@@ -22,10 +22,6 @@ int main() {
 	hist->Fill(0.5);
 	hist->Draw();
 
-	c1->SaveAs("test.png");
-
-	delete c1;
-
 	return(0);
 }
 
