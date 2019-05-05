@@ -9,6 +9,12 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include src/subdir.mk
+-include StRoot/StRefMultCorr/subdir.mk
+-include StRoot/StPicoEvent/macros/subdir.mk
+-include StRoot/StPicoEvent/subdir.mk
+-include StRoot/StEpdUtil/Operations/PatternMapping/subdir.mk
+-include StRoot/StEpdUtil/Macros/subdir.mk
+-include StRoot/StEpdUtil/subdir.mk
 -include subdir.mk
 -include objects.mk
 
@@ -38,19 +44,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: RootTemplate
+all: PicoDst_Local_Test
 
 # Tool invocations
-RootTemplate: $(OBJS) $(USER_OBJS)
+PicoDst_Local_Test: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L/home/dylan/Software/root/root-6.14.06/obj/lib -pthread -rdynamic -m64 -std=c++11 -o "RootTemplate" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/home/dylan/Software/root/root-6.14.06/obj/lib -pthread -rdynamic -m64 -std=c++11 -o "PicoDst_Local_Test" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(CC_DEPS)$(C++_DEPS)$(EXECUTABLES)$(C_UPPER_DEPS)$(CXX_DEPS)$(OBJS)$(CPP_DEPS)$(C_DEPS) RootTemplate
+	-$(RM) $(CC_DEPS)$(C++_DEPS)$(EXECUTABLES)$(C_UPPER_DEPS)$(CXX_DEPS)$(OBJS)$(CPP_DEPS)$(C_DEPS) PicoDst_Local_Test
 	-@echo ' '
 
 .PHONY: all clean dependents

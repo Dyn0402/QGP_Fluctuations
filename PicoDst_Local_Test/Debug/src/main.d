@@ -66,7 +66,8 @@ src/main.o: ../src/main.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/TAttBBox2D.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TPoint.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TAttCanvas.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TCanvasImp.h
+ /home/dylan/Software/root/root-6.14.06/obj/include/TCanvasImp.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TProfile.h
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TH1F.h:
 
@@ -203,3 +204,5 @@ src/main.o: ../src/main.cpp \
 /home/dylan/Software/root/root-6.14.06/obj/include/TAttCanvas.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TCanvasImp.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TProfile.h:

@@ -23,5 +23,11 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+StRoot/StEpdUtil/Macros \
+StRoot/StEpdUtil/Operations/PatternMapping \
+StRoot/StEpdUtil \
+StRoot/StPicoEvent \
+StRoot/StPicoEvent/macros \
+StRoot/StRefMultCorr \
 src \
 
