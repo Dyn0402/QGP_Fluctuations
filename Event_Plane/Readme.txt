@@ -1,1 +1,2 @@
-Testing for event plane algorithms to be added to Roli's code.
+General repository for exploring QGP fluctuations and possible observables related to first order phase transitions in the QGP.
+
