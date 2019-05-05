@@ -7,20 +7,57 @@
 
 
 #include <iostream>
-#include "TH1F.h"
-#include "TCanvas.h"
+#include <TCanvas.h>
+#include <TH1D.h>
+
+#include "event_plane.h"
+#include "config.h"
 
 using namespace std;
 
 
 int main() {
 	cout << "Hello Root!" << endl;
-	TCanvas *c1 = new TCanvas("c1", "Test", 600, 600);
+	double res = 0.0;
+	double v2Obs = 0.0;
+	double v2ObsCheat = 0.0;
+	TH1D *v2ObsDist = new TH1D("v2ObsDist", "Distribution of v2 Observed", 100, -1.0, 0.5);
+	TH1D *v2CheatDist = new TH1D("v2CheatDist", "Distribution of v2 from reaction angle", 100, -1, 0.5);
+	for(int i=0; i < config::n_events; i++) {
+		double reactAngle = genAngle(config::rand);
+		vector<double> particles = genParticles(config::n_particles, config::v2, reactAngle, config::rand);
+//		for( double i : particles) {
+//			cout << i << endl;
+//		}
+		double v2ObsCheati = getV2ObsCheat(particles, config::n_harmonic, reactAngle);
+		double resi = getSubRes(particles, config::n_harmonic);
+		double v2Obsi = getV2Obs(particles, config::n_harmonic);
+		v2ObsCheat += v2ObsCheati;
+		res += resi;
+		v2Obs += v2Obsi;
+//		cout << "v2Obsi: " << v2Obsi / config::n_particles << endl << endl;
+		v2ObsDist->Fill(v2Obsi / config::n_particles);
+		v2CheatDist->Fill(v2ObsCheati / config::n_particles);
+//		if(v2Obsi / config::n_particles < -0.8) {
+//			break;
+//		}
+	}
 
-	TH1F *hist = new TH1F("test", "tests", 10, 0, 1);
-	hist->Fill(0.1);
-	hist->Fill(0.5);
-	hist->Draw();
+	res /= config::n_events;
+	res = getFullRes(res);
+	v2Obs /= config::n_events * config::n_particles;
+	v2ObsCheat /= config::n_events * config::n_particles;
+
+	double v2 = v2Obs / res;
+
+	cout << "v2Obs: " << v2Obs << " | res: " << res << " | v2: " << v2 << endl;
+	cout << "v2Cheat: " << v2ObsCheat << endl;
+	TCanvas *c1 = new TCanvas("c1", "c1", 500, 500);
+	v2ObsDist->Draw();
+	TCanvas *c2 = new TCanvas("c2", "c2", 500, 500);
+	v2CheatDist->Draw();
+
+	cout << endl << "donzo" << endl;
 
 	return(0);
 }
