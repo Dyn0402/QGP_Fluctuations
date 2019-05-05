@@ -394,33 +394,33 @@ void Gamma_112_module(int cen=1, int opt_weight =1, const Char_t *inFile = "test
 	delete gRandom;
 	gRandom = new TRandom3(0);
 
-        char fname_old[200], fname_new[200];
-        sprintf(fname_new,"cen%d.weight_112_module_new.root",cen);
-        sprintf(fname_old,"cen%d.weight_112_module.root",cen);
+	char fname_old[200], fname_new[200];
+	sprintf(fname_new,"cen%d.weight_112_module_new.root",cen);
+	sprintf(fname_old,"cen%d.weight_112_module.root",cen);
 	Weight_Read = ReadWeight(fname_old);
 
-  	StPicoDstReader* picoReader = new StPicoDstReader(inFile);
-  	picoReader->Init();
-  	if( !picoReader->chain() ) { std::cout << "No chain has been found." << std::endl; }
+	StPicoDstReader* picoReader = new StPicoDstReader(inFile);
+	picoReader->Init();
+	if( !picoReader->chain() ) { std::cout << "No chain has been found." << std::endl; }
 	Int_t nentries = picoReader->chain()->GetEntries();
 
-  	// This is a way if you want to spead up IO
-        std::cout << "Explicit read status for some branches" << std::endl;
-        picoReader->SetStatus("*",0);
-        picoReader->SetStatus("Event",1);
-        picoReader->SetStatus("Track",1);
-        picoReader->SetStatus("BTofHit",1);
-        picoReader->SetStatus("BTofPidTraits",1);
+	// This is a way if you want to spead up IO
+	std::cout << "Explicit read status for some branches" << std::endl;
+	picoReader->SetStatus("*",0);
+	picoReader->SetStatus("Event",1);
+	picoReader->SetStatus("Track",1);
+	picoReader->SetStatus("BTofHit",1);
+	picoReader->SetStatus("BTofPidTraits",1);
 	// Prepare EPD
 	TClonesArray* mEpdHits = new TClonesArray("StPicoEpdHit");
-        unsigned int found;
+	unsigned int found;
 	picoReader->chain()->SetBranchStatus("EpdHit*",1,&found);
 	cout << "StPicoDstMaker::SetStatus "<< found <<" to EpdHit" << endl;
 	picoReader->chain()->SetBranchAddress("EpdHit",&mEpdHits);
 	StEpdEpFinder* mEpFinder = new StEpdEpFinder(9,fname_new,fname_old);
-  	mEpFinder->SetnMipThreshold(0.3);    	// recommended by EPD group
-  	mEpFinder->SetMaxTileWeight(2.0);     	// recommended by EPD group
-  	mEpFinder->SetEpdHitFormat(2);         	// 2=pico
+	mEpFinder->SetnMipThreshold(0.3);    	// recommended by EPD group
+	mEpFinder->SetMaxTileWeight(2.0);     	// recommended by EPD group
+	mEpFinder->SetEpdHitFormat(2);         	// 2=pico
 	mEpFinder->SetEtaWeights(1,wt);		// eta weight for 1st-order EP
 
 	//loop through events
@@ -428,20 +428,19 @@ void Gamma_112_module(int cen=1, int opt_weight =1, const Char_t *inFile = "test
 
 		if((i+1)%1000==0) cout<<"Processing entry == "<< i+1 <<" == out of "<<nentries<<".\n";
 		Bool_t readEvent = picoReader->ReadPicoEvent(i);
-    		if( !readEvent ) {
-      			cout << "Something went wrong, Master! Nothing to analyze..." << endl;
-  	    		break;
-    		}
+		if( !readEvent ) {
+			cout << "Something went wrong, Master! Nothing to analyze..." << endl;
+			break;
+		}
 		// Retrieve picoDst
 		StPicoDst *dst = picoReader->picoDst();
 		// Retrieve event information
 		StPicoEvent *event = dst->event();
-    		if( !event ) {
-      			cout << "Something went wrong, Master! Event is hiding from me..." << endl;
-      			break;
-    		}
+		if( !event ) {
+			cout << "Something went wrong, Master! Event is hiding from me..." << endl;
+			break;
+		}
 
-//		if(!event->isTrigger(460001)) continue;  //ZDCE
 		Run	= event->runId();
 		pV 	= event->primaryVertex();
 		pVz	= pV.Z();
@@ -452,43 +451,43 @@ void Gamma_112_module(int cen=1, int opt_weight =1, const Char_t *inFile = "test
 		TOFMult = event->btofTrayMultiplicity();
 		NPTracks= dst->numberOfTracks();
 		BBCco   = event->BBCx();
-                ZDCcoin = event->ZDCx();
+		ZDCcoin = event->ZDCx();
 		Day 	= (int)((Run%1000000)/1000);
 		Day2    = (int)((Run%1000000)/10);
-                Day3    = (int)((Run%1000000)/1);
+		Day3    = (int)((Run%1000000)/1);
 
 		if(!IsGoodEvent(cen)) continue;
 		if(!CountCharge(dst)) continue;;
-//shuffle tracks for random EPs
-          	int iTrack[Fcount];
-	  	Scount = Fcount/2 -1;
-          	for(int q=0;q<Fcount;q++) iTrack[q] = q;
-          	random_shuffle(iTrack,iTrack+Fcount);
+		//shuffle tracks for random EPs
+		int iTrack[Fcount];
+		Scount = Fcount/2 -1;
+		for(int q=0;q<Fcount;q++) iTrack[q] = q;
+		random_shuffle(iTrack,iTrack+Fcount);
 
-//TPC EP reconstruction
-	  	MakeTPC_EP(dst,iTrack);
-//BBC EP
-          	if(!IsGoodBBC(event)) continue;
-	  	MakeBBC_EP(event);
-//EPD EP
-	  	StEpdEpInfo result = mEpFinder->Results(mEpdHits,pV,(Centrality>0)? Centrality-1:0);
-	  	EPD_EP_east = result.EastPhiWeightedPsi(nHar);
-	  	EPD_EP_west = result.WestPhiWeightedPsi(nHar);
-	  	EPDe_Day3_cos2->Fill(Day3, cos(2*EPD_EP_east));
-          	EPDe_Day3_sin2->Fill(Day3, sin(2*EPD_EP_east));
-	  	EPDw_Day3_cos2->Fill(Day3, cos(2*EPD_EP_west));
-	  	EPDw_Day3_sin2->Fill(Day3, sin(2*EPD_EP_west));
+		//TPC EP reconstruction
+		MakeTPC_EP(dst,iTrack);
+		//BBC EP
+		if(!IsGoodBBC(event)) continue;
+		MakeBBC_EP(event);
+		//EPD EP
+		StEpdEpInfo result = mEpFinder->Results(mEpdHits,pV,(Centrality>0)? Centrality-1:0);
+		EPD_EP_east = result.EastPhiWeightedPsi(nHar);
+		EPD_EP_west = result.WestPhiWeightedPsi(nHar);
+		EPDe_Day3_cos2->Fill(Day3, cos(2*EPD_EP_east));
+		EPDe_Day3_sin2->Fill(Day3, sin(2*EPD_EP_east));
+		EPDw_Day3_cos2->Fill(Day3, cos(2*EPD_EP_west));
+		EPDw_Day3_sin2->Fill(Day3, sin(2*EPD_EP_west));
 
-//ZDC EP
-	  	if(!IsGoodZDC(event)) continue;
-          	MakeZDC_EP(event);
-//flatten EPs
- 	  	ShiftPsi();
-	  	FillEP_resolution();
+		//ZDC EP
+		if(!IsGoodZDC(event)) continue;
+		MakeZDC_EP(event);
+		//flatten EPs
+		ShiftPsi();
+		FillEP_resolution();
 
-//Store the flattened phi for POI
-	  	Phi_new.resize(NPTracks);
-          	for(int trki = 0; trki < NPTracks; trki++){
+		//Store the flattened phi for POI
+		Phi_new.resize(NPTracks);
+		for(int trki = 0; trki < NPTracks; trki++){
 			StPicoTrack *picoTrack = dst->track(trki);
 			if(!IsGoodTrack(picoTrack)) continue;
 			Pt        = picoTrack->pMom().Pt();
@@ -500,151 +499,16 @@ void Gamma_112_module(int cen=1, int opt_weight =1, const Char_t *inFile = "test
 			if(!IsGoodPOI(Pt,Eta,DCAGlobal)) continue;
 			FillPhiPOI();	//Charge is needed here
 			ShiftPhiPOI(trki);
-	  	}
-//////////Real analysis begins here//////////////////////////////////////////////////////////////////////////////////////
-	  	N_L_P1 = 0, N_L_N1 = 0, N_R_P1 = 0, N_R_N1 = 0, N_T_P1 = 0, N_T_N1 = 0, N_B_P1 = 0, N_B_N1 = 0;
-          	N_L_P2 = 0, N_L_N2 = 0, N_R_P2 = 0, N_R_N2 = 0, N_T_P2 = 0, N_T_N2 = 0, N_B_P2 = 0, N_B_N2 = 0;
-	  	Fcount = 0;
-		//loop for the real analysis
-		for(int trki = 0; trki < NPTracks; trki++){
-			StPicoTrack *picoTrack = dst->track(trki);
-			if(!IsGoodTrack(picoTrack)) continue;
-			Pt	  = picoTrack->pMom().Pt();
-			Eta	  = picoTrack->pMom().Eta();
-			Theta     = 2.*atan(exp(-Eta));
-			Charge	  = picoTrack->charge();
-			Phi	  = picoTrack->pMom().Phi();
-			ndEdx	  = picoTrack->nHitsDedx();
-			DCAGlobal = picoTrack->gDCA(pV).Mag();
-                        eff = (cen>0)? PP0[cen-1]*exp(-pow(PP1[cen-1]/Pt,PP2[cen-1])):PP0[0]*exp(-pow(PP1[0]/Pt,PP2[0]));
-                        float eff_tof = 1;
-//                      if(TOF_eff && TOF_eff->GetEntries()) eff_tof = TOF_eff->GetBinContent(TOF_eff->FindBin(Pt));
-                        eff *= eff_tof;
+		}
+	}
+	//End loop over events.
 
-                        if(DCAGlobal < DcaCut) {
-				hEtaPtDist->Fill(Eta,Pt,Eweight);
-				hEtaPhiDist->Fill(Eta,Phi,Eweight);
-				hPhiPtDist->Fill(Phi,Pt,Eweight);
-			}
-			if(!IsGoodPOI(Pt,Eta,DCAGlobal)) continue;
-                	if(DCAGlobal<1 && fabs(Eta)<0.9) {	// && Pt>0.2 && Pt*cosh(Eta)<2) {
-				Hist_Pt->Fill(Pt,Eweight);
-	                	if(picoTrack->isTofTrack() && dst->btofPidTraits(picoTrack->bTofPidTraitsIndex())->btof() >0) Hist_Pt_TOF->Fill(Pt,Eweight);
-			}
-
-//			if(!IsGoodPion(dst,picoTrack,1)) continue;
-			v2_sub = (Eta > 0)? cos(nHar*Phi_new[trki] - nHar*TPC_EP_bac_new)*100:cos(nHar*Phi_new[trki] - nHar*TPC_EP_for_new)*100;
-			FillCMW();
-
-                        float mQx_i = mQx, mQy_i = mQy;
-                        if(IsGoodAsso(Pt,Eta,DCAGlobal)) {
-                                mQx_i -= Pt * cos(PhiAsso_new[trki] * nHar);
-                                mQy_i -= Pt * sin(PhiAsso_new[trki] * nHar);
-                        }
-                        TVector2 mQ_i(mQx_i,mQy_i);
-                        float psi_F = mQ_i.Phi()/nHar;
-			Hist_TPC_EP_full_m1->Fill(psi_F);
-			float psi_F_new = psi_F;
- 			for(int jj=0;jj<order;jj++)
-                		psi_F_new += -2*PsiMean_F[1+2*jj]*cos(nHar*(jj+1)*psi_F)/nHar/(jj+1) + 2*PsiMean_F[0+2*jj]*sin(nHar*(jj+1)*psi_F)/nHar/(jj+1);
-			Hist_TPC_EP_full_m1_flat->Fill(psi_F_new);
-
-                        v2  = cos(nHar*Phi_new[trki] - nHar*psi_F_new)*100;
-                        v2e = cos(nHar*Phi_new[trki] - nHar*TPC_EP_for_new)*100;
-                        v2w = cos(nHar*Phi_new[trki] - nHar*TPC_EP_bac_new)*100;
-                        Hist_v2_pt_obs1->Fill(Pt,v2);
-                        Hist_v2_pt_obs2->Fill(Pt,v2,Eweight/eff);
-                        Hist_v2_eta_obs1->Fill(Eta,v2,1./eff);
-                        Hist_v2_eta_obs2->Fill(Eta,v2,Eweight/eff);
-                        if(fabs(Eta)<0.5) {
-				pTemp_v2->Fill(1,v2e, 1./eff);pTemp_v2->Fill(2,v2w, 1./eff);
-				if(Charge>0) {pTemp_v2->Fill(3,v2e, 1./eff); pTemp_v2->Fill(4,v2w, 1./eff);}
-                                if(Charge<0) {pTemp_v2->Fill(5,v2e, 1./eff); pTemp_v2->Fill(6,v2w, 1./eff);}
-			}
-
-                        CountMSC(iTrack, Phi_new[trki]);
-
-			Fcount++;
-			if(opt_weight==1) continue;
-			for(int trkj = trki+1; trkj < NPTracks; trkj++) {
-				StPicoTrack *picoTrack2 = dst->track(trkj);
-				if(!IsGoodTrack(picoTrack2)) continue;
-                        	Pt2        = picoTrack2->pMom().Pt();
-                        	Eta2       = picoTrack2->pMom().Eta();
-                        	Charge2    = picoTrack2->charge();
-                        	Phi2       = picoTrack2->pMom().Phi();
-				DCAGlobal2 = picoTrack2->gDCA(pV).Mag();
-                                eff2 = (cen>0)? PP0[cen-1]*exp(-pow(PP1[cen-1]/Pt2,PP2[cen-1])):PP0[0]*exp(-pow(PP1[0]/Pt2,PP2[0]));
-                                float eff_tof2 = 1;
-//                                if(TOF_eff && TOF_eff->GetEntries()) eff_tof2 = TOF_eff->GetBinContent(TOF_eff->FindBin(Pt2));
-                                eff2 *= eff_tof2;
-
-	                        if(!IsGoodPOI(Pt2,Eta2,DCAGlobal2)) continue;
-//				if(!IsGoodPion(dst,picoTrack2,1)) continue;
-                                hDpt->Fill(fabs(Pt-Pt2),Eweight);
-
-				float mQx_j = mQx_i, mQy_j = mQy_i;
-				if(IsGoodAsso(Pt2,Eta2,DCAGlobal2)) {
-                        		mQx_j -= Pt2 * cos(PhiAsso_new[trkj] * nHar);
-                        		mQy_j -= Pt2 * sin(PhiAsso_new[trkj] * nHar);
-				}
-				TVector2 mQ_j(mQx_j, mQy_j);
-				float psi_F2 = mQ_j.Phi()/nHar;
-				Hist_TPC_EP_full_m2->Fill(psi_F2);
-                        	float psi_F2_new = psi_F2;
-				for(int jj=0;jj<order;jj++)
-					psi_F2_new += -2*PsiMean_F[1+2*jj]*cos(nHar*(jj+1)*psi_F2)/nHar/(jj+1) + 2*PsiMean_F[0+2*jj]*sin(nHar*(jj+1)*psi_F2)/nHar/(jj+1);
-				if(psi_F2_new< 0) psi_F2_new += PI; if(psi_F2_new>PI) psi_F2_new -= PI;
-				Hist_TPC_EP_full_m2_flat->Fill(psi_F2_new);
-
-				//correlations
-                                correlator0 = cos(Phi + Phi2 - 2*psi_F2_new)*100;
-                                correlator3 = cos(Phi_new[trki] - Phi_new[trkj])*100;
-                                correlator4e= cos(Phi_new[trki] + Phi_new[trkj] - 2*TPC_EP_for_new)*100;
-                                correlator4w= cos(Phi_new[trki] + Phi_new[trkj] - 2*TPC_EP_bac_new)*100;
-                                correlator4 = cos(Phi_new[trki] + Phi_new[trkj] - 2*psi_F2_new)*100;
-
-                                if(Charge>0 && Charge2>0) FillGamma(1);
-                                if(Charge<0 && Charge2<0) FillGamma(2);
-                                if(Charge*Charge2>0) FillGamma(3);
-                                if(Charge*Charge2<0) FillGamma(4);
-
-                                if(fabs(Pt-Pt2)>0.15 && fabs(Eta-Eta2)>0.15) {
-					Hist_v2_eta_obs3->Fill(Eta,v2,Eweight/eff);
-					if(fabs(Eta)<0.5 && fabs(Eta2)<0.5) {
-						pTemp_v2_noHBT->Fill(1,v2e, 1./eff);pTemp_v2_noHBT->Fill(2,v2w, 1./eff);
-						if(Charge>0) {pTemp_v2_noHBT->Fill(3,v2e, 1./eff); pTemp_v2_noHBT->Fill(4,v2w, 1./eff);}
-						if(Charge<0) {pTemp_v2_noHBT->Fill(5,v2e, 1./eff); pTemp_v2_noHBT->Fill(6,v2w, 1./eff);}
-					}
-				}
-			} // 2nd track
-
-		}  //1st Track
-
-		WrapUpMSC();
-                WrapUpESE();
-
-		PhiAsso_new.clear();
-		Phi_new.clear();
-                pTemp_v2->Reset();
-		pTemp_v2_noHBT->Reset();
-                pTemp_parity_e->Reset();
-                pTemp_parity_e_noHBT->Reset();
-                pTemp_parity_w->Reset();
-                pTemp_parity_w_noHBT->Reset();
-                pTemp_delta->Reset();
-                pTemp_delta_noHBT->Reset();
-
-	} // Event
-
-        rc = (TH1D*)Hist_Pt_TOF->Clone();
-        rc->SetName("rc");
-        rc->Divide(Hist_Pt);
 	WriteHistogram(cen,opt_weight);
 	if(opt_weight==1) {
 		mEpFinder->Finish();
 		WriteWeight(fname_new);
 	}
+
 	return;
 }
 //////////////////////////////////
@@ -1362,95 +1226,111 @@ void WriteWeight(char* OutFileName) {
 }
 /////////////////////////////////////////////////////
 int ReadWeight(char* InFileName) {
-        TFile *fWgt=new TFile(InFileName,"READ");
-        if(!fWgt->IsOpen()) return 0;
-        if(fWgt->IsOpen()) {
-                TOF_eff = (TH1D*)fWgt->Get("rc");
-                if(TOF_eff && TOF_eff->GetEntries()) {float cont = TOF_eff->GetBinContent(20); TOF_eff->Scale(1.25/cont);}
-                TPCmean_FF_1 = (TProfile2D*)fWgt->Get("TPCmeanPhi_FF_1");
-                TPCmean_RF_1 = (TProfile2D*)fWgt->Get("TPCmeanPhi_RF_1");
-                TPCmeanAsso_FF_1 = (TProfile2D*)fWgt->Get("TPCmeanPhiAsso_FF_1");
-                TPCmeanAsso_RF_1 = (TProfile2D*)fWgt->Get("TPCmeanPhiAsso_RF_1");
-                TPCmean_FF_2 = (TProfile2D*)fWgt->Get("TPCmeanPhi_FF_2");
-                TPCmean_RF_2 = (TProfile2D*)fWgt->Get("TPCmeanPhi_RF_2");
-                TPCmeanAsso_FF_2 = (TProfile2D*)fWgt->Get("TPCmeanPhiAsso_FF_2");
-                TPCmeanAsso_RF_2 = (TProfile2D*)fWgt->Get("TPCmeanPhiAsso_RF_2");
-                TPCmean_FF_3 = (TProfile2D*)fWgt->Get("TPCmeanPhi_FF_3");
-                TPCmean_RF_3 = (TProfile2D*)fWgt->Get("TPCmeanPhi_RF_3");
-                TPCmeanAsso_FF_3 = (TProfile2D*)fWgt->Get("TPCmeanPhiAsso_FF_3");
-                TPCmeanAsso_RF_3 = (TProfile2D*)fWgt->Get("TPCmeanPhiAsso_RF_3");
-                Read_TPC_EP_full = (TProfile2D*)fWgt->Get("pTPC_EP_full");
-                Read_TPC_EP_east = (TProfile2D*)fWgt->Get("pTPC_EP_east");
-                Read_TPC_EP_west = (TProfile2D*)fWgt->Get("pTPC_EP_west");
-                Read_TPC_EP_for = (TProfile2D*)fWgt->Get("pTPC_EP_for");
-                Read_TPC_EP_bac = (TProfile2D*)fWgt->Get("pTPC_EP_bac");
-                Read_BBC_EP_east = (TProfile2D*)fWgt->Get("pBBC_EP_east");
-                Read_BBC_EP_west = (TProfile2D*)fWgt->Get("pBBC_EP_west");
-                Read_EPD_EP_east = (TProfile2D*)fWgt->Get("pEPD_EP_east");
-                Read_EPD_EP_west = (TProfile2D*)fWgt->Get("pEPD_EP_west");
-                Read_ZDC_EP_east = (TProfile2D*)fWgt->Get("pZDC_EP_east");
-                Read_ZDC_EP_west = (TProfile2D*)fWgt->Get("pZDC_EP_west");
-cout<<"Loaded: TPC/BBC/EPD/ZDC EP corrections"<<endl;
-		TH1D* Read_netChAsym   = (TH1D*)fWgt->Get("Hist_netChAsym");
-		MeanNetChargeAsym= Read_netChAsym->GetMean();
+	TFile *fWgt = new TFile(InFileName, "READ");
+	if (!fWgt->IsOpen())
+		return 0;
+	if (fWgt->IsOpen()) {
+		TOF_eff = (TH1D*) fWgt->Get("rc");
+		if (TOF_eff && TOF_eff->GetEntries()) {
+			float cont = TOF_eff->GetBinContent(20);
+			TOF_eff->Scale(1.25 / cont);
+		}
+
+		TPCmean_FF_1 = (TProfile2D*) fWgt->Get("TPCmeanPhi_FF_1");
+		TPCmean_RF_1 = (TProfile2D*) fWgt->Get("TPCmeanPhi_RF_1");
+		TPCmeanAsso_FF_1 = (TProfile2D*) fWgt->Get("TPCmeanPhiAsso_FF_1");
+		TPCmeanAsso_RF_1 = (TProfile2D*) fWgt->Get("TPCmeanPhiAsso_RF_1");
+		TPCmean_FF_2 = (TProfile2D*) fWgt->Get("TPCmeanPhi_FF_2");
+		TPCmean_RF_2 = (TProfile2D*) fWgt->Get("TPCmeanPhi_RF_2");
+		TPCmeanAsso_FF_2 = (TProfile2D*) fWgt->Get("TPCmeanPhiAsso_FF_2");
+		TPCmeanAsso_RF_2 = (TProfile2D*) fWgt->Get("TPCmeanPhiAsso_RF_2");
+		TPCmean_FF_3 = (TProfile2D*) fWgt->Get("TPCmeanPhi_FF_3");
+		TPCmean_RF_3 = (TProfile2D*) fWgt->Get("TPCmeanPhi_RF_3");
+		TPCmeanAsso_FF_3 = (TProfile2D*) fWgt->Get("TPCmeanPhiAsso_FF_3");
+		TPCmeanAsso_RF_3 = (TProfile2D*) fWgt->Get("TPCmeanPhiAsso_RF_3");
+		Read_TPC_EP_full = (TProfile2D*) fWgt->Get("pTPC_EP_full");
+		Read_TPC_EP_east = (TProfile2D*) fWgt->Get("pTPC_EP_east");
+		Read_TPC_EP_west = (TProfile2D*) fWgt->Get("pTPC_EP_west");
+		Read_TPC_EP_for = (TProfile2D*) fWgt->Get("pTPC_EP_for");
+		Read_TPC_EP_bac = (TProfile2D*) fWgt->Get("pTPC_EP_bac");
+		Read_BBC_EP_east = (TProfile2D*) fWgt->Get("pBBC_EP_east");
+		Read_BBC_EP_west = (TProfile2D*) fWgt->Get("pBBC_EP_west");
+		Read_EPD_EP_east = (TProfile2D*) fWgt->Get("pEPD_EP_east");
+		Read_EPD_EP_west = (TProfile2D*) fWgt->Get("pEPD_EP_west");
+		Read_ZDC_EP_east = (TProfile2D*) fWgt->Get("pZDC_EP_east");
+		Read_ZDC_EP_west = (TProfile2D*) fWgt->Get("pZDC_EP_west");
+
+		cout << "Loaded: TPC/BBC/EPD/ZDC EP corrections" << endl;
+		TH1D* Read_netChAsym = (TH1D*) fWgt->Get("Hist_netChAsym");
+		MeanNetChargeAsym = Read_netChAsym->GetMean();
 		RMSNetChargeAsym = Read_netChAsym->GetRMS();
-cout<<"Loaded: charge asymmetry "<<endl;
-		TH1D* BBC_east_1 = (TH1D*)fWgt->Get("BBC1;1");
-        	TH1D* BBC_east_2 = (TH1D*)fWgt->Get("BBC2;1");
-        	TH1D* BBC_west_2 = (TH1D*)fWgt->Get("BBC7;1");
-        	TH1D* BBC_west_1 = (TH1D*)fWgt->Get("BBC8;1");
-        	float east_mean1 = (BBC_east_1->GetSum())/6.;
-        	float east_mean2 = (BBC_east_2->GetSum())/10.;
-        	float west_mean2 = (BBC_west_2->GetSum())/10.;
-        	float west_mean1 = (BBC_west_1->GetSum())/6.;
+
+		cout << "Loaded: charge asymmetry " << endl;
+		TH1D* BBC_east_1 = (TH1D*) fWgt->Get("BBC1;1");
+		TH1D* BBC_east_2 = (TH1D*) fWgt->Get("BBC2;1");
+		TH1D* BBC_west_2 = (TH1D*) fWgt->Get("BBC7;1");
+		TH1D* BBC_west_1 = (TH1D*) fWgt->Get("BBC8;1");
+		float east_mean1 = (BBC_east_1->GetSum()) / 6.;
+		float east_mean2 = (BBC_east_2->GetSum()) / 10.;
+		float west_mean2 = (BBC_west_2->GetSum()) / 10.;
+		float west_mean1 = (BBC_west_1->GetSum()) / 6.;
 
 		float content;
-		for(int i=0;i<6;i++) {
-			content = BBC_east_1->GetBinContent(i+1);
-			BBC_gain_east[i] = (content>0)? east_mean1/content : 1;
-			content = BBC_west_1->GetBinContent(i+1);
-			BBC_gain_west[i] = (content>0)? west_mean1/content : 1;
+		for (int i = 0; i < 6; i++) {
+			content = BBC_east_1->GetBinContent(i + 1);
+			BBC_gain_east[i] = (content > 0) ? east_mean1 / content : 1;
+			content = BBC_west_1->GetBinContent(i + 1);
+			BBC_gain_west[i] = (content > 0) ? west_mean1 / content : 1;
 		}
-		for(int i=0;i<10;i++) {
-			content = BBC_east_2->GetBinContent(i+1);
-			BBC_gain_east[i+6] = (content>0)? 0.2*east_mean2/content : 1;
-			content = BBC_west_2->GetBinContent(i+1);
-			BBC_gain_west[i+6] = (content>0)? 0.2*west_mean2/content : 1;
+
+		for (int i = 0; i < 10; i++) {
+			content = BBC_east_2->GetBinContent(i + 1);
+			BBC_gain_east[i + 6] =
+					(content > 0) ? 0.2 * east_mean2 / content : 1;
+			content = BBC_west_2->GetBinContent(i + 1);
+			BBC_gain_west[i + 6] =
+					(content > 0) ? 0.2 * west_mean2 / content : 1;
 		}
-cout<<"Loaded: BBC gains"<<endl;
-		double lin[9] = {-1.950, -1.900, -1.850, -1.706, -1.438, -1.340, -1.045, -0.717, -0.700};
-  		double cub[9] = {0.1608, 0.1600, 0.1600, 0.1595, 0.1457, 0.1369, 0.1092, 0.0772, 0.0700};
-		for (int ix=1; ix<101; ix++){
-    			for (int iy=1; iy<=9; iy++){
-      				double eta = wt->GetXaxis()->GetBinCenter(ix);
-      				wt->SetBinContent(ix,iy,lin[iy-1]*eta+cub[iy-1]*pow(eta,3));
-    			}
-  		}
-cout<<"Loaded: EPD 1st-order EP weights"<<endl;
-		TH1D* Read_ZDC_e_h = (TH1D*)fWgt->Get("ZDC_e_h;1");
-		TH1D* Read_ZDC_e_v = (TH1D*)fWgt->Get("ZDC_e_v;1");
-                TH1D* Read_ZDC_w_h = (TH1D*)fWgt->Get("ZDC_w_h;1");
-                TH1D* Read_ZDC_w_v = (TH1D*)fWgt->Get("ZDC_w_v;1");
-		east_mean1 = (Read_ZDC_e_v->GetSum())/7.;
-                east_mean2 = (Read_ZDC_e_h->GetSum())/8.;
-                west_mean1 = (Read_ZDC_w_v->GetSum())/7.;
-                west_mean2 = (Read_ZDC_w_h->GetSum())/8.;
-		for(int i=0;i<7;i++) {
-			content = Read_ZDC_e_v->GetBinContent(i+1);
-			ZDC_gain_east_v[i] = (content>0)? east_mean1/content : 1;
-                        content = Read_ZDC_w_v->GetBinContent(i+1);
-                        ZDC_gain_west_v[i] = (content>0)? west_mean1/content : 1;
+
+		cout << "Loaded: BBC gains" << endl;
+		double lin[9] = { -1.950, -1.900, -1.850, -1.706, -1.438, -1.340, -1.045, -0.717, -0.700 };
+		double cub[9] = { 0.1608, 0.1600, 0.1600, 0.1595, 0.1457, 0.1369, 0.1092, 0.0772, 0.0700 };
+		for (int ix = 1; ix < 101; ix++) {
+			for (int iy = 1; iy <= 9; iy++) {
+				double eta = wt->GetXaxis()->GetBinCenter(ix);
+				wt->SetBinContent(ix, iy,
+						lin[iy - 1] * eta + cub[iy - 1] * pow(eta, 3));
+			}
 		}
-                for(int i=0;i<8;i++) {
-                        content = Read_ZDC_e_h->GetBinContent(i+1);
-                        ZDC_gain_east_h[i] = (content>0)? east_mean2/content : 1;
-                        content = Read_ZDC_w_h->GetBinContent(i+1);
-                        ZDC_gain_west_h[i] = (content>0)? west_mean2/content : 1;
-                }
-cout<<"Loaded: ZDCSMD gains"<<endl;
-		Read_ZDCcenter = (TProfile2D*)fWgt->Get("pZDCcenter");
-cout<<"Loaded: ZDCSMD beam center"<<endl;
-        }
+		cout << "Loaded: EPD 1st-order EP weights" << endl;
+
+		TH1D* Read_ZDC_e_h = (TH1D*) fWgt->Get("ZDC_e_h;1");
+		TH1D* Read_ZDC_e_v = (TH1D*) fWgt->Get("ZDC_e_v;1");
+		TH1D* Read_ZDC_w_h = (TH1D*) fWgt->Get("ZDC_w_h;1");
+		TH1D* Read_ZDC_w_v = (TH1D*) fWgt->Get("ZDC_w_v;1");
+		east_mean1 = (Read_ZDC_e_v->GetSum()) / 7.;
+		east_mean2 = (Read_ZDC_e_h->GetSum()) / 8.;
+		west_mean1 = (Read_ZDC_w_v->GetSum()) / 7.;
+		west_mean2 = (Read_ZDC_w_h->GetSum()) / 8.;
+
+		for (int i = 0; i < 7; i++) {
+			content = Read_ZDC_e_v->GetBinContent(i + 1);
+			ZDC_gain_east_v[i] = (content > 0) ? east_mean1 / content : 1;
+			content = Read_ZDC_w_v->GetBinContent(i + 1);
+			ZDC_gain_west_v[i] = (content > 0) ? west_mean1 / content : 1;
+		}
+
+		for (int i = 0; i < 8; i++) {
+			content = Read_ZDC_e_h->GetBinContent(i + 1);
+			ZDC_gain_east_h[i] = (content > 0) ? east_mean2 / content : 1;
+			content = Read_ZDC_w_h->GetBinContent(i + 1);
+			ZDC_gain_west_h[i] = (content > 0) ? west_mean2 / content : 1;
+		}
+
+		cout << "Loaded: ZDCSMD gains" << endl;
+		Read_ZDCcenter = (TProfile2D*) fWgt->Get("pZDCcenter");
+		cout << "Loaded: ZDCSMD beam center" << endl;
+	}
 	return 1;
 }
 ///////////////////////////////////////////////////
