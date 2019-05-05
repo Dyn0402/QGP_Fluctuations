@@ -26,21 +26,14 @@ int main() {
 	for(int i=0; i < config::n_events; i++) {
 		double reactAngle = genAngle(config::rand);
 		vector<double> particles = genParticles(config::n_particles, config::v2, reactAngle, config::rand);
-//		for( double i : particles) {
-//			cout << i << endl;
-//		}
 		double v2ObsCheati = getV2ObsCheat(particles, config::n_harmonic, reactAngle);
 		double resi = getSubRes(particles, config::n_harmonic);
 		double v2Obsi = getV2Obs(particles, config::n_harmonic);
 		v2ObsCheat += v2ObsCheati;
 		res += resi;
 		v2Obs += v2Obsi;
-//		cout << "v2Obsi: " << v2Obsi / config::n_particles << endl << endl;
 		v2ObsDist->Fill(v2Obsi / config::n_particles);
 		v2CheatDist->Fill(v2ObsCheati / config::n_particles);
-//		if(v2Obsi / config::n_particles < -0.8) {
-//			break;
-//		}
 	}
 
 	res /= config::n_events;
@@ -52,9 +45,9 @@ int main() {
 
 	cout << "v2Obs: " << v2Obs << " | res: " << res << " | v2: " << v2 << endl;
 	cout << "v2Cheat: " << v2ObsCheat << endl;
-	TCanvas *c1 = new TCanvas("c1", "c1", 500, 500);
+	TCanvas *c1 = new TCanvas("c1", "c1");
 	v2ObsDist->Draw();
-	TCanvas *c2 = new TCanvas("c2", "c2", 500, 500);
+	TCanvas *c2 = new TCanvas("c2", "c2");
 	v2CheatDist->Draw();
 
 	cout << endl << "donzo" << endl;
