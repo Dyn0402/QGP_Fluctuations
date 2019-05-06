@@ -7,17 +7,55 @@
 
 
 #include <iostream>
+
 #include <TCanvas.h>
 #include <TH1D.h>
+#include <TApplication.h>
+#include <TMath.h>
+#include <TLine.h>
 
 #include "event_plane.h"
 #include "config.h"
 
 using namespace std;
 
+void Assignment6();
+void EventPlane();
 
-int main() {
-	cout << "Hello Root!" << endl;
+
+int main(int argc, char* argv[]) {
+	TApplication theApp("App", &argc, argv);
+	EventPlane();
+	theApp.Run();
+
+	cout << "donzo" << endl;
+	return(0);
+}
+
+void EventPlane() {
+	TCanvas *c = new TCanvas("c1", "c1");
+	TH1D *diff_hist = new TH1D("diff", "diff", 100, -2*TMath::Pi(), 2*TMath::Pi());
+	for(int i=0; i < config::n_events; i++) {
+		double reactAngle = genAngle(config::rand);
+		vector<double> particles = genParticles(config::n_particles, config::v2, reactAngle, config::rand);
+		vector<double> Q = getQ(particles, config::n_harmonic);
+		double eventAngle = getQAngle(Q, config::n_harmonic);
+		if(reactAngle > TMath::Pi()) { reactAngle -= TMath::Pi() }
+		double diff = reactAngle - eventAngle;
+		diff_hist->Fill(diff);
+		cout << "Event " << i << ": Difference:  " << diff << endl;
+	}
+	TLine *pi_line_plus = new TLine(TMath::Pi(), 0, TMath::Pi(), diff_hist->GetMaximum());
+	TLine *pi_line_minus = new TLine(-TMath::Pi(), 0, -TMath::Pi(), diff_hist->GetMaximum());
+	pi_line_plus->SetLineColor(kRed);
+	pi_line_minus->SetLineColor(kRed);
+	diff_hist->Draw();
+	pi_line_plus->Draw();
+	pi_line_minus->Draw();
+}
+
+
+void Assignment6() {
 	double res = 0.0;
 	double v2Obs = 0.0;
 	double v2ObsCheat = 0.0;
@@ -49,9 +87,4 @@ int main() {
 	v2ObsDist->Draw();
 	TCanvas *c2 = new TCanvas("c2", "c2");
 	v2CheatDist->Draw();
-
-	cout << endl << "donzo" << endl;
-
-	return(0);
 }
-

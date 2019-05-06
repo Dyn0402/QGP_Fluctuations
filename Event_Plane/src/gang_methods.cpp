@@ -397,7 +397,7 @@ void Gamma_112_module(int cen=1, int opt_weight =1, const Char_t *inFile = "test
 	char fname_old[200], fname_new[200];
 	sprintf(fname_new,"cen%d.weight_112_module_new.root",cen);
 	sprintf(fname_old,"cen%d.weight_112_module.root",cen);
-	Weight_Read = ReadWeight(fname_old);
+	Weight_Read = ReadWeight(fname_old); //Possible global state changes.
 
 	StPicoDstReader* picoReader = new StPicoDstReader(inFile);
 	picoReader->Init();
@@ -456,19 +456,19 @@ void Gamma_112_module(int cen=1, int opt_weight =1, const Char_t *inFile = "test
 		Day2    = (int)((Run%1000000)/10);
 		Day3    = (int)((Run%1000000)/1);
 
-		if(!IsGoodEvent(cen)) continue;
-		if(!CountCharge(dst)) continue;;
+		if(!IsGoodEvent(cen)) continue; //Possible global state changes.
+		if(!CountCharge(dst)) continue; //Possible global state changes.
 		//shuffle tracks for random EPs
-		int iTrack[Fcount];
+		int iTrack[Fcount]; //Don't know where Fcount is defined.
 		Scount = Fcount/2 -1;
 		for(int q=0;q<Fcount;q++) iTrack[q] = q;
-		random_shuffle(iTrack,iTrack+Fcount);
+		random_shuffle(iTrack,iTrack+Fcount); //Possible global state changes.
 
 		//TPC EP reconstruction
-		MakeTPC_EP(dst,iTrack);
+		MakeTPC_EP(dst,iTrack); //Possible global state changes.
 		//BBC EP
-		if(!IsGoodBBC(event)) continue;
-		MakeBBC_EP(event);
+		if(!IsGoodBBC(event)) continue; //Possible global state changes.
+		MakeBBC_EP(event); //Possible global state changes.
 		//EPD EP
 		StEpdEpInfo result = mEpFinder->Results(mEpdHits,pV,(Centrality>0)? Centrality-1:0);
 		EPD_EP_east = result.EastPhiWeightedPsi(nHar);
@@ -887,99 +887,102 @@ bool IsGoodProton(StPicoDst *d, StPicoTrack *p, int opt) {
 }
 ////////////////////////////////////
 void ShiftPsi() {
-          Hist_TPC_EP_full->Fill(TPC_EP_full,Day);
-          Hist_TPC_EP_east->Fill(TPC_EP_east,Day);
-          Hist_TPC_EP_west->Fill(TPC_EP_west,Day);
-          Hist_TPC_EP_for->Fill(TPC_EP_for,Day);
-          Hist_TPC_EP_bac->Fill(TPC_EP_bac,Day);
-	  Hist_BBC_EP_east->Fill(BBC_EP_east,Day);
-          Hist_BBC_EP_west->Fill(BBC_EP_west,Day);
-          Hist_EPD_EP_east->Fill(EPD_EP_east,Day);
-          Hist_EPD_EP_west->Fill(EPD_EP_west,Day);
-	  Hist_ZDC_EP_east->Fill(ZDC_EP_east,Day);
-          Hist_ZDC_EP_west->Fill(ZDC_EP_west,Day);
+	Hist_TPC_EP_full->Fill(TPC_EP_full,Day);
+	Hist_TPC_EP_east->Fill(TPC_EP_east,Day);
+	Hist_TPC_EP_west->Fill(TPC_EP_west,Day);
+	Hist_TPC_EP_for->Fill(TPC_EP_for,Day);
+	Hist_TPC_EP_bac->Fill(TPC_EP_bac,Day);
+	Hist_BBC_EP_east->Fill(BBC_EP_east,Day);
+	Hist_BBC_EP_west->Fill(BBC_EP_west,Day);
+	Hist_EPD_EP_east->Fill(EPD_EP_east,Day);
+	Hist_EPD_EP_west->Fill(EPD_EP_west,Day);
+	Hist_ZDC_EP_east->Fill(ZDC_EP_east,Day);
+	Hist_ZDC_EP_west->Fill(ZDC_EP_west,Day);
 
-          for(int kk=0;kk<order;kk++) {
-                pTPC_EP_full->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*TPC_EP_full),Eweight);
-                pTPC_EP_full->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*TPC_EP_full),Eweight);
-                pTPC_EP_east->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*TPC_EP_east),Eweight);
-                pTPC_EP_east->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*TPC_EP_east),Eweight);
-                pTPC_EP_west->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*TPC_EP_west),Eweight);
-                pTPC_EP_west->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*TPC_EP_west),Eweight);
-                pTPC_EP_for->Fill(1+2*kk, Day2,cos(nHar*(kk+1)*TPC_EP_for),Eweight);
-                pTPC_EP_for->Fill(2+2*kk, Day2,sin(nHar*(kk+1)*TPC_EP_for),Eweight);
-                pTPC_EP_bac->Fill(1+2*kk, Day2,cos(nHar*(kk+1)*TPC_EP_bac),Eweight);
-                pTPC_EP_bac->Fill(2+2*kk, Day2,sin(nHar*(kk+1)*TPC_EP_bac),Eweight);
+	for(int kk=0;kk<order;kk++) {
+		pTPC_EP_full->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*TPC_EP_full),Eweight);
+		pTPC_EP_full->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*TPC_EP_full),Eweight);
+		pTPC_EP_east->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*TPC_EP_east),Eweight);
+		pTPC_EP_east->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*TPC_EP_east),Eweight);
+		pTPC_EP_west->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*TPC_EP_west),Eweight);
+		pTPC_EP_west->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*TPC_EP_west),Eweight);
+		pTPC_EP_for->Fill(1+2*kk, Day2,cos(nHar*(kk+1)*TPC_EP_for),Eweight);
+		pTPC_EP_for->Fill(2+2*kk, Day2,sin(nHar*(kk+1)*TPC_EP_for),Eweight);
+		pTPC_EP_bac->Fill(1+2*kk, Day2,cos(nHar*(kk+1)*TPC_EP_bac),Eweight);
+		pTPC_EP_bac->Fill(2+2*kk, Day2,sin(nHar*(kk+1)*TPC_EP_bac),Eweight);
 		pBBC_EP_east->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*BBC_EP_east),Eweight);
-                pBBC_EP_east->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*BBC_EP_east),Eweight);
-                pBBC_EP_west->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*BBC_EP_west),Eweight);
-                pBBC_EP_west->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*BBC_EP_west),Eweight);
-                pEPD_EP_east->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*EPD_EP_east),Eweight);
-                pEPD_EP_east->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*EPD_EP_east),Eweight);
-                pEPD_EP_west->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*EPD_EP_west),Eweight);
-                pEPD_EP_west->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*EPD_EP_west),Eweight);
-                pZDC_EP_east->Fill(1+2*kk,Day2,cos((kk+1)*ZDC_EP_east),Eweight);
-                pZDC_EP_east->Fill(2+2*kk,Day2,sin((kk+1)*ZDC_EP_east),Eweight);
-                pZDC_EP_west->Fill(1+2*kk,Day2,cos((kk+1)*ZDC_EP_west),Eweight);
-                pZDC_EP_west->Fill(2+2*kk,Day2,sin((kk+1)*ZDC_EP_west),Eweight);
-          }
+		pBBC_EP_east->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*BBC_EP_east),Eweight);
+		pBBC_EP_west->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*BBC_EP_west),Eweight);
+		pBBC_EP_west->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*BBC_EP_west),Eweight);
+		pEPD_EP_east->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*EPD_EP_east),Eweight);
+		pEPD_EP_east->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*EPD_EP_east),Eweight);
+		pEPD_EP_west->Fill(1+2*kk,Day2,cos(nHar*(kk+1)*EPD_EP_west),Eweight);
+		pEPD_EP_west->Fill(2+2*kk,Day2,sin(nHar*(kk+1)*EPD_EP_west),Eweight);
+		pZDC_EP_east->Fill(1+2*kk,Day2,cos((kk+1)*ZDC_EP_east),Eweight);
+		pZDC_EP_east->Fill(2+2*kk,Day2,sin((kk+1)*ZDC_EP_east),Eweight);
+		pZDC_EP_west->Fill(1+2*kk,Day2,cos((kk+1)*ZDC_EP_west),Eweight);
+		pZDC_EP_west->Fill(2+2*kk,Day2,sin((kk+1)*ZDC_EP_west),Eweight);
+	}
 
-          if(Weight_Read && Read_TPC_EP_full->GetEntries()) {
-                for(int k=0;k<2*order;k++) {
-                        PsiMean_F[k] = Read_TPC_EP_full->GetBinContent(k+1,Day2-run_sta/10+1);
-                        PsiMean_E[k] = Read_TPC_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
-                        PsiMean_W[k] = Read_TPC_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
-                        PsiMean_f[k] = Read_TPC_EP_for->GetBinContent(k+1,Day2-run_sta/10+1);
-                        PsiMean_b[k] = Read_TPC_EP_bac->GetBinContent(k+1,Day2-run_sta/10+1);
-                        Psi_BBC_E[k] = Read_BBC_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
-                        Psi_BBC_W[k] = Read_BBC_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
-                        Psi_EPD_E[k] = Read_EPD_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
-                        Psi_EPD_W[k] = Read_EPD_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
-                        Psi_ZDC_E[k] = Read_ZDC_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
-                        Psi_ZDC_W[k] = Read_ZDC_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
-                }
-          }
+	if(Weight_Read && Read_TPC_EP_full->GetEntries()) {
+		for(int k=0;k<2*order;k++) {
+			PsiMean_F[k] = Read_TPC_EP_full->GetBinContent(k+1,Day2-run_sta/10+1);
+			PsiMean_E[k] = Read_TPC_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
+			PsiMean_W[k] = Read_TPC_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
+			PsiMean_f[k] = Read_TPC_EP_for->GetBinContent(k+1,Day2-run_sta/10+1);
+			PsiMean_b[k] = Read_TPC_EP_bac->GetBinContent(k+1,Day2-run_sta/10+1);
+			Psi_BBC_E[k] = Read_BBC_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
+			Psi_BBC_W[k] = Read_BBC_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
+			Psi_EPD_E[k] = Read_EPD_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
+			Psi_EPD_W[k] = Read_EPD_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
+			Psi_ZDC_E[k] = Read_ZDC_EP_east->GetBinContent(k+1,Day2-run_sta/10+1);
+			Psi_ZDC_W[k] = Read_ZDC_EP_west->GetBinContent(k+1,Day2-run_sta/10+1);
+		}
+	}
 
-          TPC_EP_full_new = TPC_EP_full, TPC_EP_east_new = TPC_EP_east, TPC_EP_west_new = TPC_EP_west;
-          TPC_EP_for_new = TPC_EP_for, TPC_EP_bac_new = TPC_EP_bac;
-	  BBC_EP_east_new = BBC_EP_east, BBC_EP_west_new = BBC_EP_west;
- 	  EPD_EP_east_new = EPD_EP_east, EPD_EP_west_new = EPD_EP_west;
-          ZDC_EP_east_new = ZDC_EP_east, ZDC_EP_west_new = ZDC_EP_west;
-          for(int jj=0;jj<order;jj++) {
-                TPC_EP_full_new += -2*PsiMean_F[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_full)/nHar/(jj+1) + 2*PsiMean_F[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_full)/nHar/(jj+1);
-                TPC_EP_east_new += -2*PsiMean_E[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_east)/nHar/(jj+1) + 2*PsiMean_E[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_east)/nHar/(jj+1);
-                TPC_EP_west_new += -2*PsiMean_W[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_west)/nHar/(jj+1) + 2*PsiMean_W[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_west)/nHar/(jj+1);
-                TPC_EP_for_new  += -2*PsiMean_f[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_for)/nHar/(jj+1)  + 2*PsiMean_f[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_for)/nHar/(jj+1);
-                TPC_EP_bac_new  += -2*PsiMean_b[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_bac)/nHar/(jj+1)  + 2*PsiMean_b[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_bac)/nHar/(jj+1);
+	TPC_EP_full_new = TPC_EP_full, TPC_EP_east_new = TPC_EP_east, TPC_EP_west_new = TPC_EP_west;
+	TPC_EP_for_new = TPC_EP_for, TPC_EP_bac_new = TPC_EP_bac;
+	BBC_EP_east_new = BBC_EP_east, BBC_EP_west_new = BBC_EP_west;
+	EPD_EP_east_new = EPD_EP_east, EPD_EP_west_new = EPD_EP_west;
+	ZDC_EP_east_new = ZDC_EP_east, ZDC_EP_west_new = ZDC_EP_west;
+
+	for(int jj=0;jj<order;jj++) {
+		TPC_EP_full_new += -2*PsiMean_F[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_full)/nHar/(jj+1) + 2*PsiMean_F[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_full)/nHar/(jj+1);
+		TPC_EP_east_new += -2*PsiMean_E[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_east)/nHar/(jj+1) + 2*PsiMean_E[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_east)/nHar/(jj+1);
+		TPC_EP_west_new += -2*PsiMean_W[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_west)/nHar/(jj+1) + 2*PsiMean_W[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_west)/nHar/(jj+1);
+		TPC_EP_for_new  += -2*PsiMean_f[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_for)/nHar/(jj+1)  + 2*PsiMean_f[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_for)/nHar/(jj+1);
+		TPC_EP_bac_new  += -2*PsiMean_b[1+2*jj]*cos(nHar*(jj+1)*TPC_EP_bac)/nHar/(jj+1)  + 2*PsiMean_b[0+2*jj]*sin(nHar*(jj+1)*TPC_EP_bac)/nHar/(jj+1);
 		BBC_EP_east_new += -2*Psi_BBC_E[1+2*jj]*cos(nHar*(jj+1)*BBC_EP_east)/nHar/(jj+1) + 2*Psi_BBC_E[0+2*jj]*sin(nHar*(jj+1)*BBC_EP_east)/nHar/(jj+1);
 		BBC_EP_west_new += -2*Psi_BBC_W[1+2*jj]*cos(nHar*(jj+1)*BBC_EP_west)/nHar/(jj+1) + 2*Psi_BBC_W[0+2*jj]*sin(nHar*(jj+1)*BBC_EP_west)/nHar/(jj+1);
 		EPD_EP_east_new += -2*Psi_EPD_E[1+2*jj]*cos(nHar*(jj+1)*EPD_EP_east)/nHar/(jj+1) + 2*Psi_EPD_E[0+2*jj]*sin(nHar*(jj+1)*EPD_EP_east)/nHar/(jj+1);
-                EPD_EP_west_new += -2*Psi_EPD_W[1+2*jj]*cos(nHar*(jj+1)*EPD_EP_west)/nHar/(jj+1) + 2*Psi_EPD_W[0+2*jj]*sin(nHar*(jj+1)*EPD_EP_west)/nHar/(jj+1);
-                ZDC_EP_east_new += -2*Psi_ZDC_E[1+2*jj]*cos((jj+1)*ZDC_EP_east)/(jj+1) + 2*Psi_ZDC_E[0+2*jj]*sin((jj+1)*ZDC_EP_east)/(jj+1);
+		EPD_EP_west_new += -2*Psi_EPD_W[1+2*jj]*cos(nHar*(jj+1)*EPD_EP_west)/nHar/(jj+1) + 2*Psi_EPD_W[0+2*jj]*sin(nHar*(jj+1)*EPD_EP_west)/nHar/(jj+1);
+		ZDC_EP_east_new += -2*Psi_ZDC_E[1+2*jj]*cos((jj+1)*ZDC_EP_east)/(jj+1) + 2*Psi_ZDC_E[0+2*jj]*sin((jj+1)*ZDC_EP_east)/(jj+1);
 		ZDC_EP_west_new += -2*Psi_ZDC_W[1+2*jj]*cos((jj+1)*ZDC_EP_west)/(jj+1) + 2*Psi_ZDC_W[0+2*jj]*sin((jj+1)*ZDC_EP_west)/(jj+1);
-          }
-          if(TPC_EP_full_new>PI) TPC_EP_full_new -= PI; if(TPC_EP_full_new< 0) TPC_EP_full_new += PI;
-          if(TPC_EP_east_new>PI) TPC_EP_east_new -= PI; if(TPC_EP_east_new< 0) TPC_EP_east_new += PI;
-          if(TPC_EP_west_new>PI) TPC_EP_west_new -= PI; if(TPC_EP_west_new< 0) TPC_EP_west_new += PI;
-          if(TPC_EP_for_new>PI)  TPC_EP_for_new  -= PI; if(TPC_EP_for_new< 0)  TPC_EP_for_new  += PI;
-          if(TPC_EP_bac_new>PI)  TPC_EP_bac_new  -= PI; if(TPC_EP_bac_new< 0)  TPC_EP_bac_new  += PI;
-          if(BBC_EP_east_new>PI) BBC_EP_east_new -= PI; if(BBC_EP_east_new< 0) BBC_EP_east_new += PI;
-          if(BBC_EP_west_new>PI) BBC_EP_west_new -= PI; if(BBC_EP_west_new< 0) BBC_EP_west_new += PI;
-          if(EPD_EP_east_new>PI) EPD_EP_east_new -= PI; if(EPD_EP_east_new< 0) EPD_EP_east_new += PI;
-          if(EPD_EP_west_new>PI) EPD_EP_west_new -= PI; if(EPD_EP_west_new< 0) EPD_EP_west_new += PI;
-	  if(ZDC_EP_east_new>PI) ZDC_EP_east_new -= 2*PI; if(ZDC_EP_east_new<-PI) ZDC_EP_east_new += 2*PI;
-          if(ZDC_EP_west_new>PI) ZDC_EP_west_new -= 2*PI; if(ZDC_EP_west_new<-PI) ZDC_EP_west_new += 2*PI;
-          Hist_TPC_EP_east_flat->Fill(TPC_EP_east_new,Day);
-          Hist_TPC_EP_west_flat->Fill(TPC_EP_west_new,Day);
-          Hist_TPC_EP_for_flat->Fill(TPC_EP_for_new,Day);
-          Hist_TPC_EP_bac_flat->Fill(TPC_EP_bac_new,Day);
-          Hist_TPC_EP_full_flat->Fill(TPC_EP_full_new,Day);
-          Hist_BBC_EP_east_flat->Fill(BBC_EP_east_new,Day);
-          Hist_BBC_EP_west_flat->Fill(BBC_EP_west_new,Day);
-          Hist_EPD_EP_east_flat->Fill(EPD_EP_east_new,Day);
-          Hist_EPD_EP_west_flat->Fill(EPD_EP_west_new,Day);
-	  Hist_ZDC_EP_east_flat->Fill(ZDC_EP_east_new,Day);
-          Hist_ZDC_EP_west_flat->Fill(ZDC_EP_west_new,Day);
+	}
+
+	if(TPC_EP_full_new>PI) TPC_EP_full_new -= PI; if(TPC_EP_full_new< 0) TPC_EP_full_new += PI;
+	if(TPC_EP_east_new>PI) TPC_EP_east_new -= PI; if(TPC_EP_east_new< 0) TPC_EP_east_new += PI;
+	if(TPC_EP_west_new>PI) TPC_EP_west_new -= PI; if(TPC_EP_west_new< 0) TPC_EP_west_new += PI;
+	if(TPC_EP_for_new>PI)  TPC_EP_for_new  -= PI; if(TPC_EP_for_new< 0)  TPC_EP_for_new  += PI;
+	if(TPC_EP_bac_new>PI)  TPC_EP_bac_new  -= PI; if(TPC_EP_bac_new< 0)  TPC_EP_bac_new  += PI;
+	if(BBC_EP_east_new>PI) BBC_EP_east_new -= PI; if(BBC_EP_east_new< 0) BBC_EP_east_new += PI;
+	if(BBC_EP_west_new>PI) BBC_EP_west_new -= PI; if(BBC_EP_west_new< 0) BBC_EP_west_new += PI;
+	if(EPD_EP_east_new>PI) EPD_EP_east_new -= PI; if(EPD_EP_east_new< 0) EPD_EP_east_new += PI;
+	if(EPD_EP_west_new>PI) EPD_EP_west_new -= PI; if(EPD_EP_west_new< 0) EPD_EP_west_new += PI;
+	if(ZDC_EP_east_new>PI) ZDC_EP_east_new -= 2*PI; if(ZDC_EP_east_new<-PI) ZDC_EP_east_new += 2*PI;
+	if(ZDC_EP_west_new>PI) ZDC_EP_west_new -= 2*PI; if(ZDC_EP_west_new<-PI) ZDC_EP_west_new += 2*PI;
+
+	Hist_TPC_EP_east_flat->Fill(TPC_EP_east_new,Day);
+	Hist_TPC_EP_west_flat->Fill(TPC_EP_west_new,Day);
+	Hist_TPC_EP_for_flat->Fill(TPC_EP_for_new,Day);
+	Hist_TPC_EP_bac_flat->Fill(TPC_EP_bac_new,Day);
+	Hist_TPC_EP_full_flat->Fill(TPC_EP_full_new,Day);
+	Hist_BBC_EP_east_flat->Fill(BBC_EP_east_new,Day);
+	Hist_BBC_EP_west_flat->Fill(BBC_EP_west_new,Day);
+	Hist_EPD_EP_east_flat->Fill(EPD_EP_east_new,Day);
+	Hist_EPD_EP_west_flat->Fill(EPD_EP_west_new,Day);
+	Hist_ZDC_EP_east_flat->Fill(ZDC_EP_east_new,Day);
+	Hist_ZDC_EP_west_flat->Fill(ZDC_EP_west_new,Day);
 }
 //////////////////////////////////
 void ShiftPhiPOI(int tr) {

@@ -4,12 +4,21 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/config.cpp \
+../src/event_plane.cpp \
+../src/flatten.cpp \
 ../src/main.cpp 
 
 OBJS += \
+./src/config.o \
+./src/event_plane.o \
+./src/flatten.o \
 ./src/main.o 
 
 CPP_DEPS += \
+./src/config.d \
+./src/event_plane.d \
+./src/flatten.d \
 ./src/main.d 
 
 
