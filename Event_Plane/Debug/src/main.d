@@ -75,7 +75,8 @@ src/main.o: ../src/main.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/TRandom3.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TRandom.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/Math/TRandomEngine.h \
- ../src/config.h
+ ../src/flatten.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TH1.h ../src/config.h
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TCanvas.h:
 
@@ -228,5 +229,9 @@ src/main.o: ../src/main.cpp \
 /home/dylan/Software/root/root-6.14.06/obj/include/TRandom.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/Math/TRandomEngine.h:
+
+../src/flatten.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TH1.h:
 
 ../src/config.h:

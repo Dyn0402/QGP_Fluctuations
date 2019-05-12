@@ -17,7 +17,22 @@ namespace config {
 	extern int n_particles;
 	extern int n_harmonic;
 
+	extern int n_flatten_min;
+	extern int n_flatten_max;
+
 	extern TRandom3 *rand;
+
+	extern string fileName;
+	extern string rawHistName;
+	extern string flatHistName, sizedHistName;
+
+	extern double lBound, rBound;
+
+	extern vector<double> gMean;
+	extern vector<double> gRms;
+	extern vector<int> gWeight;
+
+	extern int nMax, nMin, N, bins;
 }
 
 

@@ -15,43 +15,85 @@
 #include <TLine.h>
 
 #include "event_plane.h"
+#include "flatten.h"
 #include "config.h"
 
 using namespace std;
 
 void Assignment6();
+void As5();
 void EventPlane();
+void EventPlane2();
 
 
 int main(int argc, char* argv[]) {
 	TApplication theApp("App", &argc, argv);
-	EventPlane();
+	As5();
 	theApp.Run();
 
 	cout << "donzo" << endl;
 	return(0);
 }
 
-void EventPlane() {
-	TCanvas *c = new TCanvas("c1", "c1");
-	TH1D *diff_hist = new TH1D("diff", "diff", 100, -2*TMath::Pi(), 2*TMath::Pi());
+
+void EventPlane2() {
+	TH1D *diff_hist = new TH1D("diff", "diff", 100, -TMath::Pi(), TMath::Pi());
+	TH1D *ep_hist = new TH1D("ep_hist", "Event Plane Distribution", 100, -2*TMath::Pi(), 2*TMath::Pi());
+	vector<double> particles, Q, event_angles;
+	double react_angle, event_angle, diff;
 	for(int i=0; i < config::n_events; i++) {
-		double reactAngle = genAngle(config::rand);
-		vector<double> particles = genParticles(config::n_particles, config::v2, reactAngle, config::rand);
-		vector<double> Q = getQ(particles, config::n_harmonic);
-		double eventAngle = getQAngle(Q, config::n_harmonic);
-		if(reactAngle > TMath::Pi()) { reactAngle -= TMath::Pi() }
-		double diff = reactAngle - eventAngle;
+		react_angle = genAngle(config::rand);
+		particles = genParticles(config::n_particles, config::v2, react_angle, config::rand);
+		Q = getQ(particles, config::n_harmonic);
+		event_angle = getQAngle(Q, config::n_harmonic);
+		event_angles.push_back(event_angle);
+		if(react_angle > TMath::Pi()) { react_angle -= TMath::Pi(); }
+		diff = react_angle - event_angle;
 		diff_hist->Fill(diff);
-		cout << "Event " << i << ": Difference:  " << diff << endl;
+		ep_hist->Fill(event_angle);
 	}
-	TLine *pi_line_plus = new TLine(TMath::Pi(), 0, TMath::Pi(), diff_hist->GetMaximum());
-	TLine *pi_line_minus = new TLine(-TMath::Pi(), 0, -TMath::Pi(), diff_hist->GetMaximum());
-	pi_line_plus->SetLineColor(kRed);
-	pi_line_minus->SetLineColor(kRed);
+
+	vector<double> A, B;
+	tie(A, B) = calcCoef2(ep_hist, config::n_flatten_min, config::n_flatten_max, 0, TMath::Pi());
+	TH1D *flat_hist = flatten_dist(event_angles, A, B, config::n_flatten_min, config::n_flatten_max, 0, TMath::Pi(), "flattened");
+
+	TCanvas *diff_can = new TCanvas("diff_can", "Reaction Plane Angle - Event Plane Angle");
 	diff_hist->Draw();
-	pi_line_plus->Draw();
-	pi_line_minus->Draw();
+	TCanvas *event_can = new TCanvas("event_can", "Event Plane Angle Distribution");
+	ep_hist->Draw();
+	TCanvas *flat_can = new TCanvas("flat_can", "Flattened Event Plane Angle Distribution");
+	flat_hist->Draw();
+	cout << "Drawing" << endl;
+}
+
+
+void EventPlane() {
+	TH1D *diff_hist = new TH1D("diff", "diff", 100, -TMath::Pi(), TMath::Pi());
+	TH1D *ep_hist = new TH1D("ep_hist", "Event Plane Distribution", 100, -2*TMath::Pi(), 2*TMath::Pi());
+	vector<double> particles, Q;
+	double react_angle, event_angle, diff;
+	for(int i=0; i < config::n_events; i++) {
+		react_angle = genAngle(config::rand);
+		particles = genParticles(config::n_particles, config::v2, react_angle, config::rand);
+		Q = getQ(particles, config::n_harmonic);
+		event_angle = getQAngle(Q, config::n_harmonic);
+		if(react_angle > TMath::Pi()) { react_angle -= TMath::Pi(); }
+		diff = react_angle - event_angle;
+		diff_hist->Fill(diff);
+		ep_hist->Fill(event_angle);
+	}
+
+	vector<double> A, B;
+	tie(A, B) = calcCoef(ep_hist, config::n_flatten_min, config::n_flatten_max);
+	TH1D *flat_hist = genFlatHist(ep_hist, A, B, config::n_flatten_min, config::n_flatten_max, "flattened");
+
+	TCanvas *diff_can = new TCanvas("diff_can", "Reaction Plane Angle - Event Plane Angle");
+	diff_hist->Draw();
+	TCanvas *event_can = new TCanvas("event_can", "Event Plane Angle Distribution");
+	ep_hist->Draw();
+	TCanvas *flat_can = new TCanvas("flat_can", "Flattened Event Plane Angle Distribution");
+	flat_hist->Draw();
+	cout << "Drawing" << endl;
 }
 
 
@@ -87,4 +129,36 @@ void Assignment6() {
 	v2ObsDist->Draw();
 	TCanvas *c2 = new TCanvas("c2", "c2");
 	v2CheatDist->Draw();
+}
+
+
+void As5() {
+	TH1D *rawHist = setDGausHist(config::bins, config::lBound, config::rBound, config::rawHistName);
+	rawHist = genDGausHist(rawHist, config::N, config::gWeight, config::gMean, config::gRms);
+	vector<double> A, B;
+	tie(A, B) = calcCoef(rawHist, config::nMin, config::nMax);
+
+	TH1D *flatHist = genFlatHist(rawHist, A, B, config::nMin, config::nMax, config::flatHistName);
+	TCanvas* c1 = new TCanvas();
+	rawHist->Draw();
+	TCanvas* c3 = new TCanvas();
+	flatHist->Draw();
+
+	cout << endl << "donzo" << endl;
+}
+
+
+void flatten_test() {
+	TH1D *rawHist = setDGausHist(config::bins, config::lBound, config::rBound, config::rawHistName);
+	rawHist = genDGausHist(rawHist, config::N, config::gWeight, config::gMean, config::gRms);
+	vector<double> A, B;
+	tie(A, B) = calcCoef(rawHist, config::nMin, config::nMax);
+
+	TH1D *flatHist = genFlatHist(rawHist, A, B, config::nMin, config::nMax, config::flatHistName);
+	TCanvas* c1 = new TCanvas();
+	rawHist->Draw();
+	TCanvas* c3 = new TCanvas();
+	flatHist->Draw();
+
+	cout << endl << "donzo" << endl;
 }

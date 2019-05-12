@@ -27,7 +27,9 @@ src/config.o: ../src/config.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/libcpp_string_view.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TypeTraits.hxx \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/RSpan.hxx \
- /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/span.hxx
+ /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/span.hxx \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TMath.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TError.h
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TRandom3.h:
 
@@ -86,3 +88,7 @@ src/config.o: ../src/config.cpp \
 /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/RSpan.hxx:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/span.hxx:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TMath.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TError.h:
