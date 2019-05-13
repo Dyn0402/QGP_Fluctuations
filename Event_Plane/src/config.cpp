@@ -35,8 +35,6 @@ namespace config {
 	double lBound = -TMath::Pi();
 	double rBound = +TMath::Pi();
 
-	int nMax = 10;
-	int nMin = 1;
 	int N = 1000000; //Number of weight 1 events to generate.
 	int bins = 400;
 }

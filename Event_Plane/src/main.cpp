@@ -24,11 +24,13 @@ void Assignment6();
 void As5();
 void EventPlane();
 void EventPlane2();
+void flatten_test();
+void read_test();
 
 
 int main(int argc, char* argv[]) {
 	TApplication theApp("App", &argc, argv);
-	As5();
+	flatten_test();
 	theApp.Run();
 
 	cout << "donzo" << endl;
@@ -136,9 +138,9 @@ void As5() {
 	TH1D *rawHist = setDGausHist(config::bins, config::lBound, config::rBound, config::rawHistName);
 	rawHist = genDGausHist(rawHist, config::N, config::gWeight, config::gMean, config::gRms);
 	vector<double> A, B;
-	tie(A, B) = calcCoef(rawHist, config::nMin, config::nMax);
+	tie(A, B) = calcCoef(rawHist, config::n_flatten_min, config::n_flatten_max);
 
-	TH1D *flatHist = genFlatHist(rawHist, A, B, config::nMin, config::nMax, config::flatHistName);
+	TH1D *flatHist = genFlatHist(rawHist, A, B, config::n_flatten_min, config::n_flatten_max, config::flatHistName);
 	TCanvas* c1 = new TCanvas();
 	rawHist->Draw();
 	TCanvas* c3 = new TCanvas();
@@ -150,15 +152,22 @@ void As5() {
 
 void flatten_test() {
 	TH1D *rawHist = setDGausHist(config::bins, config::lBound, config::rBound, config::rawHistName);
-	rawHist = genDGausHist(rawHist, config::N, config::gWeight, config::gMean, config::gRms);
+	vector<double> angles = genDGausHist2(rawHist, config::N, config::gWeight, config::gMean, config::gRms);
 	vector<double> A, B;
-	tie(A, B) = calcCoef(rawHist, config::nMin, config::nMax);
+	tie(A, B) = calcCoef2(rawHist, config::n_flatten_min, config::n_flatten_max, -TMath::Pi(), TMath::Pi());
 
-	TH1D *flatHist = genFlatHist(rawHist, A, B, config::nMin, config::nMax, config::flatHistName);
+	TH1D *flatHist = flatten_dist(angles, A, B, config::n_flatten_min, config::n_flatten_max, -TMath::Pi(), TMath::Pi(), "flattened");
+
+//	TH1D *flatHist = genFlatHist(rawHist, A, B, config::nMin, config::nMax, config::flatHistName);
 	TCanvas* c1 = new TCanvas();
 	rawHist->Draw();
 	TCanvas* c3 = new TCanvas();
 	flatHist->Draw();
 
 	cout << endl << "donzo" << endl;
+}
+
+
+void read_test() {
+	//
 }

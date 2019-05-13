@@ -214,3 +214,27 @@ TH1D* genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double> mean, v
 	return(hist);
 }
 
+
+vector<double> genDGausHist2(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms) {
+	int first = hist->GetXaxis()->GetFirst();
+	int last = hist->GetXaxis()->GetLast();
+	int bins = last - first;
+	double low = hist->GetBinLowEdge(first);
+	double up = hist->GetBinLowEdge(last+1);
+
+	TRandom3* r = new TRandom3(0);
+	double rand;
+	vector<double> angles;
+
+	for(int i=0; i<weight.size(); i++) {
+		for(int j=0; j<N*weight[i]; j++) {
+			rand = r->Gaus(mean[i], rms[i]);
+			while(rand > up) {rand -= (up-low);}
+			while(rand < low) {rand += (up-low);}
+			hist->Fill(rand);
+			angles.push_back(rand);
+		}
+	}
+
+	return(angles);
+}

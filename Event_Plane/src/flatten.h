@@ -23,6 +23,7 @@ TH1D* flatten_dist(vector<double> particles, vector<double> A, vector<double> B,
 
 TH1D* setDGausHist(int bins, double low, double up, string name);
 TH1D* genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms);
+vector<double> genDGausHist2(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms);
 
 
 

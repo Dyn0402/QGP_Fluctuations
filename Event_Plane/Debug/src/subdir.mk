@@ -6,18 +6,21 @@
 CPP_SRCS += \
 ../src/config.cpp \
 ../src/event_plane.cpp \
+../src/file_io.cpp \
 ../src/flatten.cpp \
 ../src/main.cpp 
 
 OBJS += \
 ./src/config.o \
 ./src/event_plane.o \
+./src/file_io.o \
 ./src/flatten.o \
 ./src/main.o 
 
 CPP_DEPS += \
 ./src/config.d \
 ./src/event_plane.d \
+./src/file_io.d \
 ./src/flatten.d \
 ./src/main.d 
 

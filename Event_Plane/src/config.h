@@ -32,7 +32,7 @@ namespace config {
 	extern vector<double> gRms;
 	extern vector<int> gWeight;
 
-	extern int nMax, nMin, N, bins;
+	extern int N, bins;
 }
 
 
