@@ -15,6 +15,7 @@ using namespace std;
 
 double getAvg(TH1D* hist, double (*f)(double), int n);
 double getAvg2(TH1D *hist, TF1 *func, int n);
+double getAvg2(TH1D *hist, TF1 *func);
 tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int nMin, int nMax);
 tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int nMin, int nMax, double x_min, double x_max);
 TH1D* genFlatHist(TH1D* hist, vector<double> A, vector<double> B, int nMin, int nMax, string flatName);

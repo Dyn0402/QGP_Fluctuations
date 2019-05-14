@@ -154,9 +154,9 @@ void flatten_test() {
 	TH1D *rawHist = setDGausHist(config::bins, config::lBound, config::rBound, config::rawHistName);
 	vector<double> angles = genDGausHist2(rawHist, config::N, config::gWeight, config::gMean, config::gRms);
 	vector<double> A, B;
-	tie(A, B) = calcCoef2(rawHist, config::n_flatten_min, config::n_flatten_max, -TMath::Pi(), TMath::Pi());
+	tie(A, B) = calcCoef2(rawHist, config::n_flatten_min, config::n_flatten_max, config::lBound, config::rBound);
 
-	TH1D *flatHist2 = flatten_dist(angles, A, B, config::n_flatten_min, config::n_flatten_max, -TMath::Pi(), TMath::Pi(), "flattened_dylan");
+	TH1D *flatHist2 = flatten_dist(angles, A, B, config::n_flatten_min, config::n_flatten_max, config::lBound, config::rBound, "flattened_dylan");
 
 	TH1D *flatHist = genFlatHist(rawHist, A, B, config::n_flatten_min, config::n_flatten_max, config::flatHistName);
 	TCanvas* c1 = new TCanvas();

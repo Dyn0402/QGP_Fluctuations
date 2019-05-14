@@ -19,7 +19,7 @@ namespace config {
 	int n_harmonic = 2;
 
 	int n_flatten_min = 1; //Minimum fourier order for flattening.
-	int n_flatten_max = 20; //Maximum fourier order for flattening.
+	int n_flatten_max = 25; //Maximum fourier order for flattening.
 
 	TRandom3 *rand = new TRandom3(0);
 
@@ -28,12 +28,12 @@ namespace config {
 	string flatHistName = "Flattened";
 	string sizedHistName = "Sized";
 
-	vector <double> gMean = {0.0, 2.0};
-	vector <double> gRms = {1.0, 0.2};
+	vector <double> gMean = {1.0, 2.0};
+	vector <double> gRms = {0.1, 0.2};
 	vector <int> gWeight = {2, 1};
 
-	double lBound = -TMath::Pi();
-	double rBound = +TMath::Pi();
+	double lBound = TMath::Pi();
+	double rBound = 2*TMath::Pi();
 
 	int N = 1000000; //Number of weight 1 events to generate.
 	int bins = 400;

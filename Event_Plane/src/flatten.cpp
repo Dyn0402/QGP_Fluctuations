@@ -52,6 +52,23 @@ double getAvg2(TH1D *hist, TF1 *func, int n) {
 }
 
 
+//Get average of TF1 func on histogram hist.
+double getAvg3(TH1D *hist, TF1 *func) {
+	int norm = 0;
+	double sum = 0.0;
+	int binCont;
+	double binCent;
+
+	for(int i = hist->GetXaxis()->GetFirst(); i<=hist->GetXaxis()->GetLast(); i++) {
+		binCont = hist->GetBinContent(i);
+		binCent = hist->GetBinCenter(i);
+		norm += binCont;
+		sum += binCont * func->Eval(binCent);
+	}
+
+	return(sum / norm);
+}
+
 
 
 //Calculate coefficients of Fourier expansion.
@@ -68,7 +85,7 @@ tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int nMin, int nMax){
 
 
 //Calculate coefficients of Fourier expansion.
-tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int nMin, int nMax, double x_min, double x_max){
+tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int n_min, int n_max, double x_min, double x_max){
 	vector<double> B, A;
 
 	//Get max and min of range for histogram. Need to transform to -pi to +pi range.
@@ -78,14 +95,16 @@ tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int nMin, int nMax, 
 	double x_avg = (x_max + x_min) / 2; //Calculate average of range
 	double L = (x_max - x_min) / 2; //Calculate half range (2*L is full range)
 
-	TF1 *cos_shift = new TF1("cos_shift", "cos([2] * (x-[0]) / [1])");
-	cos_shift->SetParameters(x_avg, L, TMath::Pi());
-	TF1 *sin_shift = new TF1("sin_shift", "sin([2] * (x-[0]) / [1])");
-	sin_shift->SetParameters(x_avg, L, TMath::Pi());
+	TF1 *cos_shift = new TF1("cos_shift", "cos([3] * [2] * (x-[0]) / [1])");
+	cos_shift->SetParameters(x_avg, L, TMath::Pi(), n_min);
+	TF1 *sin_shift = new TF1("sin_shift", "sin([3] * [2] * (x-[0]) / [1])");
+	sin_shift->SetParameters(x_avg, L, TMath::Pi(), n_min);
 
-	for(int n = nMin; n <= nMax; n++) {
-		B.push_back(getAvg2(hist, cos_shift, n) * 2.0 / n);
-		A.push_back(getAvg2(hist, sin_shift, n) * -2.0 / n);
+	for(int n = n_min; n <= n_max; n++) {
+		cos_shift->SetParameter(3, n);
+		sin_shift->SetParameter(3, n);
+		B.push_back(getAvg3(hist, cos_shift) * 2.0 / n);
+		A.push_back(getAvg3(hist, sin_shift) * -2.0 / n);
 	}
 
 	delete cos_shift;
@@ -98,7 +117,6 @@ tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int nMin, int nMax, 
 TH1D* genFlatHist(TH1D* hist, vector<double> A, vector<double> B, int nMin, int nMax, string flatName) {
 	int norm = hist->Integral();
 	int bins = hist->GetXaxis()->GetLast() - hist->GetXaxis()->GetFirst() + 1;
-	cout << "bins: " << bins << endl;
 	double low = hist->GetBinLowEdge(hist->GetXaxis()->GetFirst());
 	double up = hist->GetBinLowEdge(hist->GetXaxis()->GetLast()+1);
 	double newAngle;
