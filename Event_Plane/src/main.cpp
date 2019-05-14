@@ -16,6 +16,7 @@
 
 #include "event_plane.h"
 #include "flatten.h"
+#include "file_io.h"
 #include "config.h"
 
 using namespace std;
@@ -30,7 +31,7 @@ void read_test();
 
 int main(int argc, char* argv[]) {
 	TApplication theApp("App", &argc, argv);
-	flatten_test();
+	read_test();
 	theApp.Run();
 
 	cout << "donzo" << endl;
@@ -171,5 +172,23 @@ void flatten_test() {
 
 
 void read_test() {
-	//
+	vector<vector<string>> coef_entries = read_coef_file("/home/dylan/Dropbox/Research/QGP_Fluctuations/Event_Plane_Flattening/IO_Tests/coef_IO_test1.txt");
+	vector<double> coefs;
+	for(vector<string> entry:coef_entries) {
+		for(string element:entry) {
+			cout << element << "\t" << flush;
+		}
+		cout << endl;
+		coefs = parse_coef(entry[1]);
+		for(double coef:coefs) {
+			cout << coef << endl;
+		}
+		cout << endl;
+		coefs = parse_coef(entry[2]);
+		for(double coef:coefs) {
+			cout << coef << endl;
+		}
+	}
+
+	cout << endl << "donzo" << endl;
 }

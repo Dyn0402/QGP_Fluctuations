@@ -15,9 +15,11 @@
 using namespace std;
 
 vector<vector<string>> read_coef_file(string file_path);
-vector<vector<string>> parse_file(ifstream file);
+vector<vector<string>> parse_file(ifstream& file);
 vector<string> parse_line(string line);
+vector<double> parse_coef(string coef);
 
+void write_coefs(vector<double> A, vector<double> B, string entry, string path);
 
 
 #endif /* FILE_IO_H_ */
