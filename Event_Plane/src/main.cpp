@@ -156,11 +156,13 @@ void flatten_test() {
 	vector<double> A, B;
 	tie(A, B) = calcCoef2(rawHist, config::n_flatten_min, config::n_flatten_max, -TMath::Pi(), TMath::Pi());
 
-	TH1D *flatHist = flatten_dist(angles, A, B, config::n_flatten_min, config::n_flatten_max, -TMath::Pi(), TMath::Pi(), "flattened");
+	TH1D *flatHist2 = flatten_dist(angles, A, B, config::n_flatten_min, config::n_flatten_max, -TMath::Pi(), TMath::Pi(), "flattened_dylan");
 
-//	TH1D *flatHist = genFlatHist(rawHist, A, B, config::nMin, config::nMax, config::flatHistName);
+	TH1D *flatHist = genFlatHist(rawHist, A, B, config::n_flatten_min, config::n_flatten_max, config::flatHistName);
 	TCanvas* c1 = new TCanvas();
 	rawHist->Draw();
+	TCanvas* c2 = new TCanvas();
+	flatHist2->Draw();
 	TCanvas* c3 = new TCanvas();
 	flatHist->Draw();
 

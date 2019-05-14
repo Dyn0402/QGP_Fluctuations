@@ -97,7 +97,8 @@ tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int nMin, int nMax, 
 
 TH1D* genFlatHist(TH1D* hist, vector<double> A, vector<double> B, int nMin, int nMax, string flatName) {
 	int norm = hist->Integral();
-	int bins = hist->GetXaxis()->GetLast() - hist->GetXaxis()->GetFirst();
+	int bins = hist->GetXaxis()->GetLast() - hist->GetXaxis()->GetFirst() + 1;
+	cout << "bins: " << bins << endl;
 	double low = hist->GetBinLowEdge(hist->GetXaxis()->GetFirst());
 	double up = hist->GetBinLowEdge(hist->GetXaxis()->GetLast()+1);
 	double newAngle;
@@ -155,7 +156,7 @@ TH1D* genFlatHist2(TH1D* hist, vector<double> A, vector<double> B, int nMin, int
 
 TH1D* flatten_dist(vector<double> event_angles, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max, string flatName) {
 	double new_angle, old_angle;
-	TH1D *flat = new TH1D(flatName.data(), flatName.data(), 100, x_min, x_max);
+	TH1D *flat = new TH1D(flatName.data(), flatName.data(), 400, x_min, x_max);
 
 	double x_avg = (x_max + x_min) / 2; //Calculate average of range
 	double L = (x_max - x_min) / 2; //Calculate half range (2*L is full range)
@@ -173,15 +174,6 @@ TH1D* flatten_dist(vector<double> event_angles, vector<double> A, vector<double>
 	return(flat);
 }
 
-
-void write_coefs() {
-	//
-}
-
-
-tuple<vector<double>, vector<double>> read_coefs() {
-	//
-}
 
 //Declare and set the initial dGaus histogram.
 TH1D* setDGausHist(int bins, double low, double up, string name) {
