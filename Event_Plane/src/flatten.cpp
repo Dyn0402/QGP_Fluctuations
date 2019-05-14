@@ -168,6 +168,8 @@ TH1D* flatten_dist(vector<double> event_angles, vector<double> A, vector<double>
 			new_angle += A[n-nMin] * TMath::Cos(n * old_angle) + B[n-nMin] * TMath::Sin(n * old_angle);
 		}
 		new_angle = L * new_angle / TMath::Pi() + x_avg;
+		while(new_angle > x_max) {new_angle -= (x_max-x_min);}
+		while(new_angle < x_min) {new_angle += (x_max-x_min);}
 		flat->Fill(new_angle);
 	}
 
