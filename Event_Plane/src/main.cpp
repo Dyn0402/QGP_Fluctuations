@@ -27,11 +27,12 @@ void EventPlane();
 void EventPlane2();
 void flatten_test();
 void read_test();
+void write_test();
 
 
 int main(int argc, char* argv[]) {
 	TApplication theApp("App", &argc, argv);
-	read_test();
+	write_test();
 	theApp.Run();
 
 	cout << "donzo" << endl;
@@ -178,17 +179,39 @@ void read_test() {
 		for(string element:entry) {
 			cout << element << "\t" << flush;
 		}
-		cout << endl;
-		coefs = parse_coef(entry[1]);
-		for(double coef:coefs) {
-			cout << coef << endl;
-		}
-		cout << endl;
-		coefs = parse_coef(entry[2]);
-		for(double coef:coefs) {
-			cout << coef << endl;
+		if(entry.size() == 3) {
+			cout << endl;
+			coefs = parse_coef(entry[1]);
+			for(double coef:coefs) {
+				cout << coef << endl;
+			}
+			cout << endl;
+			coefs = parse_coef(entry[2]);
+			for(double coef:coefs) {
+				cout << coef << endl;
+			}
 		}
 	}
+
+	cout << endl << "donzo" << endl;
+}
+
+
+void write_test() {
+	string path = "/home/dylan/Dropbox/Research/QGP_Fluctuations/Event_Plane_Flattening/IO_Tests/coef_IO_test2.txt";
+	string entry = "hello";
+
+	vector<double> A_new = {103.2, -3.6323, 0.0032, 000.3243};
+	vector<double> B_new = {-1234, 2132.3, 0.0012, 0.000001232};
+
+	write_coefs(A_new, B_new, entry, path);
+
+	vector<double> A, B;
+	tie(A,B) = get_coefs(path, entry);
+
+	for(double val:A) { cout << val << "," << flush; }
+	cout << endl;
+	for(double val:B) { cout << val << "," << flush; }
 
 	cout << endl << "donzo" << endl;
 }

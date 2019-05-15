@@ -10,12 +10,34 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <tuple>
 
 #include "file_io.h"
 
 using namespace std;
 
-//Read coefficients from file.
+
+//Get coefficients for entry in file_path if they exist.
+tuple<vector<double>, vector<double>> get_coefs(string file_path, string entry_name) {
+	vector<vector<string>> coef_entries = read_coef_file(file_path);
+
+	bool found = false;
+	vector<double> A, B = {};
+	for(vector<string> entry:coef_entries) {
+		if(entry.size() == 3) {
+			if(entry[0] == entry_name) {
+				found = true;
+				A = parse_coef(entry[1]);
+				B = parse_coef(entry[2]);
+			}
+		}
+	}
+	if(!found) { cout << "Flattening Fourier coefficient entry not found." << endl; }
+
+	return(make_tuple(A, B));
+}
+
+//Read coefficients from file into string vector for each entry.
 vector<vector<string>> read_coef_file(string file_path) {
 	vector<vector<string>> coef_entries = {};
 	ifstream file(file_path, ios::in);
@@ -80,6 +102,54 @@ vector<double> parse_coef(string coef) {
 }
 
 
-void write_coefs(vector<double> A, vector<double> B, string entry, string path) {
-	//
+void write_coefs(vector<double> A, vector<double> B, string entry, string file_path) {
+	vector<vector<string>> coef_entries = read_coef_file(file_path);
+	ofstream file(file_path, ios::out | ios::trunc);
+	coef_entries = replace_entry(coef_entries, entry, A, B);
+	write_entries(coef_entries, file);
+	file.close();
+}
+
+
+vector<vector<string>> replace_entry(vector<vector<string>> coef_entries, string entry_name, vector<double> A, vector<double> B) {
+	string A_string = get_coef_string(A, "A");
+	string B_string = get_coef_string(B, "B");
+
+	int entry_index = -1;
+	for(unsigned index=0; index<coef_entries.size(); index++) {
+		if(coef_entries[index].size() == 3) {
+			if(coef_entries[index][0] == entry_name) {
+				entry_index = index;
+			}
+		}
+	}
+	if(entry_index == -1) {
+		vector<string> new_entry = {entry_name, A_string, B_string};
+		coef_entries.push_back(new_entry);
+	} else {
+		coef_entries[entry_index][1] = A_string;
+		coef_entries[entry_index][2] = B_string;
+	}
+
+	return(coef_entries);
+}
+
+
+void write_entries(vector<vector<string>> coef_entries, ofstream& file) {
+	for(vector<string> entry:coef_entries) {
+		if(entry.size() == 3) {
+			file << entry[0] << "\t" << entry[1] << "\t" << entry[2] << "\n";
+		} else { cout << "Bad entry." << endl; }
+	}
+}
+
+
+string get_coef_string(vector<double> coef, string coef_string) {
+	coef_string += "={";
+	for(double val:coef) {
+		coef_string += to_string(val) + ",";
+	}
+	coef_string[coef_string.size() - 1] = '}';
+
+	return(coef_string);
 }
