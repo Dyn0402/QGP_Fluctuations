@@ -2,7 +2,7 @@
  * flatten.h
  *
  *  Created on: May 6, 2019
- *      Author: dylan
+ *      Author: Dylan Neff
  */
 
 #ifndef FLATTEN_H_

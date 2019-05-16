@@ -6,27 +6,16 @@
  */
 
 #include <vector>
-#include <TRandom3.h>
 #include <TMath.h>
 
 using namespace std;
 
 namespace config {
-	double v2 = 0.1;
-
-	int n_events = 100000;
-	int n_particles = 200;
-	int n_harmonic = 2;
-
 	int n_flatten_min = 1; //Minimum fourier order for flattening.
 	int n_flatten_max = 25; //Maximum fourier order for flattening.
 
-	TRandom3 *rand = new TRandom3(0);
-
-	string fileName = "As4.root";
 	string rawHistName = "dGauss";
 	string flatHistName = "Flattened";
-	string sizedHistName = "Sized";
 
 	vector <double> gMean = {1.0, 2.0};
 	vector <double> gRms = {0.1, 0.2};

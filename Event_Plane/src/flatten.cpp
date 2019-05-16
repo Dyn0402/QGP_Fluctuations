@@ -2,7 +2,7 @@
  * flatten.cpp
  *
  *  Created on: May 5, 2019
- *      Author: dylan
+ *      Author: Dylan Neff
  */
 
 

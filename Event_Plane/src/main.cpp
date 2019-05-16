@@ -2,7 +2,7 @@
  * main.cpp
  *
  *  Created on: Mar 11, 2019
- *      Author: dylan
+ *      Author: Dylan Neff
  */
 
 
@@ -12,7 +12,6 @@
 #include <TH1D.h>
 #include <TApplication.h>
 #include <TMath.h>
-#include <TLine.h>
 
 #include "event_plane.h"
 #include "flatten.h"
