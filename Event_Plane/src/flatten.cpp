@@ -16,44 +16,8 @@
 using namespace std;
 
 
-//Get average of function f on histogram hist.
-double getAvg(TH1D* hist, double (*f)(double), int n) {
-	int norm = 0;
-	double sum = 0.0;
-	int binCont;
-	double binCent;
-
-	for(int i = hist->GetXaxis()->GetFirst(); i<=hist->GetXaxis()->GetLast(); i++) {
-		binCont = hist->GetBinContent(i);
-		binCent = hist->GetBinCenter(i);
-		norm += binCont;
-		sum += binCont * (*f)(n*binCent);
-	}
-
-	return(sum / norm);
-}
-
-
 //Get average of TF1 func on histogram hist.
-double getAvg2(TH1D *hist, TF1 *func, int n) {
-	int norm = 0;
-	double sum = 0.0;
-	int binCont;
-	double binCent;
-
-	for(int i = hist->GetXaxis()->GetFirst(); i<=hist->GetXaxis()->GetLast(); i++) {
-		binCont = hist->GetBinContent(i);
-		binCent = hist->GetBinCenter(i);
-		norm += binCont;
-		sum += binCont * func->Eval(n*binCent);
-	}
-
-	return(sum / norm);
-}
-
-
-//Get average of TF1 func on histogram hist.
-double getAvg3(TH1D *hist, TF1 *func) {
+double getAvg(TH1D *hist, TF1 *func) {
 	int norm = 0;
 	double sum = 0.0;
 	int binCont;
@@ -70,27 +34,9 @@ double getAvg3(TH1D *hist, TF1 *func) {
 }
 
 
-
 //Calculate coefficients of Fourier expansion.
-tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int nMin, int nMax){
+tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int n_min, int n_max, double x_min, double x_max){
 	vector<double> B, A;
-
-	for(int n = nMin; n <= nMax; n++) {
-		B.push_back(getAvg(hist, TMath::Cos, n) * 2.0 / n);
-		A.push_back(getAvg(hist, TMath::Sin, n) * -2.0 / n);
-	}
-
-	return(make_tuple(A, B));
-}
-
-
-//Calculate coefficients of Fourier expansion.
-tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int n_min, int n_max, double x_min, double x_max){
-	vector<double> B, A;
-
-	//Get max and min of range for histogram. Need to transform to -pi to +pi range.
-//	double x_max = hist->GetXaxis()->GetXmax();
-//	double x_min = hist->GetXaxis()->GetXmin();
 
 	double x_avg = (x_max + x_min) / 2; //Calculate average of range
 	double L = (x_max - x_min) / 2; //Calculate half range (2*L is full range)
@@ -103,8 +49,8 @@ tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int n_min, int n_max
 	for(int n = n_min; n <= n_max; n++) {
 		cos_shift->SetParameter(3, n);
 		sin_shift->SetParameter(3, n);
-		B.push_back(getAvg3(hist, cos_shift) * 2.0 / n);
-		A.push_back(getAvg3(hist, sin_shift) * -2.0 / n);
+		B.push_back(getAvg(hist, cos_shift) * 2.0 / n);
+		A.push_back(getAvg(hist, sin_shift) * -2.0 / n);
 	}
 
 	delete cos_shift;
@@ -114,120 +60,37 @@ tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int n_min, int n_max
 }
 
 
-TH1D* genFlatHist(TH1D* hist, vector<double> A, vector<double> B, int nMin, int nMax, string flatName) {
-	int norm = hist->Integral();
-	int bins = hist->GetXaxis()->GetLast() - hist->GetXaxis()->GetFirst() + 1;
-	double low = hist->GetBinLowEdge(hist->GetXaxis()->GetFirst());
-	double up = hist->GetBinLowEdge(hist->GetXaxis()->GetLast()+1);
-	double newAngle;
-	double oldAngle;
-
-	TH1D* flatHist = new TH1D(flatName.c_str(), flatName.c_str(), bins, low, up);
-
-
-	gRandom->SetSeed(0);
-	for(int i=0; i < norm; i++) {
-		oldAngle = hist->GetRandom();
-		newAngle = oldAngle;
-		for(int n = nMin; n <= nMax; n++) {
-			newAngle += A[n-nMin] * TMath::Cos(n*oldAngle) + B[n-nMin] * TMath::Sin(n*oldAngle);
-		}
-		while(newAngle > up) {newAngle -= (up-low);}
-		while(newAngle < low) {newAngle += (up-low);}
-
-		flatHist->Fill(newAngle);
-	}
-
-	return(flatHist);
-}
-
-
-TH1D* genFlatHist2(TH1D* hist, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max, string flatName) {
-	int norm = hist->Integral();
-	int bins = hist->GetXaxis()->GetLast() - hist->GetXaxis()->GetFirst();
-	double low = hist->GetBinLowEdge(hist->GetXaxis()->GetFirst());
-	double up = hist->GetBinLowEdge(hist->GetXaxis()->GetLast()+1);
-	double newAngle;
-	double oldAngle;
-
-	TH1D* flatHist = new TH1D(flatName.c_str(), flatName.c_str(), bins, low, up);
-
-	double x_avg = (x_max + x_min) / 2; //Calculate average of range
-	double L = (x_max - x_min) / 2; //Calculate half range (2*L is full range)
-
-	gRandom->SetSeed(0);
-	for(int i=0; i < norm; i++) {
-		oldAngle = hist->GetRandom();
-		newAngle = oldAngle;
-		for(int n = nMin; n <= nMax; n++) {
-			newAngle += A[n-nMin] * TMath::Cos(n*TMath::Pi()*(oldAngle - x_avg) / L) + B[n-nMin] * TMath::Sin(n*TMath::Pi()*(oldAngle - x_avg) / L);
-		}
-		while(newAngle > up) {newAngle -= (up-low);}
-		while(newAngle < low) {newAngle += (up-low);}
-
-		flatHist->Fill(newAngle);
-	}
-
-	return(flatHist);
-}
-
-
-TH1D* flatten_dist(vector<double> event_angles, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max, string flatName) {
+//Apply correction to event angle to make distribution flat.
+double flatten_angle(double angle, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max) {
 	double new_angle, old_angle;
-	TH1D *flat = new TH1D(flatName.data(), flatName.data(), 400, x_min, x_max);
 
 	double x_avg = (x_max + x_min) / 2; //Calculate average of range
 	double L = (x_max - x_min) / 2; //Calculate half range (2*L is full range)
 
-	for(unsigned i = 0; i < event_angles.size(); i++) {
-		old_angle = TMath::Pi() * (event_angles[i] - x_avg) / L;
-		new_angle = old_angle;
-		for(int n = nMin; n <= nMax; n++) {
-			new_angle += A[n-nMin] * TMath::Cos(n * old_angle) + B[n-nMin] * TMath::Sin(n * old_angle);
-		}
-		new_angle = L * new_angle / TMath::Pi() + x_avg;
-		while(new_angle > x_max) {new_angle -= (x_max-x_min);}
-		while(new_angle < x_min) {new_angle += (x_max-x_min);}
-		flat->Fill(new_angle);
+	old_angle = TMath::Pi() * (angle - x_avg) / L;
+	new_angle = old_angle;
+	for(int n = nMin; n <= nMax; n++) {
+		new_angle += A[n-nMin] * TMath::Cos(n * old_angle) + B[n-nMin] * TMath::Sin(n * old_angle);
 	}
+	new_angle = L * new_angle / TMath::Pi() + x_avg;
+	while(new_angle > x_max) {new_angle -= (x_max-x_min);}
+	while(new_angle < x_min) {new_angle += (x_max-x_min);}
 
-	return(flat);
+
+	return(new_angle);
 }
 
 
-//Declare and set the initial dGaus histogram.
-TH1D* setDGausHist(int bins, double low, double up, string name) {
+//Define and set the initial th1d histogram.
+TH1D* set_th1d(int bins, double low, double up, string name) {
 	TH1D* hist = new TH1D(name.c_str(), name.c_str(), bins, low, up);
 
 	return(hist);
 }
 
 
-//Fill hist with two gaussians.
-TH1D* genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms) {
-	int first = hist->GetXaxis()->GetFirst();
-	int last = hist->GetXaxis()->GetLast();
-	int bins = last - first;
-	double low = hist->GetBinLowEdge(first);
-	double up = hist->GetBinLowEdge(last+1);
-
-	TRandom3* r = new TRandom3(0);
-	double rand;
-
-	for(int i=0; i<weight.size(); i++) {
-		for(int j=0; j<N*weight[i]; j++) {
-			rand = r->Gaus(mean[i], rms[i]);
-			while(rand > up) {rand -= (up-low);}
-			while(rand < low) {rand += (up-low);}
-			hist->Fill(rand);
-		}
-	}
-
-	return(hist);
-}
-
-
-vector<double> genDGausHist2(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms) {
+//Generate a double gaussian distribution.
+vector<double> genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms) {
 	int first = hist->GetXaxis()->GetFirst();
 	int last = hist->GetXaxis()->GetLast();
 	int bins = last - first;
@@ -249,4 +112,21 @@ vector<double> genDGausHist2(TH1D* hist, int N, vector<int> weight, vector<doubl
 	}
 
 	return(angles);
+}
+
+
+
+//Given an input of event angles, fourier coefficients, minimum and maximum fourier harmonic, range (x_min, x_max) of distribution, and name of distribution
+//apply correction to each angle to flatten the distribution.
+//Return flattened distribution as a TH1D histogram.
+TH1D* flatten_dist(vector<double> event_angles, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max, string flatName) {
+	TH1D *flat = new TH1D(flatName.data(), flatName.data(), 400, x_min, x_max);
+
+	double new_angle;
+	for(unsigned i = 0; i < event_angles.size(); i++) {
+		new_angle = flatten_angle(event_angles[i], A, B, nMin, nMax, x_min, x_max);
+		flat->Fill(new_angle);
+	}
+
+	return(flat);
 }
