@@ -13,6 +13,8 @@
 #include <TRandom.h>
 #include <TRandom3.h>
 
+#include "flatten.h"
+
 using namespace std;
 
 

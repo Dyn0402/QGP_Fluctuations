@@ -28,7 +28,7 @@ void write_test();
 
 int main(int argc, char* argv[]) {
 	TApplication theApp("App", &argc, argv);
-	write_test();
+	flatten_test();
 	theApp.Run();
 
 	cout << "donzo" << endl;
@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
 }
 
 
+//Test flattening a generated distribution of two gaussians.
 void flatten_test() {
 	TH1D *rawHist = set_th1d(config::bins, config::lBound, config::rBound, config::rawHistName);
 	vector<double> angles = genDGausHist(rawHist, config::N, config::gWeight, config::gMean, config::gRms);
@@ -53,6 +54,7 @@ void flatten_test() {
 }
 
 
+//Test reading fourier coefficients from file.
 void read_test() {
 	vector<vector<string>> coef_entries = read_coef_file("/home/dylan/Dropbox/Research/QGP_Fluctuations/Event_Plane_Flattening/IO_Tests/coef_IO_test1.txt");
 	vector<double> coefs;
@@ -78,6 +80,7 @@ void read_test() {
 }
 
 
+//Test writing fourier coefficients to file.
 void write_test() {
 	string path = "/home/dylan/Dropbox/Research/QGP_Fluctuations/Event_Plane_Flattening/IO_Tests/coef_IO_test2.txt";
 	string entry = "hello";
