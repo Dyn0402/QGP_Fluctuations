@@ -31,9 +31,9 @@ string rawHistName = "dGauss";
 string flatHistName = "Flattened";
 string coef_file_path = "/home/dylan/Dropbox/Research/QGP_Fluctuations/Event_Plane_Flattening/IO_Tests/coef_IO_test1.txt";
 
-vector <double> gMean = {1.0, 2.0};
-vector <double> gRms = {0.1, 0.2};
-vector <int> gWeight = {2, 1};
+vector <double> gMean {1.0, 2.0};
+vector <double> gRms {0.1, 0.2};
+vector <int> gWeight {2, 1};
 
 double lBound = TMath::Pi();
 double rBound = 2*TMath::Pi();
