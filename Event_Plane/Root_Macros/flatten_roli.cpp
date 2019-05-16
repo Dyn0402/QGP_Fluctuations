@@ -88,7 +88,7 @@ void write_test();
 
 //Run function (runs an example function in this case)
 void flatten_roli() {
-	write_test();
+	flatten_test();
 }
 
 

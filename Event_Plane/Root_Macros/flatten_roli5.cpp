@@ -49,7 +49,7 @@ int bins = 400;
 
 
 //File input declarations
-vector<vector<double>, vector<double>> get_coefs(string file_path, string entry_name);
+vector<vector<double>> get_coefs(string file_path, string entry_name);
 vector<vector<string>> read_coef_file(string file_path);
 vector<vector<string>> parse_file(ifstream& file);
 vector<string> parse_line(string line);
@@ -172,7 +172,7 @@ void write_test() {
 
 
 //Get coefficients for entry in file_path if they exist.
-vector<vector<double>, vector<double>> get_coefs(string file_path, string entry_name) {
+vector<vector<double>> get_coefs(string file_path, string entry_name) {
 	vector<vector<string>> coef_entries = read_coef_file(file_path);
 
 	bool found = false;
@@ -188,7 +188,7 @@ vector<vector<double>, vector<double>> get_coefs(string file_path, string entry_
 	}
 	if(!found) { cout << "Flattening Fourier coefficient entry not found." << endl; }
 
-	vector<vector<double>> coefs = {A, B};
+	vector<vector<double>> coefs {A, B};
 
 	return(coefs);
 }
