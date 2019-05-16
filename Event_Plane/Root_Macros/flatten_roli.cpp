@@ -16,6 +16,7 @@
 #include <TMath.h>
 #include <TRandom.h>
 #include <TRandom3.h>
+#include <TCanvas.h>
 
 using namespace std;
 

@@ -15,6 +15,7 @@
 #include <TMath.h>
 #include <TRandom.h>
 #include <TRandom3.h>
+#include <TCanvas.h>
 
 using namespace std;
 
@@ -31,9 +32,9 @@ string rawHistName = "dGauss";
 string flatHistName = "Flattened";
 string coef_file_path = "/home/dylan/Dropbox/Research/QGP_Fluctuations/Event_Plane_Flattening/IO_Tests/coef_IO_test1.txt";
 
-vector <double> gMean {1.0, 2.0};
-vector <double> gRms {0.1, 0.2};
-vector <int> gWeight {2, 1};
+vector <double> gMean;
+vector <double> gRms;
+vector <int> gWeight;
 
 double lBound = TMath::Pi();
 double rBound = 2*TMath::Pi();
@@ -49,22 +50,22 @@ int bins = 400;
 
 
 //File input declarations
-vector<vector<double>> get_coefs(string file_path, string entry_name);
-vector<vector<string>> read_coef_file(string file_path);
-vector<vector<string>> parse_file(ifstream& file);
+vector<vector<double> > get_coefs(string file_path, string entry_name);
+vector<vector<string> > read_coef_file(string file_path);
+vector<vector<string> > parse_file(ifstream& file);
 vector<string> parse_line(string line);
 vector<double> parse_coef(string coef);
 
 //File ouptut declarations
 void write_coefs(vector<double> A, vector<double> B, string entry, string path);
-vector<vector<string>> replace_entry(vector<vector<string>> coef_entries, string entry, vector<double> A, vector<double> B);
-void write_entries(vector<vector<string>> coef_entries, ofstream& file);
+vector<vector<string> > replace_entry(vector<vector<string> > coef_entries, string entry, vector<double> A, vector<double> B);
+void write_entries(vector<vector<string> > coef_entries, ofstream& file);
 string get_coef_string(vector<double> coef, string coef_string);
 
 
 //Distribution flattening function declarations
 double getAvg(TH1D *hist, TF1 *func);
-tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int nMin, int nMax, double x_min, double x_max);
+vector<vector<double> > calcCoef(TH1D* hist, int nMin, int nMax, double x_min, double x_max);
 double flatten_angle(double angle, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max);
 
 //Test distribution generation function declarations
@@ -87,6 +88,12 @@ void write_test();
 
 //Run function (runs an example function in this case)
 void flatten_roli() {
+	gMean.push_back(1.0);
+	gMean.push_back(2.0);
+	gRms.push_back(0.1);
+	gRms.push_back(0.2);
+	gWeight.push_back(2);
+	gWeight.push_back(1);
 	write_test();
 }
 
@@ -102,7 +109,9 @@ void flatten_test() {
 	TH1D *rawHist = set_th1d(bins, lBound, rBound, rawHistName);
 	vector<double> angles = genDGausHist(rawHist, N, gWeight, gMean, gRms);
 	vector<double> A, B;
-	tie(A, B) = calcCoef(rawHist, n_flatten_min, n_flatten_max, lBound, rBound);
+	vector<vector<double> > coefs = calcCoef(rawHist, n_flatten_min, n_flatten_max, lBound, rBound);
+	A = coefs[0];
+	B = coefs[1];
 
 	TH1D *flatHist2 = flatten_dist(angles, A, B, n_flatten_min, n_flatten_max, lBound, rBound, "flattened_dylan");
 
@@ -116,29 +125,29 @@ void flatten_test() {
 
 
 //Test reading fourier coefficients from file.
-void read_test() {
-	vector<vector<string>> coef_entries = read_coef_file(coef_file_path);
-	vector<double> coefs;
-	for(vector<string> entry:coef_entries) {
-		for(string element:entry) {
-			cout << element << "\t" << flush;
-		}
-		if(entry.size() == 3) {
-			cout << endl;
-			coefs = parse_coef(entry[1]);
-			for(double coef:coefs) {
-				cout << coef << endl;
-			}
-			cout << endl;
-			coefs = parse_coef(entry[2]);
-			for(double coef:coefs) {
-				cout << coef << endl;
-			}
-		}
-	}
-
-	cout << endl << "donzo" << endl;
-}
+//void read_test() {
+//	vector<vector<string> > coef_entries = read_coef_file(coef_file_path);
+//	vector<double> coefs;
+//	for(vector<string> entry:coef_entries) {
+//		for(string element:entry) {
+//			cout << element << "\t" << flush;
+//		}
+//		if(entry.size() == 3) {
+//			cout << endl;
+//			coefs = parse_coef(entry[1]);
+//			for(double coef:coefs) {
+//				cout << coef << endl;
+//			}
+//			cout << endl;
+//			coefs = parse_coef(entry[2]);
+//			for(double coef:coefs) {
+//				cout << coef << endl;
+//			}
+//		}
+//	}
+//
+//	cout << endl << "donzo" << endl;
+//}
 
 
 //Test writing fourier coefficients to file.
@@ -146,19 +155,22 @@ void write_test() {
 	string path = coef_file_path;
 	string entry = "hello";
 
-	vector<double> A_new = {103.2, -3.6323, 0.0032, 000.3243};
-	vector<double> B_new = {-1234, 2132.3, 0.0012, 0.000001232};
+//	vector<double> A_new = {103.2, -3.6323, 0.0032, 000.3243};
+//	vector<double> B_new = {-1234, 2132.3, 0.0012, 0.000001232};
+	vector<double> A_new, B_new;
+	A_new.push_back(1.243);
+	B_new.push_back(3.4234);
 
 	write_coefs(A_new, B_new, entry, path);
 
 	vector<double> A, B;
-	vector<vector<double>> coefs = get_coefs(path, entry);
+	vector<vector<double> > coefs = get_coefs(path, entry);
 	A = coefs[0];
 	B = coefs[1];
 
-	for(double val:A) { cout << val << "," << flush; }
-	cout << endl;
-	for(double val:B) { cout << val << "," << flush; }
+//	for(double val:A) { cout << val << "," << flush; }
+//	cout << endl;
+//	for(double val:B) { cout << val << "," << flush; }
 
 	cout << endl << "donzo" << endl;
 }
@@ -172,30 +184,30 @@ void write_test() {
 
 
 //Get coefficients for entry in file_path if they exist.
-vector<vector<double>> get_coefs(string file_path, string entry_name) {
-	vector<vector<string>> coef_entries = read_coef_file(file_path);
+vector<vector<double> > get_coefs(string file_path, string entry_name) {
+	vector<vector<string> > coef_entries = read_coef_file(file_path);
 
 	bool found = false;
 	vector<double> A, B = {};
-	for(vector<string> entry:coef_entries) {
-		if(entry.size() == 3) {
-			if(entry[0] == entry_name) {
+	for(unsigned i = 0; i<coef_entries.size(); i++) {//(vector<string> entry:coef_entries) {
+		if(coef_entries[i].size() == 3) {
+			if(coef_entries[i][0] == entry_name) {
 				found = true;
-				A = parse_coef(entry[1]);
-				B = parse_coef(entry[2]);
+				A = parse_coef(coef_entries[i][1]);
+				B = parse_coef(coef_entries[i][2]);
 			}
 		}
 	}
 	if(!found) { cout << "Flattening Fourier coefficient entry not found." << endl; }
 
-	vector<vector<double>> coefs {A, B};
+	vector<vector<double> > coefs {A, B};
 
 	return(coefs);
 }
 
 //Read coefficients from file into string vector for each entry.
-vector<vector<string>> read_coef_file(string file_path) {
-	vector<vector<string>> coef_entries = {};
+vector<vector<string> > read_coef_file(string file_path) {
+	vector<vector<string> > coef_entries = {};
 	ifstream file(file_path, ios::in);
 	if(file.is_open()) {
 		coef_entries = parse_file(file);
@@ -209,9 +221,9 @@ vector<vector<string>> read_coef_file(string file_path) {
 
 
 //Parse lines of file.
-vector<vector<string>> parse_file(ifstream& file) {
+vector<vector<string> > parse_file(ifstream& file) {
 	string line;
-	vector<vector<string>> coefs;
+	vector<vector<string> > coefs;
 	while(getline(file,line)) {
 		coefs.push_back(parse_line(line));
 	}
@@ -267,7 +279,7 @@ vector<double> parse_coef(string coef) {
 //If file exists, check if entry exists. If entry exists, replace it with input A and B.
 //If entry does not exist, append it to end of file.
 void write_coefs(vector<double> A, vector<double> B, string entry, string file_path) {
-	vector<vector<string>> coef_entries = read_coef_file(file_path);
+	vector<vector<string> > coef_entries = read_coef_file(file_path);
 	ofstream file(file_path, ios::out | ios::trunc);
 	coef_entries = replace_entry(coef_entries, entry, A, B);
 	write_entries(coef_entries, file);
@@ -278,7 +290,7 @@ void write_coefs(vector<double> A, vector<double> B, string entry, string file_p
 //Check coef_entries for entry_name tagged entry.
 //If it exists, replace coefficient strings with the input A and B.
 //If it doesn't exist, append it to coef_entries.
-vector<vector<string>> replace_entry(vector<vector<string>> coef_entries, string entry_name, vector<double> A, vector<double> B) {
+vector<vector<string> > replace_entry(vector<vector<string> > coef_entries, string entry_name, vector<double> A, vector<double> B) {
 	string A_string = get_coef_string(A, "A");
 	string B_string = get_coef_string(B, "B");
 
@@ -304,10 +316,10 @@ vector<vector<string>> replace_entry(vector<vector<string>> coef_entries, string
 
 //Write each entry in coef_entries as a new line in file.
 //Separate entry elements (entry name, A string, B string) with a tab.
-void write_entries(vector<vector<string>> coef_entries, ofstream& file) {
-	for(vector<string> entry:coef_entries) {
-		if(entry.size() == 3) {
-			file << entry[0] << "\t" << entry[1] << "\t" << entry[2] << "\n";
+void write_entries(vector<vector<string> > coef_entries, ofstream& file) {
+	for(unsigned i; i<coef_entries.size(); i++) {//(vector<string> entry:coef_entries) {
+		if(coef_entries[i].size() == 3) {
+			file << coef_entries[i][0] << "\t" << coef_entries[i][1] << "\t" << coef_entries[i][2] << "\n";
 		} else { cout << "Bad entry." << endl; }
 	}
 }
@@ -317,8 +329,8 @@ void write_entries(vector<vector<string>> coef_entries, ofstream& file) {
 //Ex: A={0.324,324.32,-0.43}
 string get_coef_string(vector<double> coef, string coef_string) {
 	coef_string += "={";
-	for(double val:coef) {
-		coef_string += to_string(val) + ",";
+	for(unsigned i; i<coef.size(); i++) {//(double val:coef) {
+		coef_string += to_string(coef[i]) + ",";
 	}
 	coef_string[coef_string.size() - 1] = '}';
 
@@ -351,7 +363,7 @@ double getAvg(TH1D *hist, TF1 *func) {
 
 
 //Calculate coefficients of Fourier expansion.
-tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int n_min, int n_max, double x_min, double x_max){
+vector<vector<double> > calcCoef(TH1D* hist, int n_min, int n_max, double x_min, double x_max){
 	vector<double> B, A;
 
 	double x_avg = (x_max + x_min) / 2; //Calculate average of range
