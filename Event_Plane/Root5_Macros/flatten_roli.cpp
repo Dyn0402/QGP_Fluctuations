@@ -1,20 +1,48 @@
-/*
- * file_io.cpp
- *
- *  Created on: May 12, 2019
- *      Author: dylan
- */
-
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <vector>
 #include <tuple>
 
-#include "file_io.h"
+#include <TH1.h>
 
 using namespace std;
+
+//File input declarations
+tuple<vector<double>, vector<double>> get_coefs(string file_path, string entry_name);
+vector<vector<string>> read_coef_file(string file_path);
+vector<vector<string>> parse_file(ifstream& file);
+vector<string> parse_line(string line);
+vector<double> parse_coef(string coef);
+
+//File ouptut declarations
+void write_coefs(vector<double> A, vector<double> B, string entry, string path);
+vector<vector<string>> replace_entry(vector<vector<string>> coef_entries, string entry, vector<double> A, vector<double> B);
+void write_entries(vector<vector<string>> coef_entries, ofstream& file);
+string get_coef_string(vector<double> coef, string coef_string);
+
+
+//Flattening declarations
+double getAvg(TH1D* hist, double (*f)(double), int n);
+double getAvg2(TH1D *hist, TF1 *func, int n);
+double getAvg2(TH1D *hist, TF1 *func);
+tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int nMin, int nMax);
+tuple<vector<double>, vector<double>> calcCoef2(TH1D* hist, int nMin, int nMax, double x_min, double x_max);
+TH1D* genFlatHist(TH1D* hist, vector<double> A, vector<double> B, int nMin, int nMax, string flatName);
+TH1D* genFlatHist2(TH1D* hist, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max, string flatName);
+TH1D* flatten_dist(vector<double> particles, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max, string flatName);
+
+TH1D* setDGausHist(int bins, double low, double up, string name);
+TH1D* genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms);
+vector<double> genDGausHist2(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms);
+
+
+
+//Main function (example in this case)
+void flatten_roli() {
+	//
+}
+
 
 
 //Get coefficients for entry in file_path if they exist.
