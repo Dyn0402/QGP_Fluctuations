@@ -11,7 +11,7 @@ local.properties
 .recommenders
 
 # Debug folders
-Debug
+Debug/
 
 # External tool builders
 .externalToolBuilders/
