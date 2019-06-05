@@ -9,6 +9,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <sstream>
+#include <stdlib.h>
 
 #include <TH1.h>
 #include <TF1.h>
@@ -50,14 +52,14 @@ int bins = 400;
 
 
 //File input declarations
-vector<vector<double> > get_coefs(string file_path, string entry_name);
+vector<vector<double> > get_coefs(string file_path, string entry_name); //Use this to get flattening fourier coefficients from file.
 vector<vector<string> > read_coef_file(string file_path);
 vector<vector<string> > parse_file(ifstream& file);
 vector<string> parse_line(string line);
 vector<double> parse_coef(string coef);
 
 //File ouptut declarations
-void write_coefs(vector<double> A, vector<double> B, string entry, string path);
+void write_coefs(vector<double> A, vector<double> B, string entry, string path); //Use this to write flattening fourier coefficients to file.
 vector<vector<string> > replace_entry(vector<vector<string> > coef_entries, string entry, vector<double> A, vector<double> B);
 void write_entries(vector<vector<string> > coef_entries, ofstream& file);
 string get_coef_string(vector<double> coef, string coef_string);
@@ -65,8 +67,8 @@ string get_coef_string(vector<double> coef, string coef_string);
 
 //Distribution flattening function declarations
 double getAvg(TH1D *hist, TF1 *func);
-vector<vector<double> > calcCoef(TH1D* hist, int nMin, int nMax, double x_min, double x_max);
-double flatten_angle(double angle, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max);
+vector<vector<double> > calcCoef(TH1D* hist, int nMin, int nMax, double x_min, double x_max); //Use this to calculate and return the fourier coefficients from a distribution histogram.
+double flatten_angle(double angle, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max); //Use this to adjust a single angle such that the entire distribution becomes flat.
 
 //Test distribution generation function declarations
 TH1D* set_th1d(int bins, double low, double up, string name);
@@ -87,14 +89,14 @@ void write_test();
 
 
 //Run function (runs an example function in this case)
-void flatten_roli() {
+void flatten_roli5() {
 	gMean.push_back(1.0);
 	gMean.push_back(2.0);
 	gRms.push_back(0.1);
 	gRms.push_back(0.2);
 	gWeight.push_back(2);
 	gWeight.push_back(1);
-	write_test();
+	flatten_test();
 }
 
 
@@ -125,7 +127,7 @@ void flatten_test() {
 
 
 //Test reading fourier coefficients from file.
-//void read_test() {
+void read_test() {
 //	vector<vector<string> > coef_entries = read_coef_file(coef_file_path);
 //	vector<double> coefs;
 //	for(vector<string> entry:coef_entries) {
@@ -147,7 +149,7 @@ void flatten_test() {
 //	}
 //
 //	cout << endl << "donzo" << endl;
-//}
+}
 
 
 //Test writing fourier coefficients to file.
@@ -188,7 +190,7 @@ vector<vector<double> > get_coefs(string file_path, string entry_name) {
 	vector<vector<string> > coef_entries = read_coef_file(file_path);
 
 	bool found = false;
-	vector<double> A, B = {};
+	vector<double> A, B;
 	for(unsigned i = 0; i<coef_entries.size(); i++) {//(vector<string> entry:coef_entries) {
 		if(coef_entries[i].size() == 3) {
 			if(coef_entries[i][0] == entry_name) {
@@ -200,15 +202,18 @@ vector<vector<double> > get_coefs(string file_path, string entry_name) {
 	}
 	if(!found) { cout << "Flattening Fourier coefficient entry not found." << endl; }
 
-	vector<vector<double> > coefs {A, B};
+	vector<vector<double> > coefs;
+	coefs.push_back(A);
+	coefs.push_back(B);
 
 	return(coefs);
 }
 
 //Read coefficients from file into string vector for each entry.
 vector<vector<string> > read_coef_file(string file_path) {
-	vector<vector<string> > coef_entries = {};
-	ifstream file(file_path, ios::in);
+	vector<vector<string> > coef_entries;
+	ifstream file;
+	file.open(file_path.data(), ios::in);
 	if(file.is_open()) {
 		coef_entries = parse_file(file);
 	} else {
@@ -234,7 +239,8 @@ vector<vector<string> > parse_file(ifstream& file) {
 
 //Parse line and split by tab character.
 vector<string> parse_line(string line) {
-	stringstream line_stream(line);
+	stringstream line_stream;
+	line_stream << line;
 	string sub_string;
 	vector<string> line_split;
 	while(getline(line_stream, sub_string, '\t')) {
@@ -247,7 +253,7 @@ vector<string> parse_line(string line) {
 
 //Parse string coefficient and return a vector<double> for the coefficient string.
 vector<double> parse_coef(string coef) {
-	vector<double> coefs = {};
+	vector<double> coefs;
 	size_t start = coef.find("{");
 	size_t end = coef.find("}");
 
@@ -258,10 +264,10 @@ vector<double> parse_coef(string coef) {
 			comma = coef.substr(pos).find(",");
 			if(comma!=string::npos) {
 				comma += pos;
-				coefs.push_back(stod(coef.substr(pos, comma-pos)));
+				coefs.push_back(atof(coef.substr(pos, comma-pos).data()));
 				pos = comma+1;
 			} else {
-				coefs.push_back(stod(coef.substr(pos, end-pos)));
+				coefs.push_back(atof(coef.substr(pos, end-pos).data()));
 				pos = end;
 			}
 		}
@@ -280,7 +286,8 @@ vector<double> parse_coef(string coef) {
 //If entry does not exist, append it to end of file.
 void write_coefs(vector<double> A, vector<double> B, string entry, string file_path) {
 	vector<vector<string> > coef_entries = read_coef_file(file_path);
-	ofstream file(file_path, ios::out | ios::trunc);
+	ofstream file;
+	file.open(file_path.data(), ios::out | ios::trunc);
 	coef_entries = replace_entry(coef_entries, entry, A, B);
 	write_entries(coef_entries, file);
 	file.close();
@@ -303,7 +310,10 @@ vector<vector<string> > replace_entry(vector<vector<string> > coef_entries, stri
 		}
 	}
 	if(entry_index == -1) {
-		vector<string> new_entry = {entry_name, A_string, B_string};
+		vector<string> new_entry;
+		new_entry.push_back(entry_name);
+		new_entry.push_back(A_string);
+		new_entry.push_back(B_string);
 		coef_entries.push_back(new_entry);
 	} else {
 		coef_entries[entry_index][1] = A_string;
@@ -330,7 +340,9 @@ void write_entries(vector<vector<string> > coef_entries, ofstream& file) {
 string get_coef_string(vector<double> coef, string coef_string) {
 	coef_string += "={";
 	for(unsigned i; i<coef.size(); i++) {//(double val:coef) {
-		coef_string += to_string(coef[i]) + ",";
+		char buffer[100];
+		snprintf(buffer, sizeof(buffer), "%g", coef[i]);
+		coef_string += (string)buffer + (string)",";
 	}
 	coef_string[coef_string.size() - 1] = '}';
 
@@ -384,7 +396,11 @@ vector<vector<double> > calcCoef(TH1D* hist, int n_min, int n_max, double x_min,
 	delete cos_shift;
 	delete sin_shift;
 
-	return(make_tuple(A, B));
+	vector<vector<double> > coefs;
+	coefs.push_back(A);
+	coefs.push_back(B);
+
+	return(coefs);
 }
 
 
@@ -429,7 +445,7 @@ vector<double> genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double
 	double rand;
 	vector<double> angles;
 
-	for(int i=0; i<weight.size(); i++) {
+	for(unsigned i=0; i<weight.size(); i++) {
 		for(int j=0; j<N*weight[i]; j++) {
 			rand = r->Gaus(mean[i], rms[i]);
 			while(rand > up) {rand -= (up-low);}

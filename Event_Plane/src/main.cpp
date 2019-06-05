@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+#include <TFile.h>
 #include <TCanvas.h>
 #include <TH1D.h>
 #include <TApplication.h>
@@ -17,22 +18,77 @@
 #include "flatten.h"
 #include "file_io.h"
 #include "config.h"
+#include "tree_reader.h"
 
 using namespace std;
 
 void flatten_test();
 void read_test();
 void write_test();
+void flatten_roli_trees();
+
 
 
 int main(int argc, char* argv[]) {
 	TApplication theApp("App", &argc, argv);
-	flatten_test();
+	flatten_roli_trees();
 	theApp.Run();
 
 	cout << "donzo" << endl;
 	return(0);
 }
+
+
+//Produce flattening coefficients file for Roli's trees.
+void flatten_roli_trees() {
+	string out_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/flat_out.root";
+	string path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
+	vector<string> entries = {"tree_auau11"};
+
+	TFile *out_file = new TFile(out_path.data(), "RECREATE");
+	for(auto entry:entries) {
+		string tree_path = path + entry + ".root";
+		string coef_path = path + entry + "_coefs.txt";
+		TFile *file = new TFile(tree_path.data(), "READ");
+		TTree *tree = (TTree *)file->Get("nsmTree");
+		flatten_tree(tree, entry, coef_path, out_file);
+		cout << entry << endl;
+		delete tree;
+		file->Close();
+		delete file;
+	}
+	out_file->Close();
+	delete out_file;
+
+	cout << endl << "donzo" << endl;
+}
+
+
+//Apply flattening to roli's trees and output flat histograms.
+void check_roli_flat() {
+	string out_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/flat_out.root";
+	string path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
+	vector<string> entries = {"tree_auau11"};
+
+	TFile *out_file = new TFile(out_path.data(), "APPEND");
+	for(auto entry:entries) {
+		string tree_path = path + entry + ".root";
+		string coef_path = path + entry + "_coefs.txt";
+		TFile *file = new TFile(tree_path.data(), "READ");
+		TTree *tree = (TTree *)file->Get("nsmTree");
+		flatten_tree(tree, entry, coef_path, out_file);
+		cout << entry << endl;
+		delete tree;
+		file->Close();
+		delete file;
+	}
+	out_file->Close();
+	delete out_file;
+
+	cout << endl << "donzo" << endl;
+}
+
+
 
 
 //Test flattening a generated distribution of two gaussians.
@@ -45,8 +101,10 @@ void flatten_test() {
 	TH1D *flatHist2 = flatten_dist(angles, A, B, config::n_flatten_min, config::n_flatten_max, config::lBound, config::rBound, "flattened_dylan");
 
 	TCanvas* c1 = new TCanvas();
+	c1->cd();
 	rawHist->Draw();
 	TCanvas* c2 = new TCanvas();
+	c2->cd();
 	flatHist2->Draw();
 
 	cout << endl << "donzo" << endl;

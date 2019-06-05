@@ -8,21 +8,24 @@ CPP_SRCS += \
 ../src/event_plane.cpp \
 ../src/file_io.cpp \
 ../src/flatten.cpp \
-../src/main.cpp 
+../src/main.cpp \
+../src/tree_reader.cpp 
 
 OBJS += \
 ./src/config.o \
 ./src/event_plane.o \
 ./src/file_io.o \
 ./src/flatten.o \
-./src/main.o 
+./src/main.o \
+./src/tree_reader.o 
 
 CPP_DEPS += \
 ./src/config.d \
 ./src/event_plane.d \
 ./src/file_io.d \
 ./src/flatten.d \
-./src/main.d 
+./src/main.d \
+./src/tree_reader.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

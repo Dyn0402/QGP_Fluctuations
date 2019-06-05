@@ -73,7 +73,9 @@ src/flatten.o: ../src/flatten.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/TRandom.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/Math/TRandomEngine.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TRandom3.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TRandom.h
+ /home/dylan/Software/root/root-6.14.06/obj/include/TRandom.h \
+ ../src/flatten.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TH1.h
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TF1.h:
 
@@ -224,3 +226,7 @@ src/flatten.o: ../src/flatten.cpp \
 /home/dylan/Software/root/root-6.14.06/obj/include/TRandom3.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TRandom.h:
+
+../src/flatten.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TH1.h:

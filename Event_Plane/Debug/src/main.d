@@ -1,8 +1,10 @@
 src/main.o: ../src/main.cpp \
- /home/dylan/Software/root/root-6.14.06/obj/include/TCanvas.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TPad.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualPad.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TAttPad.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TFile.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TDirectoryFile.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TDirectory.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TBuffer.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TObject.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/RConfigure.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/Rtypes.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/RtypesCore.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/RConfig.h \
@@ -15,13 +17,10 @@ src/main.o: ../src/main.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/TSchemaHelper.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TIsAProxy.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualIsAProxy.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualX.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TNamed.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TObject.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/RConfigure.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TStorage.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TVersionCheck.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/RVersion.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TNamed.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TString.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TMathBase.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/RStringView.hxx \
@@ -30,6 +29,26 @@ src/main.o: ../src/main.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TypeTraits.hxx \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/RSpan.hxx \
  /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/span.hxx \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TList.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TSeqCollection.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TCollection.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TIterator.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualRWMutex.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualMutex.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TDatime.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TUUID.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TMap.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/THashTable.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TUrl.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/RConcurrentHashColl.hxx \
+ /home/dylan/Software/root/root-6.14.06/obj/include/Rtypes.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TRWSpinLock.hxx \
+ /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TSpinMutex.hxx \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TCanvas.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TPad.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualPad.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TAttPad.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualX.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TAttLine.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TAttFill.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TAttText.h \
@@ -38,12 +57,6 @@ src/main.o: ../src/main.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/Buttons.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TQObject.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TError.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TList.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TSeqCollection.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TCollection.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TIterator.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualRWMutex.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualMutex.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualQConnection.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TInterpreter.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TDictionary.h \
@@ -70,22 +83,38 @@ src/main.o: ../src/main.cpp \
  /home/dylan/Software/root/root-6.14.06/obj/include/TApplication.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TApplicationImp.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TMath.h \
- /home/dylan/Software/root/root-6.14.06/obj/include/TLine.h \
  ../src/event_plane.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TRandom3.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TRandom.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/Math/TRandomEngine.h \
  ../src/flatten.h \
  /home/dylan/Software/root/root-6.14.06/obj/include/TH1.h \
- ../src/file_io.h ../src/config.h
+ ../src/file_io.h ../src/config.h ../src/tree_reader.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TTree.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TIOFeatures.hxx \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TBasket.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TKey.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TClass.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TObjArray.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TObjString.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/ThreadLocalStorage.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TBranch.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TDataType.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TBranchCacheInfo.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TBits.h \
+ /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualTreePlayer.h
 
-/home/dylan/Software/root/root-6.14.06/obj/include/TCanvas.h:
+/home/dylan/Software/root/root-6.14.06/obj/include/TFile.h:
 
-/home/dylan/Software/root/root-6.14.06/obj/include/TPad.h:
+/home/dylan/Software/root/root-6.14.06/obj/include/TDirectoryFile.h:
 
-/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualPad.h:
+/home/dylan/Software/root/root-6.14.06/obj/include/TDirectory.h:
 
-/home/dylan/Software/root/root-6.14.06/obj/include/TAttPad.h:
+/home/dylan/Software/root/root-6.14.06/obj/include/TBuffer.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TObject.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/RConfigure.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/Rtypes.h:
 
@@ -111,19 +140,13 @@ src/main.o: ../src/main.cpp \
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualIsAProxy.h:
 
-/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualX.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TNamed.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TObject.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/RConfigure.h:
-
 /home/dylan/Software/root/root-6.14.06/obj/include/TStorage.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TVersionCheck.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/RVersion.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TNamed.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TString.h:
 
@@ -141,6 +164,46 @@ src/main.o: ../src/main.cpp \
 
 /home/dylan/Software/root/root-6.14.06/obj/include/ROOT/span.hxx:
 
+/home/dylan/Software/root/root-6.14.06/obj/include/TList.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TSeqCollection.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TCollection.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TIterator.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualRWMutex.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualMutex.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TDatime.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TUUID.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TMap.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/THashTable.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TUrl.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/ROOT/RConcurrentHashColl.hxx:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/Rtypes.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TRWSpinLock.hxx:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TSpinMutex.hxx:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TCanvas.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TPad.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualPad.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TAttPad.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualX.h:
+
 /home/dylan/Software/root/root-6.14.06/obj/include/TAttLine.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TAttFill.h:
@@ -156,18 +219,6 @@ src/main.o: ../src/main.cpp \
 /home/dylan/Software/root/root-6.14.06/obj/include/TQObject.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TError.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TList.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TSeqCollection.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TCollection.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TIterator.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualRWMutex.h:
-
-/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualMutex.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TVirtualQConnection.h:
 
@@ -221,8 +272,6 @@ src/main.o: ../src/main.cpp \
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TMath.h:
 
-/home/dylan/Software/root/root-6.14.06/obj/include/TLine.h:
-
 ../src/event_plane.h:
 
 /home/dylan/Software/root/root-6.14.06/obj/include/TRandom3.h:
@@ -238,3 +287,31 @@ src/main.o: ../src/main.cpp \
 ../src/file_io.h:
 
 ../src/config.h:
+
+../src/tree_reader.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TTree.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/ROOT/TIOFeatures.hxx:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TBasket.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TKey.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TClass.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TObjArray.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TObjString.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/ThreadLocalStorage.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TBranch.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TDataType.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TBranchCacheInfo.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TBits.h:
+
+/home/dylan/Software/root/root-6.14.06/obj/include/TVirtualTreePlayer.h:

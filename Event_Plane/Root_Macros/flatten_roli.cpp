@@ -415,7 +415,7 @@ vector<double> genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double
 	double rand;
 	vector<double> angles;
 
-	for(int i=0; i<weight.size(); i++) {
+	for(unsigned i=0; i<weight.size(); i++) {
 		for(int j=0; j<N*weight[i]; j++) {
 			rand = r->Gaus(mean[i], rms[i]);
 			while(rand > up) {rand -= (up-low);}

@@ -95,7 +95,6 @@ TH1D* set_th1d(int bins, double low, double up, string name) {
 vector<double> genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double> mean, vector<double> rms) {
 	int first = hist->GetXaxis()->GetFirst();
 	int last = hist->GetXaxis()->GetLast();
-	int bins = last - first;
 	double low = hist->GetBinLowEdge(first);
 	double up = hist->GetBinLowEdge(last+1);
 
@@ -103,7 +102,7 @@ vector<double> genDGausHist(TH1D* hist, int N, vector<int> weight, vector<double
 	double rand;
 	vector<double> angles;
 
-	for(int i=0; i<weight.size(); i++) {
+	for(unsigned i=0; i<weight.size(); i++) {
 		for(int j=0; j<N*weight[i]; j++) {
 			rand = r->Gaus(mean[i], rms[i]);
 			while(rand > up) {rand -= (up-low);}
