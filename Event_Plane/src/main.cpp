@@ -64,32 +64,6 @@ void flatten_roli_trees() {
 }
 
 
-//Apply flattening to roli's trees and output flat histograms.
-void check_roli_flat() {
-	string out_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/flat_out.root";
-	string path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
-	vector<string> entries = {"tree_auau11"};
-
-	TFile *out_file = new TFile(out_path.data(), "APPEND");
-	for(auto entry:entries) {
-		string tree_path = path + entry + ".root";
-		string coef_path = path + entry + "_coefs.txt";
-		TFile *file = new TFile(tree_path.data(), "READ");
-		TTree *tree = (TTree *)file->Get("nsmTree");
-		flatten_tree(tree, entry, coef_path, out_file);
-		cout << entry << endl;
-		delete tree;
-		file->Close();
-		delete file;
-	}
-	out_file->Close();
-	delete out_file;
-
-	cout << endl << "donzo" << endl;
-}
-
-
-
 
 //Test flattening a generated distribution of two gaussians.
 void flatten_test() {
