@@ -13,6 +13,9 @@ local.properties
 # Debug folders
 Debug/
 
+#Settings folders
+.settings/
+
 # External tool builders
 .externalToolBuilders/
 
