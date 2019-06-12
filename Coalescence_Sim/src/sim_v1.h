@@ -19,7 +19,7 @@ vector<double> simulate();
 
 int get_n_protons();
 
-vector<double> get_Rs(vector<double> angles);
+vector<double> get_Rs(vector<double> angles, int divisions);
 
 void plot(vector<double> Rs);
 

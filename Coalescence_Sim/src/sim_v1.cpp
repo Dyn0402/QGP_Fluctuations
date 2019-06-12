@@ -54,7 +54,7 @@ vector<double> simulate() {
 		for(int j = 0; j < group_protons; j++) {
 			proton_angles.push_back(group_angle);
 		}
-		for(auto r:get_Rs(proton_angles)) {
+		for(auto r:get_Rs(proton_angles, config::divisions)) {
 			Rs.push_back(r);
 		}
 	}
@@ -83,20 +83,20 @@ int get_n_protons() {
 }
 
 
-vector<double> get_Rs(vector<double> angles) {
+vector<double> get_Rs(vector<double> angles, int divisions) {
 	vector<double> Rs = {};
 	double r, low_cut, high_cut;
 
-	for(int i = 0; i < config::divisions; i++) {
+	for(int i = 0; i < divisions; i++) {
 		r = 0.0;
-		low_cut = i * 2 * M_PI / config::divisions;
-		high_cut = (i+1) * 2 * M_PI / config::divisions;
+		low_cut = i * 2 * M_PI / divisions;
+		high_cut = (i+1) * 2 * M_PI / divisions;
 
 		for(auto angle:angles) {
 			if(angle >= low_cut  && angle < high_cut) {
 				r++;
 			}
-			if(i+1 == config::divisions && angle == high_cut) {
+			if(i+1 == divisions && angle == high_cut) {
 				r++;
 			}
 		}
