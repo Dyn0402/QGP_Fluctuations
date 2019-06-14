@@ -10,6 +10,9 @@ local.properties
 .loadpath
 .recommenders
 
+# Ignore StRoot folders for now
+StRoot/
+
 # Debug folders
 Debug/
 
