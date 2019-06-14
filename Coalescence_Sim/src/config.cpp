@@ -18,7 +18,7 @@ using namespace std;
 namespace config {
 	string out_path = "/home/dylan/Dropbox/Research/Coalescence/v1_sim.root";
 
-	int n_events = 100;
+	int n_events = 10000;
 	int divisions = 5;
 
 	double p_effect = 1.0;
