@@ -42,10 +42,6 @@ vector<double> simulate() {
 		}
 		rand_protons = n_protons - group_protons;
 
-		if(rand_protons != 0) {
-			cout << "There are randoms" << endl;
-		}
-
 		proton_angles = {};
 		for(int j = 0; j < rand_protons; j++) {
 			proton_angles.push_back(config::rand->Rndm() * 2 * M_PI);
