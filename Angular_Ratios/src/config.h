@@ -19,7 +19,7 @@ namespace config {
 	extern string out_root_name;
 
 
-	extern vector<string> tree_in_list;
+	extern vector<string> file_list;
 	extern vector<int> divs;
 
 	extern string tree_name;

@@ -18,7 +18,7 @@ namespace config {
 	string out_root_name = "";
 
 
-	vector<string> tree_in_list = {"a","b"};
+	vector<string> file_list = {"a","b"};
 	vector<int> divs = {2,3,4,5,6};
 
 	string tree_name = "nsmTree";

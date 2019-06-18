@@ -21,12 +21,12 @@ using namespace std;
 int main() {
 	TFile *out_root = new TFile((config::out_path+config::out_root_name).data(), "UPDATE");
 	vector<vector<vector<double>>> ratios;
-	for(string tree:config::tree_in_list) {
+	for(string file_name:config::file_list) {
 		vector<vector<double>> tree_ratio;
-		TFile *file = new TFile((config::in_path+tree+".root").data(), "READ");
+		TFile *file = new TFile((config::in_path+file_name+".root").data(), "READ");
 		TTree *tree = (TTree *)file->Get(config::tree_name.data());
 		for(int div:config::divs) {
-			tree_ratio.push_back(get_ratio(tree, div));
+			tree_ratio.push_back(get_tree_ratios(tree, div));
 		}
 		ratios.push_back(tree_ratio);
 		file->Close();
@@ -34,6 +34,8 @@ int main() {
 	}
 
 //	analyze(ratios);
+
+	out_root->Close();
 
 	cout << "donzo" << endl;
 	return(0);

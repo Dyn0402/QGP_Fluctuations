@@ -11,11 +11,13 @@
 #include <vector>
 
 #include <TTree.h>
+#include <TLeaf.h>
 
 using namespace std;
 
 
-vector<double> get_ratio(TTree *tree, int div);
+vector<double> get_tree_ratios(TTree *tree, int div);
+vector<double> get_event_ratios(TLeaf *proton_psi, int div);
 
 
 #endif /* TREE_READER_H_ */
