@@ -8,10 +8,13 @@
 
 #include <iostream>
 #include <math.h>
+
 #include "TFile.h"
 #include "TRandom3.h"
 #include "TH1D.h"
+
 #include "sim_v1.h"
+#include "ratio_methods.h"
 #include "config.h"
 
 using namespace std;
@@ -76,28 +79,4 @@ void plot(vector<double> Rs) {
 int get_n_protons() {
 	int n = (int) (25 * config::rand->Rndm() + 0.5) + 1;
 	return (n);
-}
-
-
-vector<double> get_Rs(vector<double> angles, int divisions) {
-	vector<double> Rs = {};
-	double r, low_cut, high_cut;
-
-	for(int i = 0; i < divisions; i++) {
-		r = 0.0;
-		low_cut = i * 2 * M_PI / divisions;
-		high_cut = (i+1) * 2 * M_PI / divisions;
-
-		for(auto angle:angles) {
-			if(angle >= low_cut  && angle < high_cut) {
-				r++;
-			}
-			if(i+1 == divisions && angle == high_cut) {
-				r++;
-			}
-		}
-		Rs.push_back(r/angles.size());
-	}
-
-	return(Rs);
 }
