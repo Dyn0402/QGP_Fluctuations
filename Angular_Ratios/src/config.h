@@ -27,6 +27,10 @@ namespace config {
 	extern int ratio_hist_bins;
 	extern double ratio_hist_low;
 	extern double ratio_hist_high;
+
+	extern int protons_hist_bins;
+	extern double protons_hist_low;
+	extern double protons_hist_high;
 }
 
 

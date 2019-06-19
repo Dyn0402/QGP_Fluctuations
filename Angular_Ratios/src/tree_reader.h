@@ -18,6 +18,7 @@ using namespace std;
 
 vector<double> get_tree_ratios(TTree *tree, int div);
 vector<double> get_event_ratios(TLeaf *proton_psi, int div);
+vector<int> get_tree_nprotons(TTree *tree);
 
 
 #endif /* TREE_READER_H_ */
