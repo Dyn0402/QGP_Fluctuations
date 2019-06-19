@@ -20,22 +20,25 @@ using namespace std;
 
 vector<vector<vector<double>>> get_ratios();
 vector<vector<int>> get_nprotons();
-//void analyze();
 
 
 int main() {
 	TFile *out_root = new TFile((config::out_path+config::out_root_name).data(), "RECREATE");
+	//Need to add cuts--------------------------------------------------------------------------
 	cout << "Getting ratios: " << endl;
 	vector<vector<vector<double>>> ratios = get_ratios();
 	cout << endl << "Getting number of protons: " << endl;
 	vector<vector<int>> nprotons = get_nprotons();
+
+	//calculate_cumulants
 
 	out_root->cd();
 	cout << endl << "Making ratio distributions: " << endl;
 	make_ratio_dist_plots(ratios);
 	cout << endl << endl << "Makeing proton number distributions: " << endl;
 	make_proton_dist_plots(nprotons);
-//	analyze(ratios);
+	//plot_cumulants
+
 
 	out_root->Close();
 

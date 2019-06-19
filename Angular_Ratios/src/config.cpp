@@ -23,9 +23,9 @@ namespace config {
 
 	string tree_name = "nsmTree";
 
-	int ratio_hist_bins = 22;
+	int ratio_hist_bins = 23;
 	double ratio_hist_low = -0.05;
-	double ratio_hist_high = 1.05;
+	double ratio_hist_high = 1.1;
 
 	int protons_hist_bins = 51;
 	double protons_hist_low = -1;
