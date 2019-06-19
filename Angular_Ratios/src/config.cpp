@@ -13,8 +13,10 @@ using namespace std;
 
 
 namespace config {
-	string out_path = "/home/dylan/local_server/home/dyn0402/Research/Test_Data/";//"/star/u/dneff/Documents/Roli_Thesis/";
-	string in_path = "/home/dylan/local_server/home/dyn0402/Research/Test_Data/";//"/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
+//	string out_path = "/home/dylan/local_server/home/dyn0402/Research/Test_Data/";//"/star/u/dneff/Documents/Roli_Thesis/";
+	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
+//	string in_path = "/home/dylan/local_server/home/dyn0402/Research/Test_Data/";//"/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
+	string in_path = "/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
 	string out_root_name = "test.root";
 
 
