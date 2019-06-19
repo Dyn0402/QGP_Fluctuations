@@ -23,6 +23,10 @@ namespace config {
 	extern vector<int> divs;
 
 	extern string tree_name;
+
+	extern int ratio_hist_bins;
+	extern double ratio_hist_low;
+	extern double ratio_hist_high;
 }
 
 
