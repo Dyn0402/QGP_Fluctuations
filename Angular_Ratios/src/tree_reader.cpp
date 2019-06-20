@@ -147,9 +147,7 @@ vector<int> get_tree_nprotons(TTree *tree) {
 bool check_event_good(event_leaves event, int energy) {
 	bool good_event = false;
 	if(check_good_run((int)event.run->GetValue())) {
-		if(check_ref2(event.ref_mult2->GetValue(), energy)) {
-			good_event = true;
-		}
+		good_event = true;
 	}
 
 	return(good_event);
@@ -161,17 +159,6 @@ bool check_good_run(int run) {
 	bool good_run = find(config::bad_runs.begin(), config::bad_runs.end(), run) == config::bad_runs.end();
 
 	return(good_run);
-}
-
-
-//Check if ref2 is less than ref2_min. If so return false (bad event), else return true (good event).
-bool check_ref2(double ref2, int energy) {
-	bool good_event = true;
-	if(ref2 < config::ref2_min[energy]) {
-		good_event = false;
-	}
-
-	return(good_event);
 }
 
 

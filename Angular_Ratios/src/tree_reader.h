@@ -48,7 +48,6 @@ vector<int> get_tree_nprotons(TTree *tree);
 bool check_event_good(event_leaves event, int energy);
 bool check_enough_protons(proton_leaves protons);
 bool check_good_run(int run);
-bool check_ref2(double ref2, int energy);
 
 bool check_proton_good(proton_leaves protons, int proton_index);
 
