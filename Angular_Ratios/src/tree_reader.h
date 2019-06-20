@@ -35,7 +35,7 @@ struct proton_leaves {
 	TLeaf *dedx;
 };
 
-tree_data read_tree(TTree* tree);
+tree_data read_tree(TTree* tree, int energy);
 
 event_leaves get_event_leaves(TTree* tree);
 proton_leaves get_proton_leaves(TTree* tree);
@@ -44,10 +44,10 @@ vector<double> get_tree_ratios(TTree *tree, int div);
 vector<double> get_event_ratios(TLeaf *proton_psi, int div);
 vector<int> get_tree_nprotons(TTree *tree);
 
-bool check_event_good(event_leaves event);
+bool check_event_good(event_leaves event, int energy);
 bool check_enough_protons(proton_leaves protons);
 bool check_good_run(int run);
-bool check_ref2(double ref2);
+bool check_ref2(double ref2, int energy);
 
 bool check_proton_good(proton_leaves protons, int proton_index);
 

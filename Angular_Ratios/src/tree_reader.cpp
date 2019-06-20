@@ -21,7 +21,7 @@
 using namespace std;
 
 
-tree_data read_tree(TTree* tree) {
+tree_data read_tree(TTree* tree, int energy) {
 	tree_data data;
 	data.good_protons = {};
 	data.ratios = vector<vector<double>> (config::divs.size(), vector<double> {});
@@ -32,7 +32,7 @@ tree_data read_tree(TTree* tree) {
 	int n_events = tree->GetEntries();
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
-		if(check_event_good(event) && check_enough_protons(proton)) {
+		if(check_event_good(event, energy) && check_enough_protons(proton)) {
 			int n_good_protons = 0;
 			vector<double> good_proton_angles = {};
 			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
@@ -131,10 +131,10 @@ vector<int> get_tree_nprotons(TTree *tree) {
 
 
 //Returns true if event is good, false if it is bad.
-bool check_event_good(event_leaves event) {
+bool check_event_good(event_leaves event, int energy) {
 	bool good_event = false;
 	if(check_good_run((int)event.run->GetValue())) {
-		if(check_ref2(event.ref_mult2->GetValue())) {
+		if(check_ref2(event.ref_mult2->GetValue(), energy)) {
 			good_event = true;
 		}
 	}
@@ -152,9 +152,9 @@ bool check_good_run(int run) {
 
 
 //Check if ref2 is less than ref2_min. If so return false (bad event), else return true (good event).
-bool check_ref2(double ref2) {
+bool check_ref2(double ref2, int energy) {
 	bool good_event = true;
-	if(ref2 < config::ref2_min) {
+	if(ref2 < config::ref2_min[energy]) {
 		good_event = false;
 	}
 

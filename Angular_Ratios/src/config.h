@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -18,15 +19,17 @@ namespace config {
 	extern string in_path;
 	extern string out_root_name;
 
+	extern string in_file_prefx;
+	extern string in_file_sufx;
 
-	extern vector<string> file_list;
+	extern vector<int> energy_list;
 	extern vector<int> divs;
 
 	extern string tree_name;
 
 	//Event cuts
 	extern vector<int> bad_runs;
-	extern double ref2_min;
+	extern unordered_map<int, int> ref2_min;
 	extern int proton_min_multi;
 
 	//Proton cuts

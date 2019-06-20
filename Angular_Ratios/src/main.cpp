@@ -25,14 +25,14 @@ int main() {
 	vector<tree_data> trees;
 
 	int tree_num = 1;
-	int num_trees = config::file_list.size();
-	for(string file_name:config::file_list) {
-		TFile *file = new TFile((config::in_path+file_name+".root").data(), "READ");
+	int num_trees = config::energy_list.size();
+	for(int energy:config::energy_list) {
+		string file_path = config::in_path + config::in_file_prefx + to_string(energy) + config::in_file_sufx;
+		TFile *file = new TFile(file_path.data(), "READ");
 		TTree *tree = (TTree *)file->Get(config::tree_name.data());
-		cout << endl << "Reading " + file_name  << endl;
+		cout << endl << "Reading " << energy << "GeV tree" << endl;
 		cout << "Tree " + to_string(tree_num) + " of " + to_string(num_trees) << endl << endl;
-		trees.push_back(read_tree(tree));
-		//calculate_cumulants
+		trees.push_back(read_tree(tree, energy));
 		file->Close();
 		delete file;
 		tree_num++;

@@ -63,7 +63,7 @@ double get_central_moment(vector<double> data, int n) {
 	double moment = 0;
 	double mean = get_raw_moment(data, 1);
 	for(double x:data) {
-		moment += pow((x - mean),n);
+		moment += pow((x - mean), n);
 	}
 
 	return(moment / data.size());
@@ -75,7 +75,7 @@ double get_central_moment(vector<double> data, int n) {
 double get_raw_moment(vector<double> data, int n) {
 	double moment = 0;
 	for(double x:data) {
-		moment += pow(x,n);
+		moment += pow(x, n);
 	}
 
 	return(moment / data.size());
