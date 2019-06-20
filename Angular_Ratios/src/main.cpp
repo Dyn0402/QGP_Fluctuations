@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include <TFile.h>
 #include <TTree.h>
@@ -22,7 +23,7 @@ using namespace std;
 int main() {
 	TFile *out_root = new TFile((config::out_path+config::out_root_name).data(), "RECREATE");
 
-	vector<tree_data> trees;
+	map<int, tree_data> trees;
 
 	int tree_num = 1;
 	int num_trees = config::energy_list.size();
@@ -32,7 +33,7 @@ int main() {
 		TTree *tree = (TTree *)file->Get(config::tree_name.data());
 		cout << endl << "Reading " << energy << "GeV tree" << endl;
 		cout << "Tree " + to_string(tree_num) + " of " + to_string(num_trees) << endl << endl;
-		trees.push_back(read_tree(tree, energy));
+		trees[energy] = read_tree(tree, energy);
 		file->Close();
 		delete file;
 		tree_num++;

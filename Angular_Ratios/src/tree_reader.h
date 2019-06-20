@@ -17,8 +17,8 @@ using namespace std;
 
 
 struct tree_data {
-	vector<int> good_protons;
-	vector<vector<double>> ratios;
+	map<int, vector<int>> good_protons; //good_protons[centrality][event_index]
+	map<int, map<int, vector<double>>> ratios; //ratios[divisions][centrality][proton_index]
 };
 
 struct event_leaves {
@@ -37,6 +37,7 @@ struct proton_leaves {
 
 tree_data read_tree(TTree* tree, int energy);
 
+tree_data init_tree_data();
 event_leaves get_event_leaves(TTree* tree);
 proton_leaves get_proton_leaves(TTree* tree);
 
@@ -50,6 +51,8 @@ bool check_good_run(int run);
 bool check_ref2(double ref2, int energy);
 
 bool check_proton_good(proton_leaves protons, int proton_index);
+
+int get_centrality(double refmult2, int energy);
 
 
 #endif /* TREE_READER_H_ */

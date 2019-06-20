@@ -16,10 +16,11 @@ using namespace std;
 
 
 namespace config {
+//	string out_path = "/home/dylan/Dropbox/Research/Coalescence/v1_sim.root";
 	string out_path = "/home/dylan/Dropbox/Research/Coalescence/v1_sim.root";
 
 	int n_events = 1000;
-	int divisions = 5;
+	int divisions = 4;
 
 	double p_effect = 1.0;
 	double p_cluster = 0.2;

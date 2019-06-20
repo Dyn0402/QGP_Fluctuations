@@ -10,7 +10,7 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 using namespace std;
 
@@ -24,12 +24,13 @@ namespace config {
 
 	extern vector<int> energy_list;
 	extern vector<int> divs;
+	extern vector<int> centrals;
 
 	extern string tree_name;
 
 	//Event cuts
 	extern vector<int> bad_runs;
-	extern unordered_map<int, int> ref2_min;
+	extern map<int, int> ref2_min;
 	extern int proton_min_multi;
 
 	//Proton cuts
