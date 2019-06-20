@@ -41,9 +41,9 @@ int main() {
 
 	out_root->cd();
 	cout << endl << "Making ratio distributions: " << endl;
-	make_ratio_dist_plots(trees);
+	make_ratio_dist_plots(out_root, trees);
 	cout << endl << endl << "Makeing proton number distributions: " << endl;
-	make_proton_dist_plots(trees);
+	make_proton_dist_plots(out_root, trees);
 	//plot_cumulants
 
 

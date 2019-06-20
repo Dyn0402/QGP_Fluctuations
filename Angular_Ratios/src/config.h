@@ -22,6 +22,9 @@ namespace config {
 	extern string in_file_prefx;
 	extern string in_file_sufx;
 
+	extern string ratio_dist_dir_name;
+	extern string nproton_dist_dir_name;
+
 	extern vector<int> energy_list;
 	extern vector<int> divs;
 	extern vector<int> centrals;

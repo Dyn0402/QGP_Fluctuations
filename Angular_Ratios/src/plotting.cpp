@@ -9,6 +9,8 @@
 #include <vector>
 #include <string>
 
+#include <TFile.h>
+#include <TDirectory.h>
 #include <TH1.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
@@ -22,9 +24,15 @@ using namespace std;
 
 
 
-void make_ratio_dist_plots(map<int, tree_data> data) {
+void make_ratio_dist_plots(TFile *out_root, map<int, tree_data> data) {
+	TDirectory *ratio_dist_dir = out_root->mkdir(config::ratio_dist_dir_name.data());
+	ratio_dist_dir->cd();
 	for(int energy:config::energy_list) {
+		TDirectory *energy_dir = ratio_dist_dir->mkdir((to_string(energy) + "GeV").data());
+		energy_dir->cd();
 		for(int div:config::divs) {
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div) + "_Divs").data());
+			div_dir->cd();
 			for(int cent:config::centrals) {
 				hist_ratio_dist(data[energy].ratios[div][cent], energy, div, cent);
 			}
@@ -44,8 +52,12 @@ void hist_ratio_dist(vector<double> ratios, int energy, int div, int cent) {
 }
 
 
-void make_proton_dist_plots(map<int, tree_data> data) {
+void make_proton_dist_plots(TFile *out_root, map<int, tree_data> data) {
+	TDirectory *nproton_dist_dir = out_root->mkdir(config::nproton_dist_dir_name.data());
+	nproton_dist_dir->cd();
 	for(int energy:config::energy_list) {
+		TDirectory *energy_dir = nproton_dist_dir->mkdir((to_string(energy) + "GeV").data());
+		energy_dir->cd();
 		for(int cent:config::centrals) {
 			hist_proton_dist(data[energy].good_protons[cent], energy, cent);
 		}

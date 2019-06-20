@@ -23,6 +23,9 @@ namespace config {
 	string in_file_prefx = "tree_auau";
 	string in_file_sufx = ".root";
 
+	string ratio_dist_dir_name = "Ratio_Dists";
+	string nproton_dist_dir_name = "NProton_Dists";
+
 	vector<int> energy_list = {11};
 	vector<int> divs = {3,4};
 	vector<int> centrals = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
