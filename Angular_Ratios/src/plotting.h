@@ -13,9 +13,9 @@
 
 using namespace std;
 
-void make_ratio_dist_plots(vector<vector<vector<double>>> ratios);
+void make_ratio_dist_plots(vector<tree_data> data);
 void hist_ratio_dist(vector<double> ratios, string file, int div);
-void make_proton_dist_plots(vector<vector<int>> nprotons);
+void make_proton_dist_plots(vector<tree_data> data);
 void hist_proton_dist(vector<int> nprotons, string file);
 
 

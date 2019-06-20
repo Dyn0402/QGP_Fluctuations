@@ -11,6 +11,7 @@
 
 #include <TH1.h>
 
+#include "tree_reader.h"
 #include "plotting.h"
 #include "config.h"
 
@@ -18,10 +19,10 @@ using namespace std;
 
 
 
-void make_ratio_dist_plots(vector<vector<vector<double>>> ratios) {
+void make_ratio_dist_plots(vector<tree_data> data) {
 	for(unsigned i=0; i<config::file_list.size(); i++) {
 		for(unsigned j=0; j<config::divs.size(); j++) {
-			hist_ratio_dist(ratios[i][j], config::file_list[i], config::divs[j]);
+			hist_ratio_dist(data[i].ratios[j], config::file_list[i], config::divs[j]);
 		}
 	}
 }
@@ -38,9 +39,9 @@ void hist_ratio_dist(vector<double> ratios, string file, int div) {
 }
 
 
-void make_proton_dist_plots(vector<vector<int>> nprotons) {
+void make_proton_dist_plots(vector<tree_data> data) {
 	for(unsigned i=0; i<config::file_list.size(); i++) {
-		hist_proton_dist(nprotons[i], config::file_list[i]);
+		hist_proton_dist(data[i].good_protons, config::file_list[i]);
 	}
 }
 

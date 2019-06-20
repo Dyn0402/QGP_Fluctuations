@@ -24,6 +24,17 @@ namespace config {
 
 	extern string tree_name;
 
+	//Event cuts
+	extern vector<int> bad_runs;
+	extern double ref2_min;
+	extern int proton_min_multi;
+
+	//Proton cuts
+	extern double proton_max_pt;
+	extern double proton_min_beta;
+	extern double proton_min_m;
+	extern double proton_max_m;
+
 	extern int ratio_hist_bins;
 	extern double ratio_hist_low;
 	extern double ratio_hist_high;

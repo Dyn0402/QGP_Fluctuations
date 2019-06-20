@@ -24,7 +24,7 @@ TH1D* get_dist(TTree *tree) {
 	double angle;
 	for(int i=0; i<tree->GetEntries(); i++) {
 		tree->GetEntry(i);
-		angle = l_psi->GetValue(i);
+		angle = l_psi->GetValue();
 		dist->Fill(angle);
 	}
 
