@@ -43,7 +43,7 @@ void make_ratio_dist_plots(TFile *out_root, map<int, tree_data> data) {
 
 
 void hist_ratio_dist(vector<double> ratios, int energy, int div, int cent, string mode) {
-	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality: " + to_string(cent);
+	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
 	TH1D *ratio_hist = new TH1D(name.data(), name.data(), config::ratio_hist_bins, config::ratio_hist_low, config::ratio_hist_high);
 	for(double ratio:ratios) {
 		ratio_hist->Fill(ratio);
@@ -71,7 +71,7 @@ void make_proton_dist_plots(TFile *out_root, map<int, tree_data> data) {
 
 
 void hist_proton_dist(vector<int> nprotons, int energy, int cent, string mode) {
-	string name = to_string(energy) + "GeV protons Centrality: " + to_string(cent);
+	string name = to_string(energy) + "GeV protons Centrality " + to_string(cent);
 	TH1D *protons_hist = new TH1D(name.data(), name.data(), config::protons_hist_bins, config::protons_hist_low, config::protons_hist_high);
 	for(double protons:nprotons) {
 		protons_hist->Fill(protons);

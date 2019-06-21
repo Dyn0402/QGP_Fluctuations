@@ -60,6 +60,7 @@ void analysis() {
 		cout << endl << "Reading " << energy << "GeV tree" << endl;
 		cout << "Tree " + to_string(tree_num) + " of " + to_string(num_trees) << endl << endl;
 		trees[energy] = read_tree(tree, energy);
+		cout << energy << "GeV tree complete." << endl << endl;
 		file->Close();
 		delete file;
 		tree_num++;
@@ -69,10 +70,13 @@ void analysis() {
 	auto cumulants = calculate_cumulants(trees);
 
 	out_root->cd();
-	cout << endl << "Making plots.." << endl;
+	cout << endl << "Making ratio distribution plots..." << endl;
 	make_ratio_dist_plots(out_root, trees);
+	cout << endl << "Making proton distribution plots..." << endl;
 	make_proton_dist_plots(out_root, trees);
+	cout << endl << "Making cumulant plots..." << endl;
 	make_cumulant_plots(out_root, cumulants);
+	cout << endl << "Making canvases..." << endl;
 	make_canvas_plots(out_root, trees);
 
 
@@ -85,11 +89,13 @@ void analysis() {
 map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree_data> trees) {
 	map<int, map<int, map<int, map<int, double>>>> cumulants;
 	for(int energy:config::energy_list) {
+		cout << "Calculating " << to_string(energy) << "GeV cumulants" << endl;
 		for(int div:config::divs) {
+			cout << "Calculating " << to_string(div) << " division cumulants" << endl;
 			for(int cent:config::centrals) {
 				for(int order:config::cumulant_orders) {
 					cumulants[energy][div][cent][order] = get_cumulant(trees[energy].ratios[div][cent], order);
-					cout << " mean: " << get_raw_moment(trees[energy].ratios[div][cent], 1) <<  " len: " << trees[energy].ratios[div][cent].size() << " divs: " << div << " cent: " << cent << " order: " << order << " cumulant: " <<  cumulants[energy][div][cent][order] << endl;
+//					cout << " mean: " << get_raw_moment(trees[energy].ratios[div][cent], 1) <<  " len: " << trees[energy].ratios[div][cent].size() << " divs: " << div << " cent: " << cent << " order: " << order << " cumulant: " <<  cumulants[energy][div][cent][order] << endl;
 				}
 			}
 		}

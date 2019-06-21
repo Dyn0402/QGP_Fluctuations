@@ -28,7 +28,7 @@ namespace config {
 	string cumulant_dir_name = "Cumulants";
 	string canvas_dir_name = "Canvases";
 
-	vector<int> energy_list = {11, 11};
+	vector<int> energy_list = {11, 14};
 	vector<int> divs = {3,4,6};
 	vector<int> centrals = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 	vector<int> cumulant_orders = {1,2,3,4};
