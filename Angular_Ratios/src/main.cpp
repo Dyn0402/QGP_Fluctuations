@@ -12,6 +12,7 @@
 
 #include <TFile.h>
 #include <TTree.h>
+#include <TDirectory.h>
 
 #include "config.h"
 #include "tree_reader.h"
@@ -72,6 +73,7 @@ void analysis() {
 	make_ratio_dist_plots(out_root, trees);
 	make_proton_dist_plots(out_root, trees);
 	make_cumulant_plots(out_root, cumulants);
+	make_canvas_plots(out_root, trees);
 
 
 	out_root->Close();
@@ -87,11 +89,6 @@ map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree
 			for(int cent:config::centrals) {
 				for(int order:config::cumulant_orders) {
 					cumulants[energy][div][cent][order] = get_cumulant(trees[energy].ratios[div][cent], order);
-					for(double element:trees[energy].ratios[div][cent]) {
-						if(isnan(element)) {
-							cout << "Nan here" << endl;
-						}
-					}
 					cout << " mean: " << get_raw_moment(trees[energy].ratios[div][cent], 1) <<  " len: " << trees[energy].ratios[div][cent].size() << " divs: " << div << " cent: " << cent << " order: " << order << " cumulant: " <<  cumulants[energy][div][cent][order] << endl;
 				}
 			}

@@ -25,6 +25,7 @@ namespace config {
 	extern string ratio_dist_dir_name;
 	extern string nproton_dist_dir_name;
 	extern string cumulant_dir_name;
+	extern string canvas_dir_name;
 
 	extern vector<int> energy_list;
 	extern vector<int> divs;
