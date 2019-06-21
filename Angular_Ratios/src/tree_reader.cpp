@@ -43,6 +43,13 @@ tree_data read_tree(TTree* tree, int energy) {
 			data.good_protons[cent].push_back(n_good_protons);
 			for(int div:config::divs) {
 				vector<double> event_ratios = get_Rs(good_proton_angles, div);
+				//debug
+				for(double ele:event_ratios) {
+					if(isnan(ele)) {
+						cout << "Nan after get_Rs. Size: " << good_proton_angles.size() << endl;
+					}
+				}
+				//debug
 				data.ratios[div][cent].insert(data.ratios[div][cent].end(), event_ratios.begin(), event_ratios.end());
 			}
 		}

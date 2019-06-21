@@ -25,10 +25,12 @@ namespace config {
 
 	string ratio_dist_dir_name = "Ratio_Dists";
 	string nproton_dist_dir_name = "NProton_Dists";
+	string cumulant_dir_name = "Cumulants";
 
 	vector<int> energy_list = {11};
-	vector<int> divs = {3,4};
+	vector<int> divs = {3,4,6};
 	vector<int> centrals = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	vector<int> cumulant_orders = {1,2,3,4};
 
 	string tree_name = "nsmTree";
 

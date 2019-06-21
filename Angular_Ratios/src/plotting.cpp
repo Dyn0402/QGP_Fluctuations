@@ -76,6 +76,49 @@ void hist_proton_dist(vector<int> nprotons, int energy, int cent) {
 }
 
 
-//void make_cumulant_plots(vector<tree_data> data) {
-//	for(int cum_ord)
-//}
+void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, double>>>> cumulants) {
+	TDirectory *cumulant_dir = out_root->mkdir(config::cumulant_dir_name.data());
+	cumulant_dir->cd();
+	for(int order:config::cumulant_orders) {
+		TDirectory *order_dir = cumulant_dir->mkdir((to_string(order) + "_order").data());
+		order_dir->cd();
+		for(int cent:config::centrals) {
+			TDirectory *cent_dir = order_dir->mkdir((to_string(cent) + "_centrality").data());
+			cent_dir->cd();
+			for(int div:config::divs) {
+				graph_cumulant_vs_energy(cumulants, div, cent, order);
+			}
+			for(int energy:config::energy_list) {
+				graph_cumulant_vs_divs(cumulants, energy, cent, order);
+			}
+		}
+	}
+}
+
+
+
+void graph_cumulant_vs_energy(map<int, map<int, map<int, map<int, double>>>> cumulants, int div, int cent, int order) {
+	vector<double> cumulant;
+	for(int energy:config::energy_list) {
+		cumulant.push_back(cumulants[energy][div][cent][order]);
+	}
+	graph_x_vs_y(config::energy_list, cumulant);
+}
+
+
+void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, double>>>> cumulants, int energy, int cent, int order) {
+	vector<double> cumulant;
+	for(int div:config::divs) {
+		cumulant.push_back(cumulants[energy][div][cent][order]);
+	}
+	graph_x_vs_y(config::divs, cumulant);
+}
+
+
+
+void graph_x_vs_y(vector<int> x, vector<double> y) {
+	vector<double> x_double(x.begin(), x.end());
+	TGraph *graph = new TGraph((int)x_double.size(), x_double.data(), y.data());
+	graph->Write();
+	delete graph;
+}

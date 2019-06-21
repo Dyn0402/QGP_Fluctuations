@@ -20,20 +20,23 @@ vector<double> get_Rs(vector<double> angles, int divisions) {
 	vector<double> Rs = {};
 	double r, low_cut, high_cut;
 
-	for(int i = 0; i < divisions; i++) {
-		r = 0.0;
-		low_cut = i * 2 * M_PI / divisions;
-		high_cut = (i+1) * 2 * M_PI / divisions;
+	if(angles.size() > 0) {
+		for(int i = 0; i < divisions; i++) {
+			r = 0.0;
+			low_cut = i * 2. * M_PI / divisions;
+			high_cut = (i+1) * 2. * M_PI / divisions;
 
-		for(auto angle:angles) {
-			if(angle >= low_cut  && angle < high_cut) {
-				r++;
+			for(auto angle:angles) {
+				if(angle >= low_cut  && angle < high_cut) {
+					r++;
+				}
+				if(i+1 == divisions && angle == high_cut) {
+					r++;
+				}
 			}
-			if(i+1 == divisions && angle == high_cut) {
-				r++;
-			}
+			r /= angles.size();
+			Rs.push_back(r);
 		}
-		Rs.push_back(r/angles.size());
 	}
 
 	return(Rs);
@@ -44,10 +47,12 @@ vector<double> get_Rs(vector<double> angles, int divisions) {
 //Bad implementation, should use generating function or standard library which does.
 double get_cumulant(vector<double> data, int n) {
 	double cumulant;
-	if(n >= 1 && n <= 3) {
+	if(n == 1) {
+		cumulant = get_raw_moment(data, n);
+	} else if(n == 2 || n == 3) {
 		cumulant = get_central_moment(data, n);
 	} else if(n == 4) {
-		cumulant = get_central_moment(data, n) - 3 * get_central_moment(data, 2);
+		cumulant = get_central_moment(data, n) - 3 * pow(get_central_moment(data, 2),2);
 	} else if(n == 5) {
 		cumulant = get_central_moment(data, n) - 10 * get_central_moment(data, 2) * get_central_moment(data, 3);
 	} else {

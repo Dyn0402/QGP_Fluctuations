@@ -24,10 +24,12 @@ namespace config {
 
 	extern string ratio_dist_dir_name;
 	extern string nproton_dist_dir_name;
+	extern string cumulant_dir_name;
 
 	extern vector<int> energy_list;
 	extern vector<int> divs;
 	extern vector<int> centrals;
+	extern vector<int> cumulant_orders;
 
 	extern string tree_name;
 
