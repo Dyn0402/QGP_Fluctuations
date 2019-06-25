@@ -27,8 +27,11 @@ void cumulant_test();
 map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree_data> trees); //cumulants[energy][divisions][centrality][cumulant_order]
 
 
-int main() {
+int main(int argc, char** argv) {
 //	cumulant_test();
+//	config::centrals = {atoi(argv[1])};
+//	string cent(argv[1]);
+//	config::out_root_name = "cent_" + cent + ".root";
 	analysis();
 
 	cout << endl << "donzo" << endl;

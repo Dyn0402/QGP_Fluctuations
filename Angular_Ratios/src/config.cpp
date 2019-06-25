@@ -14,13 +14,13 @@ using namespace std;
 
 
 namespace config {
-	string out_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
-//	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
-	string in_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
-//	string in_path = "/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
-	string out_root_name = "test.root";
+//	string out_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
+	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
+//	string in_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
+	string in_path = "/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
+	string out_root_name = "cent_12.root";
 
-	string in_file_prefx = "tree_auau";
+	string in_file_prefx = "auau";
 	string in_file_sufx = ".root";
 
 	string ratio_dist_dir_name = "Ratio_Dists";
@@ -28,9 +28,9 @@ namespace config {
 	string cumulant_dir_name = "Cumulants";
 	string canvas_dir_name = "Canvases";
 
-	vector<int> energy_list = {11, 14};
-	vector<int> divs = {3,4,6};
-	vector<int> centrals = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	vector<int> energy_list = {7, 11, 19, 27, 39, 62};
+	vector<int> divs = {};
+	vector<int> centrals = {12};
 	vector<int> cumulant_orders = {1,2,3,4};
 
 	string tree_name = "nsmTree";
