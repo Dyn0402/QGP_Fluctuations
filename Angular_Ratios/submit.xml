@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE note [
+<!ENTITY energy "7">
+]>
+<job simulateSubmission ="false" maxFilesPerProcess="15"  fileListSyntax="paths">
+  
+	<command>
+		./Debug/Angular_Ratios $FILELIST auau_$JOBID.root &energy;
+	</command>
+  
+	<SandBox>
+		<Package>
+			<File>file:./Debug</File>
+		</Package>
+	</SandBox>
+
+	<input URL="file:/gpfs01/star/pwg/dneff/scratch/output/&energy;GeV/*.root" nFiles="all" />
+	<stderr URL="file:/gpfs01/star/pwg/dneff/scratch/ratios/log/&energy;GeV/err_&energy;GeV$JOBID.err"/>
+	<stdout URL="file:/gpfs01/star/pwg/dneff/scratch/ratios/log/&energy;GeV/log_&energy;GeV$JOBID.out" />
+
+	<output fromScratch="*.root" toURL="file:/gpfs01/star/pwg/dneff/scratch/ratios/output/&energy;GeV/" />
+	<output fromScratch="*.log" toURL="file:/gpfs01/star/pwg/dneff/scratch/ratios/log/&energy;GeV/" />
+ 
+	<Generator>
+		<Location>/gpfs01/star/pwg/dneff/scratch/ratios/script</Location>
+	</Generator>
+  
+</job>
