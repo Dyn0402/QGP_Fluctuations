@@ -23,6 +23,7 @@ using namespace std;
 
 
 void analysis();
+void analysis_mem_check();
 void cumulant_test();
 map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree_data> trees); //cumulants[energy][divisions][centrality][cumulant_order]
 
@@ -33,6 +34,7 @@ int main(int argc, char** argv) {
 //	string cent(argv[1]);
 //	config::out_root_name = "cent_" + cent + ".root";
 	analysis();
+//	analysis_mem_check();
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -60,6 +62,7 @@ void analysis() {
 		string file_path = config::in_path + config::in_file_prefx + to_string(energy) + config::in_file_sufx;
 		TFile *file = new TFile(file_path.data(), "READ");
 		TTree *tree = (TTree *)file->Get(config::tree_name.data());
+		out_root->cd();
 		cout << endl << "Reading " << energy << "GeV tree" << endl;
 		cout << "Tree " + to_string(tree_num) + " of " + to_string(num_trees) << endl << endl;
 		trees[energy] = read_tree(tree, energy);
@@ -105,4 +108,21 @@ map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree
 	}
 
 	return(cumulants);
+}
+
+
+
+void analysis_mem_check() {
+	vector<int> energy_list = {7,11,19,27,39,62};
+	map<int, tree_data> trees;
+	int tree_num = 1;
+	int num_trees = energy_list.size();
+	for(int energy:energy_list) {
+		cout << endl << "Reading " << energy << "GeV tree" << endl;
+		cout << "Tree " + to_string(tree_num) + " of " + to_string(num_trees) << endl << endl;
+		trees[energy] = read_tree_mem_check(energy);
+		cout << energy << "GeV tree complete." << endl << endl;
+		tree_num++;
+	}
+
 }
