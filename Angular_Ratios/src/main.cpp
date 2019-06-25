@@ -6,6 +6,7 @@
  */
 
 
+#include <fstream>
 #include <iostream>
 #include <vector>
 #include <map>
@@ -22,6 +23,7 @@
 using namespace std;
 
 
+void read_trees(int argc, char** argv);
 void analysis();
 void analysis_mem_check();
 void cumulant_test();
@@ -33,12 +35,22 @@ int main(int argc, char** argv) {
 //	config::centrals = {atoi(argv[1])};
 //	string cent(argv[1]);
 //	config::out_root_name = "cent_" + cent + ".root";
-	analysis();
+//	analysis();
 //	analysis_mem_check();
+	read_trees(argc, argv);
 
 	cout << endl << "donzo" << endl;
 	return(0);
 
+}
+
+
+void read_trees(int argc, char** argv) {
+	ofstream out_file("/gpfs01/star/pwg/dneff/scratch/ratios/output/7GeV/test.txt");
+	string arg1 = argv[1];
+	string arg2 = argv[2];
+	out_file << arg1 << "\n" << arg2 << "\n";
+	out_file.close();
 }
 
 
