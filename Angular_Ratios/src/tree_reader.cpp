@@ -13,6 +13,7 @@
 
 #include <TTree.h>
 #include <TLeaf.h>
+#include <TH1.h>
 
 #include "tree_reader.h"
 #include "ratio_methods.h"
@@ -27,13 +28,25 @@ tree_data read_tree(TTree* tree, int energy) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
+	TH1D *mass_hist = new TH1D("Mass_hist", "Mass_hist", 100, 0, 2);
+	TH1D *mass2_hist = new TH1D("Mass2_hist", "Mass2_hist", 100, 0, 2);
+
 	int n_events = tree->GetEntries();
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
-		if(check_event_good(event, energy) && check_enough_protons(proton)) {
+		if(check_event_good(event, proton, energy)) {
 			int n_good_protons = 0;
 			vector<double> good_proton_angles = {};
 			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
+				//debug
+				double beta = proton.beta->GetValue(proton_index);
+				double p = proton.p->GetValue(proton_index);
+				if(beta > config::proton_min_beta) {
+					double m = pow(p, 2) * (pow(beta, -2) - 1.);
+					mass_hist->Fill(pow(m,0.5));
+					mass2_hist->Fill(m);
+				}
+				//debug
 				if(check_proton_good(proton, proton_index)) {
 					n_good_protons++;
 					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
@@ -43,13 +56,6 @@ tree_data read_tree(TTree* tree, int energy) {
 			data.good_protons[cent].push_back(n_good_protons);
 			for(int div:config::divs) {
 				vector<double> event_ratios = get_Rs(good_proton_angles, div);
-				//debug
-				for(double ele:event_ratios) {
-					if(isnan(ele)) {
-						cout << "Nan after get_Rs. Size: " << good_proton_angles.size() << endl;
-					}
-				}
-				//debug
 				data.ratios[div][cent].insert(data.ratios[div][cent].end(), event_ratios.begin(), event_ratios.end());
 			}
 		}
@@ -57,6 +63,44 @@ tree_data read_tree(TTree* tree, int energy) {
 			cout << (int)(((double)event_index) / n_events * 100 + 0.5) << "% complete. " << event_index << " of " << n_events << endl;
 		}
 		event_index++;
+	}
+
+	mass_hist->Write();
+	mass2_hist->Write();
+
+	return(data);
+}
+
+
+tree_data read_tree_mem_check(int energy) {
+	tree_data data = init_tree_data();
+
+	const int n_events = 1e8;
+	int n_protons = 40;
+
+//	double ratios[n_events][6] = {};
+//	int nprotons[n_events] = {};
+
+	for(int i=0; i<n_events; i++) {
+		int n_good_protons = 0;
+		vector<double> good_proton_angles = {};
+		for(int proton_index = 0; proton_index<n_protons; proton_index++) {
+			n_good_protons++;
+			good_proton_angles.push_back(0.4 * (i*proton_index % 10));
+		}
+		int cent = i % 15;
+		data.good_protons[cent].push_back(n_good_protons);
+//		nprotons[i] = n_good_protons;
+		for(int div:config::divs) {
+			vector<double> event_ratios = get_Rs(good_proton_angles, div);
+			data.ratios[div][cent].insert(data.ratios[div][cent].end(), event_ratios.begin(), event_ratios.end());
+//			for(unsigned j=0; j<event_ratios.size(); j++) {
+//				ratios[i][j] = event_ratios[j];
+//			}
+		}
+		if( !(i % (n_events / 100)) ) {
+			cout << (int)(((double)i) / n_events * 100 + 0.5) << "% complete. " << i << " of " << n_events << endl;
+		}
 	}
 
 
@@ -151,10 +195,12 @@ vector<int> get_tree_nprotons(TTree *tree) {
 
 
 //Returns true if event is good, false if it is bad.
-bool check_event_good(event_leaves event, int energy) {
+bool check_event_good(event_leaves event, proton_leaves proton, int energy) {
 	bool good_event = false;
 	if(check_good_run((int)event.run->GetValue())) {
-		good_event = true;
+		if(check_enough_protons(proton)) {
+			good_event = true;
+		}
 	}
 
 	return(good_event);
@@ -190,7 +236,7 @@ bool check_proton_good(proton_leaves protons, int proton_index) {
 		double beta = protons.beta->GetValue(proton_index);
 		double p = protons.p->GetValue(proton_index);
 		if(beta > config::proton_min_beta) {
-			double m = pow(p, 2) * (pow(beta, -2) - 1.);
+			double m = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
 			if(m > config::proton_min_m && m < config::proton_max_m) {
 				good_proton = true;
 			}
