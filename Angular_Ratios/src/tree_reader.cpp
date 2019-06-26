@@ -11,6 +11,7 @@
 #include <vector>
 #include <cmath>
 
+#include <TChain.h>
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TH1.h>
@@ -22,7 +23,7 @@
 using namespace std;
 
 
-tree_data read_tree(TTree* tree, int energy) {
+tree_data read_tree(TChain* tree, int energy) {
 	tree_data data = init_tree_data();
 
 	event_leaves event = get_event_leaves(tree);
@@ -31,6 +32,7 @@ tree_data read_tree(TTree* tree, int energy) {
 	int n_events = tree->GetEntries();
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
+		cout << event.run->GetValue() << endl;
 		if(check_event_good(event, proton, energy)) {
 			vector<double> good_proton_angles = {};
 			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
@@ -66,7 +68,7 @@ tree_data init_tree_data() {
 
 
 //Get event leaves and return them in an event_leaves struct.
-event_leaves get_event_leaves(TTree* tree) {
+event_leaves get_event_leaves(TChain* tree) {
 	event_leaves event;
 	event.run = tree->GetLeaf("run");
 	event.ref_mult = tree->GetLeaf("Nprim");
@@ -77,7 +79,7 @@ event_leaves get_event_leaves(TTree* tree) {
 
 
 //Get proton leaves and return them in an protons_leaves struct.
-proton_leaves get_proton_leaves(TTree* tree) {
+proton_leaves get_proton_leaves(TChain* tree) {
 	proton_leaves proton;
 	proton.pt = tree->GetLeaf("Proton.pt");
 	proton.p = tree->GetLeaf("Proton.p");

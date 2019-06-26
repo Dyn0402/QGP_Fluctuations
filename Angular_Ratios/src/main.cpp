@@ -54,6 +54,7 @@ void read_files(int argc, char** argv) {
 	TChain *chain = new TChain(config::tree_name.data());
 	ifstream list_file(in_list);
 	string line;
+	cout << in_list << " " << job_id << endl;
 	if(list_file.is_open()) {
 		while(getline(list_file, line)) {
 			chain->Add(line.data());
@@ -90,7 +91,7 @@ void analysis() {
 		out_root->cd();
 		cout << endl << "Reading " << energy << "GeV tree" << endl;
 		cout << "Tree " + to_string(tree_num) + " of " + to_string(num_trees) << endl << endl;
-		trees[energy] = read_tree(tree, energy);
+//		trees[energy] = read_tree(tree, energy);
 		cout << energy << "GeV tree complete." << endl << endl;
 		file->Close();
 		delete file;
