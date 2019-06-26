@@ -13,6 +13,7 @@
 
 #include <TFile.h>
 #include <TTree.h>
+#include <TChain.h>
 #include <TDirectory.h>
 
 #include "config.h"
@@ -23,7 +24,7 @@
 using namespace std;
 
 
-void read_trees(int argc, char** argv);
+void read_files(int argc, char** argv);
 void analysis();
 void analysis_mem_check();
 void cumulant_test();
@@ -37,7 +38,7 @@ int main(int argc, char** argv) {
 //	config::out_root_name = "cent_" + cent + ".root";
 //	analysis();
 //	analysis_mem_check();
-	read_trees(argc, argv);
+	read_files(argc, argv);
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -45,23 +46,25 @@ int main(int argc, char** argv) {
 }
 
 
-void read_trees(int argc, char** argv) {
-	string arg1 = argv[1];
-	string arg2 = argv[2];
-	string arg3 = argv[3];
-	ofstream out_file(arg2);
-	out_file << arg1 << "\n" << arg2 << "\n" << arg3 << "\n";
-	ifstream list_file(arg1);
+void read_files(int argc, char** argv) {
+	string in_list = argv[1];
+	string out_name = argv[2];
+	int energy = (int)argv[3];
+	TChain *chain = new TChain(config::tree_name);
+	ifstream list_file(in_list);
 	string line;
 	if(list_file.is_open()) {
 		while(getline(list_file, line)) {
-			out_file << line << "\n";
+			chain->Add(line.data());
 		}
 		list_file.close();
+		tree_data data = read_tree(chain, energy);
+		ofstream out_file(out_name);
+		// write tree data to out_file.
+		out_file.close();
 	} else {
-		out_file << "Couldn't open the list_file. \n";
+		cout << "Couldn't open the list_file. \n";
 	}
-	out_file.close();
 }
 
 
