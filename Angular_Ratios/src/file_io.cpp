@@ -19,6 +19,13 @@
 using namespace std;
 
 
+
+void write_tree_data(string job_id, tree_data data) {
+	write_ratios(job_id, data.ratios);
+	write_nprotons(job_id, data.good_protons);
+}
+
+
 void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> ratios) {
 	for(pair<int, map<int, map<int, map<int, int>>>> divs:ratios) {
 		for(pair<int, map<int, map<int, int>>> cents:divs.second) {

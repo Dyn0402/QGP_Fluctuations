@@ -39,9 +39,7 @@ int main(int argc, char** argv) {
 //	config::out_root_name = "cent_" + cent + ".root";
 //	analysis();
 //	analysis_mem_check();
-//	read_files(argc, argv);
-
-
+	read_files(argc, argv);
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -62,7 +60,7 @@ void read_files(int argc, char** argv) {
 		}
 		list_file.close();
 		tree_data data = read_tree(chain, energy);
-		// write tree data to out_files.
+		write_tree_data(job_id, data);
 	} else {
 		cout << "Couldn't open the list_file. \n";
 	}
