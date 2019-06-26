@@ -51,6 +51,16 @@ void read_trees(int argc, char** argv) {
 	string arg3 = argv[3];
 	ofstream out_file(arg2);
 	out_file << arg1 << "\n" << arg2 << "\n" << arg3 << "\n";
+	ifstream list_file(arg1);
+	string line;
+	if(list_file.is_open()) {
+		while(getline(list_file, line)) {
+			out_file << line << "\n";
+		}
+		list_file.close();
+	} else {
+		out_file << "Couldn't open the list_file. \n";
+	}
 	out_file.close();
 }
 
