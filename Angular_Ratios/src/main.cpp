@@ -46,10 +46,11 @@ int main(int argc, char** argv) {
 
 
 void read_trees(int argc, char** argv) {
-	ofstream out_file("/gpfs01/star/pwg/dneff/scratch/ratios/output/7GeV/test.txt");
 	string arg1 = argv[1];
 	string arg2 = argv[2];
-	out_file << arg1 << "\n" << arg2 << "\n";
+	string arg3 = argv[3];
+	ofstream out_file(arg2);
+	out_file << arg1 << "\n" << arg2 << "\n" << arg3 << "\n";
 	out_file.close();
 }
 
