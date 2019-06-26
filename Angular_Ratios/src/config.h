@@ -34,6 +34,15 @@ namespace config {
 
 	extern string tree_name;
 
+	//File io
+	extern string nproton_file_pre;
+	extern vector<string> nproton_file_fields;
+	extern char file_name_delimeter;
+	extern vector<char> data_delimeters;
+	extern string ratios_file_pre;
+	extern vector<string> ratios_file_fields;
+	extern string file_ext;
+
 	//Event cuts
 	extern vector<int> bad_runs;
 	extern map<int, int> ref2_min;

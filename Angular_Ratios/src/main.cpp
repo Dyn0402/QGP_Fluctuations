@@ -20,13 +20,14 @@
 #include "tree_reader.h"
 #include "ratio_methods.h"
 #include "plotting.h"
+#include "file_io.h"
 
 using namespace std;
 
 
 void read_files(int argc, char** argv);
 void analysis();
-void analysis_mem_check();
+void io_test();
 void cumulant_test();
 map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree_data> trees); //cumulants[energy][divisions][centrality][cumulant_order]
 
@@ -38,7 +39,9 @@ int main(int argc, char** argv) {
 //	config::out_root_name = "cent_" + cent + ".root";
 //	analysis();
 //	analysis_mem_check();
-	read_files(argc, argv);
+//	read_files(argc, argv);
+
+
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -48,9 +51,9 @@ int main(int argc, char** argv) {
 
 void read_files(int argc, char** argv) {
 	string in_list = argv[1];
-	string out_name = argv[2];
-	int energy = (int)argv[3];
-	TChain *chain = new TChain(config::tree_name);
+	string job_id = argv[2];
+	int energy = stoi(argv[3]);
+	TChain *chain = new TChain(config::tree_name.data());
 	ifstream list_file(in_list);
 	string line;
 	if(list_file.is_open()) {
@@ -59,9 +62,7 @@ void read_files(int argc, char** argv) {
 		}
 		list_file.close();
 		tree_data data = read_tree(chain, energy);
-		ofstream out_file(out_name);
-		// write tree data to out_file.
-		out_file.close();
+		// write tree data to out_files.
 	} else {
 		cout << "Couldn't open the list_file. \n";
 	}
@@ -126,7 +127,7 @@ map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree
 			cout << "Calculating " << to_string(div) << " division cumulants" << endl;
 			for(int cent:config::centrals) {
 				for(int order:config::cumulant_orders) {
-					cumulants[energy][div][cent][order] = get_cumulant(trees[energy].ratios[div][cent], order);
+//					cumulants[energy][div][cent][order] = get_cumulant(trees[energy].ratios[div][cent], order);
 //					cout << " mean: " << get_raw_moment(trees[energy].ratios[div][cent], 1) <<  " len: " << trees[energy].ratios[div][cent].size() << " divs: " << div << " cent: " << cent << " order: " << order << " cumulant: " <<  cumulants[energy][div][cent][order] << endl;
 				}
 			}
@@ -137,18 +138,39 @@ map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree
 }
 
 
+void io_test() {
+	string testc = "hello_thie\tresse_reand\t11_.txt";
+	vector<string> split = split_string_by_char(testc, '\t');
+	for(string str:split) { cout << str << endl; }
 
-void analysis_mem_check() {
-	vector<int> energy_list = {7,11,19,27,39,62};
-	map<int, tree_data> trees;
-	int tree_num = 1;
-	int num_trees = energy_list.size();
-	for(int energy:energy_list) {
-		cout << endl << "Reading " << energy << "GeV tree" << endl;
-		cout << "Tree " + to_string(tree_num) + " of " + to_string(num_trees) << endl << endl;
-		trees[energy] = read_tree_mem_check(energy);
-		cout << energy << "GeV tree complete." << endl << endl;
-		tree_num++;
+	map<int, map<int, map<int, map<int, int>>>> test;
+	test[2][15][0][0] = 152;
+	test[2][15][0][1] = 456;
+	test[2][15][0][2] = 1452;
+	test[1][15][1][3] = 343;
+	test[2][15][1][11] = 1;
+
+	write_ratios("Dafd4009", test);
+	write_ratios("Cafd4009", test);
+	write_ratios("Bafd4009", test);
+	map<int, map<int, int>> test_in = read_ratios("/home/dylan/git/Research/QGP_Fluctuations/Angular_Ratios/", 2, 15);
+	for(pair<int, map<int, int>> entry:test_in) {
+		cout << entry.first << "\t";
+		for(pair<int, int> entrya:entry.second) {
+			cout << entrya.first << ":" << entrya.second << " ";
+		}
+		cout << endl;
 	}
 
+	map<int, map<int, int>> testb;
+	testb[15][0] = 156;
+	testb[15][1] = 1584;
+	testb[15][2] = 657;
+
+
+	write_nprotons("Dafd4009", testb);
+	map<int, int> test_inb = read_nprotons("/home/dylan/git/Research/QGP_Fluctuations/Angular_Ratios/", 15);
+	for(pair<int, int> entry:test_inb) {
+		cout << entry.first << "\t" << entry.second << endl;
+	}
 }

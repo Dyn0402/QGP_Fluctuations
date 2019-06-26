@@ -28,35 +28,23 @@ tree_data read_tree(TTree* tree, int energy) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
-	TH1D *mass_hist = new TH1D("Mass_hist", "Mass_hist", 100, 0, 2);
-	TH1D *mass2_hist = new TH1D("Mass2_hist", "Mass2_hist", 100, 0, 2);
-
 	int n_events = tree->GetEntries();
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 		if(check_event_good(event, proton, energy)) {
-			int n_good_protons = 0;
 			vector<double> good_proton_angles = {};
 			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
-				//debug
-				double beta = proton.beta->GetValue(proton_index);
-				double p = proton.p->GetValue(proton_index);
-				if(beta > config::proton_min_beta) {
-					double m = pow(p, 2) * (pow(beta, -2) - 1.);
-					mass_hist->Fill(pow(m,0.5));
-					mass2_hist->Fill(m);
-				}
-				//debug
 				if(check_proton_good(proton, proton_index)) {
-					n_good_protons++;
 					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
 				}
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
-			data.good_protons[cent].push_back(n_good_protons);
+			data.good_protons[cent][(int)good_proton_angles.size()]++;
 			for(int div:config::divs) {
-				vector<double> event_ratios = get_Rs(good_proton_angles, div);
-				data.ratios[div][cent].insert(data.ratios[div][cent].end(), event_ratios.begin(), event_ratios.end());
+				vector<int> event_ratios = get_Rs(good_proton_angles, div);
+				for(int protons_in_bin:event_ratios) {
+					data.ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+				}
 			}
 		}
 		if( !(event_index % (n_events / 10)) ) {
@@ -65,45 +53,6 @@ tree_data read_tree(TTree* tree, int energy) {
 		event_index++;
 	}
 
-	mass_hist->Write();
-	mass2_hist->Write();
-
-	return(data);
-}
-
-
-tree_data read_tree_mem_check(int energy) {
-	tree_data data = init_tree_data();
-
-	const int n_events = 1e8;
-	int n_protons = 40;
-
-//	double ratios[n_events][6] = {};
-//	int nprotons[n_events] = {};
-
-	for(int i=0; i<n_events; i++) {
-		int n_good_protons = 0;
-		vector<double> good_proton_angles = {};
-		for(int proton_index = 0; proton_index<n_protons; proton_index++) {
-			n_good_protons++;
-			good_proton_angles.push_back(0.4 * (i*proton_index % 10));
-		}
-		int cent = i % 15;
-		data.good_protons[cent].push_back(n_good_protons);
-//		nprotons[i] = n_good_protons;
-		for(int div:config::divs) {
-			vector<double> event_ratios = get_Rs(good_proton_angles, div);
-			data.ratios[div][cent].insert(data.ratios[div][cent].end(), event_ratios.begin(), event_ratios.end());
-//			for(unsigned j=0; j<event_ratios.size(); j++) {
-//				ratios[i][j] = event_ratios[j];
-//			}
-		}
-		if( !(i % (n_events / 100)) ) {
-			cout << (int)(((double)i) / n_events * 100 + 0.5) << "% complete. " << i << " of " << n_events << endl;
-		}
-	}
-
-
 	return(data);
 }
 
@@ -111,12 +60,6 @@ tree_data read_tree_mem_check(int energy) {
 //Initialize data elements of tree_data structure.
 tree_data init_tree_data() {
 	tree_data data;
-	for(int cent:config::centrals) {
-		data.good_protons[cent] = vector<int> {};
-		for(int div:config::divs) {
-			data.ratios[div][cent] = vector<double> {};
-		}
-	}
 
 	return(data);
 }
@@ -143,54 +86,6 @@ proton_leaves get_proton_leaves(TTree* tree) {
 	proton.dedx = tree->GetLeaf("Proton.dedx");
 
 	return(proton);
-}
-
-
-
-vector<double> get_tree_ratios(TTree *tree, int div) {
-	vector<double> ratios;
-	TLeaf *proton_psi = tree->GetLeaf("Proton.phi");
-
-	int events = tree->GetEntries();
-	int event_index = 0;
-	while(tree->GetEntry(event_index)) {
-		vector<double> event_ratios = get_event_ratios(proton_psi, div);
-		ratios.insert(ratios.end(), event_ratios.begin(), event_ratios.end());
-		if( !(event_index % (events / 10)) ) {
-			cout << (int)(((double)event_index) / events * 100 + 0.5) << "% complete. " << event_index << " of " << events << endl;
-		}
-		event_index++;
-	}
-
-	return(ratios);
-}
-
-
-vector<double> get_event_ratios(TLeaf *proton_psi, int div) {
-	vector<double> angles;
-	for(int i = 0; i<proton_psi->GetLen(); i++) {
-		angles.push_back(proton_psi->GetValue(i));
-	}
-	vector<double> ratios = get_Rs(angles, div);
-	return(ratios);
-}
-
-
-vector<int> get_tree_nprotons(TTree *tree) {
-	vector<int> nprotons;
-	TLeaf *proton_psi = tree->GetLeaf("Proton.phi");
-
-	int events = tree->GetEntries();
-	int event_index = 0;
-	while(tree->GetEntry(event_index)) {
-		nprotons.push_back(proton_psi->GetLen());
-		if( !(event_index % (events / 10)) ) {
-			cout << (int)(((double)event_index) / events * 100 + 0.5) << "% complete. " << event_index << " of " << events << endl;
-		}
-		event_index++;
-	}
-
-	return(nprotons);
 }
 
 

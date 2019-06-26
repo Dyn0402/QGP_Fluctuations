@@ -35,7 +35,7 @@ void make_ratio_dist_plots(TFile *out_root, map<int, tree_data> data) {
 			TDirectory *div_dir = energy_dir->mkdir((to_string(div) + "_Divs").data());
 			div_dir->cd();
 			for(int cent:config::centrals) {
-				hist_ratio_dist(data[energy].ratios[div][cent], energy, div, cent);
+//				hist_ratio_dist(data[energy].ratios[div][cent], energy, div, cent);
 			}
 		}
 	}
@@ -64,7 +64,7 @@ void make_proton_dist_plots(TFile *out_root, map<int, tree_data> data) {
 		TDirectory *energy_dir = nproton_dist_dir->mkdir((to_string(energy) + "GeV").data());
 		energy_dir->cd();
 		for(int cent:config::centrals) {
-			hist_proton_dist(data[energy].good_protons[cent], energy, cent);
+//			hist_proton_dist(data[energy].good_protons[cent], energy, cent);
 		}
 	}
 }
@@ -165,7 +165,7 @@ void canvas_nprotons(map<int, tree_data> data, int cent, string name) {
 	int can_index = 1;
 	for(pair<int, tree_data>  energy:data) {
 		proton_can->cd(can_index);
-		hist_proton_dist(energy.second.good_protons[cent], energy.first, cent, "draw");
+//		hist_proton_dist(energy.second.good_protons[cent], energy.first, cent, "draw");
 		can_index++;
 	}
 	proton_can->Write(name.data());
@@ -182,7 +182,7 @@ void canvas_ratio_dists(map<int, tree_data> data, int div, int cent, string name
 	int can_index = 1;
 	for(pair<int, tree_data>  energy:data) {
 		ratio_can->cd(can_index);
-		hist_ratio_dist(energy.second.ratios[div][cent], energy.first, div, cent, "draw");
+//		hist_ratio_dist(energy.second.ratios[div][cent], energy.first, div, cent, "draw");
 		can_index++;
 	}
 	ratio_can->Write(name.data());
