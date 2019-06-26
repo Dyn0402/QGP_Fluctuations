@@ -5,6 +5,7 @@
 <job simulateSubmission ="false" maxFilesPerProcess="15"  fileListSyntax="paths">
   
 	<command>
+		bash
 		source /star/u/dneff/Software/root/root-6.14.06/obj/bin/thisroot.sh
 		./Debug/Angular_Ratios $FILELIST auau_$JOBID.txt &energy;
 	</command>
