@@ -30,9 +30,13 @@ tree_data read_tree(TChain* tree, int energy) {
 	proton_leaves proton = get_proton_leaves(tree);
 
 	int n_events = tree->GetEntries();
-	int event_index = 0;
+	int event_index = 1;
 	while(tree->GetEntry(event_index)) {
+		cout << "Here" << endl;
+		cout << tree << endl;
+		cout << event.ref_mult2->GetValue() << endl;
 		cout << event.run->GetValue() << endl;
+		cout << "Past" << endl;
 		if(check_event_good(event, proton, energy)) {
 			vector<double> good_proton_angles = {};
 			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
