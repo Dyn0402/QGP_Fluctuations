@@ -12,7 +12,7 @@
 
 using namespace std;
 
-vector<double> get_Rs(vector<double> angles, int divisions);
+vector<int> get_Rs(vector<double> angles, int divisions);
 double get_cumulant(vector<double> data, int n);
 double get_central_moment(vector<double> data, int n);
 double get_raw_moment(vector<double> data, int n);

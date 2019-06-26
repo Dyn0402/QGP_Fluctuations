@@ -16,9 +16,10 @@
 using namespace std;
 
 
-vector<double> get_Rs(vector<double> angles, int divisions) {
-	vector<double> Rs = {};
-	double r, low_cut, high_cut;
+vector<int> get_Rs(vector<double> angles, int divisions) {
+	vector<int> Rs = {};
+	int r;
+	double low_cut, high_cut;
 
 	if(angles.size() > 0) {
 		for(int i = 0; i < divisions; i++) {
@@ -34,7 +35,6 @@ vector<double> get_Rs(vector<double> angles, int divisions) {
 					r++;
 				}
 			}
-			r /= angles.size();
 			Rs.push_back(r);
 		}
 	}
