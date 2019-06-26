@@ -6,7 +6,7 @@
   
 	<command>
 		source /star/u/dneff/Software/root/root-6.14.06/obj/bin/thisroot.sh
-		./Debug/Angular_Ratios $FILELIST auau_$JOBID_test.txt &energy;
+		./Debug/Angular_Ratios $FILELIST auau_$JOBID.txt &energy;
 	</command>
   
 	<SandBox>
@@ -15,7 +15,7 @@
 		</Package>
 	</SandBox>
 
-	<input URL="file:/gpfs01/star/pwg/dneff/scratch/output/&energy;GeV/*.root" nFiles="all" />
+	<input URL="file:/gpfs01/star/pwg/dneff/scratch/output/&energy;GeV/*.root" nFiles="15" />
 	<stderr URL="file:/gpfs01/star/pwg/dneff/scratch/ratios/log/&energy;GeV/err_&energy;GeV$JOBID.err"/>
 	<stdout URL="file:/gpfs01/star/pwg/dneff/scratch/ratios/log/&energy;GeV/log_&energy;GeV$JOBID.out" />
 
