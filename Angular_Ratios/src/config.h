@@ -43,17 +43,6 @@ namespace config {
 	extern vector<string> ratios_file_fields;
 	extern string file_ext;
 
-	//Event cuts
-	extern vector<int> bad_runs;
-	extern map<int, int> ref2_min;
-	extern int proton_min_multi;
-
-	//Proton cuts
-	extern double proton_max_pt;
-	extern double proton_min_beta;
-	extern double proton_min_m;
-	extern double proton_max_m;
-
 	extern int ratio_hist_bins;
 	extern double ratio_hist_low;
 	extern double ratio_hist_high;
@@ -63,5 +52,29 @@ namespace config {
 	extern double protons_hist_high;
 }
 
+
+namespace cuts {
+	//Event cuts
+	extern vector<int> bad_runs;
+	extern map<int, int> ref2_min; //Maps energy (key) to ref2_min (value)
+	extern int proton_min_multi; //Need this many protons or more to be a good event.
+
+	//Proton cuts
+	extern double proton_min_p;
+	extern double proton_max_p;
+	extern double proton_min_pt;
+	extern double proton_max_pt;
+	extern double proton_min_beta;
+	extern double proton_max_beta;
+	extern int proton_charge;
+	extern double proton_min_eta;
+	extern double proton_max_eta;
+	extern double proton_min_nsigma;
+	extern double proton_max_nsigma;
+	extern double proton_min_dca;
+	extern double proton_max_dca;
+	extern double proton_min_m2;
+	extern double proton_max_m2;
+}
 
 #endif /* CONFIG_H_ */

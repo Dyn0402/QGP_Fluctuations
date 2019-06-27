@@ -98,7 +98,7 @@ bool check_event_good(event_leaves event, proton_leaves proton, int energy) {
 //Check the list of bad runs for input run.
 //If input run is contained in bad run list, return false (bad run) else return true (good run).
 bool check_good_run(int run) {
-	bool good_run = find(config::bad_runs.begin(), config::bad_runs.end(), run) == config::bad_runs.end();
+	bool good_run = find(cuts::bad_runs.begin(), cuts::bad_runs.end(), run) == cuts::bad_runs.end();
 
 	return(good_run);
 }
@@ -108,7 +108,7 @@ bool check_good_run(int run) {
 //If more protons than minumum, return true, else false.
 bool check_enough_protons(proton_leaves protons) {
 	bool enough_protons = false;
-	if(protons.phi->GetLen() >= config::proton_min_multi) {
+	if(protons.phi->GetLen() >= cuts::proton_min_multi) {
 		enough_protons = true;
 	}
 
@@ -116,18 +116,49 @@ bool check_enough_protons(proton_leaves protons) {
 }
 
 
-//Returns true if proton is good and false if proton is bad.
+//Returns true if proton is good and false if proton is bad. Old version.
+//bool check_proton_good(proton_leaves protons, int proton_index) {
+//	bool good_proton = false;
+//	if(protons.pt->GetValue(proton_index) < config::proton_max_pt) {
+//		good_proton = true;
+//	} else {
+//		double beta = protons.beta->GetValue(proton_index);
+//		double p = protons.p->GetValue(proton_index);
+//		if(beta > config::proton_min_beta) {
+//			double m = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
+//			if(m > config::proton_min_m && m < config::proton_max_m) {
+//				good_proton = true;
+//			}
+//		}
+//	}
+//
+//	return(good_proton);
+//}
+
+// Returns true if proton is good and false if proton is bad.
 bool check_proton_good(proton_leaves protons, int proton_index) {
 	bool good_proton = false;
-	if(protons.pt->GetValue(proton_index) < config::proton_max_pt) {
-		good_proton = true;
-	} else {
-		double beta = protons.beta->GetValue(proton_index);
-		double p = protons.p->GetValue(proton_index);
-		if(beta > config::proton_min_beta) {
-			double m = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
-			if(m > config::proton_min_m && m < config::proton_max_m) {
-				good_proton = true;
+	double p = protons.p->GetValue(proton_index);
+	if(p > cuts::proton_min_p && p < cuts::proton_max_p) {
+		double pt = protons.pt->GetValue(proton_index);
+		if(pt > cuts::proton_min_pt && pt < cuts::proton_max_pt) {
+			double beta = protons.beta->GetValue(proton_index);
+			if(beta > cuts::proton_min_beta && beta < cuts::proton_max_beta) {
+				if(protons.charge->GetValue() == cuts::proton_charge) {
+					double eta = protons.eta->GetValue(proton_index);
+					if(eta > cuts::proton_min_eta && eta < cuts::proton_max_eta) {
+						double nsigma = protons.nsigma->GetValue(proton_index);
+						if(nsigma > cuts::proton_min_nsigma && nsigma < cuts::proton_max_nsigma) {
+							double dca = protons.dca->GetValue(proton_index);
+							if(dca > cuts::proton_min_dca && dca < cuts::proton_max_dca) {
+								double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
+								if(m2 > cuts::proton_min_m2 && m2 < cuts::proton_max_m2) {
+									good_proton = true;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}
