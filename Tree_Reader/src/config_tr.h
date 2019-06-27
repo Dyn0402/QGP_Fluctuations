@@ -19,29 +19,10 @@ namespace config {
 	extern string in_path;
 	extern string out_root_name;
 
-	extern string in_file_prefx;
-	extern string in_file_sufx;
-
 	extern string ratio_dist_dir_name;
 	extern string nproton_dist_dir_name;
 	extern string cumulant_dir_name;
 	extern string canvas_dir_name;
-
-	extern vector<int> energy_list;
-	extern vector<int> divs;
-	extern vector<int> centrals;
-	extern vector<int> cumulant_orders;
-
-	extern string tree_name;
-
-	//File io
-	extern string nproton_file_pre;
-	extern vector<string> nproton_file_fields;
-	extern char file_name_delimeter;
-	extern vector<char> data_delimeters;
-	extern string ratios_file_pre;
-	extern vector<string> ratios_file_fields;
-	extern string file_ext;
 
 	extern int ratio_hist_bins;
 	extern double ratio_hist_low;
@@ -50,6 +31,19 @@ namespace config {
 	extern int protons_hist_bins;
 	extern double protons_hist_low;
 	extern double protons_hist_high;
+}
+
+
+namespace pars {
+	extern string in_file_prefx;
+	extern string in_file_sufx;
+
+	extern vector<int> energy_list;
+	extern vector<int> divs;
+	extern vector<int> centrals;
+	extern vector<int> cumulant_orders;
+
+	extern string tree_name;
 }
 
 

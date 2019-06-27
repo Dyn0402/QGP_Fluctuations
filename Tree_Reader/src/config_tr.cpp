@@ -21,30 +21,10 @@ namespace config {
 //	string in_path = "/home/dylan/rcf_all/direct/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
 	string out_root_name = "test.root";
 
-	string in_file_prefx = "auau";
-	string in_file_sufx = ".root";
-
 	string ratio_dist_dir_name = "Ratio_Dists";
 	string nproton_dist_dir_name = "NProton_Dists";
 	string cumulant_dir_name = "Cumulants";
 	string canvas_dir_name = "Canvases";
-
-	vector<int> energy_list = {11};
-	vector<int> divs = {3};
-	vector<int> centrals = {15};//{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-	vector<int> cumulant_orders = {};
-
-	string tree_name = "nsmTree";
-
-	//File io
-	string nproton_file_pre = "nprotons";
-	vector<string> nproton_file_fields = {"centrality"};
-	char file_name_delimeter = '_';
-	vector<char> data_delimeters = {'\t', ' ', ':'};
-	string ratios_file_pre = "ratios";
-	vector<string> ratios_file_fields = {"divisions", "centrality"};
-	string file_ext = ".txt";
-
 
 	int ratio_hist_bins = 23;
 	double ratio_hist_low = -0.05;
@@ -53,6 +33,19 @@ namespace config {
 	int protons_hist_bins = 51;
 	double protons_hist_low = -1;
 	double protons_hist_high = 50;
+}
+
+
+namespace pars {
+	vector<int> energy_list = {11};
+	vector<int> divs = {3};
+	vector<int> centrals = {15};//{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	vector<int> cumulant_orders = {};
+
+	string in_file_prefx = "auau";
+	string in_file_sufx = ".root";
+
+	string tree_name = "nsmTree";
 }
 
 

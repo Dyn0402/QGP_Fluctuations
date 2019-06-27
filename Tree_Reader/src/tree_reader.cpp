@@ -39,7 +39,7 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
 			data.good_protons[cent][(int)good_proton_angles.size()]++;
-			for(int div:config::divs) {
+			for(int div:pars::divs) {
 				vector<int> event_ratios = get_Rs(good_proton_angles, div);
 				for(int protons_in_bin:event_ratios) {
 					data.ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;

@@ -13,13 +13,10 @@
 #include <TTree.h>
 #include <TLeaf.h>
 
+#include "ratio_methods.h"
+
 using namespace std;
 
-
-struct tree_data {
-	map<int, map<int, map<int, map<int, int>>>> ratios; //ratios[divisions][centrality][num protons in event][num protons in bin]
-	map<int, map<int, int>> good_protons; //good_protons[centrality][num protons]
-};
 
 struct event_leaves {
 	TLeaf *run;

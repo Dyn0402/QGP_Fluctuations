@@ -69,7 +69,7 @@ void read_files(int argc, char** argv) {
 			cout << path << endl;
 			if(i <= 100) {
 				TFile *file = new TFile(path.data(), "READ");
-				TTree *tree = (TTree*)file->Get(config::tree_name.data());
+				TTree *tree = (TTree*)file->Get(pars::tree_name.data());
 				data = read_tree(tree, data, energy);
 				file->Close();
 				delete file;
