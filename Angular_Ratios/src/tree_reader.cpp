@@ -95,6 +95,7 @@ bool check_event_good(event_leaves event, proton_leaves proton, int energy) {
 	return(good_event);
 }
 
+
 //Check the list of bad runs for input run.
 //If input run is contained in bad run list, return false (bad run) else return true (good run).
 bool check_good_run(int run) {
@@ -105,7 +106,7 @@ bool check_good_run(int run) {
 
 
 //Checks if there are enough protons in the event.
-//If more protons than minumum, return true, else false.
+//If more protons than minimum, return true, else false.
 bool check_enough_protons(proton_leaves protons) {
 	bool enough_protons = false;
 	if(protons.phi->GetLen() >= cuts::proton_min_multi) {
@@ -115,25 +116,6 @@ bool check_enough_protons(proton_leaves protons) {
 	return(enough_protons);
 }
 
-
-//Returns true if proton is good and false if proton is bad. Old version.
-//bool check_proton_good(proton_leaves protons, int proton_index) {
-//	bool good_proton = false;
-//	if(protons.pt->GetValue(proton_index) < config::proton_max_pt) {
-//		good_proton = true;
-//	} else {
-//		double beta = protons.beta->GetValue(proton_index);
-//		double p = protons.p->GetValue(proton_index);
-//		if(beta > config::proton_min_beta) {
-//			double m = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
-//			if(m > config::proton_min_m && m < config::proton_max_m) {
-//				good_proton = true;
-//			}
-//		}
-//	}
-//
-//	return(good_proton);
-//}
 
 // Returns true if proton is good and false if proton is bad.
 bool check_proton_good(proton_leaves protons, int proton_index) {
@@ -165,7 +147,6 @@ bool check_proton_good(proton_leaves protons, int proton_index) {
 
 	return(good_proton);
 }
-
 
 
 //Taken directly from Roli.
