@@ -8,6 +8,7 @@
 #ifndef FILE_IO_H_
 #define FILE_IO_H_
 
+#include <vector>
 #include <map>
 
 #include "tree_reader.h"

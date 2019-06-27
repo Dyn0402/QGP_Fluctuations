@@ -74,6 +74,10 @@ proton_leaves get_proton_leaves(TTree* tree) {
 	proton.phi = tree->GetLeaf("Proton.phi");
 	proton.beta = tree->GetLeaf("Proton.beta");
 	proton.dedx = tree->GetLeaf("Proton.dedx");
+	proton.charge = tree->GetLeaf("Proton.charge");
+	proton.dca = tree->GetLeaf("Proton.dca");
+	proton.nsigma = tree->GetLeaf("Proton.nsigma");
+	proton.eta = tree->GetLeaf("Proton.eta");
 
 	return(proton);
 }

@@ -66,7 +66,7 @@ void read_files(int argc, char** argv) {
 		tree_data data;
 		for(string path:read_files) {
 			cout << path << endl;
-			if(i <= 1) {
+			if(i <= 100) {
 				TFile *file = new TFile(path.data(), "READ");
 				TTree *tree = (TTree*)file->Get(config::tree_name.data());
 				data = read_tree(tree, data, energy);

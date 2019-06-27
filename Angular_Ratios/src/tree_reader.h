@@ -33,6 +33,10 @@ struct proton_leaves {
 	TLeaf *p;
 	TLeaf *beta;
 	TLeaf *dedx;
+	TLeaf *charge;
+	TLeaf *dca;
+	TLeaf *nsigma;
+	TLeaf *eta;
 };
 
 tree_data read_tree(TTree* tree, tree_data data, int energy);
