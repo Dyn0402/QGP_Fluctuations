@@ -13,8 +13,9 @@
 #include <dirent.h>
 
 #include "file_io.h"
+
+#include "config_tr.h"
 #include "tree_reader.h"
-#include "config.h"
 
 using namespace std;
 

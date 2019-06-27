@@ -16,9 +16,10 @@
 #include <TChain.h>
 #include <TDirectory.h>
 
-#include "config.h"
 #include "tree_reader.h"
 #include "ratio_methods.h"
+
+#include "config_tr.h"
 #include "plotting.h"
 #include "file_io.h"
 

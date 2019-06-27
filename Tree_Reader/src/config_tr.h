@@ -5,8 +5,8 @@
  *      Author: Dylan Neff
  */
 
-#ifndef CONFIG_H_
-#define CONFIG_H_
+#ifndef CONFIG_TR_H_
+#define CONFIG_TR_H_
 
 #include <string>
 #include <vector>
@@ -77,4 +77,4 @@ namespace cuts {
 	extern double proton_max_m2;
 }
 
-#endif /* CONFIG_H_ */
+#endif /* CONFIG_TR_H_ */
