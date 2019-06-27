@@ -27,7 +27,7 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
-	int n_events = tree->GetEntries();
+//	int n_events = tree->GetEntries();
 	int event_index = 1;
 	while(tree->GetEntry(event_index)) {
 		if(check_event_good(event, proton, energy)) {
@@ -46,9 +46,9 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 				}
 			}
 		}
-		if( !(event_index % (n_events / 10)) ) {
-			cout << (int)(((double)event_index) / n_events * 100 + 0.5) << "% complete. " << event_index << " of " << n_events << endl;
-		}
+//		if( !(event_index % (n_events / 10)) ) {
+//			cout << (int)(((double)event_index) / n_events * 100 + 0.5) << "% complete. " << event_index << " of " << n_events << endl;
+//		}
 		event_index++;
 	}
 

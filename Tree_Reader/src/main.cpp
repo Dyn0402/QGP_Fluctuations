@@ -47,7 +47,7 @@ void read_files(int argc, char** argv) {
 	int energy = stoi(argv[3]);
 
 	ifstream list_file(in_list);
-	cout << in_list << " " << job_id << endl;
+//	cout << in_list << " " << job_id << endl;
 	if(list_file.is_open()) {
 		vector<string> read_files;
 		string line;
@@ -56,18 +56,14 @@ void read_files(int argc, char** argv) {
 		}
 		list_file.close();
 
-		int i = 0;
 		tree_data data;
 		for(string path:read_files) {
-			cout << path << endl;
-			if(i <= 100) {
-				TFile *file = new TFile(path.data(), "READ");
-				TTree *tree = (TTree*)file->Get(pars::tree_name.data());
-				data = read_tree(tree, data, energy);
-				file->Close();
-				delete file;
-			}
-			i++;
+//			cout << path << endl;
+			TFile *file = new TFile(path.data(), "READ");
+			TTree *tree = (TTree*)file->Get(pars::tree_name.data());
+			data = read_tree(tree, data, energy);
+			file->Close();
+			delete file;
 		}
 		write_tree_data(job_id, data);
 	} else {
