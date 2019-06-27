@@ -10,7 +10,6 @@
 
 #include <vector>
 
-#include <TChain.h>
 #include <TTree.h>
 #include <TLeaf.h>
 
@@ -36,11 +35,10 @@ struct proton_leaves {
 	TLeaf *dedx;
 };
 
-tree_data read_tree(TChain* tree, int energy);
+tree_data read_tree(TTree* tree, tree_data data, int energy);
 
-tree_data init_tree_data();
-event_leaves get_event_leaves(TChain* tree);
-proton_leaves get_proton_leaves(TChain* tree);
+event_leaves get_event_leaves(TTree* tree);
+proton_leaves get_proton_leaves(TTree* tree);
 
 bool check_event_good(event_leaves event, proton_leaves, int energy);
 bool check_enough_protons(proton_leaves protons);

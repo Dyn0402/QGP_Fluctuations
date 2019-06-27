@@ -51,31 +51,31 @@ void read_files(int argc, char** argv) {
 	string in_list = argv[1];
 	string job_id = argv[2];
 	int energy = stoi(argv[3]);
-	TChain *chain = new TChain("nsmTree");//config::tree_name.data());
+
 	ifstream list_file(in_list);
-	string line;
 	cout << in_list << " " << job_id << endl;
 	if(list_file.is_open()) {
-		int i = 0;
+		vector<string> read_files;
+		string line;
 		while(getline(list_file, line)) {
-			if(true){
-				chain->Add(line.data());
-				cout << line << endl;
+			read_files.push_back(line);
+		}
+		list_file.close();
+
+		int i = 0;
+		tree_data data;
+		for(string path:read_files) {
+			cout << path << endl;
+			if(i <= 1) {
+				TFile *file = new TFile(path.data(), "READ");
+				TTree *tree = (TTree*)file->Get(config::tree_name.data());
+				data = read_tree(tree, data, energy);
+				file->Close();
+				delete file;
 			}
 			i++;
 		}
-		list_file.close();
-//		cout << chain->GetEntries() << endl;
-		TLeaf *ref2 = chain->GetLeaf("ref2");
-		i = 0;
-//		for(int i=0; i < 10; i++) {
-		while(chain->GetEntry(i)) {
-//			chain->GetEntry(i);
-			cout << "Entry " << i << " refmult2: " << ref2->GetValue() << endl;
-			i++;
-		}
-//		tree_data data = read_tree(chain, energy);
-//		write_tree_data(job_id, data);
+		write_tree_data(job_id, data);
 	} else {
 		cout << "Couldn't open the list_file. \n";
 	}
