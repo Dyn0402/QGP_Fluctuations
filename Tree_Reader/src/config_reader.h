@@ -5,33 +5,14 @@
  *      Author: Dylan Neff
  */
 
-#ifndef CONFIG_TR_H_
-#define CONFIG_TR_H_
+#ifndef CONFIG_READER_H_
+#define CONFIG_READER_H_
 
 #include <string>
 #include <vector>
 #include <map>
 
 using namespace std;
-
-namespace config {
-	extern string out_path;
-	extern string in_path;
-	extern string out_root_name;
-
-	extern string ratio_dist_dir_name;
-	extern string nproton_dist_dir_name;
-	extern string cumulant_dir_name;
-	extern string canvas_dir_name;
-
-	extern int ratio_hist_bins;
-	extern double ratio_hist_low;
-	extern double ratio_hist_high;
-
-	extern int protons_hist_bins;
-	extern double protons_hist_low;
-	extern double protons_hist_high;
-}
 
 
 namespace pars {
@@ -71,4 +52,4 @@ namespace cuts {
 	extern double proton_max_m2;
 }
 
-#endif /* CONFIG_TR_H_ */
+#endif /* CONFIG_READER_H_ */

@@ -18,7 +18,7 @@
 #include "tree_reader.h"
 #include "ratio_methods.h"
 
-#include "config_tr.h"
+#include "config_reader.h"
 
 using namespace std;
 
