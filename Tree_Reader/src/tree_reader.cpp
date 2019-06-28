@@ -38,11 +38,13 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 				}
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
-			data.good_protons[cent][(int)good_proton_angles.size()]++;
-			for(int div:pars::divs) {
-				vector<int> event_ratios = get_Rs(good_proton_angles, div);
-				for(int protons_in_bin:event_ratios) {
-					data.ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+			if(good_proton_angles.size() > 0) {
+				data.good_protons[cent][(int)good_proton_angles.size()]++;
+				for(int div:pars::divs) {
+					vector<int> event_ratios = get_Rs(good_proton_angles, div);
+					for(int protons_in_bin:event_ratios) {
+						data.ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+					}
 				}
 			}
 		}
@@ -110,7 +112,7 @@ bool check_good_run(int run) {
 //If more protons than minimum, return true, else false.
 bool check_enough_protons(proton_leaves protons) {
 	bool enough_protons = false;
-	if(protons.phi->GetLen() >= cuts::proton_min_multi) {
+	if(protons.phi->GetLen() >=  cuts::min_multi) {
 		enough_protons = true;
 	}
 
@@ -122,20 +124,24 @@ bool check_enough_protons(proton_leaves protons) {
 bool check_proton_good(proton_leaves protons, int proton_index) {
 	bool good_proton = false;
 	double p = protons.p->GetValue(proton_index);
-	if(p > cuts::proton_min_p && p < cuts::proton_max_p) {
+//	if(p >  cuts::min_p && p <  cuts::max_p) {
 		double pt = protons.pt->GetValue(proton_index);
-		if(pt > cuts::proton_min_pt && pt < cuts::proton_max_pt) {
+//		if(pt >  cuts::min_pt && pt <  cuts::max_pt) {
 			double beta = protons.beta->GetValue(proton_index);
-			if(beta > cuts::proton_min_beta && beta < cuts::proton_max_beta) {
-				if(protons.charge->GetValue() == cuts::proton_charge) {
+			if(beta >  cuts::min_beta && beta <  cuts::max_beta) {
+				if(protons.charge->GetValue() ==  cuts::charge) {
 					double eta = protons.eta->GetValue(proton_index);
-					if(eta > cuts::proton_min_eta && eta < cuts::proton_max_eta) {
+					if(eta >  cuts::min_eta && eta <  cuts::max_eta) {
 						double nsigma = protons.nsigma->GetValue(proton_index);
-						if(nsigma > cuts::proton_min_nsigma && nsigma < cuts::proton_max_nsigma) {
+						if(nsigma >  cuts::min_nsigma && nsigma <  cuts::max_nsigma) {
 							double dca = protons.dca->GetValue(proton_index);
-							if(dca > cuts::proton_min_dca && dca < cuts::proton_max_dca) {
-								double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
-								if(m2 > cuts::proton_min_m2 && m2 < cuts::proton_max_m2) {
+							if(dca >  cuts::min_dca && dca <  cuts::max_dca) {
+								if(pt >  cuts::min_pt_for_m && pt < cuts::max_pt_for_m) {
+									double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
+									if(m2 >  cuts::min_m2 && m2 <  cuts::max_m2) {
+										good_proton = true;
+									}
+								} else {
 									good_proton = true;
 								}
 							}
@@ -143,8 +149,8 @@ bool check_proton_good(proton_leaves protons, int proton_index) {
 					}
 				}
 			}
-		}
-	}
+//		}
+//	}
 
 	return(good_proton);
 }

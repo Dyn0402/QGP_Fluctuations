@@ -15,15 +15,21 @@ using namespace std;
 
 
 namespace analysis {
+	vector<int> energy_list = {7};
+	vector<int> divs = {3};
+	vector<int> centrals = {15};//{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	vector<int> cumulant_orders = {};
+
+	string in_file_prefx = "auau";
+	string in_file_sufx = ".root";
+
+	string in_path = "/home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/";
 }
 
 
 namespace plot {
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
 //	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
-	string in_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/";
-//	string in_path = "/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
-//	string in_path = "/home/dylan/rcf_all/direct/gpfs01/star/pwg/dneff/BES1_Trees/dylan_trees/";
 	string out_root_name = "test.root";
 
 	string ratio_dist_dir_name = "Ratio_Dists";

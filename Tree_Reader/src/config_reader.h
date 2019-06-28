@@ -16,13 +16,7 @@ using namespace std;
 
 
 namespace pars {
-	extern string in_file_prefx;
-	extern string in_file_sufx;
-
-	extern vector<int> energy_list;
 	extern vector<int> divs;
-	extern vector<int> centrals;
-	extern vector<int> cumulant_orders;
 
 	extern string tree_name;
 }
@@ -32,24 +26,26 @@ namespace cuts {
 	//Event cuts
 	extern vector<int> bad_runs;
 	extern map<int, int> ref2_min; //Maps energy (key) to ref2_min (value)
-	extern int proton_min_multi; //Need this many protons or more to be a good event.
+	extern int min_multi; //Need this many protons or more to be a good event.
 
 	//Proton cuts
-	extern double proton_min_p;
-	extern double proton_max_p;
-	extern double proton_min_pt;
-	extern double proton_max_pt;
-	extern double proton_min_beta;
-	extern double proton_max_beta;
-	extern int proton_charge;
-	extern double proton_min_eta;
-	extern double proton_max_eta;
-	extern double proton_min_nsigma;
-	extern double proton_max_nsigma;
-	extern double proton_min_dca;
-	extern double proton_max_dca;
-	extern double proton_min_m2;
-	extern double proton_max_m2;
+	extern double min_p;
+	extern double max_p;
+	extern double min_pt;
+	extern double max_pt;
+	extern double min_beta;
+	extern double max_beta;
+	extern int charge;
+	extern double min_eta;
+	extern double max_eta;
+	extern double min_nsigma;
+	extern double max_nsigma;
+	extern double min_dca;
+	extern double max_dca;
+	extern double min_m2;
+	extern double max_m2;
+	extern double min_pt_for_m;
+	extern double max_pt_for_m;
 }
 
 #endif /* CONFIG_READER_H_ */

@@ -17,12 +17,20 @@ using namespace std;
 
 
 namespace analysis {
+	extern vector<int> energy_list;
+	extern vector<int> divs;
+	extern vector<int> centrals;
+	extern vector<int> cumulant_orders;
+
+	extern string in_file_prefx;
+	extern string in_file_sufx;
+
+	extern string in_path;
 }
 
 
 namespace plot {
 	extern string out_path;
-	extern string in_path;
 	extern string out_root_name;
 
 	extern string ratio_dist_dir_name;

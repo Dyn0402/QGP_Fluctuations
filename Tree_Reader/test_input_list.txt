@@ -1,9 +1,1 @@
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_972.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_973.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_974.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_975.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_976.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_977.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_978.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_979.root
-/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/auau_183DFD00CC685ED2AB13FE7F744C619E_980.root
+/home/dylan/local_server/dyn0402/Research/Test_Data/7GeV/7GeV.root

@@ -13,6 +13,8 @@
 
 #include <TFile.h>
 
+#include "ratio_methods.h"
+
 using namespace std;
 
 void make_ratio_dist_plots(TFile *out_root, map<int, tree_data> data);
