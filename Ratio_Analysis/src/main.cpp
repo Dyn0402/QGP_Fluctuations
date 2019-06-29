@@ -47,11 +47,12 @@ void analyze() {
 	int num_trees = analysis::energy_list.size();
 	for(int energy:analysis::energy_list) {
 		cout << "Working on " << energy << "GeV. " << tree_num << " of " << num_trees << endl;
+		string path = analysis::in_path + to_string(energy) + "GeV/";
 		for(int cent:analysis::centrals) {
-			map<int, int> nprotons = read_nprotons(analysis::in_path, cent);
+			map<int, int> nprotons = read_nprotons(path, cent);
 			trees[energy].good_protons[cent] = nprotons;
 			for(int div:analysis::divs) {
-				map<int, map<int, int>> ratios = read_ratios(analysis::in_path, div, cent);
+				map<int, map<int, int>> ratios = read_ratios(path, div, cent);
 				trees[energy].ratios[div][cent] = ratios;
 			}
 		}

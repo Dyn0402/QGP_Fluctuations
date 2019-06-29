@@ -182,6 +182,7 @@ void canvas_ratio_dists(map<int, tree_data> data, int div, int cent, string name
 	int can_index = 1;
 	for(pair<int, tree_data>  energy:data) {
 		ratio_can->cd(can_index);
+		gPad->SetLogy();
 		vector<double> ratios = ratios_map_to_vec(energy.second.ratios[div][cent]);
 		hist_ratio_dist(ratios, energy.first, div, cent, "draw");
 		can_index++;
