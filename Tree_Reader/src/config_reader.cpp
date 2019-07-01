@@ -13,7 +13,7 @@
 using namespace std;
 
 namespace pars {
-	vector<int> divs = {3};
+	vector<int> divs = {2,3,4,5,6};
 
 	string tree_name = "nsmTree";
 }
