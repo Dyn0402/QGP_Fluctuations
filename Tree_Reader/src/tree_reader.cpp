@@ -14,6 +14,7 @@
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TH1.h>
+#include <TRandom3.h>
 
 #include "tree_reader.h"
 #include "ratio_methods.h"
@@ -27,6 +28,8 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
+	TRandom3 *rand = new TRandom3(0);
+
 //	int n_events = tree->GetEntries();
 	int event_index = 1;
 	while(tree->GetEntry(event_index)) {
@@ -38,9 +41,10 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 				}
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
-			if(good_proton_angles.size() > 0) {
+			if(good_proton_angles.size() >= cuts::min_multi) {
 				data.good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:pars::divs) {
+					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
 					for(int protons_in_bin:event_ratios) {
 						data.ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;

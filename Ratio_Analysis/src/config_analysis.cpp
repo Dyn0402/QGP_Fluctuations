@@ -17,7 +17,7 @@ using namespace std;
 namespace analysis {
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
-	vector<int> centrals = {13,14,15};//{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	vector<int> centrals = {10,11,12,13,14,15};//{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 	vector<int> cumulant_orders = {};
 
 	string in_file_prefx = "auau";
