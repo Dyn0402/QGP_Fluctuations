@@ -22,6 +22,7 @@ struct event_leaves {
 	TLeaf *run;
 	TLeaf *ref_mult;
 	TLeaf *ref_mult2;
+	TLeaf *btof_mult;
 };
 
 struct proton_leaves {
@@ -48,6 +49,7 @@ bool check_good_run(int run);
 bool check_proton_good(proton_leaves protons, int proton_index);
 
 int get_centrality(double refmult2, int energy);
+bool check_slope(double btof_mult, double ref_mult, int energy);
 
 
 #endif /* TREE_READER_H_ */

@@ -27,6 +27,8 @@ namespace cuts {
 	extern vector<int> bad_runs;
 	extern map<int, int> ref2_min; //Maps energy (key) to ref2_min (value)
 	extern int min_multi; //Need this many protons or more to be a good event.
+	extern map<int, double> max_slope;
+	extern map<int, double> min_slope;
 
 	//Proton cuts
 	extern double min_p;

@@ -68,6 +68,7 @@ event_leaves get_event_leaves(TTree* tree) {
 	event.run = tree->GetLeaf("run");
 	event.ref_mult = tree->GetLeaf("Nprim");
 	event.ref_mult2 = tree->GetLeaf("ref2");
+	event.btof_mult = tree->GetLeaf("btof_multi");
 
 	return(event);
 }
@@ -95,7 +96,9 @@ bool check_event_good(event_leaves event, proton_leaves proton, int energy) {
 	bool good_event = false;
 	if(check_good_run((int)event.run->GetValue())) {
 		if(check_enough_protons(proton)) {
-			good_event = true;
+			if(check_slope(event.btof_mult->GetValue(), event.ref_mult->GetValue(), energy)) {
+				good_event = true;
+			}
 		}
 	}
 
@@ -341,5 +344,17 @@ int get_centrality(double refmult2, int energy){
 
     return cent;
 
+}
+
+
+// Check slope of event. If within cuts, return true for good event, else false.
+bool check_slope(double btof_mult, double ref_mult, int energy) {
+	bool good_event = true;
+	double slope = btof_mult / ref_mult;
+	if(slope > cuts::max_slope[energy] || slope < cuts::min_slope[energy]) {
+		good_event = false;
+	}
+
+	return(good_event);
 }
 
