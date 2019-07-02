@@ -87,8 +87,9 @@ map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree
 			cout << "Calculating " << to_string(div) << " division cumulants" << endl;
 			for(int cent:analysis::centrals) {
 				for(int order:analysis::cumulant_orders) {
-//					cumulants[energy][div][cent][order] = get_cumulant(trees[energy].ratios[div][cent], order);
-//					cout << " mean: " << get_raw_moment(trees[energy].ratios[div][cent], 1) <<  " len: " << trees[energy].ratios[div][cent].size() << " divs: " << div << " cent: " << cent << " order: " << order << " cumulant: " <<  cumulants[energy][div][cent][order] << endl;
+					vector<double> ratios = ratios_map_to_vec(trees[energy].ratios[div][cent]);
+					cumulants[energy][div][cent][order] = get_cumulant(ratios, order);
+//					cout << " mean: " << get_raw_moment(ratios, 1) <<  " len: " << ratios.size() << " divs: " << div << " cent: " << cent << " order: " << order << " cumulant: " <<  cumulants[energy][div][cent][order] << endl;
 				}
 			}
 		}

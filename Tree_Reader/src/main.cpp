@@ -26,6 +26,7 @@ using namespace std;
 
 
 void read_files(int argc, char** argv);
+void read_files_local();
 void io_test();
 
 
@@ -33,7 +34,8 @@ int main(int argc, char** argv) {
 //	config::centrals = {atoi(argv[1])};
 //	string cent(argv[1]);
 //	config::out_root_name = "cent_" + cent + ".root";
-	read_files(argc, argv);
+//	read_files(argc, argv);
+	read_files_local();
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -49,15 +51,15 @@ void read_files(int argc, char** argv) {
 	ifstream list_file(in_list);
 //	cout << in_list << " " << job_id << endl;
 	if(list_file.is_open()) {
-		vector<string> read_files;
+		vector<string> in_files;
 		string line;
 		while(getline(list_file, line)) {
-			read_files.push_back(line);
+			in_files.push_back(line);
 		}
 		list_file.close();
 
 		tree_data data;
-		for(string path:read_files) {
+		for(string path:in_files) {
 //			cout << path << endl;
 			TFile *file = new TFile(path.data(), "READ");
 			TTree *tree = (TTree*)file->Get(pars::tree_name.data());
@@ -70,6 +72,33 @@ void read_files(int argc, char** argv) {
 		cout << "Couldn't open the list_file. \n";
 	}
 }
+
+
+// Read files locally via paths from config rather than input file lists from job submission.
+void read_files_local() {
+	for(int energy:local::energy_list) {
+		cout << "Reading " + to_string(energy) + "GeV trees." << endl;
+		vector<string> in_files = get_files_in_dir(local::in_path+to_string(energy)+"GeV/", "root", "path");
+		unsigned num_files = in_files.size();
+		unsigned file_index = 1;
+		tree_data data;
+		for(string path:in_files) {
+			if(!(file_index % (num_files/10))) {
+				cout << "  " << (int)(100.0*file_index/num_files+0.5) << "% complete" << endl;
+			}
+			TFile *file = new TFile(path.data(), "READ");
+			TTree *tree = (TTree*)file->Get(pars::tree_name.data());
+			data = read_tree(tree, data, energy);
+			file->Close();
+			delete file;
+			file_index++;
+		}
+		cout << " Writing " + to_string(energy) + "GeV trees." << endl;
+		write_tree_data("local", data, local::out_path+to_string(energy)+"GeV/");
+		cout << endl;
+	}
+}
+
 
 
 void io_test() {

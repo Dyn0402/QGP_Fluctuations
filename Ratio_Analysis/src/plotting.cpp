@@ -131,7 +131,7 @@ void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, double>>>> cumul
 void graph_x_vs_y(vector<int> x, vector<double> y, string name) {
 	vector<double> x_double(x.begin(), x.end());
 	TGraph *graph = new TGraph((int)x_double.size(), x_double.data(), y.data());
-	graph->Write();
+	graph->Write(name.data());
 	delete graph;
 }
 

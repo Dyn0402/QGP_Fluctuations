@@ -22,6 +22,14 @@ namespace pars {
 }
 
 
+namespace local {
+	extern string in_path;
+	extern string out_path;
+
+	extern vector<int> energy_list;
+}
+
+
 namespace cuts {
 	//Event cuts
 	extern vector<int> bad_runs;
