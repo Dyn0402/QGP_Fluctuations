@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE note [
-<!ENTITY energy "11">
-<!ENTITY files "568">
+<!ENTITY energy "39">
+<!ENTITY files "3580">
 ]>
 <job simulateSubmission="false" minFilesPerProcess="&files;" maxFilesPerProcess="&files;" fileListSyntax="paths">
   
@@ -12,7 +12,7 @@
   
 	<SandBox>
 		<Package>
-			<File>file:../Debug</File>
+			<File>file:./Debug</File>
 		</Package>
 	</SandBox>
 
@@ -25,8 +25,8 @@
  
 	<Generator>
 		<Location>/gpfs01/star/pwg/dneff/scratch/ratios/log/</Location>
-		<ScriptLocation>/gpfs01/star/pwg/dneff/scratch/ratios/script/7GeV/</ScriptLocation>
-		<ListLocation>/gpfs01/star/pwg/dneff/scratch/ratios/script/list/7GeV/</ListLocation>
+		<ScriptLocation>/gpfs01/star/pwg/dneff/scratch/ratios/script/39GeV/</ScriptLocation>
+		<ListLocation>/gpfs01/star/pwg/dneff/scratch/ratios/list/39GeV/</ListLocation>
 	</Generator>
   
 </job>
