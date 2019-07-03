@@ -37,7 +37,7 @@ struct proton_leaves {
 	TLeaf *eta;
 };
 
-tree_data read_tree(TTree* tree, tree_data data, int energy);
+void read_tree(TTree* tree, tree_data *data, int energy);
 
 event_leaves get_event_leaves(TTree* tree);
 proton_leaves get_proton_leaves(TTree* tree);

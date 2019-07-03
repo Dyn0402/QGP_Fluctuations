@@ -24,7 +24,7 @@
 using namespace std;
 
 
-tree_data read_tree(TTree* tree, tree_data data, int energy) {
+void read_tree(TTree* tree, tree_data *data, int energy) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
@@ -42,12 +42,12 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
 			if(good_proton_angles.size() >= (unsigned)cuts::min_multi) {
-				data.good_protons[cent][(int)good_proton_angles.size()]++;
+				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:pars::divs) {
-					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+//					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
 					for(int protons_in_bin:event_ratios) {
-						data.ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+						data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
 					}
 				}
 			}
@@ -57,8 +57,6 @@ tree_data read_tree(TTree* tree, tree_data data, int energy) {
 //		}
 		event_index++;
 	}
-
-	return(data);
 }
 
 

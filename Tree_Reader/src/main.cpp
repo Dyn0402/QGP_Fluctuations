@@ -10,11 +10,15 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <thread>
+#include <ctime>
+#include <chrono>
 
 #include <TFile.h>
 #include <TTree.h>
 #include <TChain.h>
 #include <TDirectory.h>
+#include <TROOT.h>
 
 #include "tree_reader.h"
 #include "ratio_methods.h"
@@ -27,7 +31,12 @@ using namespace std;
 
 void read_files(int argc, char** argv);
 void read_files_local();
+void read_energy(int energy);
 void io_test();
+void sum_tree_data_test();
+
+clock_t start = clock();
+auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
@@ -63,7 +72,7 @@ void read_files(int argc, char** argv) {
 //			cout << path << endl;
 			TFile *file = new TFile(path.data(), "READ");
 			TTree *tree = (TTree*)file->Get(pars::tree_name.data());
-			data = read_tree(tree, data, energy);
+//			data = read_tree(tree, data, energy);
 			file->Close();
 			delete file;
 		}
@@ -76,29 +85,42 @@ void read_files(int argc, char** argv) {
 
 // Read files locally via paths from config rather than input file lists from job submission.
 void read_files_local() {
+	ROOT::EnableThreadSafety();
+	vector<thread> threads;
 	for(int energy:local::energy_list) {
-		cout << "Reading " + to_string(energy) + "GeV trees." << endl;
-		vector<string> in_files = get_files_in_dir(local::in_path+to_string(energy)+"GeV/", "root", "path");
-		unsigned num_files = in_files.size();
-		unsigned file_index = 1;
-		tree_data data;
-		for(string path:in_files) {
-			if(!(file_index % (num_files/10))) {
-				cout << "  " << (int)(100.0*file_index/num_files+0.5) << "% complete" << endl;
-			}
-			TFile *file = new TFile(path.data(), "READ");
-			TTree *tree = (TTree*)file->Get(pars::tree_name.data());
-			data = read_tree(tree, data, energy);
-			file->Close();
-			delete file;
-			file_index++;
+		threads.push_back(thread(read_energy, energy));
+	}
+	for(thread & th : threads) {
+		if(th.joinable()) {
+			th.join();
 		}
-		cout << " Writing " + to_string(energy) + "GeV trees." << endl;
-		write_tree_data("local", data, local::out_path+to_string(energy)+"GeV/");
-		cout << endl;
 	}
 }
 
+
+// Read files for single energy and write results to text files.
+void read_energy(int energy) {
+	cout << "Reading " + to_string(energy) + "GeV trees." << endl;
+	vector<string> in_files = get_files_in_dir(local::in_path+to_string(energy)+"GeV/", "root", "path");
+	unsigned num_files = in_files.size();
+	unsigned file_index = 1;
+	tree_data data;
+	for(string path:in_files) {
+		if(!(file_index % (unsigned)(num_files/10.0+0.5))) {
+			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+		}
+		TFile *file = new TFile(path.data(), "READ");
+		TTree *tree = (TTree*)file->Get(pars::tree_name.data());
+		read_tree(tree, &data, energy);
+		file->Close();
+		delete file;
+		file_index++;
+	}
+	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
+	write_tree_data("local", data, local::out_path+to_string(energy)+"GeV/");
+	cout << endl;
+}
 
 
 void io_test() {
@@ -136,4 +158,20 @@ void io_test() {
 	for(pair<int, int> entry:test_inb) {
 		cout << entry.first << "\t" << entry.second << endl;
 	}
+}
+
+
+
+void sum_tree_data_test() {
+	tree_data data;
+	data.good_protons[0][10] += 10;
+	data.ratios[6][0][10][2] += 14;
+	tree_data new_data;
+	new_data.good_protons[0][10] += 5;
+	new_data.ratios[6][0][10][2] += 3;
+	sum_tree_data(&data, new_data);
+
+	cout << data.good_protons[0][10] << endl;
+	cout << data.ratios[6][0][10][2] << endl;
+
 }

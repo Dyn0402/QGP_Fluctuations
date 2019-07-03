@@ -3,7 +3,6 @@
 	<name>Tree_Reader</name>
 	<comment></comment>
 	<projects>
-		<project>Fluctuation_Lib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
