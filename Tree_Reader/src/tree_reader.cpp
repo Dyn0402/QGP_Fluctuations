@@ -44,7 +44,7 @@ void read_tree(TTree* tree, tree_data *data, int energy) {
 			if(good_proton_angles.size() >= (unsigned)cuts::min_multi) {
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:pars::divs) {
-//					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
 					for(int protons_in_bin:event_ratios) {
 						data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
@@ -131,9 +131,9 @@ bool check_proton_good(proton_leaves protons, int proton_index) {
 	double p = protons.p->GetValue(proton_index);
 //	if(p >  cuts::min_p && p <  cuts::max_p) {
 		double pt = protons.pt->GetValue(proton_index);
-//		if(pt >  cuts::min_pt && pt <  cuts::max_pt) {
+		if(pt <  cuts::max_pt) {
 			double beta = protons.beta->GetValue(proton_index);
-			if(beta >  cuts::min_beta && beta <  cuts::max_beta) {
+//			if(beta >  cuts::min_beta && beta <  cuts::max_beta) {
 				if(protons.charge->GetValue() ==  cuts::charge) {
 					double eta = protons.eta->GetValue(proton_index);
 					if(eta >  cuts::min_eta && eta <  cuts::max_eta) {
@@ -142,9 +142,11 @@ bool check_proton_good(proton_leaves protons, int proton_index) {
 							double dca = protons.dca->GetValue(proton_index);
 							if(dca >  cuts::min_dca && dca <  cuts::max_dca) {
 								if(pt >  cuts::min_pt_for_m && pt < cuts::max_pt_for_m) {
-									double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
-									if(m2 >  cuts::min_m2 && m2 <  cuts::max_m2) {
-										good_proton = true;
+									if(beta > cuts::min_beta) {
+										double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
+										if(m2 >  cuts::min_m2 && m2 <  cuts::max_m2) {
+											good_proton = true;
+										}
 									}
 								} else {
 									good_proton = true;
@@ -153,8 +155,8 @@ bool check_proton_good(proton_leaves protons, int proton_index) {
 						}
 					}
 				}
-			}
-//		}
+//			}
+		}
 //	}
 
 	return(good_proton);

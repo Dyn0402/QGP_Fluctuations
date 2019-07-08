@@ -20,6 +20,9 @@
 #include <TDirectory.h>
 #include <TROOT.h>
 
+#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
+#include "../StRoot/StRefMultCorr/CentralityMaker.h"
+
 #include "tree_reader.h"
 #include "ratio_methods.h"
 
@@ -34,6 +37,7 @@ void read_files_local();
 void read_energy(int energy);
 void io_test();
 void sum_tree_data_test();
+void ref_mult_test();
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -45,6 +49,7 @@ int main(int argc, char** argv) {
 //	config::out_root_name = "cent_" + cent + ".root";
 //	read_files(argc, argv);
 	read_files_local();
+//	ref_mult_test();
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -174,4 +179,21 @@ void sum_tree_data_test() {
 	cout << data.good_protons[0][10] << endl;
 	cout << data.ratios[6][0][10][2] << endl;
 
+}
+
+
+void ref_mult_test() {
+	StRefMultCorr *refmult2CorrUtil = CentralityMaker::instance()->getRefMult2Corr();
+	//StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
+	refmult2CorrUtil->init(11078000);
+	if(!refmult2CorrUtil->isBadRun(11078000)) {
+		int refmult2 = 100;
+		double vz = 20.0;
+		double bbc = 20000.0;
+		refmult2CorrUtil->initEvent(refmult2, vz, bbc);
+		int cent16 = refmult2CorrUtil->getCentralityBin16();
+		double reweight = refmult2CorrUtil->getWeight();
+		double refmult2Cor = refmult2CorrUtil->getRefMultCorr();
+		cout << cent16 << endl;
+	}
 }
