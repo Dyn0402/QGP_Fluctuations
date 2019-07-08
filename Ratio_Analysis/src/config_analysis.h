@@ -45,6 +45,11 @@ namespace plot {
 	extern int protons_hist_bins;
 	extern double protons_hist_low;
 	extern double protons_hist_high;
+
+	extern vector<int> div_marker_styles;
+	extern vector<int> div_marker_width;
+	extern vector<int> div_marker_colors;
+	extern vector<int> div_marker_sizes;
 }
 
 

@@ -70,7 +70,7 @@ void analyze() {
 	cout << endl << "Making cumulant plots..." << endl;
 	make_cumulant_plots(out_root, cumulants);
 	cout << endl << "Making canvases..." << endl;
-	make_canvas_plots(out_root, trees);
+	make_canvas_plots(out_root, trees, cumulants);
 
 
 	out_root->Close();

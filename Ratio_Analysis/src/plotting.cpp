@@ -15,6 +15,7 @@
 #include <TH1.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
+#include <TGraphErrors.h>
 
 #include "ratio_methods.h"
 #include "plotting.h"
@@ -136,15 +137,25 @@ void graph_x_vs_y(vector<int> x, vector<double> y, string name) {
 }
 
 
+TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double> x_err, vector<double> y_err) {
+	TGraphErrors *graph = new TGraphErrors((int)x.size(), x.data(), y.data(), x_err.data(), y_err.data());
+	return(graph);
+}
 
-void make_canvas_plots(TFile *out_root, map<int, tree_data> data) {
+
+
+void make_canvas_plots(TFile *out_root, map<int, tree_data> data, map<int, map<int, map<int, map<int, double>>>> cumulants) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
 	can_dir->cd();
+
+	// Proton distribution canvases
 	TDirectory *nproton_can_dir = can_dir->mkdir(plot::nproton_dist_dir_name.data());
 	nproton_can_dir->cd();
 	for(int cent:analysis::centrals) {
 		canvas_nprotons(data, cent, "Centrality " + to_string(cent));
 	}
+
+	// Ratios distribution canvases
 	TDirectory *ratios_can_dir = can_dir->mkdir(plot::ratio_dist_dir_name.data());
 	ratios_can_dir->cd();
 	for(int div:analysis::divs) {
@@ -152,6 +163,18 @@ void make_canvas_plots(TFile *out_root, map<int, tree_data> data) {
 		div_dir->cd();
 		for(int cent:analysis::centrals) {
 			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
+		}
+	}
+
+	// Cumulant canvases
+	TDirectory *cumulant_can_dir = can_dir->mkdir(plot::cumulant_dir_name.data());
+	cumulant_can_dir->cd();
+	for(int order:analysis::cumulant_orders) {
+		TDirectory *order_dir = cumulant_can_dir->mkdir((to_string(order) + "_Order").data());
+		order_dir->cd();
+		for(int cent:analysis::centrals) {
+			string name = "Order " + to_string(order) + " Centrality " + to_string(cent);
+			canvas_cumulant_dists(cumulants, order, cent, name);
 		}
 	}
 }
@@ -190,3 +213,29 @@ void canvas_ratio_dists(map<int, tree_data> data, int div, int cent, string name
 	ratio_can->Write(name.data());
 	delete ratio_can;
 }
+
+
+void canvas_cumulant_dists(map<int, map<int, map<int, map<int, double>>>> cumulants, int order, int cent, string name) {
+	auto *can = new TCanvas();
+	auto *mg = new TMultiGraph();
+	mg->SetNameTitle(name.data(), name.data());
+	for(int div:analysis::divs) {
+		vector<double> cumulant, energy;
+		for(int e:analysis::energy_list) {
+			energy.push_back((double)e);
+			cumulant.push_back(cumulants[e][div][cent][order]);
+		}
+		TGraphErrors *graph = graph_x_vs_y_err(energy, cumulant);
+		graph->SetNameTitle((to_string(div) + " divisions").data());
+		graph->SetMarkerStyle(plot::div_marker_styles[div]);
+		graph->SetMarkerColor(plot::div_marker_colors[div]);
+		graph->SetMarkerSize(plot::div_marker_sizes[div]);
+		mg->Add(graph, "AP");
+	}
+	mg->Draw("AP");
+	can->BuildLegend();
+	can->Write(name.data());
+	delete mg;
+	delete can;
+}
+
