@@ -9,9 +9,9 @@
 #include <iostream>
 #include <math.h>
 
-#include "TFile.h"
-#include "TRandom3.h"
-#include "TH1D.h"
+#include <TFile.h>
+#include <TRandom3.h>
+#include <TH1D.h>
 
 #include "sim_v1.h"
 #include "ratio_methods.h"
@@ -23,9 +23,9 @@ using namespace std;
 void sim_v1() {
 	cout << "Starting Simulation v1." << endl;
 
+	cout << "Test" << endl;
+
 	vector<double>Rs = simulate();
-//	analyze(Rs);
-	plot(Rs);
 
 
 	cout << "donzo" << endl;
@@ -36,6 +36,8 @@ vector<double> simulate() {
 	int n_protons, rand_protons, group_protons;
 	double group_angle;
 	vector<double> proton_angles, Rs;
+	vector<double> corr2p;
+	cout << "Here" << endl;
 	for(int i = 0; i < config::n_events; i++) {
 		n_protons = get_n_protons();
 		if(config::rand->Rndm() <= config::p_effect) {
@@ -51,12 +53,24 @@ vector<double> simulate() {
 		}
 		group_angle = config::rand->Rndm() * 2 * M_PI;
 		for(int j = 0; j < group_protons; j++) {
-			proton_angles.push_back(group_angle);
+			double cor_angle = config::rand->Gaus(group_angle, config::spread_sigma);
+			while(cor_angle > 2*M_PI) { cor_angle -= 2*M_PI; }
+			while(cor_angle < 0) { cor_angle += 2*M_PI; }
+			proton_angles.push_back(cor_angle);
 		}
+		for(double cor:get_two_particle_correlation(proton_angles)) {
+			corr2p.push_back(cor);
+		}
+//		for(double angle:proton_angles) {
+//			corr2p.push_back(angle);
+//		}
 		for(auto r:get_Rs(proton_angles, config::divisions)) {
 			Rs.push_back(r);
 		}
 	}
+
+	plot(Rs);
+	plot_corrs(corr2p);
 
 
 	return(Rs);
@@ -70,13 +84,26 @@ void plot(vector<double> Rs) {
 		config::R_hist->Fill(r);
 	}
 	config::R_hist->Write();
+	out_file->Close();
 	delete config::R_hist;
-	delete config::rand;
 	delete out_file;
 }
 
 
+void plot_corrs(vector<double> corrs) {
+	TFile *out_file = new TFile(config::out_path.data(), "UPDATE");
+	for(double c:corrs) {
+		if(c > 2*M_PI - M_PI / 2) { c-=2*M_PI; }
+		config::corr_hist->Fill(c);
+	}
+	config::corr_hist->Write();
+	out_file->Close();
+	delete config::corr_hist;
+	delete out_file;
+}
+
 int get_n_protons() {
-	int n = (int) (25 * config::rand->Rndm() + 0.5) + 1;
+//	int n = (int) (config::particle_mean * config::rand->Rndm() + 0.5) + 1;
+	int n = config::rand->Poisson(config::particle_mean);
 	return (n);
 }

@@ -20,6 +20,7 @@ vector<double> simulate();
 int get_n_protons();
 
 void plot(vector<double> Rs);
+void plot_corrs(vector<double> corrs);
 
 
 #endif /* SIM_V1_H_ */
