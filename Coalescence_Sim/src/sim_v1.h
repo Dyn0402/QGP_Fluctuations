@@ -16,6 +16,9 @@ using namespace std;
 void sim_v1();
 
 vector<double> simulate();
+void simulate_2pcorr();
+
+vector<double> simulate_event();
 
 int get_n_protons();
 
