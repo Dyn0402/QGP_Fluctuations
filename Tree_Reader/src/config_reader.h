@@ -25,6 +25,7 @@ namespace pars {
 namespace local {
 	extern string in_path;
 	extern string out_path;
+	extern string qa_path;
 
 	extern vector<int> energy_list;
 }

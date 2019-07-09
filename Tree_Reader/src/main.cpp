@@ -13,20 +13,22 @@
 #include <thread>
 #include <ctime>
 #include <chrono>
+#include <unistd.h>
 
 #include <TFile.h>
 #include <TTree.h>
 #include <TChain.h>
 #include <TDirectory.h>
 #include <TROOT.h>
-
-#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
-#include "../StRoot/StRefMultCorr/CentralityMaker.h"
+#include <TCanvas.h>
 
 #include "tree_reader.h"
 #include "ratio_methods.h"
 
 #include "file_io.h"
+
+#include "../StRoot/StRefMultCorr/CentralityMaker.h"
+#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 #include "config_reader.h"
 
 using namespace std;
@@ -94,6 +96,7 @@ void read_files_local() {
 	vector<thread> threads;
 	for(int energy:local::energy_list) {
 		threads.push_back(thread(read_energy, energy));
+//		usleep(20000000);
 	}
 	for(thread & th : threads) {
 		if(th.joinable()) {
@@ -110,6 +113,8 @@ void read_energy(int energy) {
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 	tree_data data;
+	auto *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
 	for(string path:in_files) {
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) {
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
@@ -117,11 +122,20 @@ void read_energy(int energy) {
 		}
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(pars::tree_name.data());
-		read_tree(tree, &data, energy);
+		read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist);
 		file->Close();
 		delete file;
 		file_index++;
 	}
+	TFile *qa = new TFile((local::qa_path + "QA_" + to_string(energy) + "GeV.root").data(), "RECREATE");
+	TCanvas *can = new TCanvas();
+	cent_hist->Draw("COLZ");
+	can->Write();
+	cent_hist->Write();
+	delete cent_hist;
+	delete can;
+	qa->Close();
+	delete qa;
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, local::out_path+to_string(energy)+"GeV/");
 	cout << endl;

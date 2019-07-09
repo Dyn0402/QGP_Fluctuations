@@ -14,7 +14,12 @@
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <TRandom3.h>
+#include <TCanvas.h>
+
+#include "../StRoot/StRefMultCorr/CentralityMaker.h"
+#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "tree_reader.h"
 #include "ratio_methods.h"
@@ -24,11 +29,12 @@
 using namespace std;
 
 
-void read_tree(TTree* tree, tree_data *data, int energy) {
+void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
 	TRandom3 *rand = new TRandom3(0);
+//	auto *cent_hist = new TH2I("cent_comp", "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 
 //	int n_events = tree->GetEntries();
 	int event_index = 1;
@@ -41,8 +47,16 @@ void read_tree(TTree* tree, tree_data *data, int energy) {
 				}
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
+			int cent2 = -2;
+			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) {
+////				cout << event.run->GetValue() << endl;
+				refmult2CorrUtil->init(event.run->GetValue());
+				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
+				cent2 = refmult2CorrUtil->getCentralityBin16();
+			} //else { cout << "Refmult said was a bad run" << endl; }
+			cent_hist->Fill(cent, cent2);
 			if(good_proton_angles.size() >= (unsigned)cuts::min_multi) {
-				data->good_protons[cent][(int)good_proton_angles.size()]++;
+				data->good_protons[cent2][(int)good_proton_angles.size()]++;
 				for(int div:pars::divs) {
 					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
@@ -67,6 +81,8 @@ event_leaves get_event_leaves(TTree* tree) {
 	event.ref_mult = tree->GetLeaf("Nprim");
 	event.ref_mult2 = tree->GetLeaf("ref2");
 	event.btof_mult = tree->GetLeaf("btof_multi");
+	event.vz = tree->GetLeaf("vtx_z");
+	event.run = tree->GetLeaf("run");
 
 	return(event);
 }
@@ -128,36 +144,70 @@ bool check_enough_protons(proton_leaves protons) {
 // Returns true if proton is good and false if proton is bad.
 bool check_proton_good(proton_leaves protons, int proton_index) {
 	bool good_proton = false;
+
 	double p = protons.p->GetValue(proton_index);
-//	if(p >  cuts::min_p && p <  cuts::max_p) {
-		double pt = protons.pt->GetValue(proton_index);
-		if(pt <  cuts::max_pt) {
-			double beta = protons.beta->GetValue(proton_index);
-//			if(beta >  cuts::min_beta && beta <  cuts::max_beta) {
-				if(protons.charge->GetValue() ==  cuts::charge) {
-					double eta = protons.eta->GetValue(proton_index);
-					if(eta >  cuts::min_eta && eta <  cuts::max_eta) {
-						double nsigma = protons.nsigma->GetValue(proton_index);
-						if(nsigma >  cuts::min_nsigma && nsigma <  cuts::max_nsigma) {
-							double dca = protons.dca->GetValue(proton_index);
-							if(dca >  cuts::min_dca && dca <  cuts::max_dca) {
-								if(pt >  cuts::min_pt_for_m && pt < cuts::max_pt_for_m) {
-									if(beta > cuts::min_beta) {
-										double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
-										if(m2 >  cuts::min_m2 && m2 <  cuts::max_m2) {
-											good_proton = true;
-										}
-									}
-								} else {
-									good_proton = true;
-								}
-							}
-						}
-					}
-				}
-//			}
+	if(!(p > cuts::min_p && p < cuts::max_p)) { return(good_proton); }
+
+	double pt = protons.pt->GetValue(proton_index);
+	if(!(pt < cuts::max_pt)) { return(good_proton); }
+
+	double beta = protons.beta->GetValue(proton_index);
+	if(!(beta > cuts::min_beta && beta < cuts::max_beta)) { return(good_proton); }
+
+	if(!(protons.charge->GetValue() == cuts::charge)) { return(good_proton); }
+
+	double eta = protons.eta->GetValue(proton_index);
+	if(!(eta > cuts::min_eta && eta < cuts::max_eta)) { return(good_proton); }
+
+	double nsigma = protons.nsigma->GetValue(proton_index);
+	if(!(nsigma > cuts::min_nsigma && nsigma < cuts::max_nsigma)) { return(good_proton); }
+
+	double dca = protons.dca->GetValue(proton_index);
+	if(!(dca > cuts::min_dca && dca < cuts::max_dca)) { return(good_proton); }
+
+	if(pt > cuts::min_pt_for_m && pt < cuts::max_pt_for_m) {
+		if(beta > cuts::min_beta) {
+			double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
+			if(m2 > cuts::min_m2 && m2 < cuts::max_m2) {
+				good_proton = true;
+			}
 		}
-//	}
+	} else {
+		good_proton = true;
+	}
+
+
+
+//	double p = protons.p->GetValue(proton_index);
+////	if(p >  cuts::min_p && p <  cuts::max_p) {
+//		double pt = protons.pt->GetValue(proton_index);
+//		if(pt <  cuts::max_pt) {
+//			double beta = protons.beta->GetValue(proton_index);
+////			if(beta >  cuts::min_beta && beta <  cuts::max_beta) {
+//				if(protons.charge->GetValue() ==  cuts::charge) {
+//					double eta = protons.eta->GetValue(proton_index);
+//					if(eta >  cuts::min_eta && eta <  cuts::max_eta) {
+//						double nsigma = protons.nsigma->GetValue(proton_index);
+//						if(nsigma >  cuts::min_nsigma && nsigma <  cuts::max_nsigma) {
+//							double dca = protons.dca->GetValue(proton_index);
+//							if(dca >  cuts::min_dca && dca <  cuts::max_dca) {
+//								if(pt >  cuts::min_pt_for_m && pt < cuts::max_pt_for_m) {
+//									if(beta > cuts::min_beta) {
+//										double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
+//										if(m2 >  cuts::min_m2 && m2 <  cuts::max_m2) {
+//											good_proton = true;
+//										}
+//									}
+//								} else {
+//									good_proton = true;
+//								}
+//							}
+//						}
+//					}
+//				}
+////			}
+//		}
+////	}
 
 	return(good_proton);
 }

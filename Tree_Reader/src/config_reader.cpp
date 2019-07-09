@@ -20,10 +20,12 @@ namespace pars {
 
 
 namespace local {
-	string in_path = "/home/dylan/local_server/dyn0402/Research/Trees/";
-//	string in_path = "/home/dylan/Desktop/Trees/";
+//	string in_path = "/home/dylan/local_server/dyn0402/Research/Trees/";
+	string in_path = "/home/dylan/Research/Trees/";
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Data/";
-	vector<int> energy_list = {7, 11, 19, 27, 39, 62};
+	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
+
+	vector<int> energy_list = {27, 19, 39, 11, 62, 7};//{7, 11, 19, 27, 39, 62};
 }
 
 

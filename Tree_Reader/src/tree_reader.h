@@ -12,6 +12,9 @@
 
 #include <TTree.h>
 #include <TLeaf.h>
+#include <TH2.h>
+
+#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "ratio_methods.h"
 
@@ -23,6 +26,7 @@ struct event_leaves {
 	TLeaf *ref_mult;
 	TLeaf *ref_mult2;
 	TLeaf *btof_mult;
+	TLeaf *vz;
 };
 
 struct proton_leaves {
@@ -37,7 +41,7 @@ struct proton_leaves {
 	TLeaf *eta;
 };
 
-void read_tree(TTree* tree, tree_data *data, int energy);
+void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
 
 event_leaves get_event_leaves(TTree* tree);
 proton_leaves get_proton_leaves(TTree* tree);
