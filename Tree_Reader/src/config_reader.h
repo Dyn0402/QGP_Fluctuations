@@ -27,6 +27,8 @@ namespace local {
 	extern string out_path;
 	extern string qa_path;
 
+	extern string qa_name;
+
 	extern vector<int> energy_list;
 }
 

@@ -127,7 +127,7 @@ void read_energy(int energy) {
 		delete file;
 		file_index++;
 	}
-	TFile *qa = new TFile((local::qa_path + "QA_" + to_string(energy) + "GeV.root").data(), "RECREATE");
+	TFile *qa = new TFile((local::qa_path + local::qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
 	TCanvas *can = new TCanvas();
 	cent_hist->Draw("COLZ");
 	can->Write();

@@ -18,7 +18,7 @@ using namespace std;
 
 void analyze();
 void cumulant_test();
-map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree_data> trees); //cumulants[energy][divisions][centrality][cumulant_order]
+map<int, map<int, map<int, map<int, tuple<double, double>>>>> calculate_cumulants(map<int, tree_data> trees); //cumulants[energy][divisions][centrality][cumulant_order]
 
 
 int main() {
@@ -34,7 +34,9 @@ void cumulant_test() {
 	vector<double> test_data = {-1,0,1,2,3,4,5,6,7,8,9,10,10};
 	cout << get_raw_moment(test_data, n) << endl;
 	cout << get_central_moment(test_data, n) << endl;
-	cout << get_cumulant(test_data, n) << endl;
+	double val, err;
+	tie(val, err) = get_cumulant(test_data, n);
+	cout << val << "+-" << err << endl;
 }
 
 
@@ -79,8 +81,8 @@ void analyze() {
 
 
 //Calculate cumulants for each cumulant_order for each centrality for each number of divisions for each energy.
-map<int, map<int, map<int, map<int, double>>>> calculate_cumulants(map<int, tree_data> trees) {
-	map<int, map<int, map<int, map<int, double>>>> cumulants;
+map<int, map<int, map<int, map<int, tuple<double, double>>>>> calculate_cumulants(map<int, tree_data> trees) {
+	map<int, map<int, map<int, map<int, tuple<double, double>>>>> cumulants;
 	for(int energy:analysis::energy_list) {
 		cout << "Calculating " << to_string(energy) << "GeV cumulants" << endl;
 		for(int div:analysis::divs) {

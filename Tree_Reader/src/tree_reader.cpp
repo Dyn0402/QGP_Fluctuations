@@ -56,7 +56,7 @@ void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2
 			} //else { cout << "Refmult said was a bad run" << endl; }
 			cent_hist->Fill(cent, cent2);
 			if(good_proton_angles.size() >= (unsigned)cuts::min_multi) {
-				data->good_protons[cent2][(int)good_proton_angles.size()]++;
+				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:pars::divs) {
 					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);

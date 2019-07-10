@@ -7,6 +7,7 @@
 
 
 #include <vector>
+#include <tuple>
 #include <string>
 
 #include <TFile.h>
@@ -87,7 +88,7 @@ void hist_proton_dist(vector<int> nprotons, int energy, int cent, string mode) {
 }
 
 
-void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, double>>>> cumulants) {
+void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, tuple<double, double>>>>> cumulants) {
 	TDirectory *cumulant_dir = out_root->mkdir(plot::cumulant_dir_name.data());
 	cumulant_dir->cd();
 	for(int order:analysis::cumulant_orders) {
@@ -108,23 +109,35 @@ void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, do
 
 
 
-void graph_cumulant_vs_energy(map<int, map<int, map<int, map<int, double>>>> cumulants, int div, int cent, int order) {
-	vector<double> cumulant;
+void graph_cumulant_vs_energy(map<int, map<int, map<int, map<int, tuple<double, double>>>>> cumulants, int div, int cent, int order) {
+	vector<double> cumulant, cumulant_err, energies, energies_err;
+	double cum_val, cum_err;
 	for(int energy:analysis::energy_list) {
-		cumulant.push_back(cumulants[energy][div][cent][order]);
+		tie(cum_val, cum_err) = cumulants[energy][div][cent][order];
+		cumulant.push_back(cum_val);
+		cumulant_err.push_back(cum_err);
+		energies.push_back((double)energy);
+		energies_err.push_back(0.0);
 	}
 	string name = to_string(div) + " division " + to_string(cent) + " centrality " + to_string(order) + " order";
-	graph_x_vs_y(analysis::energy_list, cumulant, name);
+	TGraphErrors *graph = graph_x_vs_y_err(energies, cumulant, energies_err, cumulant_err);
+	graph->Write(name.data());
 }
 
 
-void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, double>>>> cumulants, int energy, int cent, int order) {
-	vector<double> cumulant;
+void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, tuple<double, double>>>>> cumulants, int energy, int cent, int order) {
+	vector<double> cumulant, cumulant_err, divisions, divisions_err;
+	double cum_val, cum_err;
 	for(int div:analysis::divs) {
-		cumulant.push_back(cumulants[energy][div][cent][order]);
+		tie(cum_val, cum_err) = cumulants[energy][div][cent][order];
+		cumulant.push_back(cum_val);
+		cumulant_err.push_back(cum_err);
+		divisions.push_back((double)energy);
+		divisions_err.push_back(0.0);
 	}
 	string name = to_string(energy) + " energy " + to_string(cent) + " centrality " + to_string(order) + " order";
-	graph_x_vs_y(analysis::divs, cumulant, name);
+	TGraphErrors *graph = graph_x_vs_y_err(divisions, cumulant, divisions_err, cumulant_err);
+	graph->Write(name.data());
 }
 
 
@@ -144,7 +157,7 @@ TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double
 
 
 
-void make_canvas_plots(TFile *out_root, map<int, tree_data> data, map<int, map<int, map<int, map<int, double>>>> cumulants) {
+void make_canvas_plots(TFile *out_root, map<int, tree_data> data, map<int, map<int, map<int, map<int, tuple<double, double>>>>> cumulants) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
 	can_dir->cd();
 
@@ -215,17 +228,21 @@ void canvas_ratio_dists(map<int, tree_data> data, int div, int cent, string name
 }
 
 
-void canvas_cumulant_dists(map<int, map<int, map<int, map<int, double>>>> cumulants, int order, int cent, string name) {
+void canvas_cumulant_dists(map<int, map<int, map<int, map<int, tuple<double, double>>>>> cumulants, int order, int cent, string name) {
 	auto *can = new TCanvas();
 	auto *mg = new TMultiGraph();
 	mg->SetNameTitle(name.data(), name.data());
 	for(int div:analysis::divs) {
-		vector<double> cumulant, energy;
+		vector<double> cumulant, energy, cumulant_err, energy_err;
+		double cum_val, cum_err;
 		for(int e:analysis::energy_list) {
 			energy.push_back((double)e);
-			cumulant.push_back(cumulants[e][div][cent][order]);
+			energy_err.push_back(0.0);
+			tie(cum_val, cum_err) = cumulants[e][div][cent][order];
+			cumulant.push_back(cum_val);
+			cumulant.push_back(cum_err);
 		}
-		TGraphErrors *graph = graph_x_vs_y_err(energy, cumulant);
+		TGraphErrors *graph = graph_x_vs_y_err(energy, cumulant, energy_err, cumulant_err);
 		graph->SetNameTitle((to_string(div) + " divisions").data());
 		graph->SetMarkerStyle(plot::div_marker_styles[div]);
 		graph->SetMarkerColor(plot::div_marker_colors[div]);
