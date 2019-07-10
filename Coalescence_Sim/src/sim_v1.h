@@ -10,20 +10,19 @@
 
 #include <vector>
 
+#include "ratio_methods.h"
+
 using namespace std;
 
 
-void sim_v1();
+tree_data sim_v1();
 
-vector<double> simulate();
+tree_data simulate_Rs();
 void simulate_2pcorr();
 
 vector<double> simulate_event();
 
 int get_n_protons();
-
-void plot(vector<double> Rs);
-void plot_corrs(vector<double> corrs);
 
 
 #endif /* SIM_V1_H_ */

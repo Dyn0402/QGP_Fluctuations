@@ -8,7 +8,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-
+#include <vector>
 #include <string>
 
 #include <TFile.h>
@@ -31,6 +31,9 @@ namespace config {
 	extern double spread_sigma;
 
 	extern TRandom3 *rand;
+
+	extern vector<int> cumulant_orders;
+	extern map<int, string> cumulant_name;
 
 	extern TH1D *R_hist;
 	extern TH1D *corr_hist;
