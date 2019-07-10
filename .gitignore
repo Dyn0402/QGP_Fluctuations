@@ -11,7 +11,7 @@ local.properties
 .recommenders
 
 # Ignore StRoot folders for now
-StRoot/
+# StRoot/
 
 # Debug folders
 Debug/
