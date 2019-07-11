@@ -21,13 +21,13 @@ namespace pars {
 
 namespace local {
 //	string in_path = "/home/dylan/local_server/dyn0402/Research/Trees/";
-	string in_path = "/home/dylan/Research/Test_Trees/";
-	string out_path = "/home/dylan/local_server/dyn0402/Research/Test_Data2/";
+	string in_path = "/home/dylan/Research/Trees/";
+	string out_path = "/home/dylan/local_server/dyn0402/Research/Data2/";
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
 
-	string qa_name = "QA_Test_Data_";
+	string qa_name = "QA_";
 
-	vector<int> energy_list = {39, 62};//{27, 19, 39, 11, 62, 7};
+	vector<int> energy_list = {27, 19, 39, 11, 62, 7};
 }
 
 

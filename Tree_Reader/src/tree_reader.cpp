@@ -34,9 +34,7 @@ void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2
 	proton_leaves proton = get_proton_leaves(tree);
 
 	TRandom3 *rand = new TRandom3(0);
-//	auto *cent_hist = new TH2I("cent_comp", "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 
-//	int n_events = tree->GetEntries();
 	int event_index = 1;
 	while(tree->GetEntry(event_index)) {
 		if(check_event_good(event, proton, energy)) {
@@ -48,8 +46,7 @@ void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
 			int cent2 = -2;
-			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) {
-////				cout << event.run->GetValue() << endl;
+			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
 				refmult2CorrUtil->init(event.run->GetValue());
 				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
 				cent2 = refmult2CorrUtil->getCentralityBin16();
@@ -66,9 +63,6 @@ void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2
 				}
 			}
 		}
-//		if( !(event_index % (n_events / 10)) ) {
-//			cout << (int)(((double)event_index) / n_events * 100 + 0.5) << "% complete. " << event_index << " of " << n_events << endl;
-//		}
 		event_index++;
 	}
 }
@@ -152,7 +146,7 @@ bool check_proton_good(proton_leaves protons, int proton_index) {
 	if(!(pt < cuts::max_pt)) { return(good_proton); }
 
 	double beta = protons.beta->GetValue(proton_index);
-	if(!(beta > cuts::min_beta && beta < cuts::max_beta)) { return(good_proton); }
+//	if(!(beta > cuts::min_beta && beta < cuts::max_beta)) { return(good_proton); }
 
 	if(!(protons.charge->GetValue() == cuts::charge)) { return(good_proton); }
 
