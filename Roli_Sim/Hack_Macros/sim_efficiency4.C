@@ -50,7 +50,7 @@ double pratio;
 double twoPi = 2*3.14159;
 //double mean = 25; ///// <--- mean of the Poisson
 
-const int nPhiBin = 3+1;
+const int nPhiBin = 4+1;
 int num_particle[nPhiBin] = {0,};
 int num_mixed[nPhiBin] = {0,};
 
@@ -75,7 +75,7 @@ TProfile *hParticle;
 TProfile *hMixed;
 
 
-void sim_efficiency(TString outputFile, double pc, double xcluster, double mean, int div) {
+void sim_efficiency2(TString outputFile, double pc, double xcluster, double mean) {
 
     // ------ define histograms -------
 
