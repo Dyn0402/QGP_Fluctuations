@@ -75,7 +75,7 @@ TProfile *hParticle;
 TProfile *hMixed;
 
 
-void sim_efficiency(TString outputFile, double pc, double xcluster, double mean){
+void sim_efficiency(TString outputFile, double pc, double xcluster, double mean, int div) {
 
     // ------ define histograms -------
 
