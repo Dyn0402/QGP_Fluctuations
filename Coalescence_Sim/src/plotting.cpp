@@ -22,26 +22,28 @@ using namespace std;
 
 void plot_Rs(vector<double> Rs) {
 	TFile *out_file = new TFile(config::out_path.data(), "RECREATE");
+	TH1D *R_hist = new TH1D("Ratios", "Ratio Distribution", 23, -0.05, 1.10);
 	for(auto r:Rs) {
 //		cout << r << endl;
-		config::R_hist->Fill(r);
+		R_hist->Fill(r);
 	}
-	config::R_hist->Write();
+	R_hist->Write();
 	out_file->Close();
-	delete config::R_hist;
+	delete R_hist;
 	delete out_file;
 }
 
 
 void plot_corrs(vector<double> corrs) {
 	TFile *out_file = new TFile(config::out_path.data(), "UPDATE");
+	TH1D *corr_hist = new TH1D("Two_Particle_Correlations", "Two Particle Correlations", 1000, -M_PI/2, 2*M_PI-M_PI/2);
 	for(double c:corrs) {
 		if(c > 2*M_PI - M_PI / 2) { c-=2*M_PI; }
-		config::corr_hist->Fill(c);
+		corr_hist->Fill(c);
 	}
-	config::corr_hist->Write();
+	corr_hist->Write();
 	out_file->Close();
-	delete config::corr_hist;
+	delete corr_hist;
 	delete out_file;
 }
 
@@ -76,11 +78,7 @@ void plot_cumulants_vs_peffect(map<double, map<int, tuple<double,double>>> cumul
 
 
 void hist_ratio_dist(vector<double> ratios, string mode) {
-	string name = "Ratio hist p_effect: " +to_string(config::p_effect);
-	TH1D *ratio_hist = new TH1D(name.data(), name.data(), 23, -0.05, 1.1);
-	for(double ratio:ratios) {
-		ratio_hist->Fill(ratio);
-	}
+	TH1D* ratio_hist = hist_ratios(ratios);
 	if(mode == "write") {
 		ratio_hist->Write();
 		delete ratio_hist;
@@ -92,8 +90,8 @@ void hist_ratio_dist(vector<double> ratios, string mode) {
 
 
 void hist_proton_dist(vector<int> nprotons, string mode) {
-	string name = "Proton dist p_effect: " +to_string(config::p_effect);
-	TH1D *protons_hist = new TH1D(name.data(), name.data(), 31, -0.5, 30.5);
+	string name = "Proton dist";
+	TH1D *protons_hist = new TH1D(name.data(), name.data(), 101, -0.5, 100.5);
 	for(double protons:nprotons) {
 		protons_hist->Fill(protons);
 	}
@@ -103,4 +101,26 @@ void hist_proton_dist(vector<int> nprotons, string mode) {
 	} else if(mode == "draw") {
 		protons_hist->Draw();
 	}
+}
+
+
+void comp_hists(TH1D *hist1, TH1D *hist2, string can_name) {
+	hist2->SetLineColor(kRed);
+	TCanvas can;
+	can.SetName(can_name.data());
+	hist1->Draw();
+	hist2->Draw("sames");
+	can.SetLogy();
+	can.BuildLegend();
+	can.Write();
+}
+
+
+TH1D* hist_ratios(vector<double> ratios) {
+	string name = "Dylan";
+	TH1D *ratio_hist = new TH1D(name.data(), name.data(), 23, -0.05, 1.10);
+	for(double ratio:ratios) {
+		ratio_hist->Fill(ratio);
+	}
+	return(ratio_hist);
 }

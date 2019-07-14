@@ -19,26 +19,22 @@ using namespace std;
 
 
 namespace config {
+	struct simulation_pars {
+		int n_events = 1e7;
+		int divisions = 3;
+
+		double particle_mean = 10.0;
+		double p_effect = 0.1;
+		double p_cluster = 0.1;
+
+		double spread_sigma = 0.0;
+		int min_protons = 2;
+	};
+
 	extern string out_path;
-
-	extern int n_events;
-	extern int particle_mean;
-	extern int divisions;
-
-	extern double p_effect;
-	extern double p_cluster;
-
-	extern double spread_sigma;
-
-	extern TRandom3 *rand;
 
 	extern vector<int> cumulant_orders;
 	extern map<int, string> cumulant_name;
-
-	extern TH1D *R_hist;
-	extern TH1D *corr_hist;
-
-//	extern TFile *out_file;
 }
 
 
