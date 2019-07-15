@@ -144,7 +144,6 @@ void roli_comp() {
 
 	{
 		ThreadPool pool(12);
-
 		for(double mean:mean_list) {
 			for(double p_effect:peffect_list) {
 				for(double p_cluster:pcluster_list) {
