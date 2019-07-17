@@ -5,9 +5,11 @@
  *      Author: dylan
  */
 
+#include <fstream>
 #include <iostream>
 #include <tuple>
 #include <vector>
+#include <sstream>
 
 #include <TROOT.h>
 #include <TError.h>
@@ -20,6 +22,7 @@
 #include "config.h"
 #include "sim_efficiency.h"
 #include "ThreadPool.h"
+#include "Stats.h"
 
 using namespace std;
 
@@ -29,12 +32,14 @@ vector<double> bin_ratios(vector<double> ratios, double min, double max, int bin
 void bin_ratios_test();
 void roli_comp();
 void run_comp(config::simulation_pars pars, TFile *out_file);
+void test_stats();
 
 int main() {
 //	bin_ratios_test();
 //	simulate();
 //	simulate_batch();
-	roli_comp();
+//	roli_comp();
+	test_stats();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -187,5 +192,31 @@ void run_comp(config::simulation_pars pars, TFile *out_file) {
 	delete dylan;
 	delete roli;
 	cout << "Finishing " + name << endl;
+}
+
+
+void test_stats() {
+	string dist_path = "/home/dylan/local_server/dyn0402/Research/Test_Data/test_dist.txt";
+	ifstream file(dist_path);
+
+	double point;
+	vector<double> data;
+
+	string line;
+	while (getline(file, line)) {
+		istringstream iss(line);
+		iss >> point;
+		data.push_back(point);
+	}
+
+	Stats stat(data);
+	measure<double> mean = stat.get_mean();
+	measure<double> sd = stat.get_standard_deviation();
+	measure<double> skew = stat.get_skewness();
+	measure<double> kurt = stat.get_kurtosis();
+	cout << "Mean: " << mean.val << " +- " << mean.err << endl;
+	cout << "Standard Deviation: " << sd.val << " +- " << sd.err << endl;
+	cout << "Skewness: " << skew.val << " +- " << skew.err << endl;
+	cout << "Kurtosis: " << kurt.val << " +- " << kurt.err << endl;
 }
 
