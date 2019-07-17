@@ -41,6 +41,8 @@ tree_data simulate_Rs(config::simulation_pars pars) {
 		}
 	}
 
+	delete rand;
+
 	return(data);
 }
 
@@ -55,6 +57,8 @@ void simulate_2pcorr(config::simulation_pars pars) {
 			corr2p.push_back(cor);
 		}
 	}
+
+	delete rand;
 
 	plot_corrs(corr2p);
 }

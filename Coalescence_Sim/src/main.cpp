@@ -28,6 +28,7 @@ using namespace std;
 
 void simulate();
 void simulate_batch();
+pair<map<string, measure<double>>, map<int, measure<double>>> run_peff(double p_effect, TDirectory *ratio_dir, TDirectory *proton_dir);
 vector<double> bin_ratios(vector<double> ratios, double min, double max, int bins);
 void bin_ratios_test();
 void roli_comp();
@@ -37,9 +38,9 @@ void test_stats();
 int main() {
 //	bin_ratios_test();
 //	simulate();
-//	simulate_batch();
+	simulate_batch();
 //	roli_comp();
-	test_stats();
+//	test_stats();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -75,39 +76,63 @@ void simulate() {
 
 
 void simulate_batch() {
-	config::simulation_pars pars;
-	cout << "Here" << endl;
 	TFile *out_file = new TFile(config::out_path.data(), "RECREATE");
 	TDirectory *ratio_dir = out_file->mkdir("ratios");
 	TDirectory *proton_dir = out_file->mkdir("protons");
-	cout << "Here2" << endl;
+	map<double, future<pair<map<string, measure<double>>, map<int, measure<double>>>>> futures;
+	map<double, map<string, measure<double>>> stats_with_peffect;
+	map<double, map<int, measure<double>>> cumulants_with_peffect;
+	ROOT::EnableThreadSafety();
+//	gErrorIgnoreLevel=kError;
 
-	map<double, map<int, tuple<double,double>>> cumulants_with_peffect;
-	for(double p_effect:{0.0, 0.05, 0.10, 0.15, 0.20, 0.25}) {
-		cout << "Running p_effect: " << p_effect << endl;
-		pars.p_effect = p_effect;
-		tree_data data = sim_v1(pars);
-		map<int, tuple<double,double>> cumulants;
-		vector<double> ratios = ratios_map_to_vec(data.ratios[pars.divisions][0]);
-//		ratios = bin_ratios(ratios, -0.5, 1.1, 23);
-//		cout << "ratios: " << flush;
-//		for(double r:ratios) { cout << r << " " << flush; }
-		for(int order:config::cumulant_orders) {
-			cumulants[order] = get_cumulant(ratios, order);
+	{
+		ThreadPool pool(12);
+
+		for(double p_effect:config::p_effect_list) {
+			futures[p_effect] = pool.enqueue(run_peff, p_effect, ratio_dir, proton_dir);
 		}
-		ratio_dir->cd();
-		hist_ratio_dist(ratios, "write");
-		proton_dir->cd();
-		hist_proton_dist(nproton_map_to_vec(data.good_protons[0]),"write");
-		cumulants_with_peffect[p_effect] = cumulants;
 	}
 
+	for(auto && run:futures) {
+		auto result = run.second.get();
+		stats_with_peffect[run.first] = result.first;
+		cumulants_with_peffect[run.first] = result.second;
+	}
+
+
 	out_file->cd();
+	plot_stats_vs_peffect(stats_with_peffect);
 	plot_cumulants_vs_peffect(cumulants_with_peffect);
 
 	out_file->Close();
 	delete out_file;
 }
+
+
+pair<map<string, measure<double>>, map<int, measure<double>>> run_peff(double p_effect, TDirectory *ratio_dir, TDirectory *proton_dir) {
+	cout << "Running p_effect: " << p_effect << endl;
+	config::simulation_pars pars;
+	pars.p_effect = p_effect;
+	tree_data data = sim_v1(pars);
+	map<string, measure<double>> stats;
+	map<int, measure<double>> cumulants;
+	vector<double> ratios = ratios_map_to_vec(data.ratios[pars.divisions][0]);
+	Stats stat(ratios);
+	stats["mean"] = stat.get_mean();
+	stats["standard_deviation"] = stat.get_standard_deviation();
+	stats["skewness"] = stat.get_skewness();
+	stats["kurtosis"] = stat.get_kurtosis();
+	for(int order:config::cumulant_orders) {
+		cumulants[order] = stat.get_cumulant(order);
+	}
+	ratio_dir->cd();
+	hist_ratio_dist(ratios, "Ratio Dist p_eff: " + to_string(p_effect), "write");
+	proton_dir->cd();
+	hist_proton_dist(nproton_map_to_vec(data.good_protons[0]), "Proton Dist p_eff: " + to_string(p_effect), "write");
+
+	return(make_pair(stats, cumulants));
+}
+
 
 
 vector<double> bin_ratios(vector<double> ratios, double min, double max, int bins) {

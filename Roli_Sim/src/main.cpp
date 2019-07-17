@@ -27,8 +27,8 @@ void example();
 
 
 int main() {
-	th_pool_test();
-//	example();
+//	th_pool_test();
+	example();
 
 	cout << "donzo" << endl;
 

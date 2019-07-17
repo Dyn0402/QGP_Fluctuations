@@ -6,6 +6,7 @@
  */
 
 #include <vector>
+#include <string>
 #include <map>
 
 #include <TFile.h>
@@ -15,6 +16,7 @@
 
 #include "plotting.h"
 #include "ratio_methods.h"
+#include "Stats.h"
 #include "config.h"
 
 using namespace std;
@@ -48,37 +50,77 @@ void plot_corrs(vector<double> corrs) {
 }
 
 
-void plot_cumulants_vs_peffect(map<double, map<int, tuple<double,double>>> cumulants_with_peffect) {
+void plot_stats_vs_peffect(map<double, map<string, measure<double>>> stats_with_peffect) {
+	TCanvas *can = new TCanvas();
+	can->SetTitle("Stats vs p_effect");
+	can->SetName("Stats vs p_effect");
+	can->Divide(ceil(pow(config::statistics.size(),0.5)), ceil(config::statistics.size()/ceil(pow(config::statistics.size(), 0.5))));
+	int can_index = 1;
+	for(string stat:config::statistics) {
+		can->cd(can_index);
+		vector<double> p_effect, statistic, statistic_err;
+		for(pair<double, map<string, measure<double>>> effect:stats_with_peffect) {
+			p_effect.push_back(effect.first);
+			measure<double> stat_measure = effect.second[stat];
+			statistic.push_back(stat_measure.val);
+			statistic_err.push_back(stat_measure.err);
+		}
+		TGraphErrors *graph = new TGraphErrors((int)p_effect.size(), p_effect.data(), statistic.data(), 0, statistic_err.data());
+		graph->SetNameTitle(stat.data(), stat.data());
+		graph->SetMarkerStyle(8);
+		graph->SetMarkerColor(kRed);
+		graph->SetMarkerSize(1);
+		double x_min = *min_element(p_effect.begin(), p_effect.end());
+		double x_max = *max_element(p_effect.begin(), p_effect.end());
+		double x_range = x_max - x_min;
+		graph->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
+		graph->GetXaxis()->SetTitle("p_effect");
+		graph->Draw("AP");
+		can_index++;
+	}
+	can->Write("Statistic vs p_effect");
+	delete can;
+}
+
+
+void plot_cumulants_vs_peffect(map<double, map<int, measure<double>>> cumulants_with_peffect) {
 	TCanvas *can = new TCanvas();
 	can->SetTitle("Cumulants vs p_effect");
-	can->SetName("Cumulants vs p_effect");
+	can->SetName("Cumulantss vs p_effect");
 	can->Divide(ceil(pow(config::cumulant_orders.size(),0.5)), ceil(config::cumulant_orders.size()/ceil(pow(config::cumulant_orders.size(), 0.5))));
 	int can_index = 1;
 	for(int order:config::cumulant_orders) {
 		can->cd(can_index);
 		vector<double> p_effect, cumulant, cumulant_err;
-		double cum_val, cum_err;
-		for(pair<double, map<int, tuple<double, double>>> effect:cumulants_with_peffect) {
+		for(pair<double, map<int, measure<double>>> effect:cumulants_with_peffect) {
 			p_effect.push_back(effect.first);
-			tie(cum_val, cum_err) = effect.second[order];
-			cumulant.push_back(cum_val);
-			cumulant_err.push_back(cum_err);
+			measure<double> cumulant_measure = effect.second[order];
+			cumulant.push_back(cumulant_measure.val);
+			cumulant_err.push_back(cumulant_measure.err);
 		}
 		TGraphErrors *graph = new TGraphErrors((int)p_effect.size(), p_effect.data(), cumulant.data(), 0, cumulant_err.data());
-		graph->SetNameTitle(config::cumulant_name[order].data(), config::cumulant_name[order].data());
+		graph->SetNameTitle(("Cumulant Order " + to_string(order)).data(), ("Cumulant Order " + to_string(order)).data());
 		graph->SetMarkerStyle(8);
 		graph->SetMarkerColor(kRed);
 		graph->SetMarkerSize(1);
+		double x_min = *min_element(p_effect.begin(), p_effect.end());
+		double x_max = *max_element(p_effect.begin(), p_effect.end());
+		double x_range = x_max - x_min;
+		graph->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
+		graph->GetXaxis()->SetTitle("p_effect");
 		graph->Draw("AP");
 		can_index++;
 	}
-	can->Write("Cumulants vs p_effect");
+	can->Write("Cumulant vs p_effect");
 	delete can;
 }
 
 
-void hist_ratio_dist(vector<double> ratios, string mode) {
-	TH1D* ratio_hist = hist_ratios(ratios);
+void hist_ratio_dist(vector<double> ratios, string name, string mode) {
+	TH1D *ratio_hist = new TH1D(name.data(), name.data(), 23, -0.05, 1.10);
+	for(double ratio:ratios) {
+		ratio_hist->Fill(ratio);
+	}
 	if(mode == "write") {
 		ratio_hist->Write();
 		delete ratio_hist;
@@ -89,8 +131,7 @@ void hist_ratio_dist(vector<double> ratios, string mode) {
 
 
 
-void hist_proton_dist(vector<int> nprotons, string mode) {
-	string name = "Proton dist";
+void hist_proton_dist(vector<int> nprotons, string name, string mode) {
 	TH1D *protons_hist = new TH1D(name.data(), name.data(), 101, -0.5, 100.5);
 	for(double protons:nprotons) {
 		protons_hist->Fill(protons);
