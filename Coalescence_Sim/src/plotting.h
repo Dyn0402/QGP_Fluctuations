@@ -21,8 +21,8 @@ using namespace std;
 
 void plot_Rs(vector<double> Rs);
 void plot_corrs(vector<double> corrs);
-void plot_stats_vs_peffect(map<double, map<string, measure<double>>> stats_with_peffect);
-void plot_cumulants_vs_peffect(map<double, map<int, measure<double>>> cumulants_with_peffect);
+void plot_stats_vs_x(map<double, map<string, measure<double>>> stats, string x_name = "x");
+void plot_cumulants_vs_x(map<double, map<int, measure<double>>> cumulants, string x_name = "x");
 
 void hist_ratio_dist(vector<double> ratios, string name = "ratio dist", string mode="write");
 void hist_proton_dist(vector<int> nprotons, string name = "proton dist", string mode="write");

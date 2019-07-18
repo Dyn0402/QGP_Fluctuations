@@ -28,7 +28,7 @@ using namespace std;
 
 void simulate();
 void simulate_batch();
-pair<map<string, measure<double>>, map<int, measure<double>>> run_peff(double p_effect, TDirectory *ratio_dir, TDirectory *proton_dir);
+pair<map<string, measure<double>>, map<int, measure<double>>> run_param(double param_val, string param, TDirectory *ratio_dir, TDirectory *proton_dir);
 vector<double> bin_ratios(vector<double> ratios, double min, double max, int bins);
 void bin_ratios_test();
 void roli_comp();
@@ -80,39 +80,44 @@ void simulate_batch() {
 	TDirectory *ratio_dir = out_file->mkdir("ratios");
 	TDirectory *proton_dir = out_file->mkdir("protons");
 	map<double, future<pair<map<string, measure<double>>, map<int, measure<double>>>>> futures;
-	map<double, map<string, measure<double>>> stats_with_peffect;
-	map<double, map<int, measure<double>>> cumulants_with_peffect;
+	map<double, map<string, measure<double>>> stats;
+	map<double, map<int, measure<double>>> cumulants;
 	ROOT::EnableThreadSafety();
 //	gErrorIgnoreLevel=kError;
 
 	{
 		ThreadPool pool(12);
 
-		for(double p_effect:config::p_effect_list) {
-			futures[p_effect] = pool.enqueue(run_peff, p_effect, ratio_dir, proton_dir);
+		for(double param_val:config::param_list) {
+			futures[param_val] = pool.enqueue(run_param, param_val, config::param, ratio_dir, proton_dir);
 		}
 	}
 
 	for(auto && run:futures) {
 		auto result = run.second.get();
-		stats_with_peffect[run.first] = result.first;
-		cumulants_with_peffect[run.first] = result.second;
+		stats[run.first] = result.first;
+		cumulants[run.first] = result.second;
 	}
 
 
 	out_file->cd();
-	plot_stats_vs_peffect(stats_with_peffect);
-	plot_cumulants_vs_peffect(cumulants_with_peffect);
+	plot_stats_vs_x(stats, config::param);
+	plot_cumulants_vs_x(cumulants, config::param);
 
 	out_file->Close();
 	delete out_file;
 }
 
 
-pair<map<string, measure<double>>, map<int, measure<double>>> run_peff(double p_effect, TDirectory *ratio_dir, TDirectory *proton_dir) {
-	cout << "Running p_effect: " << p_effect << endl;
+pair<map<string, measure<double>>, map<int, measure<double>>> run_param(double param_val, string param, TDirectory *ratio_dir, TDirectory *proton_dir) {
 	config::simulation_pars pars;
-	pars.p_effect = p_effect;
+	if(param == "param_val") {
+		pars.p_effect = param_val;
+	} else if(param == "p_cluster") {
+		pars.p_cluster = param_val;
+	}
+	cout << "Starting: mean=" + to_string(pars.particle_mean) + " p_effect=" + to_string(pars.p_effect) + " p_cluster=" + to_string(pars.p_cluster) + "\n";
+
 	tree_data data = sim_v1(pars);
 	map<string, measure<double>> stats;
 	map<int, measure<double>> cumulants;
@@ -126,9 +131,11 @@ pair<map<string, measure<double>>, map<int, measure<double>>> run_peff(double p_
 		cumulants[order] = stat.get_cumulant(order);
 	}
 	ratio_dir->cd();
-	hist_ratio_dist(ratios, "Ratio Dist p_eff: " + to_string(p_effect), "write");
+	hist_ratio_dist(ratios, "Ratio Dist " + param + ": " + to_string(param_val), "write");
 	proton_dir->cd();
-	hist_proton_dist(nproton_map_to_vec(data.good_protons[0]), "Proton Dist p_eff: " + to_string(p_effect), "write");
+	hist_proton_dist(nproton_map_to_vec(data.good_protons[0]), "Proton Dist "  + param + ": " + to_string(param_val), "write");
+
+	cout << "Finishing: mean=" + to_string(pars.particle_mean) + " p_effect=" + to_string(pars.p_effect) + " p_cluster=" + to_string(pars.p_cluster) + "\n";
 
 	return(make_pair(stats, cumulants));
 }

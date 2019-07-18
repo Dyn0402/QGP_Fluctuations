@@ -20,11 +20,11 @@ using namespace std;
 
 namespace config {
 	struct simulation_pars {
-		int n_events = 1e5;
-		int divisions = 3;
+		int n_events = 1e7;
+		int divisions = 6;
 
-		double particle_mean = 10.0;
-		double p_effect = 0.1;
+		double particle_mean = 20.0;
+		double p_effect = 0.2;
 		double p_cluster = 0.5;
 
 		double spread_sigma = 0.0;
@@ -33,9 +33,13 @@ namespace config {
 
 	extern string out_path;
 
-	extern vector<double> p_effect_list;
+	extern string param;
+	extern vector<double> param_list;
 	extern vector<string> statistics;
 	extern vector<int> cumulant_orders;
+
+	extern double can_w;
+	extern double can_h;
 }
 
 

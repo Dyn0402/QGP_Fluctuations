@@ -50,68 +50,64 @@ void plot_corrs(vector<double> corrs) {
 }
 
 
-void plot_stats_vs_peffect(map<double, map<string, measure<double>>> stats_with_peffect) {
-	TCanvas *can = new TCanvas();
-	can->SetTitle("Stats vs p_effect");
-	can->SetName("Stats vs p_effect");
+void plot_stats_vs_x(map<double, map<string, measure<double>>> stats, string x_name) {
+	TCanvas *can = new TCanvas(("Stats vs " + x_name).data(), ("Stats vs " + x_name).data(), config::can_w, config::can_h);
 	can->Divide(ceil(pow(config::statistics.size(),0.5)), ceil(config::statistics.size()/ceil(pow(config::statistics.size(), 0.5))));
 	int can_index = 1;
 	for(string stat:config::statistics) {
 		can->cd(can_index);
-		vector<double> p_effect, statistic, statistic_err;
-		for(pair<double, map<string, measure<double>>> effect:stats_with_peffect) {
-			p_effect.push_back(effect.first);
+		vector<double> x, statistic, statistic_err;
+		for(pair<double, map<string, measure<double>>> effect:stats) {
+			x.push_back(effect.first);
 			measure<double> stat_measure = effect.second[stat];
 			statistic.push_back(stat_measure.val);
 			statistic_err.push_back(stat_measure.err);
 		}
-		TGraphErrors *graph = new TGraphErrors((int)p_effect.size(), p_effect.data(), statistic.data(), 0, statistic_err.data());
+		TGraphErrors *graph = new TGraphErrors((int)x.size(), x.data(), statistic.data(), 0, statistic_err.data());
 		graph->SetNameTitle(stat.data(), stat.data());
 		graph->SetMarkerStyle(8);
 		graph->SetMarkerColor(kRed);
 		graph->SetMarkerSize(1);
-		double x_min = *min_element(p_effect.begin(), p_effect.end());
-		double x_max = *max_element(p_effect.begin(), p_effect.end());
+		double x_min = *min_element(x.begin(), x.end());
+		double x_max = *max_element(x.begin(), x.end());
 		double x_range = x_max - x_min;
 		graph->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
-		graph->GetXaxis()->SetTitle("p_effect");
+		graph->GetXaxis()->SetTitle(x_name.data());
 		graph->Draw("AP");
 		can_index++;
 	}
-	can->Write("Statistic vs p_effect");
+	can->Write(("Stats vs " + x_name).data());
 	delete can;
 }
 
 
-void plot_cumulants_vs_peffect(map<double, map<int, measure<double>>> cumulants_with_peffect) {
-	TCanvas *can = new TCanvas();
-	can->SetTitle("Cumulants vs p_effect");
-	can->SetName("Cumulantss vs p_effect");
+void plot_cumulants_vs_x(map<double, map<int, measure<double>>> cumulants, string x_name) {
+	TCanvas *can = new TCanvas(("Cumulants vs " + x_name).data(), ("Cumulants vs " + x_name).data(), config::can_w, config::can_h);
 	can->Divide(ceil(pow(config::cumulant_orders.size(),0.5)), ceil(config::cumulant_orders.size()/ceil(pow(config::cumulant_orders.size(), 0.5))));
 	int can_index = 1;
 	for(int order:config::cumulant_orders) {
 		can->cd(can_index);
-		vector<double> p_effect, cumulant, cumulant_err;
-		for(pair<double, map<int, measure<double>>> effect:cumulants_with_peffect) {
-			p_effect.push_back(effect.first);
+		vector<double> x, cumulant, cumulant_err;
+		for(pair<double, map<int, measure<double>>> effect:cumulants) {
+			x.push_back(effect.first);
 			measure<double> cumulant_measure = effect.second[order];
 			cumulant.push_back(cumulant_measure.val);
 			cumulant_err.push_back(cumulant_measure.err);
 		}
-		TGraphErrors *graph = new TGraphErrors((int)p_effect.size(), p_effect.data(), cumulant.data(), 0, cumulant_err.data());
+		TGraphErrors *graph = new TGraphErrors((int)x.size(), x.data(), cumulant.data(), 0, cumulant_err.data());
 		graph->SetNameTitle(("Cumulant Order " + to_string(order)).data(), ("Cumulant Order " + to_string(order)).data());
 		graph->SetMarkerStyle(8);
 		graph->SetMarkerColor(kRed);
 		graph->SetMarkerSize(1);
-		double x_min = *min_element(p_effect.begin(), p_effect.end());
-		double x_max = *max_element(p_effect.begin(), p_effect.end());
+		double x_min = *min_element(x.begin(), x.end());
+		double x_max = *max_element(x.begin(), x.end());
 		double x_range = x_max - x_min;
 		graph->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
-		graph->GetXaxis()->SetTitle("p_effect");
+		graph->GetXaxis()->SetTitle(x_name.data());
 		graph->Draw("AP");
 		can_index++;
 	}
-	can->Write("Cumulant vs p_effect");
+	can->Write(("Cumulants vs " + x_name).data());
 	delete can;
 }
 
