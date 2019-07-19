@@ -3,6 +3,7 @@
 // Ref: Code of N.R Sahoo (psn0572) and X. Luo (psn0571)::::::
 //____________________________________________________________
 
+#include <fstream>
 #include "math.h"
 #include "string.h"
 #include "TROOT.h"
@@ -20,6 +21,8 @@
 #include "TRandom.h"
 #include "TMath.h"
 
+using namespace std;
+
 #define binSize 650
 
 double Kurtosis(double,double,double,double,double);
@@ -34,53 +37,53 @@ void moments(TString inputfilename_profile, int energy)
     
     TFile *pro_file = new TFile(inputfilename_profile);
     
-    if (energy == 7){
-        ref_beg = 165;
-        ofstream datafilep("data7.txt");
-    }
+//    ofstream datafilep;
+//
+//    if (energy == 7){
+//        ref_beg = 165;
+//        datafilep.open("data7.txt");
+//    }
+//
+//    else if (energy == 11){
+//        ref_beg = 206;
+//        datafilep.open("data11.txt");
+//    }
+//
+//    else if(energy == 14){
+//        ref_beg = 225;
+//        datafilep.open("data14.txt");
+//    }
+//
+//    else if(energy == 19){
+//        ref_beg = 258;
+//        datafilep.open("data19.txt");
+//    }
+//
+//    else if(energy == 27){
+//        ref_beg = 284;
+//        datafilep.open("data27.txt");
+//    }
+//
+//    else if(energy == 39){
+//        ref_beg = 307;
+//        datafilep.open("data39.txt");
+//    }
+//
+//    else if(energy == 62){
+//        ref_beg = 334;
+//        datafilep.open("data62.txt");
+//    }
+//
+//    else if(energy == 200){
+//        ref_beg = 421;
+//        datafilep.open("data200.txt");
+//    }
     
-    else if (energy == 11){
-        ref_beg = 206;
-        ofstream datafilep("data11.txt");
-    }
-    
-    else if(energy == 14){
-        ref_beg = 225;
-        ofstream datafilep("data14.txt");
-    }
-    
-    else if(energy == 19){
-        ref_beg = 258;
-        ofstream datafilep("data19.txt");
-    }
-    
-    else if(energy == 27){
-        ref_beg = 284;
-        ofstream datafilep("data27.txt");
-    }
-    
-    else if(energy == 39){
-        ref_beg = 307;
-        ofstream datafilep("data39.txt");
-    }
-    
-    else if(energy == 62){
-        ref_beg = 334;
-        ofstream datafilep("data62.txt");
-    }
-    
-    else if(energy == 200){
-        ref_beg = 421;
-        ofstream datafilep("data200.txt");
-    }
-    
-    else{
-        cout << "Please use valid file with a valid energy." << endl;
-    }
-    
-    char name[60];
-    
-    //ref_beg = 0;
+//    else{
+//        cout << "Please use valid file with a valid energy." << endl;
+//    }
+
+    ref_beg = 0;
     // ==== define arrays ====
     
     double nevent[binSize];
@@ -168,60 +171,61 @@ void moments(TString inputfilename_profile, int energy)
     
     cout << "Starting actual work !! " << endl;
     ///// ===== Getting profile from input file =====
+    double check_error;
     
     for(int con = 1; con < 5; con++){
         
         for( int i=1; i< binSize; i++){
             
-            sprintf(name,"p1_%d",con);
+            sprintf(name,"hp1_%d",con);
             int ir =((TProfile *)pro_file->Get(name))->GetBinCenter(i-1);
             if(ir < 0)continue;
             
-            sprintf(name,"p1_%d",con);
+            sprintf(name,"hp1_%d",con);
             nevent[ir] = ((TProfile *)pro_file->Get(name))->GetBinEntries(i-1); //Ni (# of event with i multiplicity)
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
             if(nevent[ir] ==0)continue;
             
-            sprintf(name,"p1_%d",con);
+            sprintf(name,"hp1_%d",con);
             netq1[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
-            sprintf(name,"p2_%d",con);
+            sprintf(name,"hp2_%d",con);
             netq2[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
-            sprintf(name,"p3_%d",con);
+            sprintf(name,"hp3_%d",con);
             netq3[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
-            sprintf(name,"p4_%d",con);
+            sprintf(name,"hp4_%d",con);
             netq4[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
-            sprintf(name,"p5_%d",con);
+            sprintf(name,"hp5_%d",con);
             netq5[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
-            sprintf(name,"p6_%d",con);
+            sprintf(name,"hp6_%d",con);
             netq6[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
-            sprintf(name,"p7_%d",con);
+            sprintf(name,"hp7_%d",con);
             netq7[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
-            sprintf(name,"p8_%d",con);
+            sprintf(name,"hp8_%d",con);
             netq8[ir] = nevent[ir]*((TProfile *)pro_file->Get(name))->GetBinContent(i-1);
-            double check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
+            check_error = ((TProfile *)pro_file->Get(name))->GetBinError(i-1);
             if (check_error < pow(10,-7)) continue;
             
             
@@ -327,7 +331,8 @@ void moments(TString inputfilename_profile, int energy)
         
         //write in a ascii file
         
-        datafilep<<con<<"\t"<<Mean_n<<"\t"<<err_mean<<"\t"<<St_dev_n<<"\t"<<err_sigma<<"\t"<<Skewness_n<<"\t"<<err_skew<<"\t"<<Kurtosis_n<<"\t"<<err_kurto<<endl;
+//        datafilep<<con<<"\t"<<Mean_n<<"\t"<<err_mean<<"\t"<<St_dev_n<<"\t"<<err_sigma<<"\t"<<Skewness_n<<"\t"<<err_skew<<"\t"<<Kurtosis_n<<"\t"<<err_kurto<<endl;
+        cout<<con<<"\t"<<Mean_n<<"\t"<<err_mean<<"\t"<<St_dev_n<<"\t"<<err_sigma<<"\t"<<Skewness_n<<"\t"<<err_skew<<"\t"<<Kurtosis_n<<"\t"<<err_kurto<<endl;
         
         Mean_n = 0; St_dev_n = 0; Skewness_n = 0; Kurtosis_n = 0;
         err_mean = 0; err_sigma = 0; err_skew = 0; err_kurto = 0;

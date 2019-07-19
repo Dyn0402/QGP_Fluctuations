@@ -20,7 +20,7 @@ using namespace std;
 
 namespace config {
 	struct simulation_pars {
-		int n_events = 1e7;
+		int n_events = 1e6;
 		int divisions = 6;
 
 		double particle_mean = 20.0;

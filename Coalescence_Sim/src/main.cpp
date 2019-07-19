@@ -34,13 +34,15 @@ void bin_ratios_test();
 void roli_comp();
 void run_comp(config::simulation_pars pars, TFile *out_file);
 void test_stats();
+void python_comp();
 
 int main() {
 //	bin_ratios_test();
 //	simulate();
-	simulate_batch();
+//	simulate_batch();
 //	roli_comp();
 //	test_stats();
+	python_comp();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -251,4 +253,34 @@ void test_stats() {
 	cout << "Skewness: " << skew.val << " +- " << skew.err << endl;
 	cout << "Kurtosis: " << kurt.val << " +- " << kurt.err << endl;
 }
+
+
+void python_comp() {
+	config::simulation_pars pars;
+
+	tree_data data = sim_v1(pars);
+	map<string, measure<double>> stats;
+	map<int, measure<double>> cumulants;
+	vector<double> ratios = ratios_map_to_vec(data.ratios[pars.divisions][0]);
+	Stats stat(ratios);
+	stats["mean"] = stat.get_mean();
+	stats["standard_deviation"] = stat.get_standard_deviation();
+	stats["skewness"] = stat.get_skewness();
+	stats["kurtosis"] = stat.get_kurtosis();
+	cout << "Mean: " << stat.get_mean().val << endl;
+	cout << "Standard Deviations: " << stat.get_standard_deviation().val << endl;
+	cout << "Skewness: " << stat.get_skewness().val << endl;
+	cout << "Kurtosis: " << stat.get_kurtosis().val << endl;
+	for(int order:config::cumulant_orders) {
+		cout << "Cumulant Order " << order << ": " << stat.get_cumulant(order).val << endl;
+	}
+
+	ofstream file("/home/dylan/local_server/dyn0402/Research/Test_Data/test_dist.txt");
+	for(double ratio:ratios) {
+		file << to_string(ratio) + "\n";
+	}
+	file.close();
+}
+
+
 
