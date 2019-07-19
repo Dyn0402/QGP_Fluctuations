@@ -88,7 +88,7 @@ void simulate_batch() {
 //	gErrorIgnoreLevel=kError;
 
 	{
-		ThreadPool pool(12);
+		ThreadPool pool(thread::hardware_concurrency());
 
 		for(double param_val:config::param_list) {
 			futures[param_val] = pool.enqueue(run_param, param_val, config::param, ratio_dir, proton_dir);
@@ -182,7 +182,7 @@ void roli_comp() {
 	TFile *out_file = new TFile(config::out_path.data(), "RECREATE");
 
 	{
-		ThreadPool pool(12);
+		ThreadPool pool(thread::hardware_concurrency());
 		for(double mean:mean_list) {
 			for(double p_effect:peffect_list) {
 				for(double p_cluster:pcluster_list) {
