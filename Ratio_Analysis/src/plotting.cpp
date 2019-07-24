@@ -18,6 +18,7 @@
 #include <TGraph.h>
 #include <TMultiGraph.h>
 #include <TGraphErrors.h>
+#include <TLegend.h>
 
 #include "ratio_methods.h"
 #include "plotting.h"
@@ -368,6 +369,8 @@ void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, measure<dou
 		can->cd(can_index);
 		auto *mg = new TMultiGraph();
 		mg->SetNameTitle(stat.data(), stat.data());
+		double x_min = numeric_limits<double>::max();
+		double x_max = numeric_limits<double>::min();
 		double y_max = numeric_limits<double>::min();
 		double y_min = numeric_limits<double>::max();
 		for(int energy:analysis::energy_list) {
@@ -383,22 +386,27 @@ void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, measure<dou
 				if(stat_meas.val - stat_meas.err < y_min) { y_min = stat_meas.val - stat_meas.err; }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(cent_val, stat_vals, cent_err, stat_err);
-			graph->SetNameTitle((to_string(plot::energy_match[energy]) + "GeV").data());
+			graph->SetNameTitle((to_string(plot::energy_match[energy]).substr(0,4) + " GeV").data());
 			graph->SetMarkerStyle(plot::energy_marker_styles[energy]);
 			graph->SetMarkerColor(plot::energy_marker_colors[energy]);
 			graph->SetMarkerSize(plot::energy_marker_sizes[energy]);
 			mg->Add(graph, "AP");
-			double x_min = *min_element(cent_val.begin(), cent_val.end());
-			double x_max = *max_element(cent_val.begin(), cent_val.end());
-			double x_range = x_max - x_min;
-			double y_range = y_max - y_min;
-			mg->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
-			mg->GetXaxis()->SetRangeUser(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
-			mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-			mg->GetXaxis()->SetTitle("Centrality (%)");
+			if(*min_element(cent_val.begin(), cent_val.end()) < x_min) { x_min = *min_element(cent_val.begin(), cent_val.end()); }
+			if(*max_element(cent_val.begin(), cent_val.end()) > x_max) { x_max = *max_element(cent_val.begin(), cent_val.end()); }
 		}
+		double x_range = x_max - x_min;
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
+		mg->GetXaxis()->SetRangeUser(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetXaxis()->SetTitle("Centrality (%)");
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(stat == "mean") {
+//			TLegend *leg = new TLegend();
+//			leg->Draw();
+			gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
+		}
 		can_index++;
 	}
 	can->Write(name.data());
@@ -416,8 +424,11 @@ void athic_stat_vs_energy(map<int, map<int, map<int, map<string, measure<double>
 		gPad->SetLogx();
 		auto *mg = new TMultiGraph();
 		mg->SetNameTitle(stat.data(), stat.data());
+		double x_min = numeric_limits<double>::max();
+		double x_max = numeric_limits<double>::min();
 		double y_max = numeric_limits<double>::min();
 		double y_min = numeric_limits<double>::max();
+		int cent_low, cent_high;
 		for(int cent_index=15; cent_index > 10; cent_index-=2) {
 			vector<double> stat_vals, energy_val, stat_err, energy_err;
 			measure<double> stat_meas;
@@ -431,21 +442,28 @@ void athic_stat_vs_energy(map<int, map<int, map<int, map<string, measure<double>
 				if(stat_meas.val - stat_meas.err < y_min) { y_min = stat_meas.val - stat_meas.err; }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-			graph->SetNameTitle((to_string((15-cent_index)*plot::centrality_slope + plot::centrality_intercept) + " %").data());
+			cent_high = (int)(((15-cent_index+1)*plot::centrality_slope) + 0.5);
+			cent_low = (int)(((15-cent_index)*plot::centrality_slope) + 0.5);
+			graph->SetNameTitle((to_string(cent_low) + "-" + to_string(cent_high) + " %").data());
 			graph->SetMarkerStyle(plot::cent_marker_styles[cent_index]);
 			graph->SetMarkerColor(plot::cent_marker_colors[cent_index]);
 			graph->SetMarkerSize(plot::cent_marker_sizes[cent_index]);
 			mg->Add(graph, "AP");
-			double x_min = *min_element(energy_val.begin(), energy_val.end());
-			double x_max = *max_element(energy_val.begin(), energy_val.end());
-			double y_range = y_max - y_min;
-			mg->GetXaxis()->SetLimits(pow(x_min, 1.1) / pow(x_max, 0.1), pow(x_max, 1.1) / pow(x_min, 0.1));
-			mg->GetXaxis()->SetRangeUser(pow(x_min, 1.1) / pow(x_max, 0.1), pow(x_max, 1.1) / pow(x_min, 0.1));
-			mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-			mg->GetXaxis()->SetTitle("Energy (GeV)");
+			if(*min_element(energy_val.begin(), energy_val.end()) < x_min) { x_min = *min_element(energy_val.begin(), energy_val.end()); }
+			if(*max_element(energy_val.begin(), energy_val.end()) > x_max) { x_max = *max_element(energy_val.begin(), energy_val.end()); }
 		}
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(pow(x_min, 1.1) / pow(x_max, 0.1), pow(x_max, 1.1) / pow(x_min, 0.1));
+		mg->GetXaxis()->SetRangeUser(pow(x_min, 1.1) / pow(x_max, 0.1), pow(x_max, 1.1) / pow(x_min, 0.1));
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetXaxis()->SetTitle("Energy (GeV)");
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(stat == "mean") {
+//			TLegend *leg = new TLegend();
+//			leg->Draw();
+			gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
+		}
 		can_index++;
 	}
 	can->Write(name.data());
