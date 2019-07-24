@@ -21,6 +21,7 @@ namespace analysis {
 	extern vector<int> divs;
 	extern vector<int> centrals;
 	extern vector<int> cumulant_orders;
+	extern vector<string> stat_names;
 
 	extern string in_file_prefx;
 	extern string in_file_sufx;
@@ -36,7 +37,11 @@ namespace plot {
 	extern string ratio_dist_dir_name;
 	extern string nproton_dist_dir_name;
 	extern string cumulant_dir_name;
+	extern string stat_dir_name;
 	extern string canvas_dir_name;
+
+	extern int canvas_width;
+	extern int canvas_height;
 
 	extern int ratio_hist_bins;
 	extern double ratio_hist_low;
@@ -50,6 +55,20 @@ namespace plot {
 	extern vector<int> div_marker_width;
 	extern vector<int> div_marker_colors;
 	extern vector<int> div_marker_sizes;
+
+	extern map<int, int> energy_marker_styles;
+	extern map<int, int> energy_marker_width;
+	extern map<int, int> energy_marker_colors;
+	extern map<int, int> energy_marker_sizes;
+
+	extern map<int, int> cent_marker_styles;
+	extern map<int, int> cent_marker_width;
+	extern map<int, int> cent_marker_colors;
+	extern map<int, int> cent_marker_sizes;
+
+	extern map<int, double> energy_match;
+	extern double centrality_slope;
+	extern double centrality_intercept;
 }
 
 

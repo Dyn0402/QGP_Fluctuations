@@ -22,6 +22,7 @@
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "tree_reader.h"
+#include "TreeReader.h"
 #include "ratio_methods.h"
 
 #include "config_reader.h"

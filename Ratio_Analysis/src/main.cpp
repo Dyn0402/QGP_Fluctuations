@@ -7,18 +7,24 @@
 
 
 #include <iostream>
+#include <thread>
+
+#include <TROOT.h>
 
 #include "config_analysis.h"
 #include "plotting.h"
 #include "ratio_methods.h"
 #include "file_io.h"
+#include "Stats.h"
+#include "ThreadPool.h"
 
 using namespace std;
 
 
 void analyze();
 void cumulant_test();
-map<int, map<int, map<int, map<int, tuple<double, double>>>>> calculate_cumulants(map<int, tree_data> trees); //cumulants[energy][divisions][centrality][cumulant_order]
+pair<map<int, map<int, map<int, map<string, measure<double>>>>>, map<int, map<int, map<int, map<int, measure<double>>>>>> calculate_stats(map<int, tree_data> trees); //cumulants[energy][divisions][centrality][cumulant_order]
+void calc_stat(map<int, map<int, int>> ratios_map, int energy, int div, int cent, map<int, map<int, map<int, map<string, measure<double>>>>> *stats, map<int, map<int, map<int, map<int, measure<double>>>>> *cumulants);
 
 
 int main() {
@@ -62,7 +68,7 @@ void analyze() {
 	}
 
 	cout << endl << "Calculating Cumulants..." << endl;
-	auto cumulants = calculate_cumulants(trees);
+	auto stats = calculate_stats(trees);
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
@@ -70,9 +76,11 @@ void analyze() {
 	cout << endl << "Making proton distribution plots..." << endl;
 	make_proton_dist_plots(out_root, trees);
 	cout << endl << "Making cumulant plots..." << endl;
-	make_cumulant_plots(out_root, cumulants);
+	make_cumulant_plots(out_root, stats.second);
+	cout << endl << "Making stat plots..." << endl;
+	make_stat_plots(out_root, stats.first);
 	cout << endl << "Making canvases..." << endl;
-	make_canvas_plots(out_root, trees, cumulants);
+	make_canvas_plots(out_root, trees, stats.second, stats.first);
 
 
 	out_root->Close();
@@ -98,4 +106,40 @@ map<int, map<int, map<int, map<int, tuple<double, double>>>>> calculate_cumulant
 	}
 
 	return(cumulants);
+}
+
+
+//Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
+pair<map<int, map<int, map<int, map<string, measure<double>>>>>, map<int, map<int, map<int, map<int, measure<double>>>>>> calculate_stats(map<int, tree_data> trees) {
+	map<int, map<int, map<int, map<string, measure<double>>>>> stats;
+	map<int, map<int, map<int, map<int, measure<double>>>>> cumulants;
+	ROOT::EnableThreadSafety();
+	{
+		ThreadPool pool(thread::hardware_concurrency());
+		for(int energy:analysis::energy_list) {
+			for(int div:analysis::divs) {
+				for(int cent:analysis::centrals) {
+					map<int, map<int, int>> ratios_map = trees[energy].ratios[div][cent];
+					pool.enqueue(calc_stat, ratios_map, energy, div, cent, &stats, &cumulants);
+				}
+			}
+		}
+	}
+
+	return(make_pair(stats, cumulants));
+}
+
+
+void calc_stat(map<int, map<int, int>> ratios_map, int energy, int div, int cent, map<int, map<int, map<int, map<string, measure<double>>>>> *stats, map<int, map<int, map<int, map<int, measure<double>>>>> *cumulants) {
+	cout << "Starting " << energy << "GeV \t\t" << div << " divisions \t\t" << cent << " centrality" << endl;
+	vector<double> ratios = ratios_map_to_vec(ratios_map);
+	Stats stat(ratios);
+	(*stats)[energy][div][cent]["mean"] = stat.get_mean();
+	(*stats)[energy][div][cent]["standard_deviation"] = stat.get_standard_deviation();
+	(*stats)[energy][div][cent]["skewness"] = stat.get_skewness();
+	(*stats)[energy][div][cent]["kurtosis"] = stat.get_kurtosis();
+	for(int order:analysis::cumulant_orders) {
+		(*cumulants)[energy][div][cent][order] = stat.get_cumulant(order);
+	}
+	cout << "Finishing " << energy << "GeV \t" << div << " divisions \t\t" << cent << " centrality" << endl;
 }

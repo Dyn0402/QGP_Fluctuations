@@ -23,8 +23,8 @@
 #include <TCanvas.h>
 
 #include "tree_reader.h"
+#include "TreeReader.h"
 #include "ratio_methods.h"
-
 #include "file_io.h"
 
 #include "../StRoot/StRefMultCorr/CentralityMaker.h"
@@ -34,6 +34,7 @@
 using namespace std;
 
 
+void read_class();
 void read_files(int argc, char** argv);
 void read_files_local();
 void read_energy(int energy);
@@ -50,12 +51,19 @@ int main(int argc, char** argv) {
 //	string cent(argv[1]);
 //	config::out_root_name = "cent_" + cent + ".root";
 //	read_files(argc, argv);
-	read_files_local();
+//	read_files_local();
 //	ref_mult_test();
+	read_class();
 
 	cout << endl << "donzo" << endl;
 	return(0);
 
+}
+
+
+void read_class() {
+	TreeReader reader;
+	reader.read_trees();
 }
 
 

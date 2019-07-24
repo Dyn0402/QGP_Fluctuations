@@ -16,30 +16,31 @@
 
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
+#include "TreeReader.h"
 #include "ratio_methods.h"
 
 using namespace std;
 
 
-struct event_leaves {
-	TLeaf *run;
-	TLeaf *ref_mult;
-	TLeaf *ref_mult2;
-	TLeaf *btof_mult;
-	TLeaf *vz;
-};
-
-struct proton_leaves {
-	TLeaf *phi;
-	TLeaf *pt;
-	TLeaf *p;
-	TLeaf *beta;
-	TLeaf *dedx;
-	TLeaf *charge;
-	TLeaf *dca;
-	TLeaf *nsigma;
-	TLeaf *eta;
-};
+//struct event_leaves {
+//	TLeaf *run;
+//	TLeaf *ref_mult;
+//	TLeaf *ref_mult2;
+//	TLeaf *btof_mult;
+//	TLeaf *vz;
+//};
+//
+//struct proton_leaves {
+//	TLeaf *phi;
+//	TLeaf *pt;
+//	TLeaf *p;
+//	TLeaf *beta;
+//	TLeaf *dedx;
+//	TLeaf *charge;
+//	TLeaf *dca;
+//	TLeaf *nsigma;
+//	TLeaf *eta;
+//};
 
 void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
 
