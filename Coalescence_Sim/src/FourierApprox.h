@@ -5,8 +5,8 @@
  *      Author: Dylan Neff
  */
 
-#ifndef FOURIER_APPROX_H_
-#define FOURIER_APPROX_H_
+#ifndef FOURIERAPPROX_H_
+#define FOURIERAPPROX_H_
 
 #include <vector>
 #include <tuple>
@@ -19,7 +19,7 @@ using namespace std;
 
 class FourierApprox
 {
-	public:
+public:
 	FourierApprox(TH1D *hist);
 	~FourierApprox();
 
@@ -35,15 +35,19 @@ class FourierApprox
 	int get_fourier_n_max();
 
 
-	private:
+private:
 	TH1D *hist_to_approx;
+	pair<vector<double>, vector<double>> coefs;
+	vector<TF1*> expansion_terms;
 	int fourier_n_min, fourier_n_max;
 	double hist_x_min, hist_x_max;
 };
 
 
-double getAvg(TH1D *hist, TF1 *func);
-tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int n_min, int n_max, double x_min, double x_max);
+double get_avg(TH1D *hist, TF1 *func);
+pair<vector<double>, vector<double>> calc_coef(TH1D* hist, int n_min, int n_max, double x_min, double x_max);
+vector<TF1*> get_expansion(vector<double> A, vector<double> B, int n_min, int n_max, double x_min, double x_max);
+TF1* get_func(vector<TF1*> expansion_terms);
 
 
-#endif /* FOURIER_APPROX_H_ */
+#endif /* FOURIERAPPROX_H_ */

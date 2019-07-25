@@ -14,7 +14,7 @@
 using namespace std;
 
 //Distribution flattening function declarations
-double getAvg(TH1D *hist, TF1 *func);
+double get_avg(TH1D *hist, TF1 *func);
 tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int nMin, int nMax, double x_min, double x_max);
 double flatten_angle(double angle, vector<double> A, vector<double> B, int nMin, int nMax, double x_min, double x_max);
 

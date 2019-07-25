@@ -19,7 +19,7 @@ using namespace std;
 
 
 //Get average of TF1 func on histogram hist.
-double getAvg(TH1D *hist, TF1 *func) {
+double get_avg(TH1D *hist, TF1 *func) {
 	int norm = 0;
 	double sum = 0.0;
 	int binCont;
@@ -51,8 +51,8 @@ tuple<vector<double>, vector<double>> calcCoef(TH1D* hist, int n_min, int n_max,
 	for(int n = n_min; n <= n_max; n++) {
 		cos_shift->SetParameter(3, n);
 		sin_shift->SetParameter(3, n);
-		B.push_back(getAvg(hist, cos_shift) * 2.0 / n);
-		A.push_back(getAvg(hist, sin_shift) * -2.0 / n);
+		B.push_back(get_avg(hist, cos_shift) * 2.0 / n);
+		A.push_back(get_avg(hist, sin_shift) * -2.0 / n);
 	}
 
 	delete cos_shift;
