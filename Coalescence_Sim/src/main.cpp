@@ -15,6 +15,11 @@
 #include <TError.h>
 #include <TFile.h>
 #include <TDirectory.h>
+#include <TTree.h>
+#include <TLeaf.h>
+#include <TCanvas.h>
+#include <TH1.h>
+#include <TF1.h>
 
 #include "sim_v1.h"
 #include "ratio_methods.h"
@@ -23,6 +28,7 @@
 #include "sim_efficiency.h"
 #include "ThreadPool.h"
 #include "Stats.h"
+#include "FourierApprox.h"
 
 using namespace std;
 
@@ -35,6 +41,7 @@ void roli_comp();
 void run_comp(config::simulation_pars pars, TFile *out_file);
 void test_stats();
 void python_comp();
+void fourier_test();
 
 int main() {
 //	bin_ratios_test();
@@ -42,7 +49,8 @@ int main() {
 //	simulate_batch();
 //	roli_comp();
 //	test_stats();
-	python_comp();
+//	python_comp();
+	fourier_test();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -283,4 +291,32 @@ void python_comp() {
 }
 
 
+void fourier_test() {
+	TFile *file = new TFile("/home/dylan/local_server/dyn0402/Research/Test_Data/auau11.root", "READ");
+	TTree *tree = (TTree*) file->Get("nsmTree");
+	TLeaf *phi_leaf = tree->GetLeaf("Proton.phi");
+	TH1D *hist = new TH1D("fourier_test_hist", "fourier_test_hist", 100, -2, 8);
+	int event_index = 1;
+	while(tree->GetEntry(event_index)) {
+		for(int proton_index = 0; proton_index < phi_leaf->GetLen(); proton_index++) {
+			hist->Fill(phi_leaf->GetValue(proton_index));
+		}
+		event_index++;
+	}
+	FourierApprox fapprox(hist);
+	fapprox.set_fourier_n_max(2);
+	TF1 *func = fapprox.get_approx();
+	fapprox.print_coefs();
+	cout << func->Eval(3.0) << " | " << func->Eval(3.5) << endl;
+	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Test_Data/fourier_test.root", "RECREATE");
+	out_file->cd();
+	TCanvas *can = new TCanvas();
+	hist->Draw();
+	TCanvas *can2 = new TCanvas();
+	func->Draw();
+	can->Write("Fourier_Test_Can");
+	can2->Write("Func_Test_Can");
+	out_file->Close();
+	file->Close();
+}
 

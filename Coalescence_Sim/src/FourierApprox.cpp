@@ -6,8 +6,10 @@
  */
 
 
+#include <iostream>
 #include <vector>
 #include <tuple>
+#include <cmath>
 
 #include <TH1.h>
 #include <TF1.h>
@@ -34,9 +36,9 @@ FourierApprox::~FourierApprox() {
 
 
 TF1* FourierApprox::get_approx() {
-	coefs = calc_coef(hist_to_approx, fourier_n_min, fourier_n_max, hist_x_min, hist_x_max);
-	expansion_terms = get_expansion(coefs.first, coefs.second, fourier_n_min, fourier_n_max, hist_x_min, hist_x_max);
-	TF1 *approx_func = get_func(expansion_terms);
+	coefs = calc_coef(hist_to_approx, fourier_n_max, hist_x_min, hist_x_max);
+	expansion_terms = get_expansion(coefs.first, coefs.second, fourier_n_max, hist_x_min, hist_x_max);
+	TF1 *approx_func = get_func(expansion_terms, hist_x_min, hist_x_max);
 
 	return(approx_func);
 }
@@ -55,6 +57,14 @@ int FourierApprox::get_fourier_n_min() {
 
 int FourierApprox::get_fourier_n_max() {
 	return(fourier_n_max);
+}
+
+void FourierApprox::print_coefs() {
+	map<int, double> a = coefs.first;
+	map<int, double> b = coefs.second;
+	for(int n = 0; n <= fourier_n_max; n++) {
+		cout << "a[" << n << "] = " << a[n] << "  |  b[" << n << "] = " << b[n] << endl;
+	}
 }
 
 
@@ -77,43 +87,45 @@ double get_avg(TH1D *hist, TF1 *func) {
 
 
 //Calculate coefficients of Fourier expansion.
-pair<vector<double>, vector<double>> calc_coef(TH1D* hist, int n_min, int n_max, double x_min, double x_max) {
-	vector<double> B, A;
+pair<map<int, double>, map<int, double>> calc_coef(TH1D* hist, int n_max, double x_min, double x_max) {
+	map<int, double> a, b;
 
 	double x_avg = (x_max + x_min) / 2.0; //Calculate average of range
 	double L = (x_max - x_min) / 2.0; //Calculate half range (2*L is full range)
 
 	TF1 *cos_shift = new TF1("cos_shift", "cos([3] * [2] * (x-[0]) / [1])");
-	cos_shift->SetParameters(x_avg, L, TMath::Pi(), n_min);
+	cos_shift->SetParameters(x_avg, L, M_PI, 0);
 	TF1 *sin_shift = new TF1("sin_shift", "sin([3] * [2] * (x-[0]) / [1])");
-	sin_shift->SetParameters(x_avg, L, TMath::Pi(), n_min);
+	sin_shift->SetParameters(x_avg, L, M_PI, 0);
 
-	for(int n = n_min; n <= n_max; n++) {
+	for(int n = 0; n <= n_max; n++) {
 		cos_shift->SetParameter(3, n);
 		sin_shift->SetParameter(3, n);
-		B.push_back(get_avg(hist, cos_shift) * 2.0 / n);
-		A.push_back(get_avg(hist, sin_shift) * -2.0 / n);
+		a[n] = get_avg(hist, cos_shift) / M_PI;
+		b[n] = get_avg(hist, sin_shift) / M_PI;
 	}
+
+	a[0] /= 2;
 
 	delete cos_shift;
 	delete sin_shift;
 
-	return(make_pair(A, B));
+	return(make_pair(a, b));
 }
 
 
-vector<TF1*> get_expansion(vector<double> A, vector<double> B, int n_min, int n_max, double x_min, double x_max) {
+vector<TF1*> get_expansion(map<int, double> a, map<int, double> b, int n_max, double x_min, double x_max) {
 	double x_avg = (x_max + x_min) / 2.0; //Calculate average of range
 	double L = (x_max - x_min) / 2.0; //Calculate half range (2*L is full range)
 
 //	TF1 *approx_func = new TF1("approx_func", "");
 	vector<TF1*> funcs;
 
-	for(unsigned i = 0 ; i < A.size(); i++) {
-		TF1 *cos_shift = new TF1(("cos_shift" + to_string(i)).data(), "cos([3] * [2] * (x-[0]) / [1])");
-		cos_shift->SetParameters(x_avg, L, TMath::Pi(), i+n_min);
-		TF1 *sin_shift = new TF1(("sin_shift" + to_string(i)).data(), "sin([3] * [2] * (x-[0]) / [1])");
-		sin_shift->SetParameters(x_avg, L, TMath::Pi(), i+n_min);
+	for(int n=0; n<=n_max; n++) {
+		TF1 *cos_shift = new TF1(("cos_shift" + to_string(n)).data(), "[4] * cos([3] * [2] * (x-[0]) / [1])", x_min, x_max);
+		cos_shift->SetParameters(x_avg, L, M_PI, n, a[n]);
+		TF1 *sin_shift = new TF1(("sin_shift" + to_string(n)).data(), "[4] * sin([3] * [2] * (x-[0]) / [1])", x_min, x_max);
+		sin_shift->SetParameters(x_avg, L, M_PI, n, b[n]);
 		funcs.push_back(cos_shift);
 		funcs.push_back(sin_shift);
 	}
@@ -122,13 +134,16 @@ vector<TF1*> get_expansion(vector<double> A, vector<double> B, int n_min, int n_
 }
 
 
-TF1* get_func(vector<TF1*> expansion_terms) {
+TF1* get_func(vector<TF1*> expansion_terms, double x_min, double x_max) {
 	string func_expression = "";
 	for(unsigned i = 0; i < expansion_terms.size(); i++) {
-		func_expression += (string) expansion_terms[0]->GetName() + "+";
+		func_expression += (string) expansion_terms[i]->GetName() + "+";
 	}
 	func_expression = func_expression.substr(0, func_expression.size()-1);
-	TF1 *approx_func = new TF1("Approx_func", func_expression.data());
+	cout << func_expression << endl;
+	TF1 *approx_func = new TF1("Approx_func", func_expression.data(), x_min, x_max);
+
+	cout << approx_func->Eval(3.0) << " | " << approx_func->Eval(3.5) << endl;
 
 	return(approx_func);
 }
