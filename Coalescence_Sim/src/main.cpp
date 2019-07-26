@@ -19,6 +19,7 @@
 #include <TLeaf.h>
 #include <TCanvas.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <TF1.h>
 
 #include "sim_v1.h"
@@ -325,6 +326,7 @@ void fourier_test() {
 
 
 void sim_data_hists() {
+	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/Real_Proton_Dists/07-26-19_eff95_clus25.root", "RECREATE");
 	TFile *file = new TFile("/home/dylan/local_server/dyn0402/Research/Results/07-23_new_data.root", "READ");
 	int cent = 15;
 	vector<int> energy_list = {7, 11, 19, 27, 39, 62};
@@ -345,11 +347,20 @@ void sim_data_hists() {
 		stats[(double)energy]["standard_deviation"] = stat.get_standard_deviation();
 		stats[(double)energy]["skewness"] = stat.get_skewness();
 		stats[(double)energy]["kurtosis"] = stat.get_kurtosis();
+		TH2I *hist = ratios_map_to_hist(data.ratios[sim.get_divisions()][0], to_string(energy)+"GeV_Ratio_Hist"); // Memory leak
+		out_file->cd();
+		TCanvas *can = new TCanvas((to_string(energy)+"GeV_Ratio_Hist").data()); // Memory leak
+		TF1 *line = new TF1((to_string(energy)+"GeV_Ratio_Line").data(), ("x/"+to_string(sim.get_divisions())).data(), -0.5, 0.5+(--data.ratios[sim.get_divisions()][0].end())->first);
+		can->SetLogz();
+		hist->Draw("colz");
+		line->Draw("same");
+		hist->Write();
+		can->Write();
 	}
 	file->Close();
 
-	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/Real_Proton_Dists/07-26-19_eff95_clus25.root", "RECREATE");
 	out_file->cd();
 	plot_stats_vs_x(stats, "Energy (GeV)");
+	out_file->Close();
 
 }
