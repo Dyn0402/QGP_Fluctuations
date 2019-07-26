@@ -29,6 +29,7 @@
 #include "ThreadPool.h"
 #include "Stats.h"
 #include "FourierApprox.h"
+#include "Simulator.h"
 
 using namespace std;
 
@@ -42,6 +43,7 @@ void run_comp(config::simulation_pars pars, TFile *out_file);
 void test_stats();
 void python_comp();
 void fourier_test();
+void sim_data_hists();
 
 int main() {
 //	bin_ratios_test();
@@ -50,7 +52,8 @@ int main() {
 //	roli_comp();
 //	test_stats();
 //	python_comp();
-	fourier_test();
+//	fourier_test();
+	sim_data_hists();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -320,3 +323,33 @@ void fourier_test() {
 	file->Close();
 }
 
+
+void sim_data_hists() {
+	TFile *file = new TFile("/home/dylan/local_server/dyn0402/Research/Results/07-23_new_data.root", "READ");
+	int cent = 15;
+	vector<int> energy_list = {7, 11, 19, 27, 39, 62};
+	map<double, map<string, measure<double>>> stats;
+	for(int energy:energy_list) {
+		cout << "Starting " << energy << "GeV" << endl;
+		string root_path = "NProton_Dists/" + to_string(energy) + "GeV/" + to_string(energy) + "GeV protons Centrality " + to_string(cent);
+		TH1D *proton_hist = (TH1D*) file->Get(root_path.data()); // Current memory leak. Fix.
+		Simulator sim;
+		sim.set_proton_dist_hist(proton_hist);
+		sim.set_p_effect(0.95);
+		sim.set_p_cluster(0.25);
+		sim.set_n_events((int)(proton_hist->GetEntries() + 0.5));
+		tree_data data = sim.run_simulation();
+		vector<double> ratios = ratios_map_to_vec(data.ratios[sim.get_divisions()][0]);
+		Stats stat(ratios);
+		stats[(double)energy]["mean"] = stat.get_mean();
+		stats[(double)energy]["standard_deviation"] = stat.get_standard_deviation();
+		stats[(double)energy]["skewness"] = stat.get_skewness();
+		stats[(double)energy]["kurtosis"] = stat.get_kurtosis();
+	}
+	file->Close();
+
+	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/Real_Proton_Dists/07-26-19_eff95_clus25.root", "RECREATE");
+	out_file->cd();
+	plot_stats_vs_x(stats, "Energy (GeV)");
+
+}

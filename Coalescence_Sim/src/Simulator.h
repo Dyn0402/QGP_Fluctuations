@@ -75,7 +75,7 @@ private:
 	TRandom3 *rand;
 	TH1D *proton_dist_hist;
 
-	vector<double> Simulator::simulate_event();
+	vector<double> simulate_event();
 	int get_protons();
 
 };

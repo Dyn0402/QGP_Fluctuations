@@ -52,8 +52,8 @@ void plot_corrs(vector<double> corrs) {
 
 void plot_stats_vs_x(map<double, map<string, measure<double>>> stats, string x_name) {
 	TCanvas *can = new TCanvas(("Stats vs " + x_name).data(), ("Stats vs " + x_name).data(), config::can_w, config::can_h);
-//	can->Divide(ceil(pow(config::statistics.size(),0.5)), ceil(config::statistics.size()/ceil(pow(config::statistics.size(), 0.5))));
-	can->Divide(4,1);
+	can->Divide(ceil(pow(config::statistics.size(),0.5)), ceil(config::statistics.size()/ceil(pow(config::statistics.size(), 0.5))));
+//	can->Divide(4,1);
 	int can_index = 1;
 	for(string stat:config::statistics) {
 		can->cd(can_index);
