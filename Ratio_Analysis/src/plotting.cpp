@@ -15,6 +15,7 @@
 #include <TDirectory.h>
 #include <TCanvas.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
 #include <TGraphErrors.h>
@@ -59,6 +60,37 @@ void hist_ratio_dist(vector<double> ratios, int energy, int div, int cent, strin
 	} else if(mode == "draw") {
 		ratio_hist->Draw();
 	}
+}
+
+
+
+void make_2d_dist_plots(TFile *out_root, map<int, tree_data> data) {
+	TDirectory *dist_dir = out_root->mkdir(plot::dist_2d_dir_name.data());
+	dist_dir->cd();
+	for(int energy:analysis::energy_list) {
+		TDirectory *energy_dir = dist_dir->mkdir((to_string(energy) + "GeV").data());
+		energy_dir->cd();
+		for(int div:analysis::divs) {
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div) + "_Divs").data());
+			div_dir->cd();
+			for(int cent:analysis::centrals) {
+				canvas_2d_dist(data[energy].ratios[div][cent], energy, div, cent);
+			}
+		}
+	}
+}
+
+
+void canvas_2d_dist(map<int, map<int, int>> dist, int energy, int div, int cent) {
+	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
+	TH2I *hist = ratios_map_to_hist(dist, name);
+	TCanvas *can = new TCanvas(name.data()); // Memory leak
+	TF1 *line = new TF1(name.data(), ("x/"+to_string(div)).data(), -0.5, 0.5+(--dist.end())->first);
+	can->SetLogz();
+	hist->Draw("colz");
+	line->Draw("same");
+	hist->Write();
+	can->Write();
 }
 
 

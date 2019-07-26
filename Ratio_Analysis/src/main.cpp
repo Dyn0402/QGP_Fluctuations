@@ -73,6 +73,8 @@ void analyze() {
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
 	make_ratio_dist_plots(out_root, trees);
+	cout << endl << "Making 2d distribution plots..." << endl;
+	make_2d_dist_plots(out_root, trees);
 	cout << endl << "Making proton distribution plots..." << endl;
 	make_proton_dist_plots(out_root, trees);
 	cout << endl << "Making cumulant plots..." << endl;

@@ -22,6 +22,8 @@ using namespace std;
 
 void make_ratio_dist_plots(TFile *out_root, map<int, tree_data> data);
 void hist_ratio_dist(vector<double> ratios, int energy, int div, int cent, string mode="write");
+void make_2d_dist_plots(TFile *out_root, map<int, tree_data> data);
+void canvas_2d_dist(map<int, map<int, int>> dist, int energy, int div, int cent);
 void make_proton_dist_plots(TFile *out_root, map<int, tree_data> data);
 void hist_proton_dist(vector<int> nprotons, int energy, int cent, string mode="write");
 

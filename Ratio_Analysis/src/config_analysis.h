@@ -35,6 +35,7 @@ namespace plot {
 	extern string out_root_name;
 
 	extern string ratio_dist_dir_name;
+	extern string dist_2d_dir_name;
 	extern string nproton_dist_dir_name;
 	extern string cumulant_dir_name;
 	extern string stat_dir_name;

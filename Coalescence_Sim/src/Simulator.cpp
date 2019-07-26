@@ -132,7 +132,7 @@ vector<double> Simulator::simulate_event() {
 
 
 int Simulator::get_protons() {
-	int n;
+	int n = 0;
 	if(pars.proton_dist == "poisson") {
 		n = rand->Poisson(pars.particle_mean);
 	} else if(pars.proton_dist == "hist") {
