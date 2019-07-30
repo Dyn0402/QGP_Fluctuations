@@ -31,6 +31,7 @@
 #include "Stats.h"
 #include "FourierApprox.h"
 #include "Simulator.h"
+#include "Measure.h"
 
 using namespace std;
 
@@ -45,6 +46,10 @@ void test_stats();
 void python_comp();
 void fourier_test();
 void sim_data_hists();
+void mean_cluster_hist();
+void run_pars(int n_events, double mean, double p_eff, double p_clust, double spread, map<string, map<double, map<double, measure<double>>>> *results);
+void run_mix_norm_pars(int n_events, double particle_mean, double p_eff, double p_clust, double spread, map<string, map<double, map<double, measure<double>>>> *results);
+void measure_test();
 
 int main() {
 //	bin_ratios_test();
@@ -54,7 +59,8 @@ int main() {
 //	test_stats();
 //	python_comp();
 //	fourier_test();
-	sim_data_hists();
+//	sim_data_hists();
+	mean_cluster_hist();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -363,4 +369,122 @@ void sim_data_hists() {
 	plot_stats_vs_x(stats, "Energy (GeV)");
 	out_file->Close();
 
+}
+
+
+
+void sim_mixed_data_hists() {
+	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/Real_Proton_Dists/07-30-19_eff95_clus25.root", "RECREATE");
+	TFile *file = new TFile("/home/dylan/local_server/dyn0402/Research/Results/07-23_new_data.root", "READ");
+	int cent = 15;
+	vector<int> energy_list = {7, 11, 19, 27, 39, 62};
+	map<double, map<string, measure<double>>> stats;
+	for(int energy:energy_list) {
+		cout << "Starting " << energy << "GeV" << endl;
+		string root_path = "NProton_Dists/" + to_string(energy) + "GeV/" + to_string(energy) + "GeV protons Centrality " + to_string(cent);
+		TH1D *proton_hist = (TH1D*) file->Get(root_path.data()); // Current memory leak. Fix.
+		Simulator sim;
+		sim.set_proton_dist_hist(proton_hist);
+		sim.set_p_effect(0.95);
+		sim.set_p_cluster(0.25);
+		sim.set_n_events((int)(proton_hist->GetEntries() + 0.5));
+		tree_data data = sim.run_simulation();
+		vector<double> ratios = ratios_map_to_vec(data.ratios[sim.get_divisions()][0]);
+		Stats stat(ratios);
+		stats[(double)energy]["mean"] = stat.get_mean();
+		stats[(double)energy]["standard_deviation"] = stat.get_standard_deviation();
+		stats[(double)energy]["skewness"] = stat.get_skewness();
+		stats[(double)energy]["kurtosis"] = stat.get_kurtosis();
+		TH2I *hist = ratios_map_to_hist(data.ratios[sim.get_divisions()][0], to_string(energy)+"GeV_Ratio_Hist"); // Memory leak
+		out_file->cd();
+		TCanvas *can = new TCanvas((to_string(energy)+"GeV_Ratio_Hist").data()); // Memory leak
+		TF1 *line = new TF1((to_string(energy)+"GeV_Ratio_Line").data(), ("x/"+to_string(sim.get_divisions())).data(), -0.5, 0.5+(--data.ratios[sim.get_divisions()][0].end())->first);
+		can->SetLogz();
+		hist->Draw("colz");
+		line->Draw("same");
+		hist->Write();
+		can->Write();
+	}
+	file->Close();
+
+	out_file->cd();
+	plot_stats_vs_x(stats, "Energy (GeV)");
+	out_file->Close();
+
+}
+
+
+void mean_cluster_hist() {
+	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/07-30-19_mean_vs_clust_spread.root", "RECREATE");
+	vector<double> mean_list = {5, 7.5, 10, 15, 20, 25, 30, 35, 40, 45, 50};
+	vector<double> cl_list = {0, 0.025, 0.05, 0.075, 0.10, 0.125, 0.15, 0.175, 0.20};
+	int n_events = 1000000;
+	double p_eff = 0.95;
+	double spread = 0.2;
+	vector<string> moments = {"mean", "standard_deviation", "skewness", "kurtosis"};
+	map<string, map<double, map<double, measure<double>>>> results;
+	map<double, map<string, measure<double>>> stats;
+	ROOT::EnableThreadSafety();
+	{
+		ThreadPool pool(thread::hardware_concurrency());
+		for(double mean:mean_list) {
+			for(double p_clust:cl_list) {
+				pool.enqueue(run_pars, n_events, mean, p_eff, p_clust, spread, &results);
+			}
+		}
+	}
+
+	out_file->cd();
+	for(string mom:moments) {
+		graph_2d(results[mom], mom+" with mean and cluster", "mean", "p_cluster", mom);
+	}
+	out_file->Close();
+}
+
+
+void run_pars(int n_events, double mean, double p_eff, double p_clust, double spread, map<string, map<double, map<double, measure<double>>>> *results) {
+	cout << "Starting: \t events: " << n_events << "  mean: " << mean << "  p_eff: " << p_eff << "  p_clust: " << p_clust << endl;
+	Simulator sim;
+	sim.set_p_effect(p_eff);
+	sim.set_p_cluster(p_clust);
+	sim.set_particle_mean(mean);
+	sim.set_n_events(n_events);
+	sim.set_spread_sigma(spread);
+	tree_data data = sim.run_simulation_mixed()[0];
+	vector<double> ratios = ratios_map_to_vec(data.ratios[sim.get_divisions()][0]);
+	Stats stat(ratios);
+	(*results)["mean"][mean][p_clust] = stat.get_mean();
+	(*results)["standard_deviation"][mean][p_clust] = stat.get_standard_deviation();
+	(*results)["skewness"][mean][p_clust] = stat.get_skewness();
+	(*results)["kurtosis"][mean][p_clust] = stat.get_kurtosis();
+	cout << "Finishing: \t events: " << n_events << "  mean: " << mean << "  p_eff: " << p_eff << "  p_clust: " << p_clust << endl;
+}
+
+
+void run_mix_norm_pars(int n_events, double particle_mean, double p_eff, double p_clust, double spread, map<string, map<double, map<double, measure<double>>>> *results) {
+	cout << "Starting: \t events: " << n_events << "  mean: " << particle_mean << "  p_eff: " << p_eff << "  p_clust: " << p_clust << endl;
+	Simulator sim;
+	sim.set_p_effect(p_eff);
+	sim.set_p_cluster(p_clust);
+	sim.set_particle_mean(particle_mean);
+	sim.set_n_events(n_events);
+	sim.set_spread_sigma(spread);
+	vector<tree_data> data = sim.run_simulation_mixed();
+	vector<double> ratios = ratios_map_to_vec(data[0].ratios[sim.get_divisions()][0]);
+	vector<double> mixed_ratios = ratios_map_to_vec(data[1].ratios[sim.get_divisions()][0]);
+	Stats stat(ratios);
+	Stats mixed_stat(mixed_ratios);
+	(*results)["mean"][particle_mean][p_clust] = divide(stat.get_mean(), mixed_stat.get_mean());
+	(*results)["standard_deviation"][particle_mean][p_clust] = divide(stat.get_standard_deviation(), mixed_stat.get_standard_deviation());
+	(*results)["skewness"][particle_mean][p_clust] = divide(stat.get_skewness(), mixed_stat.get_skewness());
+	(*results)["kurtosis"][particle_mean][p_clust] = divide(stat.get_kurtosis(), mixed_stat.get_kurtosis());
+	cout << "Finishing: \t events: " << n_events << "  mean: " << particle_mean << "  p_eff: " << p_eff << "  p_clust: " << p_clust << endl;
+}
+
+
+void measure_test() {
+	Measure a(10, 2);
+	Measure b(5, 1);
+
+	cout << (a+b).
 }

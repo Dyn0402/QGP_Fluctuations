@@ -13,6 +13,8 @@
 #include <TCanvas.h>
 #include <TGraph.h>
 #include <TGraphErrors.h>
+#include <TGraph2D.h>
+#include <TGraph2DErrors.h>
 
 #include "plotting.h"
 #include "ratio_methods.h"
@@ -52,10 +54,10 @@ void plot_corrs(vector<double> corrs) {
 
 void plot_stats_vs_x(map<double, map<string, measure<double>>> stats, string x_name) {
 	TCanvas *can = new TCanvas(("Stats vs " + x_name).data(), ("Stats vs " + x_name).data(), config::can_w, config::can_h);
-	can->Divide(ceil(pow(config::statistics.size(),0.5)), ceil(config::statistics.size()/ceil(pow(config::statistics.size(), 0.5))));
+	can->Divide(ceil(pow(config::moments.size(),0.5)), ceil(config::moments.size()/ceil(pow(config::moments.size(), 0.5))));
 //	can->Divide(4,1);
 	int can_index = 1;
-	for(string stat:config::statistics) {
+	for(string stat:config::moments) {
 		can->cd(can_index);
 		vector<double> x, statistic, statistic_err;
 		for(pair<double, map<string, measure<double>>> effect:stats) {
@@ -161,4 +163,28 @@ TH1D* hist_ratios(vector<double> ratios) {
 		ratio_hist->Fill(ratio);
 	}
 	return(ratio_hist);
+}
+
+
+void graph_2d(map<double, map<double, measure<double>>> data, string name, string x_title, string y_title, string z_title) {
+	TCanvas *can = new TCanvas(name.data(), name.data(), config::can_w, config::can_h);
+	TGraph2DErrors *graph = new TGraph2DErrors();
+	int index = 0;
+	for(pair<double, map<double, measure<double>>> x:data) {
+		for(pair<double, measure<double>> y:x.second) {
+			graph->SetPoint(index, x.first, y.first, y.second.val);
+			graph->SetPointError(index, 0, 0, y.second.err);
+			index++;
+		}
+	}
+	graph->SetTitle((name+"; "+x_title+"; "+y_title+"; "+z_title).data());
+	graph->GetXaxis()->SetTitleOffset(5);
+	graph->GetYaxis()->SetTitleOffset(5);
+	graph->GetZaxis()->SetTitleOffset(5);
+	graph->SetLineColor(kBlack);
+	graph->Draw("tri1 err p0");//"tri1 p0");
+//	graph->Write((name+"_graph").data());
+	can->Write();
+	delete graph;
+	delete can;
 }

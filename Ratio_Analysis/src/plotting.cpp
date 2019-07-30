@@ -85,10 +85,13 @@ void canvas_2d_dist(map<int, map<int, int>> dist, int energy, int div, int cent)
 	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
 	TH2I *hist = ratios_map_to_hist(dist, name);
 	TCanvas *can = new TCanvas(name.data()); // Memory leak
-	TF1 *line = new TF1(name.data(), ("x/"+to_string(div)).data(), -0.5, 0.5+(--dist.end())->first);
+	TF1 *avg_line = new TF1(name.data(), ("x/"+to_string(div)).data(), -0.5, 0.5+(--dist.end())->first);
+	TF1 *max_line = new TF1((name+"max").data(), "x", -0.5, 0.5+(--dist.end())->first);
+	max_line->SetLineColor(4);
 	can->SetLogz();
 	hist->Draw("colz");
-	line->Draw("same");
+	max_line->Draw("same");
+	avg_line->Draw("same");
 	hist->Write();
 	can->Write();
 }

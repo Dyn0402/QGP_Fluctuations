@@ -6,6 +6,8 @@
  */
 
 
+#include <iostream>
+#include <algorithm>
 #include <vector>
 #include <cmath>
 
@@ -100,6 +102,43 @@ tree_data Simulator::run_simulation() {
 	delete rand;
 
 	return(data);
+}
+
+
+vector<tree_data> Simulator::run_simulation_mixed() {
+	vector<double> proton_angles;
+	tree_data data;
+	map<int, vector<double>> mixed_angles;
+	for(int i = 0; i < pars.n_events; i++) {
+		proton_angles = simulate_event();
+		if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
+		mixed_angles[proton_angles.size()].insert(mixed_angles[proton_angles.size()].end(), proton_angles.begin(), proton_angles.end());
+		data.good_protons[0][(int)proton_angles.size()] ++;
+		proton_angles = rotate_angles(proton_angles, rand->Rndm() * 2*M_PI);
+		for(int r:get_Rs(proton_angles, pars.divisions)) {
+			data.ratios[pars.divisions][0][(int)proton_angles.size()][r] ++;
+		}
+	}
+
+	tree_data mixed_data;
+	for(pair<int, vector<double>> num_protons:mixed_angles) {
+		random_shuffle(num_protons.second.begin(), num_protons.second.end());
+		int num_events = num_protons.second.size() / num_protons.first;
+		for(int event_index = 0; event_index < num_events; event_index++) {
+			mixed_data.good_protons[0][(int)num_protons.first] ++;
+			vector<double> rand_angles(num_protons.second.begin()+event_index*num_protons.first, num_protons.second.begin()+(event_index+1)*num_protons.first);
+			proton_angles = rotate_angles(rand_angles, rand->Rndm() * 2*M_PI);
+			for(int r:get_Rs(rand_angles, pars.divisions)) {
+				mixed_data.ratios[pars.divisions][0][(int)rand_angles.size()][r] ++;
+			}
+		}
+	}
+
+	delete rand;
+
+	vector<tree_data> both_data = {data, mixed_data};
+
+	return(both_data);
 }
 
 

@@ -31,5 +31,7 @@ void comp_hists(TH1D *hist1, TH1D *hist2, string can_name);
 
 TH1D* hist_ratios(vector<double> ratios);
 
+void graph_2d(map<double, map<double, measure<double>>> data, string name, string x_title = "x axis", string y_title = "y axis", string z_title = "z axis");
+
 
 #endif /* PLOTTING_H_ */

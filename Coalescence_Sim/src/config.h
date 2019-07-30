@@ -35,7 +35,7 @@ namespace config {
 
 	extern string param;
 	extern vector<double> param_list;
-	extern vector<string> statistics;
+	extern vector<string> moments;
 	extern vector<int> cumulant_orders;
 
 	extern double can_w;

@@ -39,7 +39,9 @@ class Simulator {
 public:
 	Simulator();
 
+	// Doers
 	tree_data run_simulation();
+	vector<tree_data> run_simulation_mixed();
 
 	// Getters
 	int get_n_events();

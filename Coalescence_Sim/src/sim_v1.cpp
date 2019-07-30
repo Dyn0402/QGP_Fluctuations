@@ -36,6 +36,7 @@ tree_data simulate_Rs(config::simulation_pars pars) {
 		proton_angles = simulate_event(rand, pars);
 		if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
 		data.good_protons[0][(int)proton_angles.size()] ++;
+		proton_angles = rotate_angles(proton_angles, rand->Rndm() * 2 * M_PI);
 		for(int r:get_Rs(proton_angles, pars.divisions)) {
 			data.ratios[pars.divisions][0][(int)proton_angles.size()][r] ++;
 		}
@@ -44,6 +45,39 @@ tree_data simulate_Rs(config::simulation_pars pars) {
 	delete rand;
 
 	return(data);
+}
+
+
+vector<tree_data> simulate_Rs_mixed(config::simulation_pars pars) {
+	vector<double> proton_angles;
+	TRandom3 *rand = new TRandom3(0);
+	tree_data data;
+	map<int, vector<double>> mixed_angles;
+	for(int i = 0; i < pars.n_events; i++) {
+		proton_angles = simulate_event(rand, pars);
+		if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
+		mixed_angles[proton_angles.size()].insert(mixed_angles[proton_angles.size()].end(), proton_angles.begin(), proton_angles.end());
+		data.good_protons[0][(int)proton_angles.size()] ++;
+		proton_angles = rotate_angles(proton_angles, rand->Rndm() * 2 * M_PI);
+		for(int r:get_Rs(proton_angles, pars.divisions)) {
+			data.ratios[pars.divisions][0][(int)proton_angles.size()][r] ++;
+		}
+	}
+
+	tree_data mixed_data;
+	for(pair<int, vector<double>> num_protons:mixed_angles) {
+		int num_events = num_protons.second.size() / num_protons.first;
+		for(int event_index = 0; event_index < num_events; event_index++) {
+			mixed_data.good_protons[0][(int)num_protons.first] ++;
+
+		}
+	}
+
+	delete rand;
+
+	vector<tree_data> both_data = {data, mixed_data};
+
+	return(both_data);
 }
 
 

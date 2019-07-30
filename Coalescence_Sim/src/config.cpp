@@ -25,7 +25,7 @@ namespace config {
 	string param = "p_cluster";
 	vector<double> param_list = {0.0, 0.05, 0.10, 0.15, 0.20};
 	vector<int> cumulant_orders = {1, 2, 3, 4};
-	vector<string> statistics = {"mean", "standard_deviation", "skewness", "kurtosis"};
+	vector<string> moments = {"mean", "standard_deviation", "skewness", "kurtosis"};
 
 	double can_w = 1080;
 	double can_h = 1080;
