@@ -10,6 +10,8 @@
 #include <tuple>
 #include <vector>
 #include <sstream>
+#include <string>
+#include <iomanip>
 
 #include <TROOT.h>
 #include <TError.h>
@@ -46,9 +48,11 @@ void test_stats();
 void python_comp();
 void fourier_test();
 void sim_data_hists();
+void sim_mixed_data_hists();
 void mean_cluster_hist();
 void run_pars(int n_events, double mean, double p_eff, double p_clust, double spread, map<string, map<double, map<double, measure<double>>>> *results);
 void run_mix_norm_pars(int n_events, double particle_mean, double p_eff, double p_clust, double spread, map<string, map<double, map<double, measure<double>>>> *results);
+void run_mix_hist_norm_pars(int energy, double p_eff, double p_clust, double spread, TH1D *dist_hist, TFile *out_file, map<string, map<double, map<double, measure<double>>>> *results);
 void measure_test();
 
 int main() {
@@ -60,7 +64,9 @@ int main() {
 //	python_comp();
 //	fourier_test();
 //	sim_data_hists();
-	mean_cluster_hist();
+//	mean_cluster_hist();
+//	measure_test();
+	sim_mixed_data_hists();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -374,41 +380,36 @@ void sim_data_hists() {
 
 
 void sim_mixed_data_hists() {
-	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/Real_Proton_Dists/07-30-19_eff95_clus25.root", "RECREATE");
+	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/Real_Proton_Dists/07-30-19_mix.root", "RECREATE");
 	TFile *file = new TFile("/home/dylan/local_server/dyn0402/Research/Results/07-23_new_data.root", "READ");
 	int cent = 15;
 	vector<int> energy_list = {7, 11, 19, 27, 39, 62};
-	map<double, map<string, measure<double>>> stats;
-	for(int energy:energy_list) {
-		cout << "Starting " << energy << "GeV" << endl;
-		string root_path = "NProton_Dists/" + to_string(energy) + "GeV/" + to_string(energy) + "GeV protons Centrality " + to_string(cent);
-		TH1D *proton_hist = (TH1D*) file->Get(root_path.data()); // Current memory leak. Fix.
-		Simulator sim;
-		sim.set_proton_dist_hist(proton_hist);
-		sim.set_p_effect(0.95);
-		sim.set_p_cluster(0.25);
-		sim.set_n_events((int)(proton_hist->GetEntries() + 0.5));
-		tree_data data = sim.run_simulation();
-		vector<double> ratios = ratios_map_to_vec(data.ratios[sim.get_divisions()][0]);
-		Stats stat(ratios);
-		stats[(double)energy]["mean"] = stat.get_mean();
-		stats[(double)energy]["standard_deviation"] = stat.get_standard_deviation();
-		stats[(double)energy]["skewness"] = stat.get_skewness();
-		stats[(double)energy]["kurtosis"] = stat.get_kurtosis();
-		TH2I *hist = ratios_map_to_hist(data.ratios[sim.get_divisions()][0], to_string(energy)+"GeV_Ratio_Hist"); // Memory leak
-		out_file->cd();
-		TCanvas *can = new TCanvas((to_string(energy)+"GeV_Ratio_Hist").data()); // Memory leak
-		TF1 *line = new TF1((to_string(energy)+"GeV_Ratio_Line").data(), ("x/"+to_string(sim.get_divisions())).data(), -0.5, 0.5+(--data.ratios[sim.get_divisions()][0].end())->first);
-		can->SetLogz();
-		hist->Draw("colz");
-		line->Draw("same");
-		hist->Write();
-		can->Write();
+	vector<double> cl_list = {0, 0.05, 0.1, 0.15, 0.2};
+	double p_eff = 0.95;
+	double spread = 0.2;
+	map<string, map<double, map<double, measure<double>>>> results;
+	map<int, TH1D*> dist_hists;
+	ROOT::EnableThreadSafety();
+	{
+		ThreadPool pool(thread::hardware_concurrency());
+		for(int energy:energy_list) {
+			string root_path = "NProton_Dists/" + to_string(energy) + "GeV/" + to_string(energy) + "GeV protons Centrality " + to_string(cent);
+			dist_hists[energy] = (TH1D*) file->Get(root_path.data());
+			for(double p_clust:cl_list) {
+				pool.enqueue(run_mix_hist_norm_pars, energy, p_eff, p_clust, spread, dist_hists[energy], out_file, &results);
+			}
+		}
+	}
+	for(pair<int, TH1D*> hist:dist_hists) {
+		delete hist.second;
 	}
 	file->Close();
 
+	vector<string> moments = {"mean", "standard_deviation", "skewness", "kurtosis"};
 	out_file->cd();
-	plot_stats_vs_x(stats, "Energy (GeV)");
+	for(string mom:moments) {
+		graph_2d(results[mom], mom+" with energy and cluster", "energy", "p_cluster", mom);
+	}
 	out_file->Close();
 
 }
@@ -482,9 +483,87 @@ void run_mix_norm_pars(int n_events, double particle_mean, double p_eff, double 
 }
 
 
+
+void run_mix_hist_norm_pars(int energy, double p_eff, double p_clust, double spread, TH1D *dist_hist, TFile *out_file, map<string, map<double, map<double, measure<double>>>> *results) {
+	int n_events = (int)(dist_hist->GetEntries() + 0.5);
+	cout << "Starting: \t events: " << n_events << "  energy: " << energy << "  p_eff: " << p_eff << "  p_clust: " << p_clust << endl;
+	Simulator sim;
+	sim.set_p_effect(p_eff);
+	sim.set_p_cluster(p_clust);
+	sim.set_proton_dist_hist(dist_hist);
+	sim.set_n_events(n_events);
+	sim.set_spread_sigma(spread);
+
+	vector<tree_data> data = sim.run_simulation_mixed();
+	vector<double> ratios = ratios_map_to_vec(data[0].ratios[sim.get_divisions()][0]);
+	vector<double> mixed_ratios = ratios_map_to_vec(data[1].ratios[sim.get_divisions()][0]);
+	Stats stat(ratios);
+	Stats mixed_stat(mixed_ratios);
+	(*results)["mean"][energy][p_clust] = divide(stat.get_mean(), mixed_stat.get_mean());
+	(*results)["standard_deviation"][energy][p_clust] = divide(stat.get_standard_deviation(), mixed_stat.get_standard_deviation());
+	(*results)["skewness"][energy][p_clust] = divide(stat.get_skewness(), mixed_stat.get_skewness());
+	(*results)["kurtosis"][energy][p_clust] = divide(stat.get_kurtosis(), mixed_stat.get_kurtosis());
+
+
+	ostringstream os("");
+	os << energy << "GeV | peff: " << setprecision(2) << p_eff << " | p_clust: " << setprecision(2) << p_clust << " | spread: " << setprecision(2) << spread << ends;
+	string name = os.str();
+	TH2I *hist = ratios_map_to_hist(data[0].ratios[sim.get_divisions()][0], name+"GeV_Ratio_Hist");
+	out_file->cd();
+	TCanvas *can = new TCanvas((name+"GeV_Ratio_Hist").data()); // Memory leak
+	TF1 *line = new TF1((name+"GeV_Ratio_Line").data(), ("x/"+to_string(sim.get_divisions())).data(), -0.5, 0.5+(--data[0].ratios[sim.get_divisions()][0].end())->first);
+	TF1 *line2 = new TF1((name+"GeV_Ratio_Line2").data(), "x", -0.5, 0.5+(--data[0].ratios[sim.get_divisions()][0].end())->first);
+	line2->SetLineColor(kBlue);
+	can->SetLogz();
+	line2->Draw();
+	hist->Draw("colz");
+	line->Draw("same");
+	hist->Write();
+	can->Write();
+
+	ostringstream mix_os("");
+	mix_os << "Mix " << energy << "GeV | peff: " << setprecision(2) << p_eff << " | p_clust: " << setprecision(2) << p_clust << " | spread: " << setprecision(2) << spread << ends;
+	string mix_name = mix_os.str();
+	TH2I *mix_hist = ratios_map_to_hist(data[1].ratios[sim.get_divisions()][0], mix_name+"GeV_Ratio_Hist");
+	TCanvas *mix_can = new TCanvas((mix_name+"GeV_Ratio_Hist").data());
+	TF1 *mix_line = new TF1((mix_name+"GeV_Ratio_Line").data(), ("x/"+to_string(sim.get_divisions())).data(), -0.5, 0.5+(--data[1].ratios[sim.get_divisions()][0].end())->first);
+	TF1 *mix_line2 = new TF1((name+"GeV_Ratio_Line2").data(), "x", -0.5, 0.5+(--data[0].ratios[sim.get_divisions()][0].end())->first);
+	mix_line2->SetLineColor(kBlue);
+	mix_can->SetLogz();
+	mix_line2->Draw();
+	mix_hist->Draw("colz");
+	mix_line->Draw("same");
+	mix_hist->Write();
+	mix_can->Write();
+
+	delete hist;
+	delete line;
+	delete line2;
+	delete can;
+
+	delete mix_hist;
+	delete mix_line;
+	delete mix_line2;
+	delete mix_can;
+
+	cout << "Finishing: \t events: " << n_events << "  energy: " << energy << "  p_eff: " << p_eff << "  p_clust: " << p_clust << endl;
+}
+
+
 void measure_test() {
 	Measure a(10, 2);
 	Measure b(5, 1);
 
-	cout << (a+b).
+	cout << "Addition: " << string(a+b) << endl;
+	cout << "Subtraction: " << string(a-b) << endl;
+	cout << "Multiplication: " << string(a*b) << endl;
+	cout << "Division: " << string(a/b) << endl;
+	cout << "Exponents: " << string(a.pow(2)) << endl;
+
+	Measure x1(100, 1.1);
+	Measure x2(50, 1.2);
+	Measure y1(200, 2.2);
+	Measure y2(100, 2.3);
+
+	std::cout << std::string(((x1 - x2).pow(2.) + (y1 - y2).pow(2.)).pow(0.5)) << std::endl; // => 111.803398874989 ±2.938366893361
 }

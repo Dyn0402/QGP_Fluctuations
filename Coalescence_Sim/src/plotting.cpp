@@ -178,11 +178,12 @@ void graph_2d(map<double, map<double, measure<double>>> data, string name, strin
 		}
 	}
 	graph->SetTitle((name+"; "+x_title+"; "+y_title+"; "+z_title).data());
-	graph->GetXaxis()->SetTitleOffset(5);
-	graph->GetYaxis()->SetTitleOffset(5);
-	graph->GetZaxis()->SetTitleOffset(5);
 	graph->SetLineColor(kBlack);
-	graph->Draw("tri1 err p0");//"tri1 p0");
+	graph->Draw("tri1 err p0");
+	gPad->Update();
+	graph->GetXaxis()->SetTitleOffset(2);
+	graph->GetYaxis()->SetTitleOffset(2);
+	graph->GetZaxis()->SetTitleOffset(2);
 //	graph->Write((name+"_graph").data());
 	can->Write();
 	delete graph;
