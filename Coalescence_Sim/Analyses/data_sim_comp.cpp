@@ -185,51 +185,10 @@ void get_moments(vector<double> ratios, int energy, TFile *out_file, map<string,
 	hist->Write();
 	can->Write();
 
-	ostringstream mix_os("");
-	mix_os << "Mix " << energy << "GeV | peff: " << setprecision(2) << p_eff << " | p_clust: " << setprecision(2) << p_clust << " | spread: " << setprecision(2) << spread << ends;
-	string mix_name = mix_os.str();
-	TH2I *mix_hist = ratios_map_to_hist(data[1].ratios[sim.get_divisions()][0], mix_name+"GeV_Ratio_Hist");
-	TCanvas *mix_can = new TCanvas((mix_name+"GeV_Ratio_Hist").data());
-	TF1 *mix_line = new TF1((mix_name+"GeV_Ratio_Line").data(), ("x/"+to_string(sim.get_divisions())).data(), -0.5, 0.5+(--data[1].ratios[sim.get_divisions()][0].end())->first);
-	TF1 *mix_line2 = new TF1((name+"GeV_Ratio_Line2").data(), "x", -0.5, 0.5+(--data[0].ratios[sim.get_divisions()][0].end())->first);
-	mix_line2->SetLineColor(kBlue);
-	mix_can->SetLogz();
-	mix_line2->Draw();
-	mix_hist->Draw("colz");
-	mix_line->Draw("same");
-	mix_hist->Write();
-	mix_can->Write();
-
 	delete hist;
 	delete line;
 	delete line2;
 	delete can;
-
-	delete mix_hist;
-	delete mix_line;
-	delete mix_line2;
-	delete mix_can;
 
 	cout << "Finishing: \t events: " << n_events << "  energy: " << energy << "  p_eff: " << p_eff << "  p_clust: " << p_clust << endl;
-}
-
-
-void plot_2d(tree_data data, string name, TFile *out_file) {
-	TH2I *hist = ratios_map_to_hist(data.ratios[sim.get_divisions()][0], name+"GeV_Ratio_Hist");
-	out_file->cd();
-	TCanvas *can = new TCanvas((name+"GeV_Ratio_Hist").data()); // Memory leak
-	TF1 *line = new TF1((name+"GeV_Ratio_Line").data(), ("x/"+to_string(sim.get_divisions())).data(), -0.5, 0.5+(--data[0].ratios[sim.get_divisions()][0].end())->first);
-	TF1 *line2 = new TF1((name+"GeV_Ratio_Line2").data(), "x", -0.5, 0.5+(--data[0].ratios[sim.get_divisions()][0].end())->first);
-	line2->SetLineColor(kBlue);
-	can->SetLogz();
-	line2->Draw();
-	hist->Draw("colz");
-	line->Draw("same");
-	hist->Write();
-	can->Write();
-
-	delete hist;
-	delete line;
-	delete line2;
-	delete can;
 }
