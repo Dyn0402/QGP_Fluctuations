@@ -28,6 +28,7 @@
 #include "ratio_methods.h"
 #include "plotting.h"
 #include "config.h"
+#include "file_io.h"
 #include "sim_efficiency.h"
 #include "ThreadPool.h"
 #include "Stats.h"
@@ -567,3 +568,4 @@ void measure_test() {
 
 	std::cout << std::string(((x1 - x2).pow(2.) + (y1 - y2).pow(2.)).pow(0.5)) << std::endl; // => 111.803398874989 ±2.938366893361
 }
+
