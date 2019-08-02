@@ -9,7 +9,7 @@
 #define DATA_SIM_COMP_H_
 
 
-
+#include <vector>
 
 
 #endif /* DATA_SIM_COMP_H_ */

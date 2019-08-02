@@ -40,8 +40,8 @@ public:
 	Simulator();
 
 	// Doers
-	tree_data run_simulation();
-	vector<tree_data> run_simulation_mixed();
+	map<int, map<int, int>> run_simulation();
+	vector<map<int, map<int, int>>> run_simulation_mixed();
 
 	// Getters
 	int get_n_events();
