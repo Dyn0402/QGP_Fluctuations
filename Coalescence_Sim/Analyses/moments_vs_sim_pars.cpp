@@ -37,7 +37,7 @@ using namespace std;
 
 
 void moments_vs_sim_pars(int div) {
-	TFile *out_file = new TFile("/home/dylan/local_server/dyn0402/Research/Simulation/08-01-19_mean_vs_pcl_" + to_string(div) + "div.root", "RECREATE");
+	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/08-01-19_mean_vs_pcl_" + to_string(div) + "div.root").data(), "RECREATE");
 	int n_events = 10000000;
 	vector<double> mean_list; // = {5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
 	for(double mean = 4.0; mean <= 30.0; mean+=0.5) { mean_list.push_back(mean); }
