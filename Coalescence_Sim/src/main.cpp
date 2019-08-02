@@ -70,7 +70,10 @@ int main() {
 //	mean_cluster_hist();
 //	measure_test();
 //	sim_mixed_data_hists();
-	moments_vs_sim_pars();
+	moments_vs_sim_pars(6);
+	moments_vs_sim_pars(5);
+	moments_vs_sim_pars(4);
+	moments_vs_sim_pars(3);
 
 	cout << "donzo" << endl;
 	return(0);
