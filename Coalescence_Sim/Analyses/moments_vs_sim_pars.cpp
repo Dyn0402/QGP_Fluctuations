@@ -47,7 +47,7 @@ void moments_vs_sim_pars(int div) {
 	map<double, map<double, map<string, Measure>>> results;
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(4);//thread::hardware_concurrency());
+		ThreadPool pool(8);//thread::hardware_concurrency());
 		for(double mean:mean_list) {
 			for(double cl:cl_list) {
 				pool.enqueue(run_pars_mixed, n_events, mean, p_eff, cl, spread, div, out_file, &results);
@@ -74,7 +74,7 @@ void moments_vs_sim_pars(int div) {
 
 void run_pars(int n_events, double mean, double p_eff, double p_clust, double spread, int div, TFile *out_file, map<double, map<double, map<string, Measure>>> *results) {
 	ostringstream os("");
-	os << "mean: " << setprecision(2) << mean << "  peff: " << setprecision(2) << p_eff << "  p_clust: " << setprecision(2) << p_clust << "  spread: " << setprecision(2) << spread << ends;
+	os << "mean: " << setprecision(3) << mean << "  peff: " << setprecision(2) << p_eff << "  p_clust: " << setprecision(2) << p_clust << "  spread: " << setprecision(2) << spread << ends;
 	string name = os.str();
 
 	cout << "Starting: \t " << name << endl;
