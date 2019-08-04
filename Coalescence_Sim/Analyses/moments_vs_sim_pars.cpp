@@ -37,7 +37,7 @@ using namespace std;
 
 
 void moments_vs_sim_pars(int div) {
-	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/08-01-19_mean_vs_pcl_" + to_string(div) + "div.root").data(), "RECREATE");
+	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/08-02-19_mean_vs_pcl_" + to_string(div) + "div.root").data(), "RECREATE");
 	int n_events = 10000000;
 	vector<double> mean_list; // = {5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
 	for(double mean = 4.0; mean <= 30.0; mean+=0.5) { mean_list.push_back(mean); }
@@ -47,7 +47,7 @@ void moments_vs_sim_pars(int div) {
 	map<double, map<double, map<string, Measure>>> results;
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(thread::hardware_concurrency());
+		ThreadPool pool(8);//thread::hardware_concurrency());
 		for(double mean:mean_list) {
 			for(double cl:cl_list) {
 				pool.enqueue(run_pars, n_events, mean, p_eff, cl, spread, div, out_file, &results);
@@ -74,7 +74,7 @@ void moments_vs_sim_pars(int div) {
 
 void run_pars(int n_events, double mean, double p_eff, double p_clust, double spread, int div, TFile *out_file, map<double, map<double, map<string, Measure>>> *results) {
 	ostringstream os("");
-	os << "mean: " << setprecision(2) << mean << "  peff: " << setprecision(2) << p_eff << "  p_clust: " << setprecision(2) << p_clust << "  spread: " << setprecision(2) << spread << ends;
+	os << "mean: " << setprecision(3) << mean << "  peff: " << setprecision(2) << p_eff << "  p_clust: " << setprecision(2) << p_clust << "  spread: " << setprecision(2) << spread << ends;
 	string name = os.str();
 
 	cout << "Starting: \t " << name << endl;
