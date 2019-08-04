@@ -20,9 +20,14 @@ using namespace std;
 
 
 void moments_vs_sim_pars(int div);
+
 void run_pars(int n_events, double mean, double p_eff, double p_clust, double spread, int div, TFile *out_file, map<double, map<double, map<string, Measure>>> *results);
 RatioData run_sim(double p_eff, double p_clust, double mean, double n_events, double spread, int div);
 void get_moments(vector<double> ratios, map<string, Measure> *results);
+
+void run_pars_mixed(int n_events, double mean, double p_eff, double p_clust, double spread, int div, TFile *out_file, map<double, map<double, map<string, Measure>>> *results);
+vector<RatioData> run_sim_mixed(double p_eff, double p_clust, double mean, double n_events, double spread, int div);
+void get_moments_mixed(vector<vector<double>> ratios, map<string, Measure> *results);
 
 
 
