@@ -37,6 +37,7 @@
 #include "Measure.h"
 
 #include "../Analyses/moments_vs_sim_pars.h"
+#include "../Analyses/two_div_skewness.h"
 
 using namespace std;
 
@@ -70,10 +71,11 @@ int main() {
 //	mean_cluster_hist();
 //	measure_test();
 //	sim_mixed_data_hists();
-	moments_vs_sim_pars(6);
-	moments_vs_sim_pars(5);
-	moments_vs_sim_pars(4);
-	moments_vs_sim_pars(3);
+//	moments_vs_sim_pars(6);
+//	moments_vs_sim_pars(5);
+//	moments_vs_sim_pars(4);
+//	moments_vs_sim_pars(3);
+	two_div_skewness();
 
 	cout << "donzo" << endl;
 	return(0);
