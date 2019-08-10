@@ -86,7 +86,8 @@ void two_div_skew::run_pars(int n_events, double mean, double p_eff, double p_cl
 	cout << "Starting: \t " << name << endl;
 
 	RatioData data = two_div_skew::run_sim(p_eff, p_clust, mean, n_events, spread, div);
-	data.canvas_2d_dist(out_file, name, p_clust);
+	out_file->cd();
+	data.canvas_2d_dist(name, p_clust);
 	map<double, int> ratios = data.get_ratio_hist();
 
 	two_div_skew::get_moments(ratios, &((*results)[(double)n_events][p_clust]));
@@ -128,8 +129,9 @@ void two_div_skew::run_pars_mixed(int n_events, double mean, double p_eff, doubl
 	cout << "Starting: \t " << name << endl;
 
 	vector<RatioData> data = run_sim_mixed(p_eff, p_clust, mean, n_events, spread, div);
-	data[0].canvas_2d_dist(out_file, name, p_clust);
-	data[1].canvas_2d_dist(out_file, name+"_mixed", p_clust);
+	out_file->cd();
+	data[0].canvas_2d_dist(name, p_clust);
+	data[1].canvas_2d_dist(name+"_mixed", p_clust);
 	vector<double> ratios = ratios_map_to_vec(data[0].get_ratio_data());
 	vector<double> mix_ratios = ratios_map_to_vec(data[1].get_ratio_data());
 	vector<vector<double>> both = {ratios, mix_ratios};
