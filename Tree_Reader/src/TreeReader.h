@@ -95,12 +95,12 @@ private:
 	string tree_name = "nsmTree";
 	string qa_name = "QA_";
 
-	string in_path = "/home/dylan/Research/Trees2/";
-	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";
+	string in_path = "/home/dylan/Research/Roli_Trees/output/"; //"/home/dylan/Research/Trees3/"; //
+	string out_path = "/home/dylan/local_server/dyn0402/Research/Data_Roli/";
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
 
 	vector<int> divs = {2,3,4,5,6};
-	vector<int> energy_list = {27, 19, 39, 11, 62, 7};
+	vector<int> energy_list = {7};//{27, 19, 39, 11, 62, 7};
 
 	void read_energy(int energy);
 	void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);

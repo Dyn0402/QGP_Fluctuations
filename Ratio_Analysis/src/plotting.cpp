@@ -25,12 +25,14 @@
 #include "plotting.h"
 #include "config_analysis.h"
 #include "Stats.h"
+#include "Measure.h"
+#include "RatioData.h"
 
 using namespace std;
 
 
 
-void make_ratio_dist_plots(TFile *out_root, map<int, tree_data> data) {
+void make_ratio_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *ratio_dist_dir = out_root->mkdir(plot::ratio_dist_dir_name.data());
 	ratio_dist_dir->cd();
 	for(int energy:analysis::energy_list) {
@@ -40,19 +42,20 @@ void make_ratio_dist_plots(TFile *out_root, map<int, tree_data> data) {
 			TDirectory *div_dir = energy_dir->mkdir((to_string(div) + "_Divs").data());
 			div_dir->cd();
 			for(int cent:analysis::centrals) {
-				vector<double> ratios = ratios_map_to_vec(data[energy].ratios[div][cent]);
-				hist_ratio_dist(ratios, energy, div, cent);
+				data[energy][div][cent].canvas_1d_dist(to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent));
 			}
 		}
 	}
 }
 
 
-void hist_ratio_dist(vector<double> ratios, int energy, int div, int cent, string mode) {
+void hist_ratio_dist(map<double, int> ratios, int energy, int div, int cent, string mode) {
 	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
 	TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
-	for(double ratio:ratios) {
-		ratio_hist->Fill(ratio);
+	for(pair<double, int> ratio:ratios) {
+		for(int i=0; i<ratio.second; i++) {
+			ratio_hist->Fill(ratio.first);
+		}
 	}
 	if(mode == "write") {
 		ratio_hist->Write();
@@ -64,7 +67,7 @@ void hist_ratio_dist(vector<double> ratios, int energy, int div, int cent, strin
 
 
 
-void make_2d_dist_plots(TFile *out_root, map<int, tree_data> data) {
+void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *dist_dir = out_root->mkdir(plot::dist_2d_dir_name.data());
 	dist_dir->cd();
 	for(int energy:analysis::energy_list) {
@@ -74,7 +77,7 @@ void make_2d_dist_plots(TFile *out_root, map<int, tree_data> data) {
 			TDirectory *div_dir = energy_dir->mkdir((to_string(div) + "_Divs").data());
 			div_dir->cd();
 			for(int cent:analysis::centrals) {
-				canvas_2d_dist(data[energy].ratios[div][cent], energy, div, cent);
+				data[energy][div][cent].canvas_2d_dist(to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent));
 			}
 		}
 	}
@@ -97,25 +100,26 @@ void canvas_2d_dist(map<int, map<int, int>> dist, int energy, int div, int cent)
 }
 
 
-void make_proton_dist_plots(TFile *out_root, map<int, tree_data> data) {
+void make_proton_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *nproton_dist_dir = out_root->mkdir(plot::nproton_dist_dir_name.data());
 	nproton_dist_dir->cd();
 	for(int energy:analysis::energy_list) {
 		TDirectory *energy_dir = nproton_dist_dir->mkdir((to_string(energy) + "GeV").data());
 		energy_dir->cd();
 		for(int cent:analysis::centrals) {
-			vector<int> nprotons = nproton_map_to_vec(data[energy].good_protons[cent]);
-			hist_proton_dist(nprotons, energy, cent);
+			(*data[energy].begin()).second[cent].canvas_proton_dist(to_string(energy) + "GeV protons Centrality " + to_string(cent));
 		}
 	}
 }
 
 
-void hist_proton_dist(vector<int> nprotons, int energy, int cent, string mode) {
+void hist_proton_dist(map<int, int> nprotons, int energy, int cent, string mode) {
 	string name = to_string(energy) + "GeV protons Centrality " + to_string(cent);
 	TH1D *protons_hist = new TH1D(name.data(), name.data(), plot::protons_hist_bins, plot::protons_hist_low, plot::protons_hist_high);
-	for(double protons:nprotons) {
-		protons_hist->Fill(protons);
+	for(pair<int, int> protons:nprotons) {
+		for(int i=0; i<protons.second; i++) {
+			protons_hist->Fill(protons.first);
+		}
 	}
 	if(mode == "write") {
 		protons_hist->Write();
@@ -126,7 +130,7 @@ void hist_proton_dist(vector<int> nprotons, int energy, int cent, string mode) {
 }
 
 
-void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, measure<double>>>>> cumulants) {
+void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, Measure>>>> cumulants) {
 	TDirectory *cumulant_dir = out_root->mkdir(plot::cumulant_dir_name.data());
 	cumulant_dir->cd();
 	for(int order:analysis::cumulant_orders) {
@@ -147,13 +151,13 @@ void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, me
 
 
 
-void graph_cumulant_vs_energy(map<int, map<int, map<int, map<int, measure<double>>>>> cumulants, int div, int cent, int order) {
+void graph_cumulant_vs_energy(map<int, map<int, map<int, map<int, Measure>>>> cumulants, int div, int cent, int order) {
 	vector<double> cumulant, cumulant_err, energies, energies_err;
-	measure<double> cum;
+	Measure cum;
 	for(int energy:analysis::energy_list) {
 		cum = cumulants[energy][div][cent][order];
-		cumulant.push_back(cum.val);
-		cumulant_err.push_back(cum.err);
+		cumulant.push_back(cum.get_val());
+		cumulant_err.push_back(cum.get_err());
 		energies.push_back((double)energy);
 		energies_err.push_back(0.0);
 	}
@@ -163,13 +167,13 @@ void graph_cumulant_vs_energy(map<int, map<int, map<int, map<int, measure<double
 }
 
 
-void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, measure<double>>>>> cumulants, int energy, int cent, int order) {
+void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, Measure>>>> cumulants, int energy, int cent, int order) {
 	vector<double> cumulant, cumulant_err, divisions, divisions_err;
-	measure<double> cum;
+	Measure cum;
 	for(int div:analysis::divs) {
 		cum = cumulants[energy][div][cent][order];
-		cumulant.push_back(cum.val);
-		cumulant_err.push_back(cum.err);
+		cumulant.push_back(cum.get_val());
+		cumulant_err.push_back(cum.get_err());
 		divisions.push_back((double)div);
 		divisions_err.push_back(0.0);
 	}
@@ -180,7 +184,7 @@ void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, measure<double>>
 
 
 
-void make_stat_plots(TFile *out_root, map<int, map<int, map<int, map<string, measure<double>>>>> stats) {
+void make_stat_plots(TFile *out_root, map<int, map<int, map<int, map<string, Measure>>>> stats) {
 	TDirectory *stats_dir = out_root->mkdir(plot::stat_dir_name.data());
 	stats_dir->cd();
 	for(string stat:analysis::stat_names) {
@@ -201,13 +205,13 @@ void make_stat_plots(TFile *out_root, map<int, map<int, map<int, map<string, mea
 
 
 
-void graph_stat_vs_energy(map<int, map<int, map<int, map<string, measure<double>>>>> stats, int div, int cent, string stat) {
+void graph_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, int div, int cent, string stat) {
 	vector<double> stat_val, stat_err, energies, energies_err;
-	measure<double> stat_meas;
+	Measure stat_meas;
 	for(int energy:analysis::energy_list) {
 		stat_meas = stats[energy][div][cent][stat];
-		stat_val.push_back(stat_meas.val);
-		stat_err.push_back(stat_meas.err);
+		stat_val.push_back(stat_meas.get_val());
+		stat_err.push_back(stat_meas.get_err());
 		energies.push_back((double)energy);
 		energies_err.push_back(0.0);
 	}
@@ -217,13 +221,13 @@ void graph_stat_vs_energy(map<int, map<int, map<int, map<string, measure<double>
 }
 
 
-void graph_stat_vs_divs(map<int, map<int, map<int, map<string, measure<double>>>>> stats, int energy, int cent, string stat) {
+void graph_stat_vs_divs(map<int, map<int, map<int, map<string, Measure>>>> stats, int energy, int cent, string stat) {
 	vector<double> stat_val, stat_err, divisions, divisions_err;
-	measure<double> stat_meas;
+	Measure stat_meas;
 	for(int div:analysis::divs) {
 		stat_meas = stats[energy][div][cent][stat];
-		stat_val.push_back(stat_meas.val);
-		stat_err.push_back(stat_meas.err);
+		stat_val.push_back(stat_meas.get_val());
+		stat_err.push_back(stat_meas.get_err());
 		divisions.push_back((double)div);
 		divisions_err.push_back(0.0);
 	}
@@ -249,7 +253,7 @@ TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double
 
 
 
-void make_canvas_plots(TFile *out_root, map<int, tree_data> data, map<int, map<int, map<int, map<int, measure<double>>>>> cumulants, map<int, map<int, map<int, map<string, measure<double>>>>> stats) {
+void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
 	can_dir->cd();
 
@@ -302,16 +306,15 @@ void make_canvas_plots(TFile *out_root, map<int, tree_data> data, map<int, map<i
 }
 
 
-void canvas_nprotons(map<int, tree_data> data, int cent, string name) {
+void canvas_nprotons(map<int, map<int, map<int, RatioData>>> data, int cent, string name) {
 	TCanvas *proton_can = new TCanvas();
 	proton_can->SetTitle(name.data());
 	proton_can->SetName(name.data());
 	proton_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))));
 	int can_index = 1;
-	for(pair<int, tree_data>  energy:data) {
+	for(pair<int, map<int, map<int, RatioData>>>  energy:data) {
 		proton_can->cd(can_index);
-		vector<int> nprotons = nproton_map_to_vec(energy.second.good_protons[cent]);
-		hist_proton_dist(nprotons, energy.first, cent, "draw");
+		hist_proton_dist((*energy.second.begin()).second[cent].get_proton_dist(), energy.first, cent, "draw"); // Memory leak
 		can_index++;
 	}
 	proton_can->Write(name.data());
@@ -319,17 +322,16 @@ void canvas_nprotons(map<int, tree_data> data, int cent, string name) {
 }
 
 
-void canvas_ratio_dists(map<int, tree_data> data, int div, int cent, string name) {
+void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, int div, int cent, string name) {
 	TCanvas *ratio_can = new TCanvas();
 	ratio_can->SetTitle(name.data());
 	ratio_can->SetName(name.data());
 	ratio_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))));
 	int can_index = 1;
-	for(pair<int, tree_data>  energy:data) {
+	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
 		ratio_can->cd(can_index);
 		gPad->SetLogy();
-		vector<double> ratios = ratios_map_to_vec(energy.second.ratios[div][cent]);
-		hist_ratio_dist(ratios, energy.first, div, cent, "draw");
+		hist_ratio_dist(energy.second[div][cent].get_ratio_hist(), energy.first, div, cent, "draw");
 		can_index++;
 	}
 	ratio_can->Write(name.data());
@@ -337,19 +339,19 @@ void canvas_ratio_dists(map<int, tree_data> data, int div, int cent, string name
 }
 
 
-void canvas_cumulant_dists(map<int, map<int, map<int, map<int, measure<double>>>>> cumulants, int order, int cent, string name) {
+void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumulants, int order, int cent, string name) {
 	auto *can = new TCanvas();
 	auto *mg = new TMultiGraph();
 	mg->SetNameTitle(name.data(), name.data());
 	for(int div:analysis::divs) {
 		vector<double> cumulant, energy, cumulant_err, energy_err;
-		measure<double> cum;
+		Measure cum;
 		for(int e:analysis::energy_list) {
 			energy.push_back((double)e);
 			energy_err.push_back(0.0);
 			cum = cumulants[e][div][cent][order];
-			cumulant.push_back(cum.val);
-			cumulant.push_back(cum.err);
+			cumulant.push_back(cum.get_val());
+			cumulant.push_back(cum.get_err());
 		}
 		TGraphErrors *graph = graph_x_vs_y_err(energy, cumulant, energy_err, cumulant_err);
 		graph->SetNameTitle((to_string(div) + " divisions").data());
@@ -366,19 +368,19 @@ void canvas_cumulant_dists(map<int, map<int, map<int, map<int, measure<double>>>
 }
 
 
-void canvas_stat_dists(map<int, map<int, map<int, map<string, measure<double>>>>> stats, string stat, int cent, string name) {
+void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat, int cent, string name) {
 	auto *can = new TCanvas();
 	auto *mg = new TMultiGraph();
 	mg->SetNameTitle(name.data(), name.data());
 	for(int div:analysis::divs) {
 		vector<double> stat_vals, energy, stat_err, energy_err;
-		measure<double> stat_meas;
+		Measure stat_meas;
 		for(int e:analysis::energy_list) {
 			energy.push_back((double)e);
 			energy_err.push_back(0.0);
 			stat_meas = stats[e][div][cent][stat];
-			stat_vals.push_back(stat_meas.val);
-			stat_vals.push_back(stat_meas.err);
+			stat_vals.push_back(stat_meas.get_val());
+			stat_vals.push_back(stat_meas.get_err());
 		}
 		TGraphErrors *graph = graph_x_vs_y_err(energy, stat_vals, energy_err, stat_err);
 		graph->SetNameTitle((to_string(div) + " divisions").data());
@@ -395,7 +397,7 @@ void canvas_stat_dists(map<int, map<int, map<int, map<string, measure<double>>>>
 }
 
 
-void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, measure<double>>>>> stats, string name) {
+void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name) {
 	int div = 6; //Hardcode, fix.
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	can->Divide(2,2);
@@ -410,15 +412,15 @@ void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, measure<dou
 		double y_min = numeric_limits<double>::max();
 		for(int energy:analysis::energy_list) {
 			vector<double> stat_vals, cent_val, stat_err, cent_err;
-			measure<double> stat_meas;
+			Measure stat_meas;
 			for(int cent_index=15; cent_index > 5; cent_index--) {
 				cent_val.push_back((15-cent_index)*plot::centrality_slope + plot::centrality_intercept);
 				cent_err.push_back(0.0);
 				stat_meas = stats[energy][div][cent_index][stat];
-				stat_vals.push_back(stat_meas.val);
-				stat_err.push_back(stat_meas.err);
-				if(stat_meas.val + stat_meas.err > y_max) { y_max = stat_meas.val + stat_meas.err; }
-				if(stat_meas.val - stat_meas.err < y_min) { y_min = stat_meas.val - stat_meas.err; }
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(cent_val, stat_vals, cent_err, stat_err);
 			graph->SetNameTitle((to_string(plot::energy_match[energy]).substr(0,4) + " GeV").data());
@@ -449,7 +451,7 @@ void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, measure<dou
 }
 
 
-void athic_stat_vs_energy(map<int, map<int, map<int, map<string, measure<double>>>>> stats, string name) {
+void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name) {
 	int div = 6; //Hardcode, fix.
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	can->Divide(2,2);
@@ -466,15 +468,15 @@ void athic_stat_vs_energy(map<int, map<int, map<int, map<string, measure<double>
 		int cent_low, cent_high;
 		for(int cent_index=15; cent_index > 10; cent_index-=2) {
 			vector<double> stat_vals, energy_val, stat_err, energy_err;
-			measure<double> stat_meas;
+			Measure stat_meas;
 			for(int energy:analysis::energy_list) {
 				energy_val.push_back(plot::energy_match[energy]);
 				energy_err.push_back(0.0);
 				stat_meas = stats[energy][div][cent_index][stat];
-				stat_vals.push_back(stat_meas.val);
-				stat_err.push_back(stat_meas.err);
-				if(stat_meas.val + stat_meas.err > y_max) { y_max = stat_meas.val + stat_meas.err; }
-				if(stat_meas.val - stat_meas.err < y_min) { y_min = stat_meas.val - stat_meas.err; }
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
 			cent_high = (int)(((15-cent_index+1)*plot::centrality_slope) + 0.5);

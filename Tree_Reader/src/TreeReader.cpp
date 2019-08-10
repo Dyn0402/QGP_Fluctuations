@@ -62,7 +62,7 @@ void TreeReader::read_energy(int energy) {
 	auto *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
 	for(string path:in_files) {
-		if(!(file_index % (unsigned)(num_files/10.0+0.5))) {
+		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
 			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
 		}
