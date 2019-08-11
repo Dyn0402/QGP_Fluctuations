@@ -18,7 +18,7 @@
 
 using namespace std;
 
-
+void stat_test();
 void moments_vs_sim_pars2(int div);
 
 void run_pars2(int n_events, double mean, double p_group, double spread, int div, TDirectory *out_file, map<double, map<double, map<string, Measure>>> *results);

@@ -37,7 +37,7 @@ using namespace std;
 
 
 void moments_vs_sim_pars2(int div) {
-	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/08-09-19/08-10-19_mean_vs_pgroup_" + to_string(div) + "div_mixed.root").data(), "RECREATE");
+	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/08-09-19/08-11-19_mean_vs_pgroup_" + to_string(div) + "div_mixed.root").data(), "RECREATE");
 	TDirectory *indiv_dir = out_file->mkdir("Individual 2Ds");
 	indiv_dir->cd();
 	int n_events = 1000000;
@@ -51,7 +51,7 @@ void moments_vs_sim_pars2(int div) {
 		ThreadPool pool(thread::hardware_concurrency());
 		for(double mean:mean_list) {
 			for(double group:group_list) {
-				pool.enqueue(run_pars_mixed2, n_events, mean, group, spread, div, out_file, &results);
+				pool.enqueue(run_pars_mixed2, n_events, mean, group, spread, div, indiv_dir, &results);
 			}
 		}
 	}
@@ -177,4 +177,25 @@ void get_moments_mixed2(vector<map<double, int>> ratios, map<string, Measure> *r
 	(*results)["standard_deviation_r"] = stat.get_standard_deviation() / stat_mixed.get_standard_deviation();
 	(*results)["skewness_r"] = stat.get_skewness() / stat_mixed.get_skewness();
 	(*results)["kurtosis_r"] = stat.get_kurtosis() / stat_mixed.get_kurtosis();
+}
+
+
+
+void stat_test() {
+	Simulator2 sim;
+	sim.set_divisions(3);
+	sim.set_spread_sigma(0.2);
+	vector<map<int, map<int, int>>> sim_res = sim.run_simulation_mixed();
+	RatioData data;
+	data.set_ratio_data(sim_res[0]);
+	Stats stat(data.get_ratio_hist());
+	Stats stat_vec(data.get_ratio_vec());
+	cout << "Hist mean: " << string(stat.get_mean()) << endl;
+	cout << "Vec mean: " << string(stat_vec.get_mean()) << endl;
+	cout << "Hist sd: " << string(stat.get_standard_deviation()) << endl;
+	cout << "Vec sd: " << string(stat_vec.get_standard_deviation()) << endl;
+	cout << "Hist skew: " << string(stat.get_skewness()) << endl;
+	cout << "Vec skew: " << string(stat_vec.get_skewness()) << endl;
+	cout << "Hist kurt: " << string(stat.get_kurtosis()) << endl;
+	cout << "Vec kurt: " << string(stat_vec.get_kurtosis()) << endl;
 }
