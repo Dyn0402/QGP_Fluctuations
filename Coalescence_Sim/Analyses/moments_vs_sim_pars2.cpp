@@ -67,6 +67,7 @@ void moments_vs_sim_pars2(int div) {
 			}
 		}
 		Plotter plot;
+		plot.set_line_width(2);
 		plot.moments_multi(mom_result, mom+" with proton mean and group", "p_group", "proton mean");
 	}
 	for(string mom:moments) {
