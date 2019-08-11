@@ -132,46 +132,21 @@ vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
 
 
 vector<double> Simulator2::simulate_event() {
-//	double group_angle;
-//	vector<double> proton_angles = {};
-//
-//	int n_protons = get_protons();
-//
-//	if(n_protons > 0) { proton_angles.push_back(rand->Rndm() * 2 * M_PI); }
-//	for(int j=1; j< n_protons; j++) {
-//		if(rand->Rndm() < pars.p_group) {
-//			group_angle = rand->Gaus(proton_angles.back(), pars.spread_sigma);
-//			while(group_angle > 2*M_PI) { group_angle -= 2*M_PI; }
-//			while(group_angle < 0) { group_angle += 2*M_PI; }
-//			proton_angles.push_back(group_angle);
-//		} else {
-//			proton_angles.push_back(rand->Rndm() * 2 * M_PI);
-//		}
-//	}
-//
-//	return(proton_angles);
-
-	int n_protons, rand_protons, group_protons;
 	double group_angle;
 	vector<double> proton_angles = {};
 
-	n_protons = get_protons();
-	if(rand->Rndm() < 0.95) {
-		group_protons = (int) (n_protons * pars.p_group + 0.5);
-		group_angle = rand->Rndm() * 2 * M_PI;
-		for(int j = 0; j < group_protons; j++) {
-			double cor_angle = rand->Gaus(group_angle, pars.spread_sigma);
-			while(cor_angle > 2*M_PI) { cor_angle -= 2*M_PI; }
-			while(cor_angle < 0) { cor_angle += 2*M_PI; }
-			proton_angles.push_back(cor_angle);
-		}
-	} else {
-		group_protons = 0;
-	}
+	int n_protons = get_protons();
 
-	rand_protons = n_protons - group_protons;
-	for(int j = 0; j < rand_protons; j++) {
-		proton_angles.push_back(rand->Rndm() * 2 * M_PI);
+	if(n_protons > 0) { proton_angles.push_back(rand->Rndm() * 2 * M_PI); }
+	for(int j=1; j< n_protons; j++) {
+		if(rand->Rndm() < pars.p_group) {
+			group_angle = rand->Gaus(proton_angles.back(), pars.spread_sigma);
+			while(group_angle > 2*M_PI) { group_angle -= 2*M_PI; }
+			while(group_angle < 0) { group_angle += 2*M_PI; }
+			proton_angles.push_back(group_angle);
+		} else {
+			proton_angles.push_back(rand->Rndm() * 2 * M_PI);
+		}
 	}
 
 	return(proton_angles);
