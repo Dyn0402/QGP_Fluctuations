@@ -42,6 +42,7 @@ public:
 	// Doers
 	map<int, map<int, int>> run_simulation();
 	vector<map<int, map<int, int>>> run_simulation_mixed();
+	vector<map<int, map<int, int>>> run_sim_mixed_2p();
 
 	// Getters
 	int get_n_events();

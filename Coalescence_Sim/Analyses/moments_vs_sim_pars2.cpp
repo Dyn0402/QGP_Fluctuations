@@ -40,10 +40,10 @@ void moments_vs_sim_pars2(int div) {
 	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/08-09-19/08-11-19_mean_vs_pgroup_" + to_string(div) + "div_mixed.root").data(), "RECREATE");
 	TDirectory *indiv_dir = out_file->mkdir("Individual 2Ds");
 	indiv_dir->cd();
-	int n_events = 1000000;
-	vector<double> mean_list = {5.0, 10.0, 15.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
-//	for(double mean = 4.0; mean <= 30.0; mean+=0.5) { mean_list.push_back(mean); }
-	vector<double> group_list = {0.0, 0.05, 0.1};// 0.15, 0.2};
+	int n_events = 10000000;
+	vector<double> mean_list; // = {5.0, 10.0, 15.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
+	for(double mean = 30.0; mean >= 4.0; mean-=0.5) { mean_list.push_back(mean); }
+	vector<double> group_list = {0.0, 0.05, 0.1, 0.15, 0.2};
 	double spread = 0.2;
 	map<double, map<double, map<string, Measure>>> results;
 	ROOT::EnableThreadSafety();
