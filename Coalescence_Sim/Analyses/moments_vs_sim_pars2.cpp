@@ -37,18 +37,18 @@ using namespace std;
 
 
 void moments_vs_sim_pars2(int div) {
-	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/08-09-19/08-11-19_mean_vs_pgroup_" + to_string(div) + "div_mixed.root").data(), "RECREATE");
+	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/v2_sim/08-13-19_mean_vs_pgroup_" + to_string(div) + "div_mixed.root").data(), "RECREATE");
 	TDirectory *indiv_dir = out_file->mkdir("Individual 2Ds");
 	indiv_dir->cd();
 	int n_events = 10000000;
-	vector<double> mean_list; // = {5.0, 10.0, 15.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
-	for(double mean = 30.0; mean >= 4.0; mean-=0.5) { mean_list.push_back(mean); }
-	vector<double> group_list = {0.0, 0.05, 0.1, 0.15, 0.2};
+	vector<double> mean_list = {5.0, 10.0, 15.0, 20.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
+//	for(double mean = 30.0; mean >= 4.0; mean-=0.5) { mean_list.push_back(mean); }
+	vector<double> group_list = {0.0, 0.05, 0.1};//, 0.15, 0.2};
 	double spread = 0.2;
 	map<double, map<double, map<string, Measure>>> results;
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(2);//thread::hardware_concurrency());
+		ThreadPool pool(thread::hardware_concurrency());
 		for(double mean:mean_list) {
 			for(double group:group_list) {
 				pool.enqueue(run_pars_mixed2, n_events, mean, group, spread, div, indiv_dir, &results);
@@ -59,22 +59,26 @@ void moments_vs_sim_pars2(int div) {
 	out_file->cd();
 	vector<string> moments = {"mean", "standard_deviation", "skewness", "kurtosis"};
 	out_file->cd();
+	cout << "Regular" << endl;
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<double, map<string, Measure>>> group:results) {
 			for(pair<double, map<string, Measure>> mean:group.second) {
 				mom_result[group.first][mean.first] = mean.second[mom];
+				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom]) << endl;
 			}
 		}
 		Plotter plot;
 		plot.set_line_width(2);
 		plot.moments_multi(mom_result, mom+" with proton mean and group", "p_group", "proton mean");
 	}
+	cout << "Mixed divided" << endl;
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<double, map<string, Measure>>> group:results) {
 			for(pair<double, map<string, Measure>> mean:group.second) {
 				mom_result[group.first][mean.first] = mean.second[mom+"_r"];
+				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
 			}
 		}
 		Plotter plot;

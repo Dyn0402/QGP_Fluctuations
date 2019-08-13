@@ -72,13 +72,13 @@ int main() {
 //	mean_cluster_hist();
 //	measure_test();
 //	sim_mixed_data_hists();
-//	moments_vs_sim_pars2(6);
+	moments_vs_sim_pars2(6);
 //	moments_vs_sim_pars2(5);
 //	moments_vs_sim_pars2(4);
 //	moments_vs_sim_pars2(3);
 //	two_div_skewness();
 //	stat_test();
-	ram_test();
+//	ram_test();
 
 	cout << "donzo" << endl;
 	return(0);
