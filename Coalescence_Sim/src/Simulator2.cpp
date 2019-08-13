@@ -142,7 +142,11 @@ vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
 		}
 	}
 	random_shuffle(left_over.begin(), left_over.end());
-	int event_protons = get_protons();
+	int event_protons;
+	do {
+		event_protons = get_protons();
+	} while (event_protons < (unsigned)pars.min_protons);
+	if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
 	int proton_index = 0;
 	int num_leftover = (int)left_over.size();
 	while(proton_index + event_protons < num_leftover) {
@@ -152,7 +156,9 @@ vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
 			mixed_ratio_data[event_protons][r] ++;
 		}
 		proton_index += event_protons;
-		event_protons = get_protons();
+		do {
+			event_protons = get_protons();
+		} while (event_protons < (unsigned)pars.min_protons);
 	}
 
 	delete rand;
