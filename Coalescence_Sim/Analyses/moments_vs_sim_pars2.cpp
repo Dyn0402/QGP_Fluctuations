@@ -82,6 +82,16 @@ void moments_vs_sim_pars2(int div) {
 			}
 		}
 		Plotter plot;
+		plot.moments_multi(mom_result, mom+" divided by mixed with proton mean and zero effect", "p_group", "proton mean");
+	}
+	cout << "Zero effect mixed divided" << endl;
+	for(string mom:moments) {
+		map<double, map<double, Measure>> mom_result;
+		for(pair<double, map<string, Measure>> mean:results[0]) {
+			mom_result[0][mean.first] = mean.second[mom+"_r"];
+			cout << "Mean: " << mean.first << "  Group: " << to_string(0) << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
+		}
+		Plotter plot;
 		plot.moments_multi(mom_result, mom+" divided by mixed with proton mean and group", "p_group", "proton mean");
 	}
 	out_file->Close();
