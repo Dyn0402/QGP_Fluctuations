@@ -124,7 +124,7 @@ vector<map<int, map<int, int>>> Simulator::run_simulation_mixed() {
 		int num_events = num_protons.second.size() / num_protons.first;
 		for(int event_index = 0; event_index < num_events; event_index++) {
 			vector<double> rand_angles(num_protons.second.begin()+event_index*num_protons.first, num_protons.second.begin()+(event_index+1)*num_protons.first);
-			proton_angles = rotate_angles(rand_angles, rand->Rndm() * 2*M_PI);
+			rand_angles = rotate_angles(rand_angles, rand->Rndm() * 2*M_PI);
 			for(int r:get_Rs(rand_angles, pars.divisions)) {
 				mixed_ratio_data[(int)rand_angles.size()][r] ++;
 			}
