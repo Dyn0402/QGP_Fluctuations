@@ -48,7 +48,7 @@ void moments_vs_sim_pars2(int div) {
 	map<double, map<double, map<string, Measure>>> results;
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(thread::hardware_concurrency());
+		ThreadPool pool(1);//thread::hardware_concurrency());
 		for(double mean:mean_list) {
 			for(double group:group_list) {
 				pool.enqueue(run_pars_mixed2, n_events, mean, group, spread, div, indiv_dir, &results);
