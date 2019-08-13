@@ -31,6 +31,8 @@ struct simulation_pars {
 
 		string proton_dist = "poisson";
 		double particle_mean = 20.0;
+
+		int num_event_mix = 1000;
 	};
 
 
@@ -47,6 +49,7 @@ public:
 	int get_divisions();
 	double get_p_group();
 	double get_spread_sigma();
+	int get_num_event_mix();
 
 	// Setters
 	void set_n_events(int n);
@@ -57,6 +60,7 @@ public:
 	void set_proton_dist(string dist);
 	void set_particle_mean(double mean);
 	void set_proton_dist_hist(TH1D *hist);
+	void set_num_event_mix(int num);
 
 private:
 //	string out_path = "/home/dylan/local_server/dyn0402/Research/Simulation/07-18_athic_comp.root";
