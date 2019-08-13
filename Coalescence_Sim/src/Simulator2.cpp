@@ -109,8 +109,6 @@ map<int, map<int, int>> Simulator2::run_simulation() {
 		}
 	}
 
-	delete rand;
-
 	return(ratio_data);
 }
 
@@ -171,16 +169,14 @@ vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
 		} while (event_protons < pars.min_protons);
 	}
 
-	delete rand;
-
 	vector<map<int, map<int, int>>> both_data = {ratio_data, mixed_ratio_data};
 
 	return(both_data);
 }
 
 
-vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p() {
-	two_p_corr = new TH1D("Two Particle Correlation", "Two Particle Correlation", 100, -M_PI/4, 2*M_PI - M_PI/4);
+vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p(string two_p_name) {
+	two_p_corr = new TH1D(two_p_name.data(), two_p_name.data(), 100, -M_PI/4, 2*M_PI - M_PI/4);
 	vector<double> proton_angles;
 	map<int, map<int, int>> ratio_data;
 	map<int, vector<double>> mixed_angles;
@@ -215,7 +211,7 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p() {
 		}
 	}
 
-
+	two_p_corr->Write();
 
 	// Deal with left over mixed events. Not very efficient, just groups all left over into one mix. Improve.
 	vector<double> left_over;
@@ -242,8 +238,6 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p() {
 			event_protons = get_protons();
 		} while (event_protons < pars.min_protons);
 	}
-
-	delete rand;
 
 	vector<map<int, map<int, int>>> both_data = {ratio_data, mixed_ratio_data};
 

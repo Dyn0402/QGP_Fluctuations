@@ -44,7 +44,7 @@ public:
 	// Doers
 	map<int, map<int, int>> run_simulation();
 	vector<map<int, map<int, int>>> run_simulation_mixed();
-	vector<map<int, map<int, int>>> run_sim_mixed_2p();
+	vector<map<int, map<int, int>>> run_sim_mixed_2p(string two_p_name);
 	void write_two_p_corr();
 
 	// Getters
