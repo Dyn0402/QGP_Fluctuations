@@ -22,6 +22,13 @@ using namespace std;
 Simulator2::Simulator2() {
 	rand = new TRandom3(0);
 	proton_dist_hist = new TH1D();
+	two_p_corr = new TH1D();
+}
+
+Simulator2::~Simulator2() {
+	delete rand;
+	delete proton_dist_hist;
+	delete two_p_corr;
 }
 
 // Getters
@@ -43,6 +50,10 @@ double Simulator2::get_spread_sigma() {
 
 int Simulator2::get_num_event_mix() {
 	return(pars.num_event_mix);
+}
+
+TH1D* Simulator2::get_two_p_corr() {
+	return(two_p_corr);
 }
 
 
@@ -169,44 +180,77 @@ vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
 }
 
 
+vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p() {
+	two_p_corr = new TH1D("Two Particle Correlation", "Two Particle Correlation", 100, -M_PI/4, 2*M_PI - M_PI/4);
+	vector<double> proton_angles;
+	map<int, map<int, int>> ratio_data;
+	map<int, vector<double>> mixed_angles;
+	map<int, map<int, int>> mixed_ratio_data;
+	int n_protons, n_mix_events;
+	for(int i = 0; i < pars.n_events; i++) {
+		proton_angles = simulate_event();
+		if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
+		proton_angles = rotate_angles(proton_angles, rand->Rndm() * 2*M_PI);
+		n_protons = (int) proton_angles.size();
+		for(int r:get_Rs(proton_angles, pars.divisions)) {
+			ratio_data[n_protons][r] ++;
+		}
+		// Two particle filling
+		for(double cor:get_two_particle_correlation(proton_angles)) {
+			if(cor > 2*M_PI - M_PI / 4) { cor -= 2*M_PI; }
+			two_p_corr->Fill(cor);
+		}
+		// Mixed event logic
+		mixed_angles[n_protons].insert(mixed_angles[n_protons].end(), proton_angles.begin(), proton_angles.end());
+		n_mix_events = (int) mixed_angles[n_protons].size() / n_protons;
+		if(n_mix_events >= pars.num_event_mix) {
+			random_shuffle(mixed_angles[n_protons].begin(), mixed_angles[n_protons].end());
+			for(int event_index = 0; event_index < n_mix_events; event_index++) {
+				vector<double> rand_angles(mixed_angles[n_protons].begin()+event_index*n_protons, mixed_angles[n_protons].begin()+(event_index+1)*n_protons);
+				rand_angles = rotate_angles(rand_angles, rand->Rndm() * 2*M_PI);
+				for(int r:get_Rs(rand_angles, pars.divisions)) {
+					mixed_ratio_data[(int)rand_angles.size()][r] ++;
+				}
+			}
+			mixed_angles[n_protons] = {};
+		}
+	}
 
-//vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p() {
-//	vector<double> proton_angles;
-//	map<int, map<int, int>> ratio_data;
-//	map<int, vector<double>> mixed_angles;
-//	for(int i = 0; i < pars.n_events; i++) {
-//		proton_angles = simulate_event();
-//		if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
-//		mixed_angles[proton_angles.size()].insert(mixed_angles[proton_angles.size()].end(), proton_angles.begin(), proton_angles.end());
-//		proton_angles = rotate_angles(proton_angles, rand->Rndm() * 2*M_PI);
-//		for(int r:get_Rs(proton_angles, pars.divisions)) {
-//			ratio_data[(int)proton_angles.size()][r] ++;
-//		}
-//	}
-//
-//	for(double cor:get_two_particle_correlation(proton_angles)) {
-//		corr2p.push_back(cor);
-//	}
-//
-//	map<int, map<int, int>> mixed_ratio_data;
-//	for(pair<int, vector<double>> num_protons:mixed_angles) {
-//		random_shuffle(num_protons.second.begin(), num_protons.second.end());
-//		int num_events = num_protons.second.size() / num_protons.first;
-//		for(int event_index = 0; event_index < num_events; event_index++) {
-//			vector<double> rand_angles(num_protons.second.begin()+event_index*num_protons.first, num_protons.second.begin()+(event_index+1)*num_protons.first);
-//			proton_angles = rotate_angles(rand_angles, rand->Rndm() * 2*M_PI);
-//			for(int r:get_Rs(rand_angles, pars.divisions)) {
-//				mixed_ratio_data[(int)rand_angles.size()][r] ++;
-//			}
-//		}
-//	}
-//
-//	delete rand;
-//
-//	vector<map<int, map<int, int>>> both_data = {ratio_data, mixed_ratio_data};
-//
-//	return(both_data);
-//}
+
+
+	// Deal with left over mixed events. Not very efficient, just groups all left over into one mix. Improve.
+	vector<double> left_over;
+	for(pair<int, vector<double>> num_protons:mixed_angles) {
+		for(double angle:num_protons.second) {
+			left_over.push_back(angle);
+		}
+	}
+	random_shuffle(left_over.begin(), left_over.end());
+	int event_protons;
+	do {
+		event_protons = get_protons();
+	} while (event_protons < (unsigned)pars.min_protons);
+	if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
+	int proton_index = 0;
+	int num_leftover = (int)left_over.size();
+	while(proton_index + event_protons < num_leftover) {
+		vector<double> rand_angles(left_over.begin()+proton_index, left_over.begin()+proton_index+event_protons);
+		rand_angles = rotate_angles(rand_angles, rand->Rndm() * 2*M_PI);
+		for(int r:get_Rs(rand_angles, pars.divisions)) {
+			mixed_ratio_data[event_protons][r] ++;
+		}
+		proton_index += event_protons;
+		do {
+			event_protons = get_protons();
+		} while (event_protons < (unsigned)pars.min_protons);
+	}
+
+	delete rand;
+
+	vector<map<int, map<int, int>>> both_data = {ratio_data, mixed_ratio_data};
+
+	return(both_data);
+}
 
 
 vector<double> Simulator2::simulate_event() {
@@ -240,4 +284,9 @@ int Simulator2::get_protons() {
 	}
 
 	return (n);
+}
+
+
+void Simulator2::write_two_p_corr() {
+	two_p_corr->Write();
 }

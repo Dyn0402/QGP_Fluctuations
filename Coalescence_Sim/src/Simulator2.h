@@ -39,10 +39,13 @@ struct simulation_pars {
 class Simulator2 {
 public:
 	Simulator2();
+	~Simulator2();
 
 	// Doers
 	map<int, map<int, int>> run_simulation();
 	vector<map<int, map<int, int>>> run_simulation_mixed();
+	vector<map<int, map<int, int>>> run_sim_mixed_2p();
+	void write_two_p_corr();
 
 	// Getters
 	int get_n_events();
@@ -50,6 +53,7 @@ public:
 	double get_p_group();
 	double get_spread_sigma();
 	int get_num_event_mix();
+	TH1D* get_two_p_corr();
 
 	// Setters
 	void set_n_events(int n);
@@ -77,6 +81,7 @@ private:
 	simulation_pars pars;
 	TRandom3 *rand;
 	TH1D *proton_dist_hist;
+	TH1D *two_p_corr;
 
 	vector<double> simulate_event();
 	int get_protons();

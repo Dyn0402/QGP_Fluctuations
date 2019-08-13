@@ -106,6 +106,7 @@ void run_pars2(int n_events, double mean, double p_group, double spread, int div
 
 	cout << "Starting: \t " << name << endl;
 
+	out_file->cd();
 	RatioData data = run_sim2(p_group, mean, n_events, spread, div);
 	out_file->cd();
 	data.canvas_2d_dist(name);
@@ -126,6 +127,7 @@ RatioData run_sim2(double p_group, double mean, double n_events, double spread, 
 	sim.set_divisions(div);
 	RatioData data(div);
 	data.set_ratio_data(sim.run_simulation());
+	sim.write_two_p_corr();
 
 	return data;
 }
@@ -148,6 +150,7 @@ void run_pars_mixed2(int n_events, double mean, double p_group, double spread, i
 
 	cout << "Starting: \t " << name << endl;
 
+	out_file->cd();
 	vector<RatioData> data = run_sim_mixed2(p_group, mean, n_events, spread, div);
 	out_file->cd();
 	data[0].canvas_2d_dist(name);
@@ -169,11 +172,12 @@ vector<RatioData> run_sim_mixed2(double p_group, double mean, double n_events, d
 	sim.set_n_events(n_events);
 	sim.set_spread_sigma(spread);
 	sim.set_divisions(div);
-	vector<map<int, map<int, int>>> sim_res = sim.run_simulation_mixed();
+	vector<map<int, map<int, int>>> sim_res = sim.run_sim_mixed_2p();
 	RatioData data(div);
 	data.set_ratio_data(sim_res[0]);
 	RatioData mix_data(div);
 	mix_data.set_ratio_data(sim_res[1]);
+	sim.write_two_p_corr();
 
 	vector<RatioData> both = {data, mix_data};
 
