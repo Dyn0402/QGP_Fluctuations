@@ -228,8 +228,7 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p() {
 	int event_protons;
 	do {
 		event_protons = get_protons();
-	} while (event_protons < (unsigned)pars.min_protons);
-	if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
+	} while (event_protons < pars.min_protons);
 	int proton_index = 0;
 	int num_leftover = (int)left_over.size();
 	while(proton_index + event_protons < num_leftover) {
@@ -241,7 +240,7 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p() {
 		proton_index += event_protons;
 		do {
 			event_protons = get_protons();
-		} while (event_protons < (unsigned)pars.min_protons);
+		} while (event_protons < pars.min_protons);
 	}
 
 	delete rand;
