@@ -38,7 +38,7 @@ using namespace std;
 
 void moments_vs_sim_pars2(int div) {
 	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/v2_sim/08-13-19_mean_vs_pgroup_" + to_string(div) + "div_mixed.root").data(), "RECREATE");
-	TDirectory *indiv_dir = out_file->mkdir("Individual 2Ds");
+	TDirectory *indiv_dir = out_file->mkdir("Individual Figures");
 	indiv_dir->cd();
 	int n_events = 10000000;
 	vector<double> mean_list = {5.0, 10.0, 15.0, 20.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
@@ -59,37 +59,37 @@ void moments_vs_sim_pars2(int div) {
 	out_file->cd();
 	vector<string> moments = {"mean", "standard_deviation", "skewness", "kurtosis"};
 	out_file->cd();
-	cout << "Regular" << endl;
+//	cout << "Regular" << endl;
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<double, map<string, Measure>>> group:results) {
 			for(pair<double, map<string, Measure>> mean:group.second) {
 				mom_result[group.first][mean.first] = mean.second[mom];
-				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom]) << endl;
+//				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom]) << endl;
 			}
 		}
 		Plotter plot;
 		plot.set_line_width(2);
 		plot.moments_multi(mom_result, mom+" with proton mean and group", "p_group", "proton mean");
 	}
-	cout << "Mixed divided" << endl;
+//	cout << "Mixed divided" << endl;
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<double, map<string, Measure>>> group:results) {
 			for(pair<double, map<string, Measure>> mean:group.second) {
 				mom_result[group.first][mean.first] = mean.second[mom+"_r"];
-				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
+//				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
 			}
 		}
 		Plotter plot;
 		plot.moments_multi(mom_result, mom+" divided by mixed with proton mean and zero effect", "p_group", "proton mean");
 	}
-	cout << "Zero effect mixed divided" << endl;
+//	cout << "Zero effect mixed divided" << endl;
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<string, Measure>> mean:results[0]) {
 			mom_result[0][mean.first] = mean.second[mom+"_r"];
-			cout << "Mean: " << mean.first << "  Group: " << to_string(0) << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
+//			cout << "Mean: " << mean.first << "  Group: " << to_string(0) << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
 		}
 		Plotter plot;
 		plot.moments_multi(mom_result, mom+" divided by mixed with proton mean and group", "p_group", "proton mean");
@@ -104,11 +104,13 @@ void run_pars2(int n_events, double mean, double p_group, double spread, int div
 	os << "mean: " << setprecision(3) << mean << "  p_group: " << setprecision(2) << p_group << "  spread: " << setprecision(2) << spread << ends;
 	string name = os.str();
 
+	TDirectory *sim_dir = out_file->mkdir(name.data());
+
 	cout << "Starting: \t " << name << endl;
 
-	out_file->cd();
+	sim_dir->cd();
 	RatioData data = run_sim2(p_group, mean, n_events, spread, div);
-	out_file->cd();
+	sim_dir->cd();
 	data.canvas_2d_dist(name);
 	map<double, int> ratio_hist = data.get_ratio_hist();
 
@@ -145,16 +147,19 @@ void get_moments2(map<double, int> ratios, map<string, Measure> *results) {
 
 void run_pars_mixed2(int n_events, double mean, double p_group, double spread, int div, TDirectory *out_file, map<double, map<double, map<string, Measure>>> *results) {
 	ostringstream os("");
-	os << "mean: " << setprecision(2) << mean << "  p_group: " << setprecision(2) << p_group << "  spread: " << setprecision(2) << spread << ends;
+	os << "mean: " << setprecision(2) << mean << "  p_group: " << setprecision(2) << p_group << ends;
 	string name = os.str();
+
+	TDirectory *sim_dir = out_file->mkdir(name.data());
 
 	cout << "Starting: \t " << name << endl;
 
-	out_file->cd();
-	vector<RatioData> data = run_sim_mixed2(p_group, mean, n_events, spread, div);
-	out_file->cd();
-	data[0].canvas_2d_dist(name);
-	data[1].canvas_2d_dist(name+"_mixed");
+	vector<RatioData> data = run_sim_mixed2(p_group, mean, n_events, spread, div, name, sim_dir);
+	sim_dir->cd();
+	data[0].canvas_2d_dist("2d_hist "+name);
+	data[0].canvas_proton_dist("proton_dist "+name);
+	data[1].canvas_2d_dist("2d_hist_mix "+name);
+	data[1].canvas_proton_dist("proton_dist_mix "+name);
 	map<double, int> ratios = data[0].get_ratio_hist();
 	map<double, int> mix_ratios = data[1].get_ratio_hist();
 	vector<map<double, int>> both = {ratios, mix_ratios};
@@ -165,19 +170,19 @@ void run_pars_mixed2(int n_events, double mean, double p_group, double spread, i
 }
 
 
-vector<RatioData> run_sim_mixed2(double p_group, double mean, double n_events, double spread, int div) {
+vector<RatioData> run_sim_mixed2(double p_group, double mean, double n_events, double spread, int div, string name, TDirectory *out_file) {
 	Simulator2 sim;
 	sim.set_p_group(p_group);
 	sim.set_particle_mean(mean);
 	sim.set_n_events(n_events);
 	sim.set_spread_sigma(spread);
 	sim.set_divisions(div);
-	vector<map<int, map<int, int>>> sim_res = sim.run_sim_mixed_2p();
+	out_file->cd();
+	vector<map<int, map<int, int>>> sim_res = sim.run_sim_mixed_2p("2p_corr_"+name);
 	RatioData data(div);
 	data.set_ratio_data(sim_res[0]);
 	RatioData mix_data(div);
 	mix_data.set_ratio_data(sim_res[1]);
-	sim.write_two_p_corr();
 
 	vector<RatioData> both = {data, mix_data};
 

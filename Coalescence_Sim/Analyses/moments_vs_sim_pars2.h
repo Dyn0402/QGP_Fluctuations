@@ -26,7 +26,7 @@ RatioData run_sim2(double p_group, double mean, double n_events, double spread, 
 void get_moments2(map<double, int> ratios, map<string, Measure> *results);
 
 void run_pars_mixed2(int n_events, double mean, double p_group, double spread, int div, TDirectory *out_file, map<double, map<double, map<string, Measure>>> *results);
-vector<RatioData> run_sim_mixed2(double p_group, double mean, double n_events, double spread, int div);
+vector<RatioData> run_sim_mixed2(double p_group, double mean, double n_events, double spread, int div, string name, TDirectory *out_file);
 void get_moments_mixed2(vector<map<double, int>> ratios, map<string, Measure> *results);
 
 
