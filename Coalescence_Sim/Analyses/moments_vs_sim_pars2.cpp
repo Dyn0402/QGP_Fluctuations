@@ -63,40 +63,38 @@ void moments_vs_sim_pars2(int div) {
 		}
 	}
 
-	out_file->cd();
 	vector<string> moments = {"mean", "standard_deviation", "skewness", "kurtosis"};
-	out_file->cd();
-//	cout << "Regular" << endl;
+	TDirectory* mom_dir = out_file->mkdir("Moments");
+	mom_dir->cd();
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<double, map<string, Measure>>> group:results) {
 			for(pair<double, map<string, Measure>> mean:group.second) {
 				mom_result[group.first][mean.first] = mean.second[mom];
-//				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom]) << endl;
 			}
 		}
 		Plotter plot;
 		plot.set_line_width(2);
 		plot.moments_multi(mom_result, mom+" with proton mean and group", "p_group", "proton mean");
 	}
-//	cout << "Mixed divided" << endl;
+	TDirectory* mix_dir = out_file->mkdir("Mix_Moments");
+	mix_dir->cd();
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<double, map<string, Measure>>> group:results) {
 			for(pair<double, map<string, Measure>> mean:group.second) {
 				mom_result[group.first][mean.first] = mean.second[mom+"_r"];
-//				cout << "Mean: " << mean.first << "  Group: " << group.first << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
 			}
 		}
 		Plotter plot;
 		plot.moments_multi(mom_result, mom+" divided by mixed with proton mean and zero effect", "p_group", "proton mean");
 	}
-//	cout << "Zero effect mixed divided" << endl;
+	TDirectory* zero_dir = out_file->mkdir("Zero_Effect_Moments");
+	zero_dir->cd();
 	for(string mom:moments) {
 		map<double, map<double, Measure>> mom_result;
 		for(pair<double, map<string, Measure>> mean:results[0]) {
 			mom_result[0][mean.first] = mean.second[mom+"_r"];
-//			cout << "Mean: " << mean.first << "  Group: " << to_string(0) << "  Mom: " << mom << " " << string(mean.second[mom+"_r"]) << endl;
 		}
 		Plotter plot;
 		plot.moments_multi(mom_result, mom+" divided by mixed with proton mean and group", "p_group", "proton mean");

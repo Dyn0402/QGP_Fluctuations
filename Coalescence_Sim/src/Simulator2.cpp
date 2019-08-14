@@ -219,7 +219,7 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p(string two_p_name) 
 	TCanvas *can = new TCanvas();
 	two_p_corr->Draw();
 	two_p_corr->GetXaxis()->SetTitle("#Delta#phi");
-	can->Write("2pCorr");
+	can->Write(two_p_name.data());
 	delete can;
 
 	// Deal with left over mixed events. Not very efficient, just groups all left over into one mix. Improve.
