@@ -77,6 +77,8 @@ private:
 //
 //	double can_w = 1080;
 //	double can_h = 1080;
+	double two_p_shift = M_PI / 4;
+	int two_p_bins = 100;
 
 	simulation_pars pars;
 	TRandom3 *rand;

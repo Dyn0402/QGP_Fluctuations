@@ -12,6 +12,8 @@
 #include <cmath>
 
 #include <TRandom3.h>
+#include <TCanvas.h>
+#include <TH1.h>
 
 #include "Simulator2.h"
 #include "ratio_methods.h"
@@ -176,24 +178,27 @@ vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
 
 
 vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p(string two_p_name) {
-	two_p_corr = new TH1D(two_p_name.data(), two_p_name.data(), 100, -M_PI/4, 2*M_PI - M_PI/4);
+	two_p_corr = new TH1D(two_p_name.data(), two_p_name.data(), two_p_bins, -two_p_shift, 2*M_PI - two_p_shift);
 	vector<double> proton_angles;
 	map<int, map<int, int>> ratio_data;
 	map<int, vector<double>> mixed_angles;
 	map<int, map<int, int>> mixed_ratio_data;
 	int n_protons, n_mix_events;
 	for(int i = 0; i < pars.n_events; i++) {
+		// Simulate Event
 		proton_angles = simulate_event();
 		if(proton_angles.size() < (unsigned)pars.min_protons) { continue; }
-		proton_angles = rotate_angles(proton_angles, rand->Rndm() * 2*M_PI);
 		n_protons = (int) proton_angles.size();
-		for(int r:get_Rs(proton_angles, pars.divisions)) {
-			ratio_data[n_protons][r] ++;
-		}
 		// Two particle filling
 		for(double cor:get_two_particle_correlation(proton_angles)) {
-			if(cor > 2*M_PI - M_PI / 4) { cor -= 2*M_PI; }
+			while(cor > 2*M_PI - two_p_shift) { cor -= 2*M_PI; }
+			while(cor < -two_p_shift) { cor += 2*M_PI; }
 			two_p_corr->Fill(cor);
+		}
+		// Ratio data filling
+		proton_angles = rotate_angles(proton_angles, rand->Rndm() * 2*M_PI);
+		for(int r:get_Rs(proton_angles, pars.divisions)) {
+			ratio_data[n_protons][r] ++;
 		}
 		// Mixed event logic
 		mixed_angles[n_protons].insert(mixed_angles[n_protons].end(), proton_angles.begin(), proton_angles.end());
@@ -211,7 +216,11 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p(string two_p_name) 
 		}
 	}
 
-	two_p_corr->Write();
+	TCanvas *can = new TCanvas();
+	two_p_corr->Draw();
+	two_p_corr->GetXaxis()->SetTitle("#Delta#phi");
+	can->Write("2pCorr");
+	delete can;
 
 	// Deal with left over mixed events. Not very efficient, just groups all left over into one mix. Improve.
 	vector<double> left_over;

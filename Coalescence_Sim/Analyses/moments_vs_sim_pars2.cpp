@@ -37,11 +37,11 @@ using namespace std;
 
 
 void moments_vs_sim_pars2(int div) {
-	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/v2_sim/08-13-19_mean_vs_pgroup_" + to_string(div) + "div_mixed.root").data(), "RECREATE");
+	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/v2_sim/08-13-19_mean_vs_pgroup_" + to_string(div) + "div_mixed4.root").data(), "RECREATE");
 	TDirectory *indiv_dir = out_file->mkdir("Individual Figures");
 	indiv_dir->cd();
-	int n_events = 10000000;
-	vector<double> mean_list = {5.0, 10.0, 15.0, 20.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
+	int n_events = 1000000;//00;
+	vector<double> mean_list = {2.0, 3.0, 4.0, 9.0};//, 10.0, 15.0, 20.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
 //	for(double mean = 30.0; mean >= 4.0; mean-=0.5) { mean_list.push_back(mean); }
 	vector<double> group_list = {0.0, 0.05, 0.1};//, 0.15, 0.2};
 	double spread = 0.2;
@@ -51,7 +51,14 @@ void moments_vs_sim_pars2(int div) {
 		ThreadPool pool(thread::hardware_concurrency());
 		for(double mean:mean_list) {
 			for(double group:group_list) {
-				pool.enqueue(run_pars_mixed2, n_events, mean, group, spread, div, indiv_dir, &results);
+				ostringstream os("");
+				os << "mean= " << setprecision(3) << mean << "  p_group= " << setprecision(2) << group << ends;
+				string name = os.str();
+				TDirectory *sim_dir = indiv_dir->mkdir(name.data());
+
+				usleep(1000000); // Sleep for 1 second between queueing to stagger and hopefully avoid root corruption issues.
+
+				pool.enqueue(run_pars_mixed2, n_events, mean, group, spread, div, sim_dir, &results);
 			}
 		}
 	}
@@ -101,16 +108,14 @@ void moments_vs_sim_pars2(int div) {
 
 void run_pars2(int n_events, double mean, double p_group, double spread, int div, TDirectory *out_file, map<double, map<double, map<string, Measure>>> *results) {
 	ostringstream os("");
-	os << "mean: " << setprecision(3) << mean << "  p_group: " << setprecision(2) << p_group << "  spread: " << setprecision(2) << spread << ends;
+	os << "mean= " << setprecision(3) << mean << "  p_group= " << setprecision(2) << p_group << "  spread= " << setprecision(2) << spread << ends;
 	string name = os.str();
-
-	TDirectory *sim_dir = out_file->mkdir(name.data());
 
 	cout << "Starting: \t " << name << endl;
 
-	sim_dir->cd();
+	out_file->cd();
 	RatioData data = run_sim2(p_group, mean, n_events, spread, div);
-	sim_dir->cd();
+	out_file->cd();
 	data.canvas_2d_dist(name);
 	map<double, int> ratio_hist = data.get_ratio_hist();
 
@@ -147,15 +152,13 @@ void get_moments2(map<double, int> ratios, map<string, Measure> *results) {
 
 void run_pars_mixed2(int n_events, double mean, double p_group, double spread, int div, TDirectory *out_file, map<double, map<double, map<string, Measure>>> *results) {
 	ostringstream os("");
-	os << "mean: " << setprecision(2) << mean << "  p_group: " << setprecision(2) << p_group << ends;
+	os << "mean=" << setprecision(2) << mean << "  p_group=" << setprecision(2) << p_group << ends;
 	string name = os.str();
 
-	TDirectory *sim_dir = out_file->mkdir(name.data());
+	cout << "Starting: \t " << div << " div  " << name << endl;
 
-	cout << "Starting: \t " << name << endl;
-
-	vector<RatioData> data = run_sim_mixed2(p_group, mean, n_events, spread, div, name, sim_dir);
-	sim_dir->cd();
+	vector<RatioData> data = run_sim_mixed2(p_group, mean, n_events, spread, div, name, out_file);
+	out_file->cd();
 	data[0].canvas_2d_dist("2d_hist "+name);
 	data[0].canvas_proton_dist("proton_dist "+name);
 	data[1].canvas_2d_dist("2d_hist_mix "+name);
@@ -166,7 +169,7 @@ void run_pars_mixed2(int n_events, double mean, double p_group, double spread, i
 
 	get_moments_mixed2(both, &((*results)[p_group][mean]));
 
-	cout << "Finishing: \t " << name << endl;
+	cout << "Finishing: \t " << div << " div  " << name << endl;
 }
 
 
@@ -178,7 +181,7 @@ vector<RatioData> run_sim_mixed2(double p_group, double mean, double n_events, d
 	sim.set_spread_sigma(spread);
 	sim.set_divisions(div);
 	out_file->cd();
-	vector<map<int, map<int, int>>> sim_res = sim.run_sim_mixed_2p("2p_corr_"+name);
+	vector<map<int, map<int, int>>> sim_res = sim.run_sim_mixed_2p("2p_corr "+name);
 	RatioData data(div);
 	data.set_ratio_data(sim_res[0]);
 	RatioData mix_data(div);
