@@ -37,13 +37,13 @@ using namespace std;
 
 
 void moments_vs_sim_pars2(int div) {
-	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/v2_sim/08-13-19_mean_vs_pgroup_" + to_string(div) + "div_mixed4.root").data(), "RECREATE");
+	TFile *out_file = new TFile(("/home/dylan/local_server/dyn0402/Research/Simulation/v2_sim/08-13-19_mean_vs_pgroup_" + to_string(div) + "div_mixed2p.root").data(), "RECREATE");
 	TDirectory *indiv_dir = out_file->mkdir("Individual Figures");
 	indiv_dir->cd();
-	int n_events = 1000000;//00;
-	vector<double> mean_list = {2.0, 3.0, 4.0, 9.0};//, 10.0, 15.0, 20.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
-//	for(double mean = 30.0; mean >= 4.0; mean-=0.5) { mean_list.push_back(mean); }
-	vector<double> group_list = {0.0, 0.05, 0.1};//, 0.15, 0.2};
+	int n_events = 10000000;
+	vector<double> mean_list;// = {2.0, 3.0, 4.0, 9.0};//, 10.0, 15.0, 20.0}; //{5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0};
+	for(double mean = 30.0; mean >= 4.0; mean-=0.5) { mean_list.push_back(mean); }
+	vector<double> group_list = {0.0, 0.02, 0.04, 0.06, 0.08, 0.1};//, 0.15, 0.2};
 	double spread = 0.2;
 	map<double, map<double, map<string, Measure>>> results;
 	ROOT::EnableThreadSafety();
@@ -150,7 +150,7 @@ void get_moments2(map<double, int> ratios, map<string, Measure> *results) {
 
 void run_pars_mixed2(int n_events, double mean, double p_group, double spread, int div, TDirectory *out_file, map<double, map<double, map<string, Measure>>> *results) {
 	ostringstream os("");
-	os << "mean=" << setprecision(2) << mean << "  p_group=" << setprecision(2) << p_group << ends;
+	os << "mean=" << setprecision(3) << mean << "  p_group=" << setprecision(2) << p_group << ends;
 	string name = os.str();
 
 	cout << "Starting: \t " << div << " div  " << name << endl;
