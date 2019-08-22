@@ -41,6 +41,7 @@ void read_energy(int energy);
 void io_test();
 void sum_tree_data_test();
 void ref_mult_test();
+void tree_test();
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -53,7 +54,8 @@ int main(int argc, char** argv) {
 //	read_files(argc, argv);
 //	read_files_local();
 //	ref_mult_test();
-	read_class();
+//	read_class();
+	tree_test();
 
 	cout << endl << "donzo" << endl;
 	return(0);
