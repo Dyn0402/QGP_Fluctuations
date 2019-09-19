@@ -56,10 +56,10 @@ int main(int argc, char** argv) {
 //	read_files(argc, argv);
 //	read_files_local();
 //	ref_mult_test();
-//	read_class();
+	read_class();
 //	vec_tree_test();
 //	obj_tree_test();
-	real_tree_test();
+//	real_tree_test();
 
 	cout << endl << "donzo" << endl;
 	return(0);

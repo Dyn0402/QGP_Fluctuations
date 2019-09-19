@@ -68,7 +68,7 @@ void TreeReader::read_energy(int energy) {
 		}
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-		read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist); ///----------------------------
+		read_tree_cbwc(tree, &data, energy, refmult2CorrUtil, cent_hist); ///----------------------------
 		file->Close();
 		delete file;
 		file_index++;
@@ -118,6 +118,46 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, int energy, StRefMultCo
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
 					for(int protons_in_bin:event_ratios) {
 						data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+					}
+				}
+			}
+		}
+		event_index++;
+	}
+}
+
+
+
+void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
+	event_leaves event = get_event_leaves(tree);
+	proton_leaves proton = get_proton_leaves(tree);
+
+	TRandom3 *rand = new TRandom3(0);
+
+	int event_index = 1;
+	while(tree->GetEntry(event_index)) {
+		if(check_event_good(event, proton, energy)) {
+			vector<double> good_proton_angles = {};
+			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
+				if(check_proton_good(proton, proton_index)) {
+					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
+				}
+			}
+			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
+			int cent2 = -2;
+			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
+				refmult2CorrUtil->init(event.run->GetValue());
+				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
+				cent2 = refmult2CorrUtil->getCentralityBin16();
+			} //else { cout << "Refmult said was a bad run" << endl; }
+			cent_hist->Fill(cent, cent2);
+			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
+				data->good_protons[cent][(int)good_proton_angles.size()]++;
+				for(int div:divs) {
+					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+					vector<int> event_ratios = get_Rs(good_proton_angles, div);
+					for(int protons_in_bin:event_ratios) {
+						data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
 					}
 				}
 			}
