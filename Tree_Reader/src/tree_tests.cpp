@@ -17,8 +17,11 @@ using namespace std;
 
 class Track {
 public:
+	Track();
 	vector<double> track_size;
 };
+
+Track::Track() {};
 
 
 void tree_test() {
