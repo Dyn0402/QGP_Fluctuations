@@ -27,6 +27,7 @@ using namespace std;
 
 
 void analyze();
+void analyze_CBWC();
 void comp_proton_dists();
 void cumulant_test();
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calculate_stats(map<int, map<int, map<int, RatioData>>> data); //cumulants[energy][divisions][centrality][cumulant_order]
@@ -35,7 +36,8 @@ void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int,
 
 int main() {
 //	analyze();
-	comp_proton_dists();
+//	comp_proton_dists();
+	analyze_CBWC();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -95,13 +97,57 @@ void analyze() {
 }
 
 
+
+void analyze_CBWC() {
+	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
+
+	map<int, map<int, map<int, RatioData>>> data;
+
+	int energy_num = 1;
+	int num_energies = analysis::energy_list.size();
+	for(int energy:analysis::energy_list) {
+		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
+		string path = analysis::in_path + to_string(energy) + "GeV/";
+		for(int div:analysis::divs) {
+			analysis::centrals = get_centrals(path, div);
+			for(int cent:analysis::centrals) {
+				RatioData ratios(div);
+				ratios.read_ratios_from_dir(path, div, cent);
+				data[energy][div][cent] = ratios;
+			}
+		}
+		energy_num++;
+	}
+
+	cout << endl << "Calculating Cumulants..." << endl;
+	auto stats = calculate_stats(data);
+
+//	out_root->cd();
+//	cout << endl << "Making ratio distribution plots..." << endl;
+//	make_ratio_dist_plots(out_root, data);
+//	cout << endl << "Making 2d distribution plots..." << endl;
+//	make_2d_dist_plots(out_root, data);
+//	cout << endl << "Making proton distribution plots..." << endl;
+//	make_proton_dist_plots(out_root, data);
+//	cout << endl << "Making cumulant plots..." << endl;
+//	make_cumulant_plots(out_root, stats.second);
+//	cout << endl << "Making stat plots..." << endl;
+//	make_stat_plots(out_root, stats.first);
+//	cout << endl << "Making canvases..." << endl;
+//	make_canvas_plots(out_root, data, stats.second, stats.first);
+
+
+	out_root->Close();
+}
+
+
 //Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calculate_stats(map<int, map<int, map<int, RatioData>>> data) {
 	map<int, map<int, map<int, map<string, Measure>>>> stats;
 	map<int, map<int, map<int, map<int, Measure>>>> cumulants;
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(thread::hardware_concurrency());
+		ThreadPool pool(1);//thread::hardware_concurrency());
 		for(int energy:analysis::energy_list) {
 			for(int div:analysis::divs) {
 				for(int cent:analysis::centrals) {
