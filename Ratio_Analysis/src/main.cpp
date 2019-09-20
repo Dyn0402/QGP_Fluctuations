@@ -32,6 +32,8 @@ void comp_proton_dists();
 void cumulant_test();
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calculate_stats(map<int, map<int, map<int, RatioData>>> data); //cumulants[energy][divisions][centrality][cumulant_order]
 void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int, map<int, map<string, Measure>>>> *stats, map<int, map<int, map<int, map<int, Measure>>>> *cumulants);
+pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats);
+int get_centrality(double refmult2, int energy);
 
 
 int main() {
@@ -120,21 +122,22 @@ void analyze_CBWC() {
 	}
 
 	cout << endl << "Calculating Cumulants..." << endl;
-	auto stats = calculate_stats(data);
+	auto raw_stats = calculate_stats(data);
+	auto stats = calc_cbwc_stats(data, raw_stats);
 
-//	out_root->cd();
-//	cout << endl << "Making ratio distribution plots..." << endl;
-//	make_ratio_dist_plots(out_root, data);
+	out_root->cd();
+	cout << endl << "Making ratio distribution plots..." << endl;
+	make_ratio_dist_plots(out_root, data);
 //	cout << endl << "Making 2d distribution plots..." << endl;
 //	make_2d_dist_plots(out_root, data);
 //	cout << endl << "Making proton distribution plots..." << endl;
 //	make_proton_dist_plots(out_root, data);
-//	cout << endl << "Making cumulant plots..." << endl;
-//	make_cumulant_plots(out_root, stats.second);
-//	cout << endl << "Making stat plots..." << endl;
-//	make_stat_plots(out_root, stats.first);
-//	cout << endl << "Making canvases..." << endl;
-//	make_canvas_plots(out_root, data, stats.second, stats.first);
+	cout << endl << "Making cumulant plots..." << endl;
+	make_cumulant_plots(out_root, stats.second);
+	cout << endl << "Making stat plots..." << endl;
+	make_stat_plots(out_root, stats.first);
+	cout << endl << "Making canvases..." << endl;
+	make_canvas_plots(out_root, data, stats.second, stats.first);
 
 
 	out_root->Close();
@@ -254,4 +257,222 @@ void comp_proton_dists() {
 		energy_num++;
 	}
 	out_root->Close();
+}
+
+
+
+pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats) {
+	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> binned_stats;
+	for(int energy:analysis::energy_list) {
+		for(int div:analysis::divs) {
+			map<int, int> bin_ratios;
+			for(int cent:analysis::centrals) {
+				int cent_ratios = data[energy][div][cent].get_num_ratios();
+				int cent_bin = get_centrality(cent, energy);
+				bin_ratios[cent_bin] += cent_ratios;
+				for(string stat:analysis::stat_names) {
+					binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent][stat] * cent_ratios;
+				}
+				for(int order:analysis::cumulant_orders) {
+					binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent][order] * cent_ratios;
+				}
+			}
+			for(pair<int, map<string, Measure>> cent_bin:binned_stats.first[energy][div]) {
+				for(string stat:analysis::stat_names) {
+					binned_stats.first[energy][div][cent_bin.first][stat] = binned_stats.first[energy][div][cent_bin.first][stat] / bin_ratios[cent_bin.first];
+				}
+			}
+			for(pair<int, map<int, Measure>> cent_bin:binned_stats.second[energy][div]) {
+				for(int order:analysis::cumulant_orders) {
+					binned_stats.second[energy][div][cent_bin.first][order] = binned_stats.second[energy][div][cent_bin.first][order] / bin_ratios[cent_bin.first];
+				}
+			}
+		}
+	}
+
+	return(binned_stats);
+}
+
+
+//Taken directly from Roli.
+//Given energy and refmult2, will return centrality of event.
+int get_centrality(double refmult2, int energy){
+
+    int cent = -1;
+
+    if(energy == 7){
+
+        if(refmult2 >= 165) cent = 15;
+        else if(refmult2 >= 137 && refmult2 < 165) cent = 14;
+        else if(refmult2 >= 114 && refmult2 < 137) cent = 13;
+        else if(refmult2 >= 95 && refmult2 < 114) cent = 12;
+        else if(refmult2 >= 78 && refmult2 < 95) cent = 11;
+        else if(refmult2 >= 64 && refmult2 < 78) cent = 10;
+        else if(refmult2 >= 51 && refmult2 < 64) cent = 9;
+        else if(refmult2 >= 41 && refmult2 < 51) cent = 8;
+        else if(refmult2 >= 32 && refmult2 < 41) cent = 7;
+        else if(refmult2 >= 25 && refmult2 < 32) cent = 6;
+        else if(refmult2 >= 19 && refmult2 < 25) cent = 5;
+        else if(refmult2 >= 14 && refmult2 < 19) cent = 4;
+        else if(refmult2 >= 10 && refmult2 < 14) cent = 3;
+        else if(refmult2 >= 7 && refmult2 < 10) cent = 2;
+        else if(refmult2 >= 5 && refmult2 < 7) cent = 1;
+        else if(refmult2 >= 3 && refmult2 < 5) cent = 0;
+
+    }
+
+    else if(energy == 11){
+
+        if(refmult2 >= 206) cent = 15;
+        else if(refmult2 >= 172 && refmult2 < 206) cent = 14;
+        else if(refmult2 >= 143 && refmult2 < 172) cent = 13;
+        else if(refmult2 >= 118 && refmult2 < 143) cent = 12;
+        else if(refmult2 >= 98 && refmult2 < 118) cent = 11;
+        else if(refmult2 >= 80 && refmult2 < 98) cent = 10;
+        else if(refmult2 >= 65 && refmult2 < 80) cent = 9;
+        else if(refmult2 >= 52 && refmult2 < 65) cent = 8;
+        else if(refmult2 >= 41 && refmult2 < 52) cent = 7;
+        else if(refmult2 >= 32 && refmult2 < 41) cent = 6;
+        else if(refmult2 >= 24 && refmult2 < 32) cent = 5;
+        else if(refmult2 >= 18 && refmult2 < 24) cent = 4;
+        else if(refmult2 >= 13 && refmult2 < 18) cent = 3;
+        else if(refmult2 >= 9 && refmult2 < 13) cent = 2;
+        else if(refmult2 >= 6 && refmult2 < 9) cent = 1;
+        else if(refmult2 >= 4 && refmult2 < 6) cent = 0;
+
+    }
+
+    else if(energy == 14){ ///// we take refmult here
+
+        if(refmult2 >= 239) cent = 15;
+        else if(refmult2 >= 200 && refmult2 < 239) cent = 14;
+        else if(refmult2 >= 167 && refmult2 < 200) cent = 13;
+        else if(refmult2 >= 139 && refmult2 < 167) cent = 12;
+        else if(refmult2 >= 115 && refmult2 < 139) cent = 11;
+        else if(refmult2 >= 94 && refmult2 < 115) cent = 10;
+        else if(refmult2 >= 76 && refmult2 < 94) cent = 9;
+        else if(refmult2 >= 61 && refmult2 < 76) cent = 8;
+        else if(refmult2 >= 48 && refmult2 < 61) cent = 7;
+        else if(refmult2 >= 37 && refmult2 < 48) cent = 6;
+        else if(refmult2 >= 28 && refmult2 < 37) cent = 5;
+        else if(refmult2 >= 21 && refmult2 < 28) cent = 4;
+        else if(refmult2 >= 16 && refmult2 < 21) cent = 3;
+        else if(refmult2 >= 11 && refmult2 < 16) cent = 2;
+        else if(refmult2 >= 8 && refmult2 < 11) cent = 1;
+        else if(refmult2 >= 5 && refmult2 < 8) cent = 0;
+
+    }
+
+    else if(energy == 19){
+
+        if(refmult2 >= 258) cent = 15;
+        else if(refmult2 >= 215 && refmult2 < 258) cent = 14;
+        else if(refmult2 >= 180 && refmult2 < 215) cent = 13;
+        else if(refmult2 >= 149 && refmult2 < 180) cent = 12;
+        else if(refmult2 >= 123 && refmult2 < 149) cent = 11;
+        else if(refmult2 >= 100 && refmult2 < 123) cent = 10;
+        else if(refmult2 >= 81 && refmult2 < 100) cent = 9;
+        else if(refmult2 >= 65 && refmult2 < 81) cent = 8;
+        else if(refmult2 >= 51 && refmult2 < 65) cent = 7;
+        else if(refmult2 >= 40 && refmult2 < 51) cent = 6;
+        else if(refmult2 >= 30 && refmult2 < 40) cent = 5;
+        else if(refmult2 >= 22 && refmult2 < 30) cent = 4;
+        else if(refmult2 >= 16 && refmult2 < 22) cent = 3;
+        else if(refmult2 >= 12 && refmult2 < 16) cent = 2;
+        else if(refmult2 >= 8 && refmult2 < 12) cent = 1;
+        else if(refmult2 >= 5 && refmult2 < 8) cent = 0;
+
+    }
+
+    else if(energy == 27){
+
+        if(refmult2 >= 284) cent = 15;
+        else if(refmult2 >= 237 && refmult2 < 284) cent = 14;
+        else if(refmult2 >= 198 && refmult2 < 237) cent = 13;
+        else if(refmult2 >= 164 && refmult2 < 198) cent = 12;
+        else if(refmult2 >= 135 && refmult2 < 164) cent = 11;
+        else if(refmult2 >= 111 && refmult2 < 135) cent = 10;
+        else if(refmult2 >= 90 && refmult2 < 111) cent = 9;
+        else if(refmult2 >= 71 && refmult2 < 90) cent = 8;
+        else if(refmult2 >= 56 && refmult2 < 71) cent = 7;
+        else if(refmult2 >= 43 && refmult2 < 56) cent = 6;
+        else if(refmult2 >= 33 && refmult2 < 43) cent = 5;
+        else if(refmult2 >= 25 && refmult2 < 33) cent = 4;
+        else if(refmult2 >= 18 && refmult2 < 25) cent = 3;
+        else if(refmult2 >= 13 && refmult2 < 18) cent = 2;
+        else if(refmult2 >= 9 && refmult2 < 13) cent = 1;
+        else if(refmult2 >= 6 && refmult2 < 9) cent = 0;
+
+    }
+
+    else if(energy == 39){
+
+        if(refmult2 >= 307) cent = 15;
+        else if(refmult2 >= 257 && refmult2 < 307) cent = 14;
+        else if(refmult2 >= 215 && refmult2 < 257) cent = 13;
+        else if(refmult2 >= 179 && refmult2 < 215) cent = 12;
+        else if(refmult2 >= 147 && refmult2 < 179) cent = 11;
+        else if(refmult2 >= 121 && refmult2 < 147) cent = 10;
+        else if(refmult2 >= 97 && refmult2 < 121) cent = 9;
+        else if(refmult2 >= 78 && refmult2 < 97) cent = 8;
+        else if(refmult2 >= 61 && refmult2 < 78) cent = 7;
+        else if(refmult2 >= 47 && refmult2 < 61) cent = 6;
+        else if(refmult2 >= 36 && refmult2 < 47) cent = 5;
+        else if(refmult2 >= 27 && refmult2 < 36) cent = 4;
+        else if(refmult2 >= 20 && refmult2 < 27) cent = 3;
+        else if(refmult2 >= 14 && refmult2 < 20) cent = 2;
+        else if(refmult2 >= 10 && refmult2 < 14) cent = 1;
+        else if(refmult2 >= 7 && refmult2 < 10) cent = 0;
+
+    }
+
+    else if(energy == 62){
+
+        if(refmult2 >= 334) cent = 15;
+        else if(refmult2 >= 279 && refmult2 < 334) cent = 14;
+        else if(refmult2 >= 233 && refmult2 < 279) cent = 13;
+        else if(refmult2 >= 194 && refmult2 < 233) cent = 12;
+        else if(refmult2 >= 160 && refmult2 < 194) cent = 11;
+        else if(refmult2 >= 131 && refmult2 < 160) cent = 10;
+        else if(refmult2 >= 106 && refmult2 < 131) cent = 9;
+        else if(refmult2 >= 84 && refmult2 < 106) cent = 8;
+        else if(refmult2 >= 66 && refmult2 < 84) cent = 7;
+        else if(refmult2 >= 51 && refmult2 < 66) cent = 6;
+        else if(refmult2 >= 39 && refmult2 < 51) cent = 5;
+        else if(refmult2 >= 29 && refmult2 < 39) cent = 4;
+        else if(refmult2 >= 21 && refmult2 < 29) cent = 3;
+        else if(refmult2 >= 15 && refmult2 < 21) cent = 2;
+        else if(refmult2 >= 10 && refmult2 < 15) cent = 1;
+        else if(refmult2 >= 7 && refmult2 < 10) cent = 0;
+
+    }
+
+    else if(energy == 200){
+
+        if(refmult2 >= 421) cent = 15;
+        else if(refmult2 >= 355 && refmult2 < 421) cent = 14;
+        else if(refmult2 >= 297 && refmult2 < 355) cent = 13;
+        else if(refmult2 >= 247 && refmult2 < 297) cent = 12;
+        else if(refmult2 >= 204 && refmult2 < 247) cent = 11;
+        else if(refmult2 >= 167 && refmult2 < 204) cent = 10;
+        else if(refmult2 >= 135 && refmult2 < 167) cent = 9;
+        else if(refmult2 >= 108 && refmult2 < 135) cent = 8;
+        else if(refmult2 >= 85 && refmult2 < 108) cent = 7;
+        else if(refmult2 >= 65 && refmult2 < 85) cent = 6;
+        else if(refmult2 >= 50 && refmult2 < 65) cent = 5;
+        else if(refmult2 >= 37 && refmult2 < 50) cent = 4;
+        else if(refmult2 >= 27 && refmult2 < 37) cent = 3;
+        else if(refmult2 >= 19 && refmult2 < 27) cent = 2;
+        else if(refmult2 >= 13 && refmult2 < 19) cent = 1;
+        else if(refmult2 >= 9 && refmult2 < 13) cent = 0;
+
+    }
+
+    else {
+    	cout << "Unimplemented energy " << energy << " returned centrality " << cent << endl;
+    }
+
+
+    return cent;
+
 }
