@@ -37,9 +37,9 @@ int get_centrality(double refmult2, int energy);
 
 
 int main() {
-//	analyze();
+	analyze();
 //	comp_proton_dists();
-	analyze_CBWC();
+//	analyze_CBWC();
 
 	cout << "donzo" << endl;
 	return(0);

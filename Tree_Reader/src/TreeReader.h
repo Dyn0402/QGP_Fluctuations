@@ -96,7 +96,7 @@ private:
 	string qa_name = "QA_CBWC_";
 
 	string in_path = "/home/dylan/Research/Trees3/"; //"/home/dylan/Research/Roli_Trees/output/"; //
-	string out_path = "/home/dylan/local_server/dyn0402/Research/Data_CBWC/";
+	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
 
 	vector<int> divs = {2,3,4,5,6};

@@ -21,13 +21,13 @@
 using namespace std;
 
 
-class Track {
+class Track_Test {
 public:
-	Track();
+	Track_Test();
 	vector<double> track_size;
 };
 
-Track::Track() {};
+Track_Test::Track_Test() {};
 
 
 void vec_tree_test() {

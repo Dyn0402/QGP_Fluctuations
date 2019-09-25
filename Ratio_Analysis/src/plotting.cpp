@@ -257,23 +257,23 @@ void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> 
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
 	can_dir->cd();
 
-	// Proton distribution canvases
-	TDirectory *nproton_can_dir = can_dir->mkdir(plot::nproton_dist_dir_name.data());
-	nproton_can_dir->cd();
-	for(int cent:analysis::centrals) {
-		canvas_nprotons(data, cent, "Centrality " + to_string(cent));
-	}
-
-	// Ratios distribution canvases
-	TDirectory *ratios_can_dir = can_dir->mkdir(plot::ratio_dist_dir_name.data());
-	ratios_can_dir->cd();
-	for(int div:analysis::divs) {
-		TDirectory *div_dir = ratios_can_dir->mkdir((to_string(div) + "_Divs").data());
-		div_dir->cd();
-		for(int cent:analysis::centrals) {
-			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
-		}
-	}
+//	// Proton distribution canvases
+//	TDirectory *nproton_can_dir = can_dir->mkdir(plot::nproton_dist_dir_name.data());
+//	nproton_can_dir->cd();
+//	for(int cent:analysis::centrals) {
+//		canvas_nprotons(data, cent, "Centrality " + to_string(cent));
+//	}
+//
+//	// Ratios distribution canvases
+//	TDirectory *ratios_can_dir = can_dir->mkdir(plot::ratio_dist_dir_name.data());
+//	ratios_can_dir->cd();
+//	for(int div:analysis::divs) {
+//		TDirectory *div_dir = ratios_can_dir->mkdir((to_string(div) + "_Divs").data());
+//		div_dir->cd();
+//		for(int cent:analysis::centrals) {
+//			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
+//		}
+//	}
 
 	// Cumulant canvases
 	TDirectory *cumulant_can_dir = can_dir->mkdir(plot::cumulant_dir_name.data());

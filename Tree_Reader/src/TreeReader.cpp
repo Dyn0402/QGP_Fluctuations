@@ -68,7 +68,7 @@ void TreeReader::read_energy(int energy) {
 		}
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-		read_tree_cbwc(tree, &data, energy, refmult2CorrUtil, cent_hist); ///----------------------------
+		read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist); ///----------------------------
 		file->Close();
 		delete file;
 		file_index++;
