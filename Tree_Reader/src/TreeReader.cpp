@@ -35,6 +35,7 @@ using namespace std;
 
 TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
+	cbwc = false;
 }
 
 
@@ -68,7 +69,11 @@ void TreeReader::read_energy(int energy) {
 		}
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-		read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist); ///----------------------------
+		if(cbwc) {
+			read_tree_cbwc(tree, &data, energy, refmult2CorrUtil, cent_hist);
+		} else {
+			read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist);
+		}
 		file->Close();
 		delete file;
 		file_index++;
@@ -500,4 +505,14 @@ bool TreeReader::check_slope(double btof_mult, double ref_mult, int energy) {
 	}
 
 	return(good_event);
+}
+
+
+bool TreeReader::get_cbwc() {
+	return(cbwc);
+}
+
+
+void TreeReader::set_cbwc(bool cbwc) {
+	this->cbwc = cbwc;
 }

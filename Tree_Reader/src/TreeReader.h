@@ -79,11 +79,14 @@ public:
 	string get_in_path();
 	string get_out_path();
 	string get_qa_path();
+	bool get_cbwc();
+
 	void set_in_path(string path);
 	void set_out_path(string path);
 	void set_qa_path(string path);
 	void set_energy_list(vector<int>);
 	void set_divs(vector<int>);
+	void set_cbwc(bool cbwc);
 
 	void read_trees();
 
@@ -101,6 +104,8 @@ private:
 
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> energy_list = {27, 19, 11, 7};
+
+	bool cbwc;
 
 	void read_energy(int energy);
 	void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
