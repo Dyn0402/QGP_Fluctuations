@@ -84,8 +84,9 @@ public:
 	void set_in_path(string path);
 	void set_out_path(string path);
 	void set_qa_path(string path);
-	void set_energy_list(vector<int>);
-	void set_divs(vector<int>);
+	void set_qa_name(string name);
+	void set_energy_list(vector<int> list);
+	void set_divs(vector<int> list);
 	void set_cbwc(bool cbwc);
 
 	void read_trees();

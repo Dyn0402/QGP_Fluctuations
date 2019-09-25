@@ -69,6 +69,12 @@ int main(int argc, char** argv) {
 
 void read_class() {
 	TreeReader reader;
+	reader.set_cbwc(false);
+	reader.set_in_path("/home/dylan/Research/Trees/");
+	reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data/");
+	reader.set_qa_name("QA_");
+	reader.set_divs({2,3,4,5,6});
+	reader.set_energy_list({27,19,7,11});
 	reader.read_trees();
 }
 

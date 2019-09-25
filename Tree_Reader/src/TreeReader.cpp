@@ -33,11 +33,53 @@
 using namespace std;
 
 
+// Structors
+
 TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
 	cbwc = false;
 }
 
+
+// Getters
+
+bool TreeReader::get_cbwc() {
+	return(cbwc);
+}
+
+
+// Setters
+
+void TreeReader::set_in_path(string path) {
+	in_path = path;
+}
+
+void TreeReader::set_out_path(string path) {
+	out_path = path;
+}
+
+void TreeReader::set_qa_path(string path) {
+	qa_path = path;
+}
+
+void TreeReader::set_qa_name(string name) {
+	qa_name = name;
+}
+
+void TreeReader::set_energy_list(vector<int> list) {
+	energy_list = list;
+}
+
+void TreeReader::set_divs(vector<int> list) {
+	divs = list;
+}
+
+void TreeReader::set_cbwc(bool cbwc) {
+	this->cbwc = cbwc;
+}
+
+
+// Doers
 
 void TreeReader::read_trees() {
 	ROOT::EnableThreadSafety();
@@ -505,14 +547,4 @@ bool TreeReader::check_slope(double btof_mult, double ref_mult, int energy) {
 	}
 
 	return(good_event);
-}
-
-
-bool TreeReader::get_cbwc() {
-	return(cbwc);
-}
-
-
-void TreeReader::set_cbwc(bool cbwc) {
-	this->cbwc = cbwc;
 }
