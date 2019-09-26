@@ -220,7 +220,7 @@ event_leaves TreeReader::get_event_leaves(TTree* tree) {
 	event.run = tree->GetLeaf("run");
 	event.ref_mult = tree->GetLeaf("Nprim");
 	event.ref_mult2 = tree->GetLeaf("ref2");
-	event.btof_mult = tree->GetLeaf("btof_multi");
+	event.btof_mult = tree->GetLeaf("btof");
 	event.vz = tree->GetLeaf("vtx_z");
 	event.run = tree->GetLeaf("run");
 

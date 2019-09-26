@@ -37,8 +37,8 @@ int get_centrality(double refmult2, int energy);
 
 
 int main() {
-	analyze();
-//	comp_proton_dists();
+//	analyze();
+	comp_proton_dists();
 //	analyze_CBWC();
 
 	cout << "donzo" << endl;
@@ -179,7 +179,7 @@ void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int,
 
 
 void comp_proton_dists() {
-	TFile *out_root = new TFile("/home/dylan/local_server/dyn0402/Research/Results/08-09-19_proton_dist_comp.root", "RECREATE");
+	TFile *out_root = new TFile("/home/dylan/local_server/dyn0402/Research/Results/09-25-19_proton_dist_comp.root", "RECREATE");
 
 	string in_path_dylan = "/home/dylan/local_server/dyn0402/Research/Data/";
 	string in_path_roli = "/home/dylan/local_server/dyn0402/Research/Data_Roli/";
