@@ -19,7 +19,7 @@ using namespace std;
 
 namespace config {
 //	string out_path = "/home/dylan/Dropbox/Research/Coalescence/v1_sim.root";
-	string out_path = "/home/dylan/local_server/dyn0402/Research/Simulation/07-18_athic_comp.root";
+	string out_path = "/home/dylan/local_server/dyn0402/Research/Simulation/Statistics_Compare/09-26_roli_save_test.root";
 //	string out_path = "/home/dylan/Research/Roli_Sim_Data/comp_test_dylan.root";
 
 	string param = "p_cluster";

@@ -10,9 +10,10 @@
 
 #include <TH1.h>
 #include <TString.h>
+#include <TFile.h>
 
 int getPhiBin(double, int);
-TH1D* sim_efficiency(double pc, double xcluster, double mean, int divs, int events);
+TH1D* sim_efficiency(double pc, double xcluster, double mean, int divs, int events, TFile *output_file);
 
 
 

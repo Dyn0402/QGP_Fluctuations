@@ -20,7 +20,7 @@
 using namespace std;
 
 
-TH1D* sim_efficiency(double pc, double xcluster, double mean, int divs, int events) {
+TH1D* sim_efficiency(double pc, double xcluster, double mean, int divs, int events, TFile *n) {
 
 	// ------ define variables -------
 	int nevents = events;//10000000; //Total number of events to run on
@@ -43,11 +43,10 @@ TH1D* sim_efficiency(double pc, double xcluster, double mean, int divs, int even
 
     // ------ define histograms -------
 
-//    TFile *n = new TFile(outputFile,"RECREATE");
-//    if(!n){
-//        cout << "Output file cannot be opened" << endl;
-//        exit(0);
-//    }
+    if(!n){
+        cout << "Output file cannot be opened" << endl;
+        exit(0);
+    }
 
     TH1F *hTrue = new TH1F("hTrue","true particle multiplicity  distribution ",101,-0.5,100.0);
     TH1F *hMult = new TH1F("hMult","total multiplicity  distribution ",250,0,250);
@@ -156,7 +155,7 @@ TH1D* sim_efficiency(double pc, double xcluster, double mean, int divs, int even
 
         /////////// cumulant analysis ////////////////////
 
-        nglob = myRandom.Rndm()*50;
+        nglob = 1;//myRandom.Rndm()*50;
 
         for(int order = 0; order <= 8; order++){
 
@@ -230,9 +229,20 @@ TH1D* sim_efficiency(double pc, double xcluster, double mean, int divs, int even
         }
     }
 
-//    n->cd();
-//    n->Write();
+    n->cd();
+    hTrue->Write();
+    hMult->Write();
+	hphi->Write();
+	hbin->Write();
+	for(int i = 0; i <= 12; i++) {
+		if(i != 0 && i < nPhiBin) {
+			hratio[i]->Write();
+		}
+		hp[i]->Write();
+	}
+	hParticle->Write();
 //    n->Close();
+
 
 	delete hTrue;
 	delete hMult;
