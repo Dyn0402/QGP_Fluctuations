@@ -322,7 +322,7 @@ void comp_moments() {
 	auto stats = calc_cbwc_stats(data, raw_stats);
 
 
-	// Read data27.txt roli moments
+	get_roli_moments();
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
@@ -340,6 +340,13 @@ void comp_moments() {
 
 
 	out_root->Close();
+}
+
+
+
+// Get Roli moments
+pair<string, Measure> get_roli_moments(string path) {
+	//
 }
 
 
