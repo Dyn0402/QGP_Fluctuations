@@ -33,7 +33,9 @@ void cumulant_test();
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calculate_stats(map<int, map<int, map<int, RatioData>>> data); //cumulants[energy][divisions][centrality][cumulant_order]
 void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int, map<int, map<string, Measure>>>> *stats, map<int, map<int, map<int, map<int, Measure>>>> *cumulants);
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats);
+void comp_moments();
 int get_centrality(double refmult2, int energy);
+int get_centrality9(double refmult2, int energy);
 
 
 int main() {
@@ -294,6 +296,53 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 }
 
 
+void comp_moments() {
+	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
+
+	map<int, map<int, map<int, RatioData>>> data;
+
+	int energy_num = 1;
+	int num_energies = analysis::energy_list.size();
+	for(int energy:analysis::energy_list) {
+		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
+		string path = analysis::in_path + to_string(energy) + "GeV/";
+		for(int div:analysis::divs) {
+			analysis::centrals = get_centrals(path, div);
+			for(int cent:analysis::centrals) {
+				RatioData ratios(div);
+				ratios.read_ratios_from_dir(path, div, cent);
+				data[energy][div][cent] = ratios;
+			}
+		}
+		energy_num++;
+	}
+
+	cout << endl << "Calculating Cumulants..." << endl;
+	auto raw_stats = calculate_stats(data);
+	auto stats = calc_cbwc_stats(data, raw_stats);
+
+
+	// Read data27.txt roli moments
+
+	out_root->cd();
+	cout << endl << "Making ratio distribution plots..." << endl;
+	make_ratio_dist_plots(out_root, data);
+//	cout << endl << "Making 2d distribution plots..." << endl;
+//	make_2d_dist_plots(out_root, data);
+//	cout << endl << "Making proton distribution plots..." << endl;
+//	make_proton_dist_plots(out_root, data);
+	cout << endl << "Making cumulant plots..." << endl;
+	make_cumulant_plots(out_root, stats.second);
+	cout << endl << "Making stat plots..." << endl;
+	make_stat_plots(out_root, stats.first);
+	cout << endl << "Making canvases..." << endl;
+	make_canvas_plots(out_root, data, stats.second, stats.first);
+
+
+	out_root->Close();
+}
+
+
 //Taken directly from Roli.
 //Given energy and refmult2, will return centrality of event.
 int get_centrality(double refmult2, int energy){
@@ -474,5 +523,119 @@ int get_centrality(double refmult2, int energy){
 
 
     return cent;
+
+}
+
+
+int get_centrality9(int mult, double energy){
+
+    int central = -1;
+
+    if(energy == 7){
+
+        float centFull[9] = {32,41,51,64,78,95,114,137,165};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 11){
+
+        float centFull[9] = {41,52,65,80,98,118,143,172,206};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 19){
+
+        float centFull[9] = {51,65,81,100,123,149,180,215,258};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 27){
+
+        float centFull[9] = {56,71,90,111,135,164,198,237,284};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 39){
+
+        float centFull[9] = {61,78,97,121,147,179,215,257,307};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 62){
+
+        float centFull[9] = {66,84,106,131,160,194,233,279,334};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 200){
+
+        float centFull[9] = {85,108,135,167,204,247,297,355,421};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    return central;
 
 }
