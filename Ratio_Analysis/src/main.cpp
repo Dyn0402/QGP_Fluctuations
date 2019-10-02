@@ -7,6 +7,8 @@
 
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <thread>
 
 #include <TROOT.h>
@@ -34,6 +36,7 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int, map<int, map<string, Measure>>>> *stats, map<int, map<int, map<int, map<int, Measure>>>> *cumulants);
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats);
 void comp_moments();
+pair<string, Measure> get_roli_moments(string path);
 int get_centrality(double refmult2, int energy);
 int get_centrality9(double refmult2, int energy);
 
@@ -346,7 +349,15 @@ void comp_moments() {
 
 // Get Roli moments
 pair<string, Measure> get_roli_moments(string path) {
-	//
+	pair<string, Measure> moments;
+	ifstream file("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data27.txt");
+	string line;
+	getline(file, line);
+	while(getline(file, line)) {
+		istringstream stream(line);
+		double mean, mean_err, sigma, sigma_err, skew, skew_err, kurt, kurt_err;
+
+	}
 }
 
 
