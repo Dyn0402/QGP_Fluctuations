@@ -181,12 +181,12 @@ void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int,
 
 
 void comp_proton_dists() {
-	TFile *out_root = new TFile("/home/dylan/local_server/dyn0402/Research/Results/09-25-19_proton_dist_comp.root", "RECREATE");
+	TFile *out_root = new TFile("/home/dylan/local_server/dyn0402/Research/Results/09-25-19_proton_dist_comp_roli_dylan_roli.root", "RECREATE");
 
 	string in_path_dylan = "/home/dylan/local_server/dyn0402/Research/Data/";
-	string in_path_roli = "/home/dylan/local_server/dyn0402/Research/Data_Roli/";
+	string in_path_roli = "/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/";
 
-	vector<int> energy_list = {7, 11, 19, 27};
+	vector<int> energy_list = {27};
 	vector<int> divs = {2};
 	vector<int> centrals = {15};
 
