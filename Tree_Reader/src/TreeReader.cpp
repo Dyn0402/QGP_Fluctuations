@@ -307,7 +307,7 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 
 	if(pt > cut.min_pt_for_m && pt < cut.max_pt_for_m) {
 		if(beta > cut.min_beta) {
-			double m2 = pow(pow(p, 2) * (pow(beta, -2) - 1.), 0.5);
+			double m2 = pow(p, 2) * (pow(beta, -2) - 1.);
 			if(m2 > cut.min_m2 && m2 < cut.max_m2) {
 				good_proton = true;
 			}
