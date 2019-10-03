@@ -52,7 +52,7 @@ struct cut_values {
 	map<int, double> min_slope = {{7, (double)(924+34)/(418-7)}, {11, (double)(660+20)/(307-7)}, {14, (double)(1020+61)/(396-10)}, {19, (double)(1049+35)/(426-5)}, {27, (double)(1211+39)/(460-6)}, {39, (double)(1563+103)/(524-10)}, {62, (double)(2657+244)/(649-51)}, {200, (double)(3130+77)/(616-70)}};
 
 	//Proton cuts
-	double min_p = 0.4;
+	double min_p = 0.15;
 	double max_p = 0.8;
 	double min_pt = 0.4;
 	double max_pt = 2.0;
@@ -64,7 +64,7 @@ struct cut_values {
 	double min_nsigma = -2.0;
 	double max_nsigma = 2.0;
 	double min_dca = 0.0;
-	double max_dca = 1.0;
+	double max_dca = 2.0;
 	double min_m2 = 0.8;
 	double max_m2 = 1.0;
 	double min_pt_for_m = 0.8;
