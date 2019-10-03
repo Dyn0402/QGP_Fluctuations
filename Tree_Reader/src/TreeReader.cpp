@@ -38,6 +38,7 @@ using namespace std;
 TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
 	cbwc = false;
+	rotate_random = true;
 }
 
 
@@ -45,6 +46,10 @@ TreeReader::TreeReader() {
 
 bool TreeReader::get_cbwc() {
 	return(cbwc);
+}
+
+bool TreeReader::get_rotate_random() {
+	return(rotate_random);
 }
 
 
@@ -78,6 +83,9 @@ void TreeReader::set_cbwc(bool cbwc) {
 	this->cbwc = cbwc;
 }
 
+void TreeReader::set_rotate_random(bool rotate_random) {
+	this->rotate_random = rotate_random;
+}
 
 // Doers
 
@@ -161,7 +169,9 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, int energy, StRefMultCo
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:divs) {
-					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+					if(rotate_random) {
+						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+					}
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
 					for(int protons_in_bin:event_ratios) {
 						data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
@@ -201,7 +211,9 @@ void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, int energy, StRefM
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:divs) {
-					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+					if(rotate_random) {
+						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+					}
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
 					for(int protons_in_bin:event_ratios) {
 						data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
