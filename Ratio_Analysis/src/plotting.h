@@ -46,5 +46,7 @@ void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats,
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 
+void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
+
 
 #endif /* PLOTTING_H_ */

@@ -34,16 +34,17 @@ void comp_proton_dists();
 void cumulant_test();
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calculate_stats(map<int, map<int, map<int, RatioData>>> data); //cumulants[energy][divisions][centrality][cumulant_order]
 void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int, map<int, map<string, Measure>>>> *stats, map<int, map<int, map<int, map<int, Measure>>>> *cumulants);
-pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats);
+pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats, int cent_type = 16);
 void comp_moments();
-pair<string, Measure> get_roli_moments(string path);
+map<int, map<string, Measure>> get_roli_moments(string path);
 int get_centrality(double refmult2, int energy);
 int get_centrality9(double refmult2, int energy);
 
 
 int main() {
 //	analyze();
-	comp_proton_dists();
+//	comp_proton_dists();
+	comp_moments();
 //	analyze_CBWC();
 
 	cout << "donzo" << endl;
@@ -266,14 +267,20 @@ void comp_proton_dists() {
 
 
 
-pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats) {
+pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats, int cent_type) {
 	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> binned_stats;
 	for(int energy:analysis::energy_list) {
 		for(int div:analysis::divs) {
 			map<int, int> bin_ratios;
 			for(int cent:analysis::centrals) {
 				int cent_ratios = data[energy][div][cent].get_num_ratios();
-				int cent_bin = get_centrality(cent, energy);
+				int cent_bin;
+				if(cent_type == 9) {
+					cent_bin = get_centrality9(cent, energy);
+				}
+				else{
+					cent_bin = get_centrality(cent, energy);
+				}
 				bin_ratios[cent_bin] += cent_ratios;
 				for(string stat:analysis::stat_names) {
 					binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent][stat] * cent_ratios;
@@ -322,10 +329,10 @@ void comp_moments() {
 
 	cout << endl << "Calculating Cumulants..." << endl;
 	auto raw_stats = calculate_stats(data);
-	auto stats = calc_cbwc_stats(data, raw_stats);
+	auto stats = calc_cbwc_stats(data, raw_stats, 9);
 
 
-	get_roli_moments();
+	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data27.txt");
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
@@ -340,6 +347,9 @@ void comp_moments() {
 	make_stat_plots(out_root, stats.first);
 	cout << endl << "Making canvases..." << endl;
 	make_canvas_plots(out_root, data, stats.second, stats.first);
+	cout << endl << "Making moment comparison..." << endl;
+	out_root->cd();
+	make_comp_stat_plot(stats.first[27][2], roli_moments);
 
 
 	out_root->Close();
@@ -348,16 +358,29 @@ void comp_moments() {
 
 
 // Get Roli moments
-pair<string, Measure> get_roli_moments(string path) {
-	pair<string, Measure> moments;
-	ifstream file("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data27.txt");
+map<int, map<string, Measure>> get_roli_moments(string path) {
+	map<int, map<string, Measure>> moments;
+	ifstream file(path);
 	string line;
-	getline(file, line);
+//	getline(file, line);
 	while(getline(file, line)) {
 		istringstream stream(line);
-		double mean, mean_err, sigma, sigma_err, skew, skew_err, kurt, kurt_err;
+		int i, cent;
+		map<string, vector<double>> m = {{"mean", {0,0}},  {"standard_deviation", {0,0}}, {"skewness", {0,0}}, {"kurtosis", {0,0}}};
+
+		// Read line
+		if(!(stream >> i >> cent >> m["mean"][0] >> m["mean"][1] >> m["standard_deviation"][0] >> m["standard_deviation"][1] >> m["skewness"][0] >> m["skewness"][1] >> m["kurtosis"][0] >> m["kurtosis"][1])) {
+			continue;
+		}
+
+		// Fill map
+		for(string stat:analysis::stat_names) {
+			Measure meas = Measure(m[stat][0], m[stat][1]);
+			moments[cent][stat] = meas;
+		}
 
 	}
+	return(moments);
 }
 
 
@@ -545,7 +568,7 @@ int get_centrality(double refmult2, int energy){
 }
 
 
-int get_centrality9(int mult, double energy){
+int get_centrality9(double mult, int energy) {
 
     int central = -1;
 

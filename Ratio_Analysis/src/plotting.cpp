@@ -507,3 +507,50 @@ void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> sta
 	delete can;
 }
 
+
+void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2) {
+	for(string stat:analysis::stat_names) {
+		string name = "Moment Comparison " + stat;
+		auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+
+		auto *mg = new TMultiGraph();
+		mg->SetNameTitle(stat.data(), stat.data());
+
+		vector<double> stat1_val, stat1_err, stat2_val, stat2_err, cent_vec, cent_err;
+		Measure stat1_meas, stat2_meas;
+		for(int cent=1; cent<=9; cent++) {
+			stat1_meas = stats1[cent][stat];
+			stat2_meas = stats2[cent][stat];
+			if(!isnan(stat1_meas.get_val())) { stat1_val.push_back(stat1_meas.get_val()); }
+			if(!isnan(stat1_meas.get_err())) { stat1_err.push_back(stat1_meas.get_err()); }
+			if(!isnan(stat2_meas.get_val())) { stat2_val.push_back(stat2_meas.get_val()); }
+			if(!isnan(stat2_meas.get_err())) { stat2_err.push_back(stat2_meas.get_err()); }
+			cent_vec.push_back((double)cent);
+			cent_err.push_back(0.0);
+		}
+
+		for(unsigned i = 0; i < cent_vec.size(); i++) {
+			cout << cent_vec[i] << "\t" << stat1_val[i] << "\t" << stat2_val[i] << endl;
+		}
+
+		TGraphErrors *graph1 = graph_x_vs_y_err(cent_vec, stat1_val, cent_err, stat1_err);
+		graph1->SetNameTitle("Dylan");
+		graph1->SetMarkerStyle(24);
+		graph1->SetMarkerColor(kRed);
+		graph1->SetMarkerSize(2);
+		mg->Add(graph1, "AP");
+
+		TGraphErrors *graph2 = graph_x_vs_y_err(cent_vec, stat2_val, cent_err, stat2_err);
+		graph2->SetNameTitle("Roli");
+		graph2->SetMarkerStyle(25);
+		graph2->SetMarkerColor(kBlue);
+		graph2->SetMarkerSize(2);
+		mg->Add(graph2, "AP");
+
+//		gPad->BuildLegend(0.3, 0.2, 0.3, 0.2, "", "p");
+		mg->Draw();
+//
+		can->Write(name.data());
+		delete can;
+	}
+}
