@@ -332,7 +332,14 @@ void comp_moments() {
 	auto stats = calc_cbwc_stats(data, raw_stats, 9);
 
 
-	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data27.txt");
+	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Results/Moments_Tests/data27_fixed_CBWC.txt");
+
+	cout << endl << "Making moment comparison..." << endl;
+	out_root->cd();
+	make_comp_stat_plot(stats.first[27][2], roli_moments);
+
+	for()
+	get_roli_ratio_dist();
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
@@ -347,9 +354,6 @@ void comp_moments() {
 	make_stat_plots(out_root, stats.first);
 	cout << endl << "Making canvases..." << endl;
 	make_canvas_plots(out_root, data, stats.second, stats.first);
-	cout << endl << "Making moment comparison..." << endl;
-	out_root->cd();
-	make_comp_stat_plot(stats.first[27][2], roli_moments);
 
 
 	out_root->Close();
@@ -381,6 +385,13 @@ map<int, map<string, Measure>> get_roli_moments(string path) {
 
 	}
 	return(moments);
+}
+
+
+
+TH1F* get_roli_ratio_dist(string path) {
+	TFile *roli_ratio_file = new TFile(path.data(), "READ");
+	TH1F *roli_ratio_hist = (TH1F*) roli_ratio_file->Get("hratio_1_1");
 }
 
 

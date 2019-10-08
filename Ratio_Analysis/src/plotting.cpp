@@ -529,27 +529,41 @@ void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<str
 			cent_err.push_back(0.0);
 		}
 
+		double y_max = numeric_limits<double>::min();
+		double y_min = numeric_limits<double>::max();
 		for(unsigned i = 0; i < cent_vec.size(); i++) {
-			cout << cent_vec[i] << "\t" << stat1_val[i] << "\t" << stat2_val[i] << endl;
+			cout << cent_vec[i] << "\t" << stat1_val[i] << " ± " << stat1_err[i] << "\t" << stat2_val[i]  << " ± " << stat2_err[i] << endl;
+			if(stat1_val[i] + stat1_err[i] > y_max) { y_max = stat1_val[i] + stat1_err[i]; }
+			if(stat2_val[i] + stat2_err[i] > y_max) { y_max = stat2_val[i] + stat2_err[i]; }
+			if(stat1_val[i] - stat1_err[i] < y_min) { y_min = stat1_val[i] - stat1_err[i]; }
+			if(stat2_val[i] - stat2_err[i] < y_min) { y_min = stat2_val[i] - stat2_err[i]; }
 		}
 
 		TGraphErrors *graph1 = graph_x_vs_y_err(cent_vec, stat1_val, cent_err, stat1_err);
 		graph1->SetNameTitle("Dylan");
-		graph1->SetMarkerStyle(24);
+		graph1->SetMarkerStyle(26);
 		graph1->SetMarkerColor(kRed);
-		graph1->SetMarkerSize(2);
+		graph1->SetMarkerSize(1.5);
 		mg->Add(graph1, "AP");
 
 		TGraphErrors *graph2 = graph_x_vs_y_err(cent_vec, stat2_val, cent_err, stat2_err);
 		graph2->SetNameTitle("Roli");
-		graph2->SetMarkerStyle(25);
+		graph2->SetMarkerStyle(24);
 		graph2->SetMarkerColor(kBlue);
-		graph2->SetMarkerSize(2);
+		graph2->SetMarkerSize(1.5);
 		mg->Add(graph2, "AP");
 
-//		gPad->BuildLegend(0.3, 0.2, 0.3, 0.2, "", "p");
-		mg->Draw();
-//
+		double y_range = y_max - y_min;
+
+		mg->GetXaxis()->SetLimits(0, 10);
+		mg->GetXaxis()->SetRangeUser(0, 10);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetXaxis()->SetTitle("Centrality Bin");
+
+		mg->Draw("AP");
+		gPad->BuildLegend(0.1, 0.5, 0.2, 0.55, "", "p");
+
 		can->Write(name.data());
 		delete can;
 	}
