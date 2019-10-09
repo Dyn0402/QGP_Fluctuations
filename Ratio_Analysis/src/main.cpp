@@ -32,6 +32,7 @@ void analyze();
 void analyze_CBWC();
 void comp_proton_dists();
 void cumulant_test();
+void ratio_data_op_test();
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calculate_stats(map<int, map<int, map<int, RatioData>>> data); //cumulants[energy][divisions][centrality][cumulant_order]
 void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int, map<int, map<string, Measure>>>> *stats, map<int, map<int, map<int, map<int, Measure>>>> *cumulants);
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats, int cent_type = 16);
@@ -44,8 +45,9 @@ int get_centrality9(double refmult2, int energy);
 int main() {
 //	analyze();
 //	comp_proton_dists();
-	comp_moments();
+//	comp_moments();
 //	analyze_CBWC();
+	ratio_data_op_test();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -60,6 +62,24 @@ void cumulant_test() {
 	double val, err;
 	tie(val, err) = get_cumulant(test_data, n);
 	cout << val << "+-" << err << endl;
+}
+
+
+void ratio_data_op_test() {
+	TFile *file = new TFile("/home/dylan/Desktop/ratio_data_op_test.root", "RECREATE");
+	string path1 = "/home/dylan/local_server/dyn0402/Research/Data/11GeV/ratios_divisions_6_centrality_9_local.txt";
+	string path2 = "/home/dylan/local_server/dyn0402/Research/Data/7GeV/ratios_divisions_6_centrality_9_local.txt";
+	RatioData a(6);
+	RatioData b(6);
+	a.read_data_from_file(path1);
+	b.read_data_from_file(path2);
+	a.canvas_1d_dist("a");
+	b.canvas_1d_dist("b");
+	a += b;
+	a.canvas_1d_dist("a+b");
+	b.canvas_1d_dist("b_2");
+	file->Close();
+	delete file;
 }
 
 
@@ -338,8 +358,8 @@ void comp_moments() {
 	out_root->cd();
 	make_comp_stat_plot(stats.first[27][2], roli_moments);
 
-	for()
-	get_roli_ratio_dist();
+//	for()
+//	get_roli_ratio_dist();
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
