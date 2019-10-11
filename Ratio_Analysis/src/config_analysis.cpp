@@ -25,15 +25,14 @@ namespace analysis {
 	string in_file_sufx = ".root";
 
 //	string in_path = "/home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/";
-	string in_path = "/home/dylan/local_server/dyn0402/Research/Data_CBWC/";
+	string in_path = "/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/";
 }
 
 
 namespace plot {
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Results/";
 //	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
-	string out_root_name = "10-04-19_Moment_Comp.root";
-
+	string out_root_name = "10-10-19_16Centbins.root";
 	string ratio_dist_dir_name = "Ratio_Dists";
 	string dist_2d_dir_name = "2D_Dists";
 	string nproton_dist_dir_name = "NProton_Dists";

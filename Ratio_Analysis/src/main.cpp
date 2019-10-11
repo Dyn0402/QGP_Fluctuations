@@ -45,9 +45,9 @@ int get_centrality9(double refmult2, int energy);
 int main() {
 //	analyze();
 //	comp_proton_dists();
-//	comp_moments();
+	comp_moments();
 //	analyze_CBWC();
-	ratio_data_op_test();
+//	ratio_data_op_test();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -109,8 +109,8 @@ void analyze() {
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
 	make_ratio_dist_plots(out_root, data);
-	cout << endl << "Making 2d distribution plots..." << endl;
-	make_2d_dist_plots(out_root, data);
+//	cout << endl << "Making 2d distribution plots..." << endl;
+//	make_2d_dist_plots(out_root, data);
 	cout << endl << "Making proton distribution plots..." << endl;
 	make_proton_dist_plots(out_root, data);
 	cout << endl << "Making cumulant plots..." << endl;
@@ -178,7 +178,9 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 	{
 		ThreadPool pool(1);//thread::hardware_concurrency());
 		for(int energy:analysis::energy_list) {
+			string path = analysis::in_path + to_string(energy) + "GeV/";
 			for(int div:analysis::divs) {
+				analysis::centrals = get_centrals(path, div);
 				for(int cent:analysis::centrals) {
 					pool.enqueue(calc_stat, &(data[energy][div][cent]), energy, div, cent, &stats, &cumulants);
 				}
@@ -302,11 +304,21 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 					cent_bin = get_centrality(cent, energy);
 				}
 				bin_ratios[cent_bin] += cent_ratios;
-				for(string stat:analysis::stat_names) {
-					binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent][stat] * cent_ratios;
+				if(cent_bin == 9 && div == 2) {
+					string out = "Cent: " + to_string(cent) + " | num: " + to_string(cent_ratios);
+					out += " | Mean: " + to_string(stats.first[energy][div][cent]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["mean"].get_err());
+					out += " | SD: " + to_string(stats.first[energy][div][cent]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["standard_deviation"].get_err());
+					out += " | Skewness: " + to_string(stats.first[energy][div][cent]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["skewness"].get_err());
+					out += " | Kurtosis: " + to_string(stats.first[energy][div][cent]["kurtosis"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["kurtosis"].get_err());
+					cout << out << endl;
 				}
-				for(int order:analysis::cumulant_orders) {
-					binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent][order] * cent_ratios;
+				if(stats.first[energy][div][cent]["standard_deviation"].get_val() != 0) {
+					for(string stat:analysis::stat_names) {
+						binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent][stat] * cent_ratios;
+					}
+					for(int order:analysis::cumulant_orders) {
+						binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent][order] * cent_ratios;
+					}
 				}
 			}
 			for(pair<int, map<string, Measure>> cent_bin:binned_stats.first[energy][div]) {
@@ -330,6 +342,9 @@ void comp_moments() {
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
 	map<int, map<int, map<int, RatioData>>> data;
+	map<int, map<int, map<int, RatioData>>> data_cent;
+
+	vector<int> cent_bins = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	int energy_num = 1;
 	int num_energies = analysis::energy_list.size();
@@ -337,11 +352,16 @@ void comp_moments() {
 		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
 		string path = analysis::in_path + to_string(energy) + "GeV/";
 		for(int div:analysis::divs) {
+			for(int cent:cent_bins) {
+				RatioData ratios(div);
+				data_cent[energy][div][cent] = ratios;
+			}
 			analysis::centrals = get_centrals(path, div);
 			for(int cent:analysis::centrals) {
 				RatioData ratios(div);
 				ratios.read_ratios_from_dir(path, div, cent);
 				data[energy][div][cent] = ratios;
+				data_cent[energy][div][get_centrality9(cent, energy)] += ratios;
 			}
 		}
 		energy_num++;
@@ -352,14 +372,43 @@ void comp_moments() {
 	auto stats = calc_cbwc_stats(data, raw_stats, 9);
 
 
-	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Results/Moments_Tests/data27_fixed_CBWC.txt");
+	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data27.txt");
 
 	cout << endl << "Making moment comparison..." << endl;
 	out_root->cd();
+	TDirectory *compare_dir = out_root->mkdir("Compare");
+	compare_dir->cd();
 	make_comp_stat_plot(stats.first[27][2], roli_moments);
 
-//	for()
-//	get_roli_ratio_dist();
+	TFile *roli_loop = new TFile("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/loop_out_27GeV.root", "READ");
+	compare_dir->cd();
+	for(int cent:cent_bins) {
+		string roli_name = "hratio_1_" + to_string(cent);
+		TH1F *roli_hist = (TH1F*) roli_loop->Get(roli_name.data());
+
+		TH1F *hist = new TH1F((roli_name+"_dylan").data(), (roli_name+"_dylan").data(), 100, -0.05, 1.05);
+		for(pair<int, map<int, int>> event:data_cent[27][2][cent].get_ratio_data()) {
+			for(pair<int, int> bin:event.second) {
+				for(int i=0; i<bin.second; i++) {
+					hist->Fill(((double)bin.first) / event.first);
+				}
+			}
+		}
+		TCanvas *can = new TCanvas((roli_name+"_Can").data());
+		can->SetLogy();
+		hist->SetLineColor(kRed);
+		hist->Draw();
+		roli_hist->Draw("sames");
+
+		can->Write();
+
+
+		delete hist;
+		delete can;
+		delete roli_hist;
+	}
+	roli_loop->Close();
+	delete roli_loop;
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
@@ -409,10 +458,10 @@ map<int, map<string, Measure>> get_roli_moments(string path) {
 
 
 
-TH1F* get_roli_ratio_dist(string path) {
-	TFile *roli_ratio_file = new TFile(path.data(), "READ");
-	TH1F *roli_ratio_hist = (TH1F*) roli_ratio_file->Get("hratio_1_1");
-}
+//TH1F* get_roli_ratio_dist(string path) {
+//	TFile *roli_ratio_file = new TFile(path.data(), "READ");
+//	TH1F *roli_ratio_hist = (TH1F*) roli_ratio_file->Get("hratio_1_1");
+//}
 
 
 //Taken directly from Roli.
