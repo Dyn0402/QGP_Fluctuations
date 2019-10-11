@@ -68,15 +68,24 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	TreeReader reader;
-	reader.set_cbwc(true);
-	reader.set_rotate_random(false);
-	reader.set_in_path("/home/dylan/Research/Roli_Trees/");
-	reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/");
-	reader.set_qa_name("QA_CBWC_Roli_");
-	reader.set_divs({2,3,4,5,6});
-	reader.set_energy_list({27});
-	reader.read_trees();
+	vector<int> energy_list = {19, 11, 7};
+	ROOT::EnableThreadSafety();
+	vector<thread> threads;
+	for(int energy:energy_list) {
+		TreeReader reader(energy);
+		reader.set_cbwc(true);
+		reader.set_rotate_random(false);
+		reader.set_in_path("/home/dylan/Research/Trees/");
+		reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data/");
+		reader.set_qa_name("QA_New_TreeReader_Test_");
+		reader.set_divs({2,3,4,5,6});
+		threads.push_back(thread(&TreeReader::read_trees, reader));
+	}
+	for(thread & th : threads) {
+		if(th.joinable()) {
+			th.join();
+		}
+	}
 }
 
 

@@ -30,6 +30,7 @@ struct event_leaves {
 	TLeaf *ref_mult2;
 	TLeaf *btof_mult;
 	TLeaf *vz;
+	TLeaf *event_plane;
 };
 
 struct proton_leaves {
@@ -74,7 +75,7 @@ struct cut_values {
 
 class TreeReader {
 public:
-	TreeReader();
+	TreeReader(int energy);
 
 	string get_in_path();
 	string get_out_path();
@@ -86,7 +87,7 @@ public:
 	void set_out_path(string path);
 	void set_qa_path(string path);
 	void set_qa_name(string name);
-	void set_energy_list(vector<int> list);
+	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
@@ -101,19 +102,18 @@ private:
 	string tree_name = "nsmTree";
 	string qa_name = "QA_CBWC_";
 
-	string in_path = "/home/dylan/Research/Trees3/"; //"/home/dylan/Research/Roli_Trees/output/"; //
+	string in_path = "/home/dylan/Research/Trees/";
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
 
 	vector<int> divs = {2,3,4,5,6};
-	vector<int> energy_list = {27, 19, 11, 7};
+	int energy;
 
 	bool cbwc;
 	bool rotate_random;
 
-	void read_energy(int energy);
-	void read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
-	void read_tree_cbwc(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
+	void read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
+	void read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
 
 	event_leaves get_event_leaves(TTree* tree);
 	proton_leaves get_proton_leaves(TTree* tree);

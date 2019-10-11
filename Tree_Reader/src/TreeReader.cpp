@@ -35,10 +35,12 @@ using namespace std;
 
 // Structors
 
-TreeReader::TreeReader() {
+TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
 	cbwc = false;
 	rotate_random = true;
+	this->energy = energy;
+	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
 
 
@@ -71,8 +73,8 @@ void TreeReader::set_qa_name(string name) {
 	qa_name = name;
 }
 
-void TreeReader::set_energy_list(vector<int> list) {
-	energy_list = list;
+void TreeReader::set_energy(int energy) {
+	this->energy = energy;
 }
 
 void TreeReader::set_divs(vector<int> list) {
@@ -89,22 +91,9 @@ void TreeReader::set_rotate_random(bool rotate_random) {
 
 // Doers
 
-void TreeReader::read_trees() {
-	ROOT::EnableThreadSafety();
-	vector<thread> threads;
-	for(int energy:energy_list) {
-		threads.push_back(thread(&TreeReader::read_energy, this, energy));
-	}
-	for(thread & th : threads) {
-		if(th.joinable()) {
-			th.join();
-		}
-	}
-}
-
 
 // Read files for single energy and write results to text files.
-void TreeReader::read_energy(int energy) {
+void TreeReader::read_trees() {
 	cout << "Reading " + to_string(energy) + "GeV trees." << endl;
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
 	unsigned num_files = in_files.size();
@@ -120,9 +109,9 @@ void TreeReader::read_energy(int energy) {
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		if(cbwc) {
-			read_tree_cbwc(tree, &data, energy, refmult2CorrUtil, cent_hist);
+			read_tree_cbwc(tree, &data, refmult2CorrUtil, cent_hist);
 		} else {
-			read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist);
+			read_tree(tree, &data, refmult2CorrUtil, cent_hist);
 		}
 		file->Close();
 		delete file;
@@ -143,7 +132,7 @@ void TreeReader::read_energy(int energy) {
 }
 
 
-void TreeReader::read_tree(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
+void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
@@ -185,7 +174,7 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, int energy, StRefMultCo
 
 
 
-void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, int energy, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
+void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
