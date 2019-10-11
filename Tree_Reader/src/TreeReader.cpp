@@ -301,7 +301,7 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	if(p < cut.min_p) { return(good_proton); }
 
 	double pt = protons.pt->GetValue(proton_index);
-	if(!(pt > cut.min_pt && pt < cut.max_pt)) { return(good_proton); }
+	if(!(pt >= cut.min_pt && pt <= cut.max_pt)) { return(good_proton); }
 
 	double beta = protons.beta->GetValue(proton_index);
 //	if(!(beta > cut.min_beta && beta < cut.max_beta)) { return(good_proton); }
@@ -309,15 +309,15 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	if(!(protons.charge->GetValue() == cut.charge)) { return(good_proton); }
 
 	double eta = protons.eta->GetValue(proton_index);
-	if(!(eta > cut.min_eta && eta < cut.max_eta)) { return(good_proton); }
+	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return(good_proton); }
 
 	double nsigma = protons.nsigma->GetValue(proton_index);
-	if(!(nsigma > cut.min_nsigma && nsigma < cut.max_nsigma)) { return(good_proton); }
+	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return(good_proton); }
 
 	double dca = protons.dca->GetValue(proton_index);
-	if(!(dca > cut.min_dca && dca < cut.max_dca)) { return(good_proton); }
+	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return(good_proton); }
 
-	if(pt > cut.min_pt_for_m && pt < cut.max_pt_for_m) {
+	if(pt >= cut.min_pt_for_m && pt <= cut.max_pt_for_m) {
 		if(beta > cut.min_beta) {
 			double m2 = pow(p, 2) * (pow(beta, -2) - 1.);
 			if(m2 > cut.min_m2 && m2 < cut.max_m2) {
