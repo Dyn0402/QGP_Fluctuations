@@ -372,22 +372,22 @@ void comp_moments() {
 	auto stats = calc_cbwc_stats(data, raw_stats, 9);
 
 
-	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data27.txt");
+	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data11.txt");
 
 	cout << endl << "Making moment comparison..." << endl;
 	out_root->cd();
 	TDirectory *compare_dir = out_root->mkdir("Compare");
 	compare_dir->cd();
-	make_comp_stat_plot(stats.first[27][2], roli_moments);
+	make_comp_stat_plot(stats.first[11][2], roli_moments);
 
-	TFile *roli_loop = new TFile("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/loop_out_27GeV.root", "READ");
+	TFile *roli_loop = new TFile("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/loop_out_11GeV.root", "READ");
 	compare_dir->cd();
 	for(int cent:cent_bins) {
 		string roli_name = "hratio_1_" + to_string(cent);
 		TH1F *roli_hist = (TH1F*) roli_loop->Get(roli_name.data());
 
 		TH1F *hist = new TH1F((roli_name+"_dylan").data(), (roli_name+"_dylan").data(), 100, -0.05, 1.05);
-		for(pair<int, map<int, int>> event:data_cent[27][2][cent].get_ratio_data()) {
+		for(pair<int, map<int, int>> event:data_cent[11][2][cent].get_ratio_data()) {
 			for(pair<int, int> bin:event.second) {
 				for(int i=0; i<bin.second; i++) {
 					hist->Fill(((double)bin.first) / event.first);

@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	vector<int> energy_list = {19, 11, 7};
+	vector<int> energy_list = {27};
 	ROOT::EnableThreadSafety();
 	vector<thread> threads;
 	for(int energy:energy_list) {

@@ -40,6 +40,11 @@ TreeReader::TreeReader(int energy) {
 	cbwc = false;
 	rotate_random = true;
 	this->energy = energy;
+
+	event_cut_hist = TH1I(("event_cut"+to_string(energy)).data(), "Event Cuts", 4, -0.5, 3.5);
+	track_cut_hist = TH1I(("track_cut"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
+	cent_hist = TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
 
@@ -99,7 +104,7 @@ void TreeReader::read_trees() {
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 	tree_data data;
-	auto *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+//	auto *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
 	for(string path:in_files) {
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
@@ -109,30 +114,22 @@ void TreeReader::read_trees() {
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		if(cbwc) {
-			read_tree_cbwc(tree, &data, refmult2CorrUtil, cent_hist);
+			read_tree_cbwc(tree, &data, refmult2CorrUtil);
 		} else {
-			read_tree(tree, &data, refmult2CorrUtil, cent_hist);
+			read_tree(tree, &data, refmult2CorrUtil);
 		}
 		file->Close();
 		delete file;
 		file_index++;
 	}
-	TFile *qa = new TFile((qa_path + qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
-	TCanvas *can = new TCanvas();
-	cent_hist->Draw("COLZ");
-	can->Write();
-	cent_hist->Write();
-	delete cent_hist;
-	delete can;
-	qa->Close();
-	delete qa;
+	write_qa();
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
 	cout << endl;
 }
 
 
-void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
+void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
@@ -154,7 +151,7 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
 				cent2 = refmult2CorrUtil->getCentralityBin16();
 			} //else { cout << "Refmult said was a bad run" << endl; }
-			cent_hist->Fill(cent, cent2);
+			cent_hist.Fill(cent, cent2);
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:divs) {
@@ -174,7 +171,7 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 
 
 
-void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist) {
+void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
@@ -196,7 +193,7 @@ void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *ref
 				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
 				cent2 = refmult2CorrUtil->getCentralityBin16();
 			} //else { cout << "Refmult said was a bad run" << endl; }
-			cent_hist->Fill(cent, cent2);
+			cent_hist.Fill(cent, cent2);
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:divs) {
@@ -249,9 +246,13 @@ proton_leaves TreeReader::get_proton_leaves(TTree* tree) {
 //Returns true if event is good, false if it is bad.
 bool TreeReader::check_event_good(event_leaves event, proton_leaves proton, int energy) {
 	bool good_event = false;
+	event_cut_hist.Fill(0);
 	if(check_good_run((int)event.run->GetValue())) {
+		event_cut_hist.Fill(1);
 		if(check_enough_protons(proton)) {
+			event_cut_hist.Fill(2);
 			if(check_slope(event.btof_mult->GetValue(), event.ref_mult->GetValue(), energy)) {
+				event_cut_hist.Fill(3);
 				good_event = true;
 			}
 		}
@@ -282,29 +283,48 @@ bool TreeReader::check_enough_protons(proton_leaves protons) {
 }
 
 
+// Check slope of event. If within cuts, return true for good event, else false.
+bool TreeReader::check_slope(double btof_mult, double ref_mult, int energy) {
+	bool good_event = true;
+	double slope = btof_mult / ref_mult;
+	if(slope > cut.max_slope[energy] || slope < cut.min_slope[energy]) {
+		good_event = false;
+	}
+
+	return(good_event);
+}
+
+
 // Returns true if proton is good and false if proton is bad.
 bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	bool good_proton = false;
+	track_cut_hist.Fill(0);
 
 	double p = protons.p->GetValue(proton_index);
 	if(p < cut.min_p) { return(good_proton); }
+	track_cut_hist.Fill(1);
 
 	double pt = protons.pt->GetValue(proton_index);
 	if(!(pt >= cut.min_pt && pt <= cut.max_pt)) { return(good_proton); }
+	track_cut_hist.Fill(2);
 
 	double beta = protons.beta->GetValue(proton_index);
 //	if(!(beta > cut.min_beta && beta < cut.max_beta)) { return(good_proton); }
 
 	if(!(protons.charge->GetValue() == cut.charge)) { return(good_proton); }
+	track_cut_hist.Fill(3);
 
 	double eta = protons.eta->GetValue(proton_index);
 	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return(good_proton); }
+	track_cut_hist.Fill(4);
 
 	double nsigma = protons.nsigma->GetValue(proton_index);
 	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return(good_proton); }
+	track_cut_hist.Fill(5);
 
 	double dca = protons.dca->GetValue(proton_index);
 	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return(good_proton); }
+	track_cut_hist.Fill(6);
 
 	if(pt >= cut.min_pt_for_m && pt <= cut.max_pt_for_m) {
 		if(beta > cut.min_beta) {
@@ -316,14 +336,28 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	} else {
 		good_proton = true;
 	}
+	if(good_proton) { track_cut_hist.Fill(7); }
 
 	return(good_proton);
 }
 
 
+// Write all qa plots into TFile.
+void TreeReader::write_qa() {
+	TFile qa((qa_path + qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
+	TCanvas cent_can;
+	cent_hist.Draw("COLZ");
+	cent_can.Write();
+	cent_hist.Write();
+	event_cut_hist.Write();
+	track_cut_hist.Write();
+	qa.Close();
+}
+
+
 //Taken directly from Roli.
 //Given energy and refmult2, will return centrality of event.
-int TreeReader::get_centrality(double refmult2, int energy){
+int TreeReader::get_centrality(int refmult2, int energy){
 
     int cent = -1;
 
@@ -505,13 +539,121 @@ int TreeReader::get_centrality(double refmult2, int energy){
 }
 
 
-// Check slope of event. If within cuts, return true for good event, else false.
-bool TreeReader::check_slope(double btof_mult, double ref_mult, int energy) {
-	bool good_event = true;
-	double slope = btof_mult / ref_mult;
-	if(slope > cut.max_slope[energy] || slope < cut.min_slope[energy]) {
-		good_event = false;
+//Taken directly from Roli.
+//Given energy and refmult2, will return centrality of event.
+int TreeReader::get_centrality9(int mult, int energy){
+
+    int central = -1;
+
+    if(energy == 7){
+
+        float centFull[9] = {32,41,51,64,78,95,114,137,165};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 11){
+
+        float centFull[9] = {41,52,65,80,98,118,143,172,206};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 19){
+
+        float centFull[9] = {51,65,81,100,123,149,180,215,258};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 27){
+
+        float centFull[9] = {56,71,90,111,135,164,198,237,284};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 39){
+
+        float centFull[9] = {61,78,97,121,147,179,215,257,307};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 62){
+
+        float centFull[9] = {66,84,106,131,160,194,233,279,334};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else if(energy == 200){
+
+        float centFull[9] = {85,108,135,167,204,247,297,355,421};
+        if      (mult>=centFull[8]) central=9;
+        else if (mult>=centFull[7]) central=8;
+        else if (mult>=centFull[6]) central=7;
+        else if (mult>=centFull[5]) central=6;
+        else if (mult>=centFull[4]) central=5;
+        else if (mult>=centFull[3]) central=4;
+        else if (mult>=centFull[2]) central=3;
+        else if (mult>=centFull[1]) central=2;
+        else if (mult>=centFull[0]) central=1;
+
+    }
+
+    else {
+		cout << "Unimplemented energy " << energy << " returned centrality " << central << endl;
 	}
 
-	return(good_event);
+    return central;
+
 }

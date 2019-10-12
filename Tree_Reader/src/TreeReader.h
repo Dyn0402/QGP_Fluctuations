@@ -75,14 +75,17 @@ struct cut_values {
 
 class TreeReader {
 public:
+	// Structors
 	TreeReader(int energy);
 
+	// Getters
 	string get_in_path();
 	string get_out_path();
 	string get_qa_path();
 	bool get_cbwc();
 	bool get_rotate_random();
 
+	// Setters
 	void set_in_path(string path);
 	void set_out_path(string path);
 	void set_qa_path(string path);
@@ -92,13 +95,16 @@ public:
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 
+	// Doers
 	void read_trees();
 
+	// Attributes
 	cut_values cut;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
 
 private:
+	// Attributes
 	string tree_name = "nsmTree";
 	string qa_name = "QA_CBWC_";
 
@@ -112,8 +118,9 @@ private:
 	bool cbwc;
 	bool rotate_random;
 
-	void read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
-	void read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil, TH2I *cent_hist);
+	// Doers
+	void read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);
+	void read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);
 
 	event_leaves get_event_leaves(TTree* tree);
 	proton_leaves get_proton_leaves(TTree* tree);
@@ -124,8 +131,19 @@ private:
 
 	bool check_proton_good(proton_leaves protons, int proton_index);
 
-	int get_centrality(double refmult2, int energy);
+	int get_centrality(int refmult2, int energy);
+	int get_centrality9(int refmult2, int energy);
 	bool check_slope(double btof_mult, double ref_mult, int energy);
+
+	void write_qa();
+
+	// QA Plots
+//	TH1I *event_cut_hist = new TH1I(("event_cut"+to_string(energy)).data(), "Event Cuts", 10, -0.5, 9.5);
+//	TH1I *track_cut_hist = new TH1I(("track_cut"+to_string(energy)).data(), "Track Cuts", 10, -0.5, 9.5);
+//	TH2I *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+	TH1I event_cut_hist;
+	TH1I track_cut_hist;
+	TH2I cent_hist;
 };
 
 
