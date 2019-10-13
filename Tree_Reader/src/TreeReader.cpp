@@ -41,9 +41,7 @@ TreeReader::TreeReader(int energy) {
 	rotate_random = true;
 	this->energy = energy;
 
-	event_cut_hist = TH1I(("event_cut"+to_string(energy)).data(), "Event Cuts", 4, -0.5, 3.5);
-	track_cut_hist = TH1I(("track_cut"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
-	cent_hist = TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+	define_qa();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -104,7 +102,6 @@ void TreeReader::read_trees() {
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 	tree_data data;
-//	auto *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
 	for(string path:in_files) {
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
@@ -113,11 +110,11 @@ void TreeReader::read_trees() {
 		}
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-		if(cbwc) {
-			read_tree_cbwc(tree, &data, refmult2CorrUtil);
-		} else {
-			read_tree(tree, &data, refmult2CorrUtil);
-		}
+//		if(cbwc) {
+//			read_tree_cbwc(tree, &data, refmult2CorrUtil);
+//		} else {
+		read_tree(tree, &data, refmult2CorrUtil);
+//		}
 		file->Close();
 		delete file;
 		file_index++;
@@ -145,6 +142,7 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 				}
 			}
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
+			int cent9 = get_centrality9(event.ref_mult2->GetValue(), energy);
 			int cent2 = -2;
 			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
 				refmult2CorrUtil->init(event.run->GetValue());
@@ -153,6 +151,9 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 			} //else { cout << "Refmult said was a bad run" << endl; }
 			cent_hist.Fill(cent, cent2);
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
+				cent16_events.Fill(cent);
+				cent9_events.Fill(cent9);
+				event_cut_hist.Fill(4);
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:divs) {
 					if(rotate_random) {
@@ -160,7 +161,11 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 					}
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
 					for(int protons_in_bin:event_ratios) {
-						data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+						if(cbwc) {
+							data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
+						} else {
+							data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+						}
 					}
 				}
 			}
@@ -171,45 +176,45 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 
 
 
-void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil) {
-	event_leaves event = get_event_leaves(tree);
-	proton_leaves proton = get_proton_leaves(tree);
-
-	TRandom3 *rand = new TRandom3(0);
-
-	int event_index = 1;
-	while(tree->GetEntry(event_index)) {
-		if(check_event_good(event, proton, energy)) {
-			vector<double> good_proton_angles = {};
-			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
-				if(check_proton_good(proton, proton_index)) {
-					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
-				}
-			}
-			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
-			int cent2 = -2;
-			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
-				refmult2CorrUtil->init(event.run->GetValue());
-				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
-				cent2 = refmult2CorrUtil->getCentralityBin16();
-			} //else { cout << "Refmult said was a bad run" << endl; }
-			cent_hist.Fill(cent, cent2);
-			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
-				data->good_protons[cent][(int)good_proton_angles.size()]++;
-				for(int div:divs) {
-					if(rotate_random) {
-						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
-					}
-					vector<int> event_ratios = get_Rs(good_proton_angles, div);
-					for(int protons_in_bin:event_ratios) {
-						data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
-					}
-				}
-			}
-		}
-		event_index++;
-	}
-}
+//void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil) {
+//	event_leaves event = get_event_leaves(tree);
+//	proton_leaves proton = get_proton_leaves(tree);
+//
+//	TRandom3 *rand = new TRandom3(0);
+//
+//	int event_index = 1;
+//	while(tree->GetEntry(event_index)) {
+//		if(check_event_good(event, proton, energy)) {
+//			vector<double> good_proton_angles = {};
+//			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
+//				if(check_proton_good(proton, proton_index)) {
+//					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
+//				}
+//			}
+//			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
+//			int cent2 = -2;
+//			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
+//				refmult2CorrUtil->init(event.run->GetValue());
+//				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
+//				cent2 = refmult2CorrUtil->getCentralityBin16();
+//			} //else { cout << "Refmult said was a bad run" << endl; }
+//			cent_hist.Fill(cent, cent2);
+//			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
+//				data->good_protons[cent][(int)good_proton_angles.size()]++;
+//				for(int div:divs) {
+//					if(rotate_random) {
+//						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+//					}
+//					vector<int> event_ratios = get_Rs(good_proton_angles, div);
+//					for(int protons_in_bin:event_ratios) {
+//						data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
+//					}
+//				}
+//			}
+//		}
+//		event_index++;
+//	}
+//}
 
 
 //Get event leaves and return them in an event_leaves struct.
@@ -247,6 +252,7 @@ proton_leaves TreeReader::get_proton_leaves(TTree* tree) {
 bool TreeReader::check_event_good(event_leaves event, proton_leaves proton, int energy) {
 	bool good_event = false;
 	event_cut_hist.Fill(0);
+	pre_run_hist.Fill(event.run->GetValue());
 	if(check_good_run((int)event.run->GetValue())) {
 		event_cut_hist.Fill(1);
 		if(check_enough_protons(proton)) {
@@ -284,12 +290,13 @@ bool TreeReader::check_enough_protons(proton_leaves protons) {
 
 
 // Check slope of event. If within cuts, return true for good event, else false.
-bool TreeReader::check_slope(double btof_mult, double ref_mult, int energy) {
+bool TreeReader::check_slope(int btof_mult, int ref_mult, int energy) {
 	bool good_event = true;
-	double slope = btof_mult / ref_mult;
+	double slope = (double)btof_mult / ref_mult;
 	if(slope > cut.max_slope[energy] || slope < cut.min_slope[energy]) {
 		good_event = false;
 	}
+	btof_ref_hist.Fill(btof_mult, ref_mult);
 
 	return(good_event);
 }
@@ -299,6 +306,8 @@ bool TreeReader::check_slope(double btof_mult, double ref_mult, int energy) {
 bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	bool good_proton = false;
 	track_cut_hist.Fill(0);
+
+	fill_pre_track_qa(protons, proton_index);
 
 	double p = protons.p->GetValue(proton_index);
 	if(p < cut.min_p) { return(good_proton); }
@@ -342,15 +351,67 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 }
 
 
+// Define all histograms collected for qa.
+void TreeReader::define_qa() {
+	cent_hist = TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+	btof_ref_hist = TH2I(("btof_ref"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
+
+	event_cut_hist = TH1I(("event_cut"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
+	track_cut_hist = TH1I(("track_cut"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
+	cent16_events = TH1I(("cent16_events"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
+	cent9_events = TH1I(("cent9_events"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
+
+	m2_hist = TH1I(("m2"+to_string(energy)).data(), "m^2", 100, -0.5, 2.0);
+
+	pre_run_hist = TH1I(("pre_run"+to_string(energy)).data(), "pre_run", 1000, 1000000, 100000000);
+	pre_phi_hist = TH1I(("pre_phi"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
+	pre_p_hist = TH1I(("pre_p"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
+	pre_pt_hist = TH1I(("pre_pt"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
+	pre_beta_hist = TH1I(("pre_beta"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
+	pre_charge_hist = TH1I(("pre_charge"+to_string(energy)).data(), "pre_charge", 100, -2.5, 2.5);
+	pre_eta_hist = TH1I(("pre_eta"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
+	pre_nsigma_hist = TH1I(("pre_nsigma"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
+	pre_dca_hist = TH1I(("pre_dca"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
+
+}
+
+
+// Fill histograms for pre-qa
+void TreeReader:: fill_pre_track_qa(proton_leaves proton, int proton_index) {
+	pre_phi_hist.Fill(proton.phi->GetValue(proton_index));
+	pre_p_hist.Fill(proton.p->GetValue(proton_index));
+	pre_pt_hist.Fill(proton.pt->GetValue(proton_index));
+	pre_beta_hist.Fill(proton.beta->GetValue(proton_index));
+	pre_charge_hist.Fill(proton.charge->GetValue(proton_index));
+	pre_eta_hist.Fill(proton.eta->GetValue(proton_index));
+	pre_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
+	pre_dca_hist.Fill(proton.dca->GetValue(proton_index));
+}
+
+
 // Write all qa plots into TFile.
 void TreeReader::write_qa() {
 	TFile qa((qa_path + qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
-	TCanvas cent_can;
+	TCanvas cent_can("cent_can");
 	cent_hist.Draw("COLZ");
 	cent_can.Write();
 	cent_hist.Write();
+	TCanvas pile_can("pile_can");
+	btof_ref_hist.Draw("COLZ");
+	pile_can.Write();
+	btof_ref_hist.Write();
 	event_cut_hist.Write();
 	track_cut_hist.Write();
+	cent16_events.Write();
+	cent9_events.Write();
+	pre_phi_hist.Write();
+	pre_p_hist.Write();
+	pre_pt_hist.Write();
+	pre_beta_hist.Write();
+	pre_charge_hist.Write();
+	pre_eta_hist.Write();
+	pre_nsigma_hist.Write();
+	pre_dca_hist.Write();
 	qa.Close();
 }
 

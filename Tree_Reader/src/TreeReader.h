@@ -120,7 +120,7 @@ private:
 
 	// Doers
 	void read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);
-	void read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);
+//	void read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);
 
 	event_leaves get_event_leaves(TTree* tree);
 	proton_leaves get_proton_leaves(TTree* tree);
@@ -133,17 +133,33 @@ private:
 
 	int get_centrality(int refmult2, int energy);
 	int get_centrality9(int refmult2, int energy);
-	bool check_slope(double btof_mult, double ref_mult, int energy);
+	bool check_slope(int btof_mult, int ref_mult, int energy);
 
+	void define_qa();
+	void fill_pre_track_qa(proton_leaves proton, int proton_index);
 	void write_qa();
 
 	// QA Plots
-//	TH1I *event_cut_hist = new TH1I(("event_cut"+to_string(energy)).data(), "Event Cuts", 10, -0.5, 9.5);
-//	TH1I *track_cut_hist = new TH1I(("track_cut"+to_string(energy)).data(), "Track Cuts", 10, -0.5, 9.5);
-//	TH2I *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+	TH2I cent_hist;
+	TH2I btof_ref_hist;
+
 	TH1I event_cut_hist;
 	TH1I track_cut_hist;
-	TH2I cent_hist;
+	TH1I cent16_events;
+	TH1I cent9_events;
+
+	TH1I m2_hist;
+
+	TH1I pre_run_hist;
+	TH1I pre_phi_hist;
+	TH1I pre_p_hist;
+	TH1I pre_pt_hist;
+	TH1I pre_beta_hist;
+	TH1I pre_charge_hist;
+	TH1I pre_eta_hist;
+	TH1I pre_nsigma_hist;
+	TH1I pre_dca_hist;
+
 };
 
 

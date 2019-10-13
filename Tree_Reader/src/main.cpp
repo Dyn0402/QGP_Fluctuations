@@ -41,9 +41,9 @@ void read_energy(int energy);
 void io_test();
 void sum_tree_data_test();
 void ref_mult_test();
-void vec_tree_test();
-void obj_tree_test();
-void real_tree_test();
+//void vec_tree_test();
+//void obj_tree_test();
+//void real_tree_test();
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -68,16 +68,17 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	vector<int> energy_list = {27};
+	vector<int> energy_list = {11};
 	ROOT::EnableThreadSafety();
 	vector<thread> threads;
 	for(int energy:energy_list) {
 		TreeReader reader(energy);
 		reader.set_cbwc(true);
 		reader.set_rotate_random(false);
-		reader.set_in_path("/home/dylan/Research/Trees/");
-		reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data/");
-		reader.set_qa_name("QA_New_TreeReader_Test_");
+		reader.set_in_path("/gpfs01/star/pwg/dneff/scratch/trees/output/");//("/home/dylan/Research/Trees/");
+		reader.set_out_path("/gpfs01/star/pwg/dneff/scratch/ratios/output/");//("/home/dylan/local_server/dyn0402/Research/Data/");
+		reader.set_qa_path("/gpfs01/star/pwg/dneff/scratch/ratios/log/");//("/home/dylan/local_server/dyn0402/Research/QA/");
+		reader.set_qa_name("QA_RCF_Test_");
 		reader.set_divs({2,3,4,5,6});
 		threads.push_back(thread(&TreeReader::read_trees, reader));
 	}
