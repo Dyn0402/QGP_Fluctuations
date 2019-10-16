@@ -132,7 +132,7 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 
 	TRandom3 *rand = new TRandom3(0);
 
-	int event_index = 1;
+	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 		if(check_event_good(event, proton, energy)) {
 			vector<double> good_proton_angles = {};
