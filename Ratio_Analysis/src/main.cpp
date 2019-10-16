@@ -294,30 +294,30 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 	for(int energy:analysis::energy_list) {
 		for(int div:analysis::divs) {
 			map<int, int> bin_ratios;
-			for(int cent:analysis::centrals) {
-				int cent_ratios = data[energy][div][cent].get_num_ratios();
+			for(pair<int, RatioData> cent:data[energy][div]) {
+				int cent_ratios = cent.second.get_num_ratios();
 				int cent_bin;
 				if(cent_type == 9) {
-					cent_bin = get_centrality9(cent, energy);
+					cent_bin = get_centrality9(cent.first, energy);
 				}
 				else{
-					cent_bin = get_centrality(cent, energy);
+					cent_bin = get_centrality(cent.first, energy);
 				}
 				bin_ratios[cent_bin] += cent_ratios;
 				if(cent_bin == 9 && div == 2) {
-					string out = "Cent: " + to_string(cent) + " | num: " + to_string(cent_ratios);
-					out += " | Mean: " + to_string(stats.first[energy][div][cent]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["mean"].get_err());
-					out += " | SD: " + to_string(stats.first[energy][div][cent]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["standard_deviation"].get_err());
-					out += " | Skewness: " + to_string(stats.first[energy][div][cent]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["skewness"].get_err());
-					out += " | Kurtosis: " + to_string(stats.first[energy][div][cent]["kurtosis"].get_val()) + " ± " + to_string(stats.first[energy][div][cent]["kurtosis"].get_err());
+					string out = "Cent: " + to_string(cent.first) + " | num: " + to_string(cent_ratios);
+					out += " | Mean: " + to_string(stats.first[energy][div][cent.first]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["mean"].get_err());
+					out += " | SD: " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_err());
+					out += " | Skewness: " + to_string(stats.first[energy][div][cent.first]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["skewness"].get_err());
+					out += " | Kurtosis: " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_err());
 					cout << out << endl;
 				}
-				if(stats.first[energy][div][cent]["standard_deviation"].get_val() != 0) {
+				if(stats.first[energy][div][cent.first]["standard_deviation"].get_val() != 0) {
 					for(string stat:analysis::stat_names) {
-						binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent][stat] * cent_ratios;
+						binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent.first][stat] * cent_ratios;
 					}
 					for(int order:analysis::cumulant_orders) {
-						binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent][order] * cent_ratios;
+						binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent.first][order] * cent_ratios;
 					}
 				}
 			}
@@ -352,16 +352,21 @@ void comp_moments() {
 		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
 		string path = analysis::in_path + to_string(energy) + "GeV/";
 		for(int div:analysis::divs) {
+			// Initialize ratio object for each centrality bin
 			for(int cent:cent_bins) {
 				RatioData ratios(div);
 				data_cent[energy][div][cent] = ratios;
 			}
-			analysis::centrals = get_centrals(path, div);
+			analysis::centrals = get_centrals(path, div);  // Get centralities found in file names of given directory path.
 			for(int cent:analysis::centrals) {
 				RatioData ratios(div);
-				ratios.read_ratios_from_dir(path, div, cent);
-				data[energy][div][cent] = ratios;
-				data_cent[energy][div][get_centrality9(cent, energy)] += ratios;
+				ratios.read_ratios_from_dir(path, div, cent);  // Read ratios data from file
+				if(ratios.get_num_ratios() <= 2) {
+					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
+				} else {
+					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality value
+					data_cent[energy][div][get_centrality9(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
+				}
 			}
 		}
 		energy_num++;
