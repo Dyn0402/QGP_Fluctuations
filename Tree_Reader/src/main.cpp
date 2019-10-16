@@ -75,9 +75,9 @@ void read_class() {
 		TreeReader reader(energy);
 		reader.set_cbwc(true);
 		reader.set_rotate_random(false);
-		reader.set_in_path("/gpfs01/star/pwg/dneff/scratch/trees/output/");//("/home/dylan/Research/Trees/");
-		reader.set_out_path("/gpfs01/star/pwg/dneff/scratch/ratios/output/");//("/home/dylan/local_server/dyn0402/Research/Data/");
-		reader.set_qa_path("/gpfs01/star/pwg/dneff/scratch/ratios/log/");//("/home/dylan/local_server/dyn0402/Research/QA/");
+		reader.set_in_path("/home/dylan/Research/Trees/");
+		reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data/");
+		reader.set_qa_path("/home/dylan/local_server/dyn0402/Research/QA/");
 		reader.set_qa_name("QA_RCF_Test_");
 		reader.set_divs({2,3,4,5,6});
 		threads.push_back(thread(&TreeReader::read_trees, reader));

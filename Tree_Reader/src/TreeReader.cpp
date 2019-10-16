@@ -320,7 +320,7 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	double beta = protons.beta->GetValue(proton_index);
 //	if(!(beta > cut.min_beta && beta < cut.max_beta)) { return(good_proton); }
 
-	if(!(protons.charge->GetValue() == cut.charge)) { return(good_proton); }
+	if(!(protons.charge->GetValue(proton_index) == cut.charge)) { return(good_proton); }
 	track_cut_hist.Fill(3);
 
 	double eta = protons.eta->GetValue(proton_index);
@@ -338,14 +338,18 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	if(pt >= cut.min_pt_for_m && pt <= cut.max_pt_for_m) {
 		if(beta > cut.min_beta) {
 			double m2 = pow(p, 2) * (pow(beta, -2) - 1.);
+			pre_m2_hist.Fill(m2);
 			if(m2 > cut.min_m2 && m2 < cut.max_m2) {
 				good_proton = true;
+				post_m2_hist.Fill(m2);
 			}
 		}
 	} else {
 		good_proton = true;
 	}
 	if(good_proton) { track_cut_hist.Fill(7); }
+
+	fill_post_track_qa(protons, proton_index);
 
 	return(good_proton);
 }
@@ -361,7 +365,8 @@ void TreeReader::define_qa() {
 	cent16_events = TH1I(("cent16_events"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
 	cent9_events = TH1I(("cent9_events"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
 
-	m2_hist = TH1I(("m2"+to_string(energy)).data(), "m^2", 100, -0.5, 2.0);
+	pre_m2_hist = TH1I(("pre_m2"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
+	post_m2_hist = TH1I(("post_m2"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
 
 	pre_run_hist = TH1I(("pre_run"+to_string(energy)).data(), "pre_run", 1000, 1000000, 100000000);
 	pre_phi_hist = TH1I(("pre_phi"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
@@ -372,6 +377,16 @@ void TreeReader::define_qa() {
 	pre_eta_hist = TH1I(("pre_eta"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
 	pre_nsigma_hist = TH1I(("pre_nsigma"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
 	pre_dca_hist = TH1I(("pre_dca"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
+
+	post_run_hist = TH1I(("post_run"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
+	post_phi_hist = TH1I(("post_phi"+to_string(energy)).data(), "post_phi", 100, 0.0, 7.0);
+	post_p_hist = TH1I(("post_p"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
+	post_pt_hist = TH1I(("post_pt"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
+	post_beta_hist = TH1I(("post_beta"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);
+	post_charge_hist = TH1I(("post_charge"+to_string(energy)).data(), "post_charge", 100, -2.5, 2.5);
+	post_eta_hist = TH1I(("post_eta"+to_string(energy)).data(), "post_eta", 100, -1.0, 1.0);
+	post_nsigma_hist = TH1I(("post_nsigma"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
+	post_dca_hist = TH1I(("post_dca"+to_string(energy)).data(), "post_dca", 100, 0.0, 2.5);
 
 }
 
@@ -386,6 +401,19 @@ void TreeReader:: fill_pre_track_qa(proton_leaves proton, int proton_index) {
 	pre_eta_hist.Fill(proton.eta->GetValue(proton_index));
 	pre_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
 	pre_dca_hist.Fill(proton.dca->GetValue(proton_index));
+}
+
+
+// Fill histograms for post-qa
+void TreeReader:: fill_post_track_qa(proton_leaves proton, int proton_index) {
+	post_phi_hist.Fill(proton.phi->GetValue(proton_index));
+	post_p_hist.Fill(proton.p->GetValue(proton_index));
+	post_pt_hist.Fill(proton.pt->GetValue(proton_index));
+	post_beta_hist.Fill(proton.beta->GetValue(proton_index));
+	post_charge_hist.Fill(proton.charge->GetValue(proton_index));
+	post_eta_hist.Fill(proton.eta->GetValue(proton_index));
+	post_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
+	post_dca_hist.Fill(proton.dca->GetValue(proton_index));
 }
 
 
@@ -404,6 +432,8 @@ void TreeReader::write_qa() {
 	track_cut_hist.Write();
 	cent16_events.Write();
 	cent9_events.Write();
+	pre_m2_hist.Write();
+	post_m2_hist.Write();
 	pre_phi_hist.Write();
 	pre_p_hist.Write();
 	pre_pt_hist.Write();
@@ -412,6 +442,59 @@ void TreeReader::write_qa() {
 	pre_eta_hist.Write();
 	pre_nsigma_hist.Write();
 	pre_dca_hist.Write();
+	post_phi_hist.Write();
+	post_p_hist.Write();
+	post_pt_hist.Write();
+	post_beta_hist.Write();
+	post_charge_hist.Write();
+	post_eta_hist.Write();
+	post_nsigma_hist.Write();
+	post_dca_hist.Write();
+	TCanvas phi_can("phi_can");
+	pre_phi_hist.Draw();
+	post_phi_hist.SetLineColor(kRed);
+	post_phi_hist.Draw("sames");
+	phi_can.Write();
+	TCanvas p_can("p_can");
+	pre_p_hist.Draw();
+	post_p_hist.SetLineColor(kRed);
+	post_p_hist.Draw("sames");
+	p_can.Write();
+	TCanvas pt_can("pt_can");
+	pre_pt_hist.Draw();
+	post_pt_hist.SetLineColor(kRed);
+	post_pt_hist.Draw("sames");
+	pt_can.Write();
+	TCanvas beta_can("beta_can");
+	pre_beta_hist.Draw();
+	post_beta_hist.SetLineColor(kRed);
+	post_beta_hist.Draw("sames");
+	beta_can.Write();
+	TCanvas charge_can("charge_can");
+	pre_charge_hist.Draw();
+	post_charge_hist.SetLineColor(kRed);
+	post_charge_hist.Draw("sames");
+	charge_can.Write();
+	TCanvas eta_can("eta_can");
+	pre_eta_hist.Draw();
+	post_eta_hist.SetLineColor(kRed);
+	post_eta_hist.Draw("sames");
+	eta_can.Write();
+	TCanvas nsigma_can("nsigma_can");
+	pre_nsigma_hist.Draw();
+	post_nsigma_hist.SetLineColor(kRed);
+	post_nsigma_hist.Draw("sames");
+	nsigma_can.Write();
+	TCanvas dca_can("dca_can");
+	pre_dca_hist.Draw();
+	post_dca_hist.SetLineColor(kRed);
+	post_dca_hist.Draw("sames");
+	dca_can.Write();
+	TCanvas m2_can("m2_can");
+	pre_m2_hist.Draw();
+	post_m2_hist.SetLineColor(kRed);
+	post_m2_hist.Draw("sames");
+	m2_can.Write();
 	qa.Close();
 }
 

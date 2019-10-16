@@ -137,6 +137,7 @@ private:
 
 	void define_qa();
 	void fill_pre_track_qa(proton_leaves proton, int proton_index);
+	void fill_post_track_qa(proton_leaves proton, int proton_index);
 	void write_qa();
 
 	// QA Plots
@@ -148,7 +149,8 @@ private:
 	TH1I cent16_events;
 	TH1I cent9_events;
 
-	TH1I m2_hist;
+	TH1I pre_m2_hist;
+	TH1I post_m2_hist;
 
 	TH1I pre_run_hist;
 	TH1I pre_phi_hist;
@@ -159,6 +161,16 @@ private:
 	TH1I pre_eta_hist;
 	TH1I pre_nsigma_hist;
 	TH1I pre_dca_hist;
+
+	TH1I post_run_hist;
+	TH1I post_phi_hist;
+	TH1I post_p_hist;
+	TH1I post_pt_hist;
+	TH1I post_beta_hist;
+	TH1I post_charge_hist;
+	TH1I post_eta_hist;
+	TH1I post_nsigma_hist;
+	TH1I post_dca_hist;
 
 };
 
