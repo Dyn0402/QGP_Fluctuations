@@ -108,26 +108,35 @@ void TreeReader::set_event_plane(bool event_plane) {
 void TreeReader::read_trees() {
 	cout << "Reading " + to_string(energy) + "GeV trees." << endl;
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
+
 	tree_data data;
 	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
+
+	if(event_plane) { // If event_plane flagged, need to flatten event plane before using raw values.
+		for(string path:in_files) {
+			cout << "Need to implement event plane flattening" << endl;  // Need to implement
+		}
+	}
+
 	for(string path:in_files) {
+
+		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
 			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
 		}
+
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-//		if(cbwc) {
-//			read_tree_cbwc(tree, &data, refmult2CorrUtil);
-//		} else {
-		read_tree(tree, &data, refmult2CorrUtil);
-//		}
+		read_tree(tree, &data, refmult2CorrUtil);  // Read tree from file into data
 		file->Close();
 		delete file;
 		file_index++;
 	}
+
 	write_qa();
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
@@ -135,6 +144,7 @@ void TreeReader::read_trees() {
 }
 
 
+// Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
 void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
@@ -143,13 +153,19 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
+
+		// Check if each event is good. Analyze if so, continue if not.
 		if(check_event_good(event, proton, energy)) {
 			vector<double> good_proton_angles = {};
+
+			// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
 			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
 				if(check_proton_good(proton, proton_index)) {
 					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
 				}
 			}
+
+			// Get centrality bin for event from ref_mult2 value
 			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
 			int cent9 = get_centrality9(event.ref_mult2->GetValue(), energy);
 			int cent2 = -2;
@@ -159,75 +175,42 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 				cent2 = refmult2CorrUtil->getCentralityBin16();
 			} //else { cout << "Refmult said was a bad run" << endl; }
 			cent_hist.Fill(cent, cent2);
+
+
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
+
 				cent16_events.Fill(cent);
 				cent9_events.Fill(cent9);
 				event_cut_hist.Fill(4);
+
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
+
 				for(int div:divs) {
-					if(event_plane) {
-						// If event_plane flag then rotate all angles by -event_plane.
-						good_proton_angles = rotate_angles(good_proton_angles, -event.event_plane->GetValue());
-					} else if(rotate_random) {
-						// If rotate_random flag then rotate all angles by random angle between 0 and 2pi
+					if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
+						double event_plane = event.event_plane->GetValue();
+						cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
+						good_proton_angles = rotate_angles(good_proton_angles, -event_plane);
+					} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 					}
-					vector<int> event_ratios = get_Rs(good_proton_angles, div);
+
+					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
+
+					// Save ratio values to data
 					for(int protons_in_bin:event_ratios) {
-						if(cbwc) {
+						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
 							data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
 						} else {
 							data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
 						}
 					}
+
 				}
 			}
 		}
 		event_index++;
 	}
 }
-
-
-
-//void TreeReader::read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil) {
-//	event_leaves event = get_event_leaves(tree);
-//	proton_leaves proton = get_proton_leaves(tree);
-//
-//	TRandom3 *rand = new TRandom3(0);
-//
-//	int event_index = 1;
-//	while(tree->GetEntry(event_index)) {
-//		if(check_event_good(event, proton, energy)) {
-//			vector<double> good_proton_angles = {};
-//			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
-//				if(check_proton_good(proton, proton_index)) {
-//					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
-//				}
-//			}
-//			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
-//			int cent2 = -2;
-//			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
-//				refmult2CorrUtil->init(event.run->GetValue());
-//				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
-//				cent2 = refmult2CorrUtil->getCentralityBin16();
-//			} //else { cout << "Refmult said was a bad run" << endl; }
-//			cent_hist.Fill(cent, cent2);
-//			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
-//				data->good_protons[cent][(int)good_proton_angles.size()]++;
-//				for(int div:divs) {
-//					if(rotate_random) {
-//						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
-//					}
-//					vector<int> event_ratios = get_Rs(good_proton_angles, div);
-//					for(int protons_in_bin:event_ratios) {
-//						data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
-//					}
-//				}
-//			}
-//		}
-//		event_index++;
-//	}
-//}
 
 
 //Get event leaves and return them in an event_leaves struct.
@@ -434,6 +417,7 @@ void TreeReader:: fill_post_track_qa(proton_leaves proton, int proton_index) {
 // Write all qa plots into TFile.
 void TreeReader::write_qa() {
 	TFile qa((qa_path + qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
+
 	TCanvas cent_can("cent_can");
 	cent_hist.Draw("COLZ");
 	cent_can.Write();
@@ -441,6 +425,7 @@ void TreeReader::write_qa() {
 	TCanvas pile_can("pile_can");
 	btof_ref_hist.Draw("COLZ");
 	pile_can.Write();
+
 	btof_ref_hist.Write();
 	event_cut_hist.Write();
 	track_cut_hist.Write();
@@ -464,6 +449,8 @@ void TreeReader::write_qa() {
 	post_eta_hist.Write();
 	post_nsigma_hist.Write();
 	post_dca_hist.Write();
+
+	// Make before/after canvases for each variable
 	TCanvas phi_can("phi_can");
 	pre_phi_hist.Draw();
 	post_phi_hist.SetLineColor(kRed);
@@ -509,6 +496,7 @@ void TreeReader::write_qa() {
 	post_m2_hist.SetLineColor(kRed);
 	post_m2_hist.Draw("sames");
 	m2_can.Write();
+
 	qa.Close();
 }
 
