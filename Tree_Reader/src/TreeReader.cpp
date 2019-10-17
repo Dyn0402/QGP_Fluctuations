@@ -186,7 +186,7 @@ void TreeReader::read_tree(TTree* tree) {
 			} //else { cout << "Refmult said was a bad run" << endl; }
 			cent_hist.Fill(cent, cent2);
 
-
+			// If there are enough good protons, calculate ratios for each division and save to data.
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
 
 				cent16_events.Fill(cent);
