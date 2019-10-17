@@ -77,6 +77,7 @@ class TreeReader {
 public:
 	// Structors
 	TreeReader(int energy);
+	~TreeReader();
 
 	// Getters
 	string get_in_path();
@@ -109,6 +110,9 @@ public:
 
 private:
 	// Attributes
+	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
+
 	string tree_name = "nsmTree";
 	string qa_name = "QA_CBWC_";
 
@@ -125,8 +129,7 @@ private:
 	bool mixed;
 
 	// Doers
-	void read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);
-//	void read_tree_cbwc(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);
+	void read_tree(TTree* tree);
 
 	event_leaves get_event_leaves(TTree* tree);
 	proton_leaves get_proton_leaves(TTree* tree);

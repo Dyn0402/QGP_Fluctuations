@@ -48,6 +48,10 @@ TreeReader::TreeReader(int energy) {
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
 
+TreeReader::~TreeReader() {
+	delete refmult2CorrUtil;
+}
+
 
 // Getters
 
@@ -121,9 +125,6 @@ void TreeReader::read_trees() {
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 
-	tree_data data;
-	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
-
 	if(event_plane) { // If event_plane flagged, need to flatten event plane before using raw values.
 		for(string path:in_files) {
 			cout << "Need to implement event plane flattening" << endl;  // Need to implement
@@ -140,7 +141,7 @@ void TreeReader::read_trees() {
 
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-		read_tree(tree, &data, refmult2CorrUtil);  // Read tree from file into data
+		read_tree(tree);  // Read tree from file into data
 		file->Close();
 		delete file;
 		file_index++;
@@ -154,7 +155,7 @@ void TreeReader::read_trees() {
 
 
 // Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
-void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil) {
+void TreeReader::read_tree(TTree* tree) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
@@ -192,8 +193,6 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 				cent9_events.Fill(cent9);
 				event_cut_hist.Fill(4);
 
-				data->good_protons[cent][(int)good_proton_angles.size()]++;
-
 				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
 					double event_plane = event.event_plane->GetValue();
 					cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
@@ -208,9 +207,9 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 					// Save ratio values to data
 					for(int protons_in_bin:event_ratios) {
 						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-							data->ratios[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
+							data[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
 						} else {
-							data->ratios[div][cent][good_proton_angles.size()][protons_in_bin]++;
+							data[div][cent][good_proton_angles.size()][protons_in_bin]++;
 						}
 					}
 
