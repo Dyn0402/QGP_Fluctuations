@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	vector<int> energy_list = {11};
+	vector<int> energy_list = {27, 39, 62, 19, 11, 7};
 	ROOT::EnableThreadSafety();
 	vector<thread> threads;
 	for(int energy:energy_list) {
@@ -78,7 +78,7 @@ void read_class() {
 		reader.set_in_path("/home/dylan/Research/Trees/");
 		reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data/");
 		reader.set_qa_path("/home/dylan/local_server/dyn0402/Research/QA/");
-		reader.set_qa_name("QA_RCF_Test_");
+		reader.set_qa_name("QA_Paper_");
 		reader.set_divs({2,3,4,5,6});
 		threads.push_back(thread(&TreeReader::read_trees, reader));
 	}

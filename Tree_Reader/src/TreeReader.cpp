@@ -38,7 +38,8 @@ using namespace std;
 TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
 	cbwc = false;
-	rotate_random = true;
+	rotate_random = false;
+	event_plane = false;
 	this->energy = energy;
 
 	define_qa();
@@ -55,6 +56,10 @@ bool TreeReader::get_cbwc() {
 
 bool TreeReader::get_rotate_random() {
 	return(rotate_random);
+}
+
+bool TreeReader::get_event_plane() {
+	return(event_plane);
 }
 
 
@@ -92,8 +97,12 @@ void TreeReader::set_rotate_random(bool rotate_random) {
 	this->rotate_random = rotate_random;
 }
 
-// Doers
+void TreeReader::set_event_plane(bool event_plane) {
+	this->event_plane = event_plane;
+}
 
+
+// Doers
 
 // Read files for single energy and write results to text files.
 void TreeReader::read_trees() {
@@ -156,7 +165,11 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 				event_cut_hist.Fill(4);
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 				for(int div:divs) {
-					if(rotate_random) {
+					if(event_plane) {
+						// If event_plane flag then rotate all angles by -event_plane.
+						good_proton_angles = rotate_angles(good_proton_angles, -event.event_plane->GetValue());
+					} else if(rotate_random) {
+						// If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 					}
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);
@@ -226,6 +239,7 @@ event_leaves TreeReader::get_event_leaves(TTree* tree) {
 	event.btof_mult = tree->GetLeaf("btof");
 	event.vz = tree->GetLeaf("vtx_z");
 	event.run = tree->GetLeaf("run");
+	event.event_plane = tree->GetLeaf("event_plane");
 
 	return(event);
 }
