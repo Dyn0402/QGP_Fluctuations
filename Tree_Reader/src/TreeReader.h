@@ -85,6 +85,7 @@ public:
 	bool get_cbwc();
 	bool get_rotate_random();
 	bool get_event_plane();
+	bool get_mixed();
 
 	// Setters
 	void set_in_path(string path);
@@ -96,6 +97,7 @@ public:
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
+	void set_mixed(bool mixed);
 
 	// Doers
 	void read_trees();
@@ -120,6 +122,7 @@ private:
 	bool cbwc;
 	bool rotate_random;
 	bool event_plane;
+	bool mixed;
 
 	// Doers
 	void read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2CorrUtil);

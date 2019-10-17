@@ -40,6 +40,7 @@ TreeReader::TreeReader(int energy) {
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
+	mixed = false;
 	this->energy = energy;
 
 	define_qa();
@@ -60,6 +61,10 @@ bool TreeReader::get_rotate_random() {
 
 bool TreeReader::get_event_plane() {
 	return(event_plane);
+}
+
+bool TreeReader::get_mixed() {
+	return(mixed);
 }
 
 
@@ -99,6 +104,10 @@ void TreeReader::set_rotate_random(bool rotate_random) {
 
 void TreeReader::set_event_plane(bool event_plane) {
 	this->event_plane = event_plane;
+}
+
+void TreeReader::set_mixed(bool mixed) {
+	this->mixed = mixed;
 }
 
 
@@ -185,15 +194,15 @@ void TreeReader::read_tree(TTree* tree, tree_data *data, StRefMultCorr *refmult2
 
 				data->good_protons[cent][(int)good_proton_angles.size()]++;
 
-				for(int div:divs) {
-					if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
-						double event_plane = event.event_plane->GetValue();
-						cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
-						good_proton_angles = rotate_angles(good_proton_angles, -event_plane);
-					} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
-						good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
-					}
+				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
+					double event_plane = event.event_plane->GetValue();
+					cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
+					good_proton_angles = rotate_angles(good_proton_angles, -event_plane);
+				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
+					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+				}
 
+				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
 
 					// Save ratio values to data
