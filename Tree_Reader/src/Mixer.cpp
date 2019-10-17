@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "ratio_methods.h"
 #include "Mixer.h"
 
 
@@ -60,7 +61,6 @@ void Mixer::append_event(vector<double> angles, int ref_mult2) {
 	// Append number of angles to appropriate ref_mult2 vector and mix the set if there are enough.
 	num_angles[ref_mult2].push_back((int) angles.size());
 	if((int)num_angles[ref_mult2].size() >= max_events) { mix_set(ref_mult2); }
-
 }
 
 // Mix all angles in specific ref_mult2 pool and sample randomly
@@ -70,6 +70,16 @@ void Mixer::mix_set(int ref_mult2) {
 
 	int index = 0;
 	for(int num:num_angles[ref_mult2]) {
-		vector<double> mix_angles(angles[ref_mult2].begin() + index, angles[ref_mult2].begin() + index);
+		vector<double> mix_angles(angles[ref_mult2].begin() + index, angles[ref_mult2].begin() + index + num);
+
+		for(int div:divs) {
+			vector<int> event_ratios = get_Rs(mix_angles, div);  // Convert proton angles in event to ratio values.
+
+			// Save ratio values to data
+			for(int protons_in_bin:event_ratios) {
+				data[div][ref_mult2][mix_angles.size()][protons_in_bin]++;
+			}
+		}
+		index += num;
 	}
 }
