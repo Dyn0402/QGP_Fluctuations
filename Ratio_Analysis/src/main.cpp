@@ -45,8 +45,8 @@ int get_centrality9(double refmult2, int energy);
 int main() {
 //	analyze();
 //	comp_proton_dists();
-	comp_moments();
-//	analyze_CBWC();
+//	comp_moments();
+	analyze_CBWC();
 //	ratio_data_op_test();
 
 	cout << "donzo" << endl;
@@ -130,6 +130,10 @@ void analyze_CBWC() {
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
 	map<int, map<int, map<int, RatioData>>> data;
+	map<int, map<int, map<int, RatioData>>> data_cent;
+
+	vector<int> cent_bins = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	int min_num_entries = 2;
 
 	int energy_num = 1;
 	int num_energies = analysis::energy_list.size();
@@ -137,11 +141,20 @@ void analyze_CBWC() {
 		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
 		string path = analysis::in_path + to_string(energy) + "GeV/";
 		for(int div:analysis::divs) {
-			analysis::centrals = get_centrals(path, div);
+			// Initialize ratio object for each centrality bin
+			for(int cent:cent_bins) {
+				RatioData ratios(div);
+				data_cent[energy][div][cent] = ratios;
+			}
+			analysis::centrals = get_centrals(path, div);  // Get centralities found in file names of given directory path.
 			for(int cent:analysis::centrals) {
 				RatioData ratios(div);
-				ratios.read_ratios_from_dir(path, div, cent);
-				data[energy][div][cent] = ratios;
+				ratios.read_ratios_from_dir(path, div, cent);  // Read ratio data from file path
+				if(ratios.get_num_ratios() <= min_num_entries) {
+					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
+				} else {
+					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality (refmult2) value
+				}
 			}
 		}
 		energy_num++;
@@ -149,21 +162,22 @@ void analyze_CBWC() {
 
 	cout << endl << "Calculating Cumulants..." << endl;
 	auto raw_stats = calculate_stats(data);
-	auto stats = calc_cbwc_stats(data, raw_stats);
+	auto stats = calc_cbwc_stats(data, raw_stats, cent_bins.back());
+
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
-	make_ratio_dist_plots(out_root, data);
-//	cout << endl << "Making 2d distribution plots..." << endl;
-//	make_2d_dist_plots(out_root, data);
-//	cout << endl << "Making proton distribution plots..." << endl;
-//	make_proton_dist_plots(out_root, data);
+	make_ratio_dist_plots(out_root, data_cent);
+	cout << endl << "Making 2d distribution plots..." << endl;
+	make_2d_dist_plots(out_root, data_cent);
+	cout << endl << "Making proton distribution plots..." << endl;
+	make_proton_dist_plots(out_root, data_cent);
 	cout << endl << "Making cumulant plots..." << endl;
 	make_cumulant_plots(out_root, stats.second);
 	cout << endl << "Making stat plots..." << endl;
 	make_stat_plots(out_root, stats.first);
 	cout << endl << "Making canvases..." << endl;
-	make_canvas_plots(out_root, data, stats.second, stats.first);
+	make_canvas_plots(out_root, data_cent, stats.second, stats.first);
 
 
 	out_root->Close();
