@@ -22,11 +22,13 @@ public:
 	// Getters
 	int get_max_events();
 	bool get_use_leftover();
+	string get_out_path();
 	vector<int> get_divs();
 
 	// Setters
 	void set_max_events(int max_events);
 	void set_use_leftover(bool use_leftover);
+	void set_out_path(string path);
 	void set_divs(vector<int>);
 
 	// Doers
@@ -42,9 +44,11 @@ private:
 	map<int, vector<double>> angles;
 	map<int, vector<int>> num_angles;
 	vector<int> divs;
+	string out_path;
 
 	// Doers
 	void mix_set(int ref_mult2);
+	void write_mixed_data();
 };
 
 

@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "ratio_methods.h"
+#include "file_io.h"
 #include "Mixer.h"
 
 
@@ -30,6 +31,10 @@ bool Mixer::get_use_leftover() {
 	return(use_leftover);
 }
 
+string Mixer::get_out_path() {
+	return(out_path);
+}
+
 vector<int> Mixer::get_divs() {
 	return(divs);
 }
@@ -43,6 +48,10 @@ void Mixer::set_max_events(int max_events) {
 
 void Mixer::set_use_leftover(bool use_leftover) {
 	this->use_leftover = use_leftover;
+}
+
+void Mixer::set_out_path(string path) {
+	this->out_path = path;
 }
 
 void Mixer::set_divs(vector<int> divs) {
@@ -82,4 +91,15 @@ void Mixer::mix_set(int ref_mult2) {
 		}
 		index += num;
 	}
+}
+
+
+// Write data to output directory
+void Mixer::write_mixed_data() {
+	if(use_leftover) {
+		for(pair<int, vector<int>> cent:num_angles) {
+			mix_set(cent.first);
+		}
+	}
+	write_tree_data("local", data, out_path);
 }
