@@ -13,6 +13,7 @@
 
 #include <TROOT.h>
 #include <TFile.h>
+#include <TDirectory.h>
 #include <TH1.h>
 #include <TCanvas.h>
 
@@ -132,6 +133,7 @@ void analyze_CBWC() {
 	map<int, map<int, map<int, RatioData>>> data;
 	map<int, map<int, map<int, RatioData>>> data_mix;
 	map<int, map<int, map<int, RatioData>>> data_cent;
+	map<int, map<int, map<int, RatioData>>> data_cent_mix;
 
 	int min_num_entries = 2;
 
@@ -146,6 +148,7 @@ void analyze_CBWC() {
 			for(int cent:analysis::centrals) {
 				RatioData ratios(div);
 				data_cent[energy][div][cent] = ratios;
+				data_cent_mix[energy][div][cent] = ratios;
 			}
 			// Get centralities found in file names of given directory path.
 			for(int cent:get_centrals(path, div)) {
@@ -155,6 +158,7 @@ void analyze_CBWC() {
 					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
 				} else {
 					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality (refmult2) value
+					data_cent[energy][div][get_centrality(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
 				}
 			}
 			// Get centralities found in file names of given directory path.
@@ -165,7 +169,7 @@ void analyze_CBWC() {
 					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
 				} else {
 					data_mix[energy][div][cent] = ratios;  // Store ratio data in data_mix under corresponding centrality (refmult2) value
-					data_cent[energy][div][get_centrality(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
+					data_cent_mix[energy][div][get_centrality(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
 				}
 			}
 		}
@@ -175,21 +179,71 @@ void analyze_CBWC() {
 	cout << endl << "Calculating Cumulants..." << endl;
 	auto raw_stats = calculate_stats(data);
 	auto stats = calc_cbwc_stats(data, raw_stats, analysis::centrals.back());
+	auto raw_mix_stats = calculate_stats(data_mix);
+	auto stats_mix = calc_cbwc_stats(data_mix, raw_mix_stats, analysis::centrals.back());
+
+	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats_mix_divide;
+
+	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:stats.first) {
+		for(pair<int, map<int, map<string, Measure>>> div:energy.second) {
+			for(pair<int, map<string, Measure>> cent:div.second) {
+				for(pair<string, Measure> stat:cent.second) {
+					stats_mix_divide.first[energy.first][div.first][cent.first][stat.first] = stat.second / stats_mix.first[energy.first][div.first][cent.first][stat.first];
+				}
+			}
+		}
+	}
+	for(pair<int, map<int, map<int, map<int, Measure>>>> energy:stats.second) {
+		for(pair<int, map<int, map<int, Measure>>> div:energy.second) {
+			for(pair<int, map<int, Measure>> cent:div.second) {
+				for(pair<int, Measure> order:cent.second) {
+					stats_mix_divide.second[energy.first][div.first][cent.first][order.first] = order.second / stats_mix.second[energy.first][div.first][cent.first][order.first];
+				}
+			}
+		}
+	}
 
 
-	out_root->cd();
+	TDirectory *data_dir = out_root->mkdir("Raw_Data");
+	data_dir->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
-	make_ratio_dist_plots(out_root, data_cent);
+	make_ratio_dist_plots(data_dir, data_cent);
 	cout << endl << "Making 2d distribution plots..." << endl;
-	make_2d_dist_plots(out_root, data_cent);
+	make_2d_dist_plots(data_dir, data_cent);
 	cout << endl << "Making proton distribution plots..." << endl;
-	make_proton_dist_plots(out_root, data_cent);
+	make_proton_dist_plots(data_dir, data_cent);
 	cout << endl << "Making cumulant plots..." << endl;
-	make_cumulant_plots(out_root, stats.second);
+	make_cumulant_plots(data_dir, stats.second);
 	cout << endl << "Making stat plots..." << endl;
-	make_stat_plots(out_root, stats.first);
+	make_stat_plots(data_dir, stats.first);
 	cout << endl << "Making canvases..." << endl;
-	make_canvas_plots(out_root, data_cent, stats.second, stats.first);
+	make_canvas_plots(data_dir, data_cent, stats.second, stats.first);
+
+
+	TDirectory *mix_dir = out_root->mkdir("Mix_Data");
+	mix_dir->cd();
+	cout << endl << "Making ratio distribution plots..." << endl;
+	make_ratio_dist_plots(mix_dir, data_cent_mix);
+	cout << endl << "Making 2d distribution plots..." << endl;
+	make_2d_dist_plots(mix_dir, data_cent_mix);
+	cout << endl << "Making proton distribution plots..." << endl;
+	make_proton_dist_plots(mix_dir, data_cent_mix);
+	cout << endl << "Making cumulant plots..." << endl;
+	make_cumulant_plots(mix_dir, stats_mix.second);
+	cout << endl << "Making stat plots..." << endl;
+	make_stat_plots(mix_dir, stats_mix.first);
+	cout << endl << "Making canvases..." << endl;
+	make_canvas_plots(mix_dir, data_cent_mix, stats_mix.second, stats_mix.first);
+
+
+	TDirectory *mix_div_dir = out_root->mkdir("Mix_Divded_Data");
+	mix_div_dir->cd();
+	cout << endl << "Making cumulant plots..." << endl;
+	make_cumulant_plots(mix_div_dir, stats_mix_divide.second);
+	cout << endl << "Making stat plots..." << endl;
+	make_stat_plots(mix_div_dir, stats_mix_divide.first);
+	cout << endl << "Making canvases..." << endl;
+	make_canvas_plots(mix_div_dir, data_cent_mix, stats_mix_divide.second, stats_mix_divide.first);
 
 
 	out_root->Close();
@@ -329,14 +383,14 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 					cent_bin = get_centrality(cent.first, energy);
 				}
 				bin_ratios[cent_bin] += cent_ratios;
-				if(cent_bin == 9 && div == 2) {
-					string out = "Cent: " + to_string(cent.first) + " | num: " + to_string(cent_ratios);
-					out += " | Mean: " + to_string(stats.first[energy][div][cent.first]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["mean"].get_err());
-					out += " | SD: " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_err());
-					out += " | Skewness: " + to_string(stats.first[energy][div][cent.first]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["skewness"].get_err());
-					out += " | Kurtosis: " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_err());
-					cout << out << endl;
-				}
+//				if(cent_bin == 9 && div == 2) {
+//					string out = "Cent: " + to_string(cent.first) + " | num: " + to_string(cent_ratios);
+//					out += " | Mean: " + to_string(stats.first[energy][div][cent.first]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["mean"].get_err());
+//					out += " | SD: " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_err());
+//					out += " | Skewness: " + to_string(stats.first[energy][div][cent.first]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["skewness"].get_err());
+//					out += " | Kurtosis: " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_err());
+//					cout << out << endl;
+//				}
 				if(stats.first[energy][div][cent.first]["standard_deviation"].get_val() != 0) {
 					for(string stat:analysis::stat_names) {
 						binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent.first][stat] * cent_ratios;
