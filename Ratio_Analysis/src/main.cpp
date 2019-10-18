@@ -133,7 +133,6 @@ void analyze_CBWC() {
 	map<int, map<int, map<int, RatioData>>> data_mix;
 	map<int, map<int, map<int, RatioData>>> data_cent;
 
-	vector<int> cent_bins = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 	int min_num_entries = 2;
 
 	int energy_num = 1;
@@ -144,12 +143,12 @@ void analyze_CBWC() {
 		string path_mix = analysis::in_mix_path + to_string(energy) + "GeV/";
 		for(int div:analysis::divs) {
 			// Initialize ratio object for each centrality bin
-			for(int cent:cent_bins) {
+			for(int cent:analysis::centrals) {
 				RatioData ratios(div);
 				data_cent[energy][div][cent] = ratios;
 			}
-			analysis::centrals = get_centrals(path, div);  // Get centralities found in file names of given directory path.
-			for(int cent:analysis::centrals) {
+			// Get centralities found in file names of given directory path.
+			for(int cent:get_centrals(path, div)) {
 				RatioData ratios(div);
 				ratios.read_ratios_from_dir(path, div, cent);  // Read ratio data from file path
 				if(ratios.get_num_ratios() <= min_num_entries) {
@@ -158,14 +157,15 @@ void analyze_CBWC() {
 					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality (refmult2) value
 				}
 			}
-			analysis::centrals = get_centrals(path, div);  // Get centralities found in file names of given directory path.
-			for(int cent:analysis::centrals) {
+			// Get centralities found in file names of given directory path.
+			for(int cent:get_centrals(path_mix, div)) {
 				RatioData ratios(div);
-				ratios.read_ratios_from_dir(path, div, cent);  // Read ratio data from file path
+				ratios.read_ratios_from_dir(path_mix, div, cent);  // Read ratio data from file path
 				if(ratios.get_num_ratios() <= min_num_entries) {
 					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
 				} else {
-					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality (refmult2) value
+					data_mix[energy][div][cent] = ratios;  // Store ratio data in data_mix under corresponding centrality (refmult2) value
+					data_cent[energy][div][get_centrality(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
 				}
 			}
 		}
@@ -174,7 +174,7 @@ void analyze_CBWC() {
 
 	cout << endl << "Calculating Cumulants..." << endl;
 	auto raw_stats = calculate_stats(data);
-	auto stats = calc_cbwc_stats(data, raw_stats, cent_bins.back());
+	auto stats = calc_cbwc_stats(data, raw_stats, analysis::centrals.back());
 
 
 	out_root->cd();
@@ -206,8 +206,7 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 		for(int energy:analysis::energy_list) {
 			string path = analysis::in_path + to_string(energy) + "GeV/";
 			for(int div:analysis::divs) {
-				analysis::centrals = get_centrals(path, div);
-				for(int cent:analysis::centrals) {
+				for(int cent:get_centrals(path, div)) {
 					pool.enqueue(calc_stat, &(data[energy][div][cent]), energy, div, cent, &stats, &cumulants);
 				}
 			}
@@ -383,8 +382,8 @@ void comp_moments() {
 				RatioData ratios(div);
 				data_cent[energy][div][cent] = ratios;
 			}
-			analysis::centrals = get_centrals(path, div);  // Get centralities found in file names of given directory path.
-			for(int cent:analysis::centrals) {
+			// Get centralities found in file names of given directory path.
+			for(int cent:get_centrals(path, div)) {
 				RatioData ratios(div);
 				ratios.read_ratios_from_dir(path, div, cent);  // Read ratios data from file
 				if(ratios.get_num_ratios() <= 2) {
