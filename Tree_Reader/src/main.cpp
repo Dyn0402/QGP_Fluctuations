@@ -35,9 +35,9 @@ using namespace std;
 
 
 void read_class();
-void read_files(int argc, char** argv);
-void read_files_local();
-void read_energy(int energy);
+//void read_files(int argc, char** argv);
+//void read_files_local();
+//void read_energy(int energy);
 void io_test();
 void sum_tree_data_test();
 void ref_mult_test();
@@ -81,7 +81,7 @@ void read_class() {
 		reader.set_qa_path("/home/dylan/local_server/dyn0402/Research/QA/");
 		reader.set_qa_name("QA_Paper_");
 		reader.set_divs(divs);
-		reader.set_mixed(true);
+		reader.set_mixed(false);
 		reader.mix.set_divs(divs);
 		reader.mix.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix/"+to_string(energy)+"GeV/");
 		reader.mix.set_max_events(100);
@@ -96,87 +96,87 @@ void read_class() {
 }
 
 
-void read_files(int argc, char** argv) {
-	string in_list = argv[1];
-	string job_id = argv[2];
-	int energy = stoi(argv[3]);
-
-	ifstream list_file(in_list);
-//	cout << in_list << " " << job_id << endl;
-	if(list_file.is_open()) {
-		vector<string> in_files;
-		string line;
-		while(getline(list_file, line)) {
-			in_files.push_back(line);
-		}
-		list_file.close();
-
-		tree_data data;
-		for(string path:in_files) {
-//			cout << path << endl;
-			TFile *file = new TFile(path.data(), "READ");
-			TTree *tree = (TTree*)file->Get(pars::tree_name.data());
-//			data = read_tree(tree, data, energy);
-			file->Close();
-			delete file;
-		}
-		write_tree_data(job_id, data);
-	} else {
-		cout << "Couldn't open the list_file. \n";
-	}
-}
-
-
-// Read files locally via paths from config rather than input file lists from job submission.
-void read_files_local() {
-	ROOT::EnableThreadSafety();
-	vector<thread> threads;
-	for(int energy:local::energy_list) {
-		threads.push_back(thread(read_energy, energy));
-//		usleep(20000000);
-	}
-	for(thread & th : threads) {
-		if(th.joinable()) {
-			th.join();
-		}
-	}
-}
+//void read_files(int argc, char** argv) {
+//	string in_list = argv[1];
+//	string job_id = argv[2];
+//	int energy = stoi(argv[3]);
+//
+//	ifstream list_file(in_list);
+////	cout << in_list << " " << job_id << endl;
+//	if(list_file.is_open()) {
+//		vector<string> in_files;
+//		string line;
+//		while(getline(list_file, line)) {
+//			in_files.push_back(line);
+//		}
+//		list_file.close();
+//
+//		tree_data data;
+//		for(string path:in_files) {
+////			cout << path << endl;
+//			TFile *file = new TFile(path.data(), "READ");
+//			TTree *tree = (TTree*)file->Get(pars::tree_name.data());
+////			data = read_tree(tree, data, energy);
+//			file->Close();
+//			delete file;
+//		}
+//		write_tree_data(job_id, data);
+//	} else {
+//		cout << "Couldn't open the list_file. \n";
+//	}
+//}
 
 
-// Read files for single energy and write results to text files.
-void read_energy(int energy) {
-	cout << "Reading " + to_string(energy) + "GeV trees." << endl;
-	vector<string> in_files = get_files_in_dir(local::in_path+to_string(energy)+"GeV/", "root", "path");
-	unsigned num_files = in_files.size();
-	unsigned file_index = 1;
-	tree_data data;
-	auto *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
-	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
-	for(string path:in_files) {
-		if(!(file_index % (unsigned)(num_files/10.0+0.5))) {
-			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
-		}
-		TFile *file = new TFile(path.data(), "READ");
-		TTree *tree = (TTree*)file->Get(pars::tree_name.data());
-		read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist);
-		file->Close();
-		delete file;
-		file_index++;
-	}
-	TFile *qa = new TFile((local::qa_path + local::qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
-	TCanvas *can = new TCanvas();
-	cent_hist->Draw("COLZ");
-	can->Write();
-	cent_hist->Write();
-	delete cent_hist;
-	delete can;
-	qa->Close();
-	delete qa;
-	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
-	write_tree_data("local", data, local::out_path+to_string(energy)+"GeV/");
-	cout << endl;
-}
+//// Read files locally via paths from config rather than input file lists from job submission.
+//void read_files_local() {
+//	ROOT::EnableThreadSafety();
+//	vector<thread> threads;
+//	for(int energy:local::energy_list) {
+//		threads.push_back(thread(read_energy, energy));
+////		usleep(20000000);
+//	}
+//	for(thread & th : threads) {
+//		if(th.joinable()) {
+//			th.join();
+//		}
+//	}
+//}
+
+
+//// Read files for single energy and write results to text files.
+//void read_energy(int energy) {
+//	cout << "Reading " + to_string(energy) + "GeV trees." << endl;
+//	vector<string> in_files = get_files_in_dir(local::in_path+to_string(energy)+"GeV/", "root", "path");
+//	unsigned num_files = in_files.size();
+//	unsigned file_index = 1;
+//	tree_data data;
+//	auto *cent_hist = new TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+//	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
+//	for(string path:in_files) {
+//		if(!(file_index % (unsigned)(num_files/10.0+0.5))) {
+//			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+//			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+//		}
+//		TFile *file = new TFile(path.data(), "READ");
+//		TTree *tree = (TTree*)file->Get(pars::tree_name.data());
+//		read_tree(tree, &data, energy, refmult2CorrUtil, cent_hist);
+//		file->Close();
+//		delete file;
+//		file_index++;
+//	}
+//	TFile *qa = new TFile((local::qa_path + local::qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
+//	TCanvas *can = new TCanvas();
+//	cent_hist->Draw("COLZ");
+//	can->Write();
+//	cent_hist->Write();
+//	delete cent_hist;
+//	delete can;
+//	qa->Close();
+//	delete qa;
+//	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
+//	write_tree_data("local", data, local::out_path+to_string(energy)+"GeV/");
+//	cout << endl;
+//}
 
 
 void io_test() {

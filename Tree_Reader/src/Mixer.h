@@ -33,6 +33,7 @@ public:
 
 	// Doers
 	void append_event(vector<double> angles, int ref_mult2);
+	void write_mixed_data();
 
 	// Attributes
 
@@ -48,7 +49,6 @@ private:
 
 	// Doers
 	void mix_set(int ref_mult2);
-	void write_mixed_data();
 };
 
 

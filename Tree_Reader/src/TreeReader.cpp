@@ -50,7 +50,7 @@ TreeReader::TreeReader(int energy) {
 }
 
 TreeReader::~TreeReader() {
-	delete refmult2CorrUtil;
+//	delete refmult2CorrUtil;
 }
 
 
