@@ -130,6 +130,7 @@ void analyze_CBWC() {
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
 	map<int, map<int, map<int, RatioData>>> data;
+	map<int, map<int, map<int, RatioData>>> data_mix;
 	map<int, map<int, map<int, RatioData>>> data_cent;
 
 	vector<int> cent_bins = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
@@ -140,11 +141,22 @@ void analyze_CBWC() {
 	for(int energy:analysis::energy_list) {
 		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
 		string path = analysis::in_path + to_string(energy) + "GeV/";
+		string path_mix = analysis::in_mix_path + to_string(energy) + "GeV/";
 		for(int div:analysis::divs) {
 			// Initialize ratio object for each centrality bin
 			for(int cent:cent_bins) {
 				RatioData ratios(div);
 				data_cent[energy][div][cent] = ratios;
+			}
+			analysis::centrals = get_centrals(path, div);  // Get centralities found in file names of given directory path.
+			for(int cent:analysis::centrals) {
+				RatioData ratios(div);
+				ratios.read_ratios_from_dir(path, div, cent);  // Read ratio data from file path
+				if(ratios.get_num_ratios() <= min_num_entries) {
+					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
+				} else {
+					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality (refmult2) value
+				}
 			}
 			analysis::centrals = get_centrals(path, div);  // Get centralities found in file names of given directory path.
 			for(int cent:analysis::centrals) {

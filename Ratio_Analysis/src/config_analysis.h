@@ -27,6 +27,7 @@ namespace analysis {
 	extern string in_file_sufx;
 
 	extern string in_path;
+	extern string in_mix_path;
 }
 
 
