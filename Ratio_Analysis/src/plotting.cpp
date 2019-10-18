@@ -34,6 +34,15 @@ using namespace std;
 
 void make_ratio_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *ratio_dist_dir = out_root->mkdir(plot::ratio_dist_dir_name.data());
+	create_ratio_dist_plots(ratio_dist_dir, data);
+}
+
+void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
+	TDirectory *ratio_dist_dir = out_root->mkdir(plot::ratio_dist_dir_name.data());
+	create_ratio_dist_plots(ratio_dist_dir, data);
+}
+
+void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<int, RatioData>>> data) {
 	ratio_dist_dir->cd();
 	for(int energy:analysis::energy_list) {
 		TDirectory *energy_dir = ratio_dist_dir->mkdir((to_string(energy) + "GeV").data());
@@ -66,9 +75,18 @@ void hist_ratio_dist(map<double, int> ratios, int energy, int div, int cent, str
 }
 
 
-
 void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *dist_dir = out_root->mkdir(plot::dist_2d_dir_name.data());
+	create_2d_dist_plots(dist_dir, data);
+}
+
+void make_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
+	TDirectory *dist_dir = out_root->mkdir(plot::dist_2d_dir_name.data());
+	create_2d_dist_plots(dist_dir, data);
+}
+
+
+void create_2d_dist_plots(TDirectory *dist_dir, map<int, map<int, map<int, RatioData>>> data) {
 	dist_dir->cd();
 	for(int energy:analysis::energy_list) {
 		TDirectory *energy_dir = dist_dir->mkdir((to_string(energy) + "GeV").data());
@@ -102,6 +120,15 @@ void canvas_2d_dist(map<int, map<int, int>> dist, int energy, int div, int cent)
 
 void make_proton_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *nproton_dist_dir = out_root->mkdir(plot::nproton_dist_dir_name.data());
+	create_proton_dist_plots(nproton_dist_dir, data);
+}
+
+void make_proton_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
+	TDirectory *nproton_dist_dir = out_root->mkdir(plot::nproton_dist_dir_name.data());
+	create_proton_dist_plots(nproton_dist_dir, data);
+}
+
+void create_proton_dist_plots(TDirectory *nproton_dist_dir, map<int, map<int, map<int, RatioData>>> data) {
 	nproton_dist_dir->cd();
 	for(int energy:analysis::energy_list) {
 		TDirectory *energy_dir = nproton_dist_dir->mkdir((to_string(energy) + "GeV").data());
@@ -132,6 +159,15 @@ void hist_proton_dist(map<int, int> nprotons, int energy, int cent, string mode)
 
 void make_cumulant_plots(TFile *out_root, map<int, map<int, map<int, map<int, Measure>>>> cumulants) {
 	TDirectory *cumulant_dir = out_root->mkdir(plot::cumulant_dir_name.data());
+	create_cumulant_plots(cumulant_dir, cumulants);
+}
+
+void make_cumulant_plots(TDirectory *out_root, map<int, map<int, map<int, map<int, Measure>>>> cumulants) {
+	TDirectory *cumulant_dir = out_root->mkdir(plot::cumulant_dir_name.data());
+	create_cumulant_plots(cumulant_dir, cumulants);
+}
+
+void create_cumulant_plots(TDirectory *cumulant_dir, map<int, map<int, map<int, map<int, Measure>>>> cumulants) {
 	cumulant_dir->cd();
 	for(int order:analysis::cumulant_orders) {
 		TDirectory *order_dir = cumulant_dir->mkdir((to_string(order) + "_order").data());
@@ -186,6 +222,15 @@ void graph_cumulant_vs_divs(map<int, map<int, map<int, map<int, Measure>>>> cumu
 
 void make_stat_plots(TFile *out_root, map<int, map<int, map<int, map<string, Measure>>>> stats) {
 	TDirectory *stats_dir = out_root->mkdir(plot::stat_dir_name.data());
+	create_stat_plots(stats_dir, stats);
+}
+
+void make_stat_plots(TDirectory *out_root, map<int, map<int, map<int, map<string, Measure>>>> stats) {
+	TDirectory *stats_dir = out_root->mkdir(plot::stat_dir_name.data());
+	create_stat_plots(stats_dir, stats);
+}
+
+void create_stat_plots(TDirectory *stats_dir, map<int, map<int, map<int, map<string, Measure>>>> stats) {
 	stats_dir->cd();
 	for(string stat:analysis::stat_names) {
 		TDirectory *stat_dir = stats_dir->mkdir(stat.data());
@@ -255,25 +300,35 @@ TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double
 
 void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
+	create_canvas_plots(can_dir, data, cumulants, stats);
+}
+
+void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats) {
+	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
+	create_canvas_plots(can_dir, data, cumulants, stats);
+}
+
+
+void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats) {
 	can_dir->cd();
 
-//	// Proton distribution canvases
-//	TDirectory *nproton_can_dir = can_dir->mkdir(plot::nproton_dist_dir_name.data());
-//	nproton_can_dir->cd();
-//	for(int cent:analysis::centrals) {
-//		canvas_nprotons(data, cent, "Centrality " + to_string(cent));
-//	}
-//
-//	// Ratios distribution canvases
-//	TDirectory *ratios_can_dir = can_dir->mkdir(plot::ratio_dist_dir_name.data());
-//	ratios_can_dir->cd();
-//	for(int div:analysis::divs) {
-//		TDirectory *div_dir = ratios_can_dir->mkdir((to_string(div) + "_Divs").data());
-//		div_dir->cd();
-//		for(int cent:analysis::centrals) {
-//			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
-//		}
-//	}
+	// Proton distribution canvases
+	TDirectory *nproton_can_dir = can_dir->mkdir(plot::nproton_dist_dir_name.data());
+	nproton_can_dir->cd();
+	for(int cent:analysis::centrals) {
+		canvas_nprotons(data, cent, "Centrality " + to_string(cent));
+	}
+
+	// Ratios distribution canvases
+	TDirectory *ratios_can_dir = can_dir->mkdir(plot::ratio_dist_dir_name.data());
+	ratios_can_dir->cd();
+	for(int div:analysis::divs) {
+		TDirectory *div_dir = ratios_can_dir->mkdir((to_string(div) + "_Divs").data());
+		div_dir->cd();
+		for(int cent:analysis::centrals) {
+			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
+		}
+	}
 
 	// Cumulant canvases
 	TDirectory *cumulant_can_dir = can_dir->mkdir(plot::cumulant_dir_name.data());
