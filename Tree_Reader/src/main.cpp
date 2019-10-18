@@ -81,7 +81,8 @@ void read_class() {
 		reader.set_qa_path("/home/dylan/local_server/dyn0402/Research/QA/");
 		reader.set_qa_name("QA_Paper_");
 		reader.set_divs(divs);
-		reader.set_mixed(false);
+		reader.set_mixed(true);
+		reader.set_event_plane(false);
 		reader.mix.set_divs(divs);
 		reader.mix.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix/"+to_string(energy)+"GeV/");
 		reader.mix.set_max_events(100);

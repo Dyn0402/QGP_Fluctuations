@@ -63,9 +63,8 @@ void Mixer::set_divs(vector<int> divs) {
 
 // Append an event to the specified ref_mult2 pool of events.
 void Mixer::append_event(vector<double> angles, int ref_mult2) {
-	for(double angle:angles) {  // Append all proton angles from event to speficied ref_mult2 pool.
-		this->angles[ref_mult2].push_back(angle);
-	}
+	// Append all proton angles from event to specified ref_mult2 pool.
+	this->angles[ref_mult2].insert(this->angles[ref_mult2].end(), angles.begin(), angles.end());
 
 	// Append number of angles to appropriate ref_mult2 vector and mix the set if there are enough.
 	num_angles[ref_mult2].push_back((int) angles.size());
@@ -91,6 +90,10 @@ void Mixer::mix_set(int ref_mult2) {
 		}
 		index += num;
 	}
+
+	// Clear angles and num_angles vectors for mixed ref_mult2
+	angles[ref_mult2].clear();
+	num_angles[ref_mult2].clear();
 }
 
 
