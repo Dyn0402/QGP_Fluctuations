@@ -27,6 +27,7 @@
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "TreeReader.h"
+#include "Mixer.h"
 #include "file_io.h"
 #include "ratio_methods.h"
 
@@ -150,6 +151,7 @@ void TreeReader::read_trees() {
 	write_qa();
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+	mix.write_mixed_data();
 	cout << endl;
 }
 
@@ -200,6 +202,9 @@ void TreeReader::read_tree(TTree* tree) {
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
 				}
+
+				// If mixed flagged append event to mix object.
+				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.

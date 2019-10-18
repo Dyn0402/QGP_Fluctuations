@@ -69,6 +69,7 @@ int main(int argc, char** argv) {
 
 void read_class() {
 	vector<int> energy_list = {27, 39, 62, 19, 11, 7};
+	vector<int> divs = {2, 3, 4, 5, 6};
 	ROOT::EnableThreadSafety();
 	vector<thread> threads;
 	for(int energy:energy_list) {
@@ -79,7 +80,12 @@ void read_class() {
 		reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data/");
 		reader.set_qa_path("/home/dylan/local_server/dyn0402/Research/QA/");
 		reader.set_qa_name("QA_Paper_");
-		reader.set_divs({2,3,4,5,6});
+		reader.set_divs(divs);
+		reader.set_mixed(true);
+		reader.mix.set_divs(divs);
+		reader.mix.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix/"+to_string(energy)+"GeV/");
+		reader.mix.set_max_events(100);
+		reader.mix.set_use_leftover(true);
 		threads.push_back(thread(&TreeReader::read_trees, reader));
 	}
 	for(thread & th : threads) {

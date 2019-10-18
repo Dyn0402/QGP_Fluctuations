@@ -21,6 +21,7 @@
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "ratio_methods.h"
+#include "Mixer.h"
 
 using namespace std;
 
@@ -107,6 +108,7 @@ public:
 	cut_values cut;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
+	Mixer mix;
 
 private:
 	// Attributes
