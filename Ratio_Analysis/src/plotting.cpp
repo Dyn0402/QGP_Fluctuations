@@ -406,7 +406,7 @@ void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumul
 			energy_err.push_back(0.0);
 			cum = cumulants[e][div][cent][order];
 			cumulant.push_back(cum.get_val());
-			cumulant.push_back(cum.get_err());
+			cumulant_err.push_back(cum.get_err());
 		}
 		TGraphErrors *graph = graph_x_vs_y_err(energy, cumulant, energy_err, cumulant_err);
 		graph->SetNameTitle((to_string(div) + " divisions").data());
@@ -435,7 +435,7 @@ void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			energy_err.push_back(0.0);
 			stat_meas = stats[e][div][cent][stat];
 			stat_vals.push_back(stat_meas.get_val());
-			stat_vals.push_back(stat_meas.get_err());
+			stat_err.push_back(stat_meas.get_err());
 		}
 		TGraphErrors *graph = graph_x_vs_y_err(energy, stat_vals, energy_err, stat_err);
 		graph->SetNameTitle((to_string(div) + " divisions").data());
