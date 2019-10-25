@@ -85,8 +85,6 @@ void ratio_data_op_test() {
 
 
 void analyze() {
-	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
-
 	map<int, map<int, map<int, RatioData>>> data;
 
 	int energy_num = 1;
@@ -106,6 +104,8 @@ void analyze() {
 
 	cout << endl << "Calculating Cumulants..." << endl;
 	auto stats = calculate_stats(data);
+
+	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
 	out_root->cd();
 	cout << endl << "Making ratio distribution plots..." << endl;
@@ -128,60 +128,73 @@ void analyze() {
 
 
 void analyze_CBWC() {
-	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
-
 	map<int, map<int, map<int, RatioData>>> data;
 	map<int, map<int, map<int, RatioData>>> data_mix;
 	map<int, map<int, map<int, RatioData>>> data_cent;
 	map<int, map<int, map<int, RatioData>>> data_cent_mix;
 
-	int min_num_entries = 2;
+	int min_num_events = 1;
 
 	int energy_num = 1;
 	int num_energies = analysis::energy_list.size();
 	for(int energy:analysis::energy_list) {
 		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
+
 		string path = analysis::in_path + to_string(energy) + "GeV/";
 		string path_mix = analysis::in_mix_path + to_string(energy) + "GeV/";
+
 		for(int div:analysis::divs) {
+
 			// Initialize ratio object for each centrality bin
 			for(int cent:analysis::centrals) {
 				RatioData ratios(div);
 				data_cent[energy][div][cent] = ratios;
 				data_cent_mix[energy][div][cent] = ratios;
 			}
+
 			// Get centralities found in file names of given directory path.
 			for(int cent:get_centrals(path, div)) {
 				RatioData ratios(div);
 				ratios.read_ratios_from_dir(path, div, cent);  // Read ratio data from file path
-				if(ratios.get_num_ratios() <= min_num_entries) {
-					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
+
+				if(ratios.get_num_ratios() / div <= min_num_events) {
+					if(div == analysis::divs[0]) {
+						cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() / div << " events. Skipping." << endl;
+					}
 				} else {
 					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality (refmult2) value
 					data_cent[energy][div][get_centrality(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
 				}
+
 			}
+
 			// Get centralities found in file names of given directory path.
 			for(int cent:get_centrals(path_mix, div)) {
 				RatioData ratios(div);
 				ratios.read_ratios_from_dir(path_mix, div, cent);  // Read ratio data from file path
-				if(ratios.get_num_ratios() <= min_num_entries) {
-					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
+
+				if(ratios.get_num_ratios() / div <= min_num_events) {
+//					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() / div << " events. Skipping." << endl;
 				} else {
 					data_mix[energy][div][cent] = ratios;  // Store ratio data in data_mix under corresponding centrality (refmult2) value
 					data_cent_mix[energy][div][get_centrality(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
 				}
+
 			}
 		}
 		energy_num++;
 	}
 
-	cout << endl << "Calculating Cumulants..." << endl;
+	cout << endl << "Calculating Raw Stats..." << endl;
 	auto raw_stats = calculate_stats(data);
+	cout << endl << "Calculating Raw CBWC Stats..." << endl;
 	auto stats = calc_cbwc_stats(data, raw_stats, analysis::centrals.back());
+	cout << endl << "Calculating Mix Stats..." << endl;
 	auto raw_mix_stats = calculate_stats(data_mix);
+	cout << endl << "Calculating Mix CBWC Stats..." << endl;
 	auto stats_mix = calc_cbwc_stats(data_mix, raw_mix_stats, analysis::centrals.back());
 
+	cout << endl << "Calculating Divided Stats..." << endl;
 	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats_mix_divide;
 
 	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:stats.first) {
@@ -203,6 +216,7 @@ void analyze_CBWC() {
 		}
 	}
 
+	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
 	TDirectory *data_dir = out_root->mkdir("Raw_Data");
 	data_dir->cd();
@@ -218,6 +232,7 @@ void analyze_CBWC() {
 	make_stat_plots(data_dir, stats.first);
 	cout << endl << "Making canvases..." << endl;
 	make_canvas_plots(data_dir, data_cent, stats.second, stats.first);
+	roli_thesis_stats(stats.first, {15, 13, 11, 9}, {2,3,4,5,6}, "roli_thesis_stats");
 
 
 	TDirectory *mix_dir = out_root->mkdir("Mix_Data");
@@ -234,6 +249,7 @@ void analyze_CBWC() {
 	make_stat_plots(mix_dir, stats_mix.first);
 	cout << endl << "Making canvases..." << endl;
 	make_canvas_plots(mix_dir, data_cent_mix, stats_mix.second, stats_mix.first);
+	roli_thesis_stats(stats_mix.first, {15, 13, 11, 9}, {2,3,4,5,6}, "roli_thesis_stats_mix");
 
 
 	TDirectory *mix_div_dir = out_root->mkdir("Mix_Divded_Data");
@@ -244,6 +260,12 @@ void analyze_CBWC() {
 	make_stat_plots(mix_div_dir, stats_mix_divide.first);
 	cout << endl << "Making canvases..." << endl;
 	make_canvas_plots(mix_div_dir, data_cent_mix, stats_mix_divide.second, stats_mix_divide.first);
+	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {3,4,5,6}, "roli_thesis_stats_mix_divide");
+	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {2}, "roli_thesis_stats_mix_divide2");
+	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {3}, "roli_thesis_stats_mix_divide3");
+	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {4}, "roli_thesis_stats_mix_divide4");
+	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {5}, "roli_thesis_stats_mix_divide5");
+	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {6}, "roli_thesis_stats_mix_divide6");
 
 
 	out_root->Close();
@@ -257,11 +279,11 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 	ROOT::EnableThreadSafety();
 	{
 		ThreadPool pool(1);//thread::hardware_concurrency());
-		for(int energy:analysis::energy_list) {
-			string path = analysis::in_path + to_string(energy) + "GeV/";
-			for(int div:analysis::divs) {
-				for(int cent:get_centrals(path, div)) {
-					pool.enqueue(calc_stat, &(data[energy][div][cent]), energy, div, cent, &stats, &cumulants);
+		for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+			string path = analysis::in_path + to_string(energy.first) + "GeV/";
+			for(pair<int, map<int, RatioData>> div:energy.second) {
+				for(pair<int, RatioData> cent:div.second) {
+					pool.enqueue(calc_stat, &(data[energy.first][div.first][cent.first]), energy.first, div.first, cent.first, &stats, &cumulants);
 				}
 			}
 		}
@@ -272,7 +294,7 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 
 
 void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int, map<int, map<string, Measure>>>> *stats, map<int, map<int, map<int, map<int, Measure>>>> *cumulants) {
-	cout << "Starting " << energy << "GeV \t\t" << div << " divisions \t\t" << cent << " centrality" << endl;
+//	cout << "Starting " << energy << "GeV \t\t" << div << " divisions \t\t" << cent << " centrality" << endl;
 	Stats stat(data->get_ratio_hist());
 	(*stats)[energy][div][cent]["mean"] = stat.get_mean();
 	(*stats)[energy][div][cent]["standard_deviation"] = stat.get_standard_deviation();
@@ -281,7 +303,7 @@ void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int,
 	for(int order:analysis::cumulant_orders) {
 		(*cumulants)[energy][div][cent][order] = stat.get_cumulant(order);
 	}
-	cout << "Finishing " << energy << "GeV \t" << div << " divisions \t\t" << cent << " centrality" << endl;
+//	cout << "Finishing " << energy << "GeV \t" << div << " divisions \t\t" << cent << " centrality" << endl;
 }
 
 
@@ -383,8 +405,8 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 					cent_bin = get_centrality(cent.first, energy);
 				}
 				bin_ratios[cent_bin] += cent_ratios;
-//				if(cent_bin == 9 && div == 2) {
-//					string out = "Cent: " + to_string(cent.first) + " | num: " + to_string(cent_ratios);
+//				if(div == 2) {
+//					string out = "Energy: " + to_string(energy) + " | " + "Cent: " + to_string(cent.first) + " | num: " + to_string(cent_ratios);
 //					out += " | Mean: " + to_string(stats.first[energy][div][cent.first]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["mean"].get_err());
 //					out += " | SD: " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_err());
 //					out += " | Skewness: " + to_string(stats.first[energy][div][cent.first]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["skewness"].get_err());
@@ -394,10 +416,15 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 				if(stats.first[energy][div][cent.first]["standard_deviation"].get_val() != 0) {
 					for(string stat:analysis::stat_names) {
 						binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent.first][stat] * cent_ratios;
+						if(div == 2 && cent.first == 15 && energy == 39 && stat == "skewness") {
+							cout << "Energy: " << energy << " | Div: " << div << " | Stat: " << stat << " | Cent: " << cent.first << " | ratios: " << cent_ratios << " | new_val: " << stats.first[energy][div][cent.first][stat].get_val() << " | new_err: " << stats.first[energy][div][cent.first][stat].get_err() << " | err: " << binned_stats.first[energy][div][cent_bin][stat].get_err() << endl;
+						}
 					}
 					for(int order:analysis::cumulant_orders) {
 						binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent.first][order] * cent_ratios;
 					}
+				} else {
+					cout << "SD0 --> Energy: " << energy << " | Div: " << div  << " | Cent: " << cent.first << endl;
 				}
 			}
 			for(pair<int, map<string, Measure>> cent_bin:binned_stats.first[energy][div]) {
@@ -429,7 +456,7 @@ void comp_moments() {
 	int num_energies = analysis::energy_list.size();
 	for(int energy:analysis::energy_list) {
 		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
-		string path = analysis::in_path + to_string(energy) + "GeV/";
+		string path = analysis::in_mix_path + to_string(energy) + "GeV/";  // in_path or in_mix_path
 		for(int div:analysis::divs) {
 			// Initialize ratio object for each centrality bin
 			for(int cent:cent_bins) {
@@ -456,7 +483,7 @@ void comp_moments() {
 	auto stats = calc_cbwc_stats(data, raw_stats, 9);
 
 
-	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/data11.txt");
+	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/mixed11.txt");  // dataE.txt or mixedE.txt
 
 	cout << endl << "Making moment comparison..." << endl;
 	out_root->cd();
@@ -467,7 +494,7 @@ void comp_moments() {
 	TFile *roli_loop = new TFile("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/loop_out_11GeV.root", "READ");
 	compare_dir->cd();
 	for(int cent:cent_bins) {
-		string roli_name = "hratio_1_" + to_string(cent);
+		string roli_name = "hratio_2_" + to_string(cent);  // hratio_1_ for raw hratio_2_ for mixed
 		TH1F *roli_hist = (TH1F*) roli_loop->Get(roli_name.data());
 
 		TH1F *hist = new TH1F((roli_name+"_dylan").data(), (roli_name+"_dylan").data(), 100, -0.05, 1.05);

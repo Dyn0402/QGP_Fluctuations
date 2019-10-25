@@ -56,7 +56,7 @@ namespace plot {
 	extern vector<int> div_marker_styles;
 	extern vector<int> div_marker_width;
 	extern vector<int> div_marker_colors;
-	extern vector<int> div_marker_sizes;
+	extern vector<double> div_marker_sizes;
 
 	extern map<int, int> energy_marker_styles;
 	extern map<int, int> energy_marker_width;
