@@ -20,6 +20,7 @@
 #include <TMultiGraph.h>
 #include <TGraphErrors.h>
 #include <TLegend.h>
+#include <TStyle.h>
 
 #include "ratio_methods.h"
 #include "plotting.h"
@@ -558,6 +559,69 @@ void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> sta
 		}
 		can_index++;
 	}
+	can->Write(name.data());
+	delete can;
+}
+
+
+
+void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, vector<int> cents, vector<int> divs, string name) {
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	gStyle->SetTitleFontSize(0.09);
+	gStyle->SetTitleOffset(1.2);
+	can->Divide(4, 4, 0.001, 0.001);
+	int can_index = 1;
+	for(int cent:cents) {
+		for(string stat:analysis::stat_names) {
+			can->cd(can_index);
+			auto *mg = new TMultiGraph();
+			if(can_index <= 4) { mg->SetNameTitle(stat.data(), stat.data()); }
+			double y_max = numeric_limits<double>::min();
+			double y_min = numeric_limits<double>::max();
+			for(int div:divs) {
+				vector<double> stat_vals, energy_val, stat_err, energy_err;
+				Measure stat_meas;
+				for(int energy:analysis::energy_list) {
+					energy_val.push_back(plot::energy_match[energy]);
+					energy_err.push_back(0.0);
+					stat_meas = stats[energy][div][cent][stat];
+					stat_vals.push_back(stat_meas.get_val());
+					stat_err.push_back(stat_meas.get_err());
+					if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+				}
+				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
+				graph->SetNameTitle((to_string(div) + " divisions").data());
+				graph->SetMarkerStyle(plot::div_marker_styles[div]);
+				graph->SetMarkerColor(plot::div_marker_colors[div]);
+				graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				mg->Add(graph, "AP");
+			}
+			double y_range = y_max - y_min;
+			mg->GetXaxis()->SetLimits(0, 80);
+			mg->GetXaxis()->SetRangeUser(0, 80);
+			mg->GetXaxis()->SetLabelSize(0.06);
+			mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+			mg->GetYaxis()->SetLabelSize(0.06);
+			if(can_index % 4 == 1) {
+				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
+			}
+			else { gPad->SetLeftMargin(0.08); }
+			if(can_index > 12) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+			else { gPad->SetBottomMargin(0.05); }
+			if(can_index > 4) { gPad->SetTopMargin(0.07); }
+			else { gPad->SetTopMargin(0.08); }
+			gPad->SetRightMargin(0.02);
+			mg->Draw("AP"); // Multigraph memory leak, fix.
+			if(can_index == 1) {
+				gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
+			}
+			can_index++;
+		}
+	}
+	can->Update();
 	can->Write(name.data());
 	delete can;
 }

@@ -61,6 +61,7 @@ void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumul
 void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat, int cent, string name);
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
+void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, vector<int> cents, vector<int> divs, string name);
 
 void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
 
