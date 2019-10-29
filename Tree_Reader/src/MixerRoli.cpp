@@ -74,7 +74,7 @@ void MixerRoli::get_mixed(int cent, int num_protons, int ref_mult2, int ep_bin) 
 	vector<double> mix_angles;
 	while((int)mix_angles.size() < num_protons) {
 		int event_index = rand() % max_events;
-		int angle_index = rand() % (int)angles[cent][event_index].size();
+		int angle_index = rand() % (int)angles[cent][ep_bin][event_index].size();
 		mix_angles.push_back(angles[cent][ep_bin][event_index][angle_index]);
 	}
 	for(int div:divs) {
