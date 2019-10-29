@@ -162,7 +162,7 @@ void TreeReader::read_trees() {
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
 	if(mixed_roli) { mix_roli.write_mixed_data(); }
-	else if(mixed) { mix.write_mixed_data(); }
+	if(mixed) { mix.write_mixed_data(); }
 	cout << endl;
 }
 
@@ -216,7 +216,7 @@ void TreeReader::read_tree(TTree* tree) {
 
 				// If mixed flagged append event to mix object.
 				if(mixed_roli) { mix_roli.append_event(good_proton_angles, cent9, event.ref_mult2->GetValue()); }
-				else if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
+				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
