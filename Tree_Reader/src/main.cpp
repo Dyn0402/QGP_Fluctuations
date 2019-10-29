@@ -71,11 +71,15 @@ void read_class() {
 		reader.set_qa_name("QA_Paper_");
 		reader.set_divs(divs);
 		reader.set_mixed(true);
+		reader.set_mixed_roli(true);
 		reader.set_event_plane(false);
 		reader.mix.set_divs(divs);
 		reader.mix.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix/"+to_string(energy)+"GeV/");
 		reader.mix.set_max_events(100);
 		reader.mix.set_use_leftover(true);
+		reader.mix_roli.set_divs(divs);
+		reader.mix_roli.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/"+to_string(energy)+"GeV/");
+		reader.mix_roli.set_max_events(100);
 		threads.push_back(thread(&TreeReader::read_trees, reader));
 	}
 	for(thread & th : threads) {
