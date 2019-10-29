@@ -7,6 +7,7 @@
 
 
 #include <algorithm>
+#include <iostream>
 
 #include "ratio_methods.h"
 #include "file_io.h"
@@ -55,8 +56,9 @@ void Mixer_Roli::set_divs(vector<int> divs) {
 // Append an event to the specified cent pool of events.
 void Mixer_Roli::append_event(vector<double> angles, int cent, int ref_mult2) {
 	// Append all proton angles from event to specified cent pool.
+//	cout << "Cent: " << cent << " | ref_mult2: " << ref_mult2 << " | num_angles: " << angles.size() << " | num_events: " << this->angles[cent].size() << endl;
 	if((int)this->angles[cent].size() >= max_events) {  // Replace a random event if there are enough.
-		int index = rand() * max_events;
+		int index = rand() % max_events;
 		this->angles[cent][index] = angles;
 		get_mixed(cent, (int)angles.size(), ref_mult2);
 	} else {  // Append event if there are not enough.
@@ -68,8 +70,8 @@ void Mixer_Roli::append_event(vector<double> angles, int cent, int ref_mult2) {
 void Mixer_Roli::get_mixed(int cent, int num_protons, int ref_mult2) {
 	vector<double> mix_angles;
 	while((int)mix_angles.size() < num_protons) {
-		int event_index = rand() * max_events;
-		int angle_index = rand() * (int)angles[cent][event_index].size();
+		int event_index = rand() % max_events;
+		int angle_index = rand() % (int)angles[cent][event_index].size();
 		mix_angles.push_back(angles[cent][event_index][angle_index]);
 	}
 	for(int div:divs) {
