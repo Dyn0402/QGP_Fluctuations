@@ -46,8 +46,8 @@ int get_centrality9(double refmult2, int energy);
 int main() {
 //	analyze();
 //	comp_proton_dists();
-//	comp_moments();
-	analyze_CBWC();
+	comp_moments();
+//	analyze_CBWC();
 //	ratio_data_op_test();
 
 	cout << "donzo" << endl;
@@ -445,8 +445,6 @@ pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<i
 
 
 void comp_moments() {
-	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
-
 	map<int, map<int, map<int, RatioData>>> data;
 	map<int, map<int, map<int, RatioData>>> data_cent;
 
@@ -485,6 +483,7 @@ void comp_moments() {
 
 	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/mixed11.txt");  // dataE.txt or mixedE.txt
 
+	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 	cout << endl << "Making moment comparison..." << endl;
 	out_root->cd();
 	TDirectory *compare_dir = out_root->mkdir("Compare");
