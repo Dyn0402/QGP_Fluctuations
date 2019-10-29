@@ -5,8 +5,8 @@
  *      Author: Dylan Neff
  */
 
-#ifndef MIXER_ROLI_H_
-#define MIXER_ROLI_H_
+#ifndef MIXERROLI_H_
+#define MIXERROLI_H_
 
 #include <map>
 #include <vector>
@@ -14,10 +14,10 @@
 using namespace std;
 
 
-class Mixer_Roli {
+class MixerRoli {
 public:
 	// Structors
-	Mixer_Roli();
+	MixerRoli();
 
 	// Getters
 	int get_max_events();
@@ -48,4 +48,4 @@ private:
 };
 
 
-#endif /* MIXER_ROLI_H_ */
+#endif /* MIXERROLI_H_ */

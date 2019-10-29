@@ -22,7 +22,7 @@
 
 #include "ratio_methods.h"
 #include "Mixer.h"
-#include "Mixer_Roli.h"
+#include "MixerRoli.h"
 
 using namespace std;
 
@@ -112,7 +112,7 @@ public:
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
 	Mixer mix;
-	Mixer_Roli mix_roli;
+	MixerRoli mix_roli;
 
 private:
 	// Attributes

@@ -28,9 +28,9 @@
 
 #include "TreeReader.h"
 #include "Mixer.h"
-#include "Mixer_Roli.h"
 #include "file_io.h"
 #include "ratio_methods.h"
+#include "MixerRoli.h"
 
 using namespace std;
 

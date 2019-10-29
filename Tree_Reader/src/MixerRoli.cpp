@@ -11,42 +11,43 @@
 
 #include "ratio_methods.h"
 #include "file_io.h"
-#include "Mixer_Roli.h"
+
+#include "MixerRoli.h"
 
 
 // Structors
 
-Mixer_Roli::Mixer_Roli() {
+MixerRoli::MixerRoli() {
 	max_events = 100;
 }
 
 
 // Getters
 
-int Mixer_Roli::get_max_events() {
+int MixerRoli::get_max_events() {
 	return(max_events);
 }
 
-string Mixer_Roli::get_out_path() {
+string MixerRoli::get_out_path() {
 	return(out_path);
 }
 
-vector<int> Mixer_Roli::get_divs() {
+vector<int> MixerRoli::get_divs() {
 	return(divs);
 }
 
 
 // Setters
 
-void Mixer_Roli::set_max_events(int max_events) {
+void MixerRoli::set_max_events(int max_events) {
 	this->max_events = max_events;
 }
 
-void Mixer_Roli::set_out_path(string path) {
+void MixerRoli::set_out_path(string path) {
 	this->out_path = path;
 }
 
-void Mixer_Roli::set_divs(vector<int> divs) {
+void MixerRoli::set_divs(vector<int> divs) {
 	this->divs = divs;
 }
 
@@ -54,7 +55,7 @@ void Mixer_Roli::set_divs(vector<int> divs) {
 // Doers
 
 // Append an event to the specified cent pool of events.
-void Mixer_Roli::append_event(vector<double> angles, int cent, int ref_mult2) {
+void MixerRoli::append_event(vector<double> angles, int cent, int ref_mult2) {
 	// Append all proton angles from event to specified cent pool.
 //	cout << "Cent: " << cent << " | ref_mult2: " << ref_mult2 << " | num_angles: " << angles.size() << " | num_events: " << this->angles[cent].size() << endl;
 	if((int)this->angles[cent].size() >= max_events) {  // Replace a random event if there are enough.
@@ -67,7 +68,7 @@ void Mixer_Roli::append_event(vector<double> angles, int cent, int ref_mult2) {
 }
 
 // Sample angles randomly for an event.
-void Mixer_Roli::get_mixed(int cent, int num_protons, int ref_mult2) {
+void MixerRoli::get_mixed(int cent, int num_protons, int ref_mult2) {
 	vector<double> mix_angles;
 	while((int)mix_angles.size() < num_protons) {
 		int event_index = rand() % max_events;
@@ -86,6 +87,6 @@ void Mixer_Roli::get_mixed(int cent, int num_protons, int ref_mult2) {
 
 
 // Write data to output directory
-void Mixer_Roli::write_mixed_data() {
+void MixerRoli::write_mixed_data() {
 	write_tree_data("local", data, out_path);
 }
