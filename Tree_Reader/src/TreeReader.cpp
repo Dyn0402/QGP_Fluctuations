@@ -28,6 +28,7 @@
 
 #include "TreeReader.h"
 #include "Mixer.h"
+#include "Mixer_Roli.h"
 #include "file_io.h"
 #include "ratio_methods.h"
 
@@ -42,6 +43,7 @@ TreeReader::TreeReader(int energy) {
 	rotate_random = false;
 	event_plane = false;
 	mixed = false;
+	mixed_roli = false;
 	this->energy = energy;
 
 	define_qa();
@@ -70,6 +72,10 @@ bool TreeReader::get_event_plane() {
 
 bool TreeReader::get_mixed() {
 	return(mixed);
+}
+
+bool TreeReader::get_mixed_roli() {
+	return(mixed_roli);
 }
 
 
@@ -115,6 +121,10 @@ void TreeReader::set_mixed(bool mixed) {
 	this->mixed = mixed;
 }
 
+void TreeReader::set_mixed_roli(bool mixed_roli) {
+	this->mixed_roli = mixed_roli;
+}
+
 
 // Doers
 
@@ -151,7 +161,8 @@ void TreeReader::read_trees() {
 	write_qa();
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
-	mix.write_mixed_data();
+	if(mixed_roli) { mix_roli.write_mixed_data(); }
+	else if(mixed) { mix.write_mixed_data(); }
 	cout << endl;
 }
 
@@ -204,7 +215,8 @@ void TreeReader::read_tree(TTree* tree) {
 				}
 
 				// If mixed flagged append event to mix object.
-				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
+				if(mixed_roli) { mix_roli.append_event(good_proton_angles, cent9, event.ref_mult2->GetValue()); }
+				else if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.

@@ -22,6 +22,7 @@
 
 #include "ratio_methods.h"
 #include "Mixer.h"
+#include "Mixer_Roli.h"
 
 using namespace std;
 
@@ -88,6 +89,7 @@ public:
 	bool get_rotate_random();
 	bool get_event_plane();
 	bool get_mixed();
+	bool get_mixed_roli();
 
 	// Setters
 	void set_in_path(string path);
@@ -100,6 +102,7 @@ public:
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
 	void set_mixed(bool mixed);
+	void set_mixed_roli(bool mixed_roli);
 
 	// Doers
 	void read_trees();
@@ -109,6 +112,7 @@ public:
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
 	Mixer mix;
+	Mixer_Roli mix_roli;
 
 private:
 	// Attributes
@@ -129,6 +133,7 @@ private:
 	bool rotate_random;
 	bool event_plane;
 	bool mixed;
+	bool mixed_roli;
 
 	// Doers
 	void read_tree(TTree* tree);
