@@ -215,7 +215,7 @@ void TreeReader::read_tree(TTree* tree) {
 				}
 
 				// If mixed flagged append event to mix object.
-				if(mixed_roli) { mix_roli.append_event(good_proton_angles, cent9, event.ref_mult2->GetValue()); }
+				if(mixed_roli) { mix_roli.append_event(good_proton_angles, cent9, event.ref_mult2->GetValue(), event.event_plane->GetValue()); }
 				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
 
 				for(int div:divs) {

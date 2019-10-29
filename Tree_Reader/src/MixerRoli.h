@@ -30,7 +30,7 @@ public:
 	void set_divs(vector<int>);
 
 	// Doers
-	void append_event(vector<double> angles, int cent, int ref_mult2);
+	void append_event(vector<double> angles, int cent, int ref_mult2, double event_plane);
 	void write_mixed_data();
 
 	// Attributes
@@ -39,12 +39,12 @@ private:
 	// Attributes
 	int max_events;
 	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
-	map<int, vector<vector<double>>> angles;
+	map<int, map<int, vector<vector<double>>>> angles;
 	vector<int> divs;
 	string out_path;
 
 	// Doers
-	void get_mixed(int cent, int num_protons, int ref_mult2);
+	void get_mixed(int cent, int num_protons, int ref_mult2, int ep_bin);
 };
 
 
