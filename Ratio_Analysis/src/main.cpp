@@ -46,8 +46,8 @@ int get_centrality9(double refmult2, int energy);
 int main() {
 //	analyze();
 //	comp_proton_dists();
-	comp_moments();
-//	analyze_CBWC();
+//	comp_moments();
+	analyze_CBWC();
 //	ratio_data_op_test();
 
 	cout << "donzo" << endl;
@@ -489,6 +489,9 @@ void comp_moments() {
 	TDirectory *compare_dir = out_root->mkdir("Compare");
 	compare_dir->cd();
 	make_comp_stat_plot(stats.first[11][2], roli_moments);
+	TDirectory *compare_dir_sys = out_root->mkdir("Compare_sys");
+	compare_dir_sys->cd();
+	make_comp_stat_plot_hack(stats.first[11][2], roli_moments);
 
 	TFile *roli_loop = new TFile("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/loop_out_11GeV.root", "READ");
 	compare_dir->cd();

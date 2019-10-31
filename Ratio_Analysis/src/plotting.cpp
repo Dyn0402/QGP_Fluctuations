@@ -687,3 +687,69 @@ void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<str
 		delete can;
 	}
 }
+
+
+void make_comp_stat_plot_hack(map<int, map<string, Measure>> dylan, map<int, map<string, Measure>> roli) {
+	vector<double> roli_sys = {0.004139200212004939, 0.0032558531832097806, 0.004697130111456425, 0.0021703333166663815, 0.004128883299661329, 0.006058885056950112, 0.0051792985941065016, 0.003855254850777629, 0.010578548892656355};
+	for(string stat:analysis::stat_names) {
+		string name = "Moment Comparison " + stat;
+		auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+
+		auto *mg = new TMultiGraph();
+		mg->SetNameTitle(stat.data(), stat.data());
+
+		vector<double> stat1_val, stat1_err, stat2_val, stat2_err, cent_vec, cent_err;
+		Measure stat1_meas, stat2_meas;
+		for(int cent=1; cent<=9; cent++) {
+			stat1_meas = dylan[cent][stat];
+			stat2_meas = roli[cent][stat];
+			if(!isnan(stat1_meas.get_val())) { stat1_val.push_back(stat1_meas.get_val()); }
+			if(!isnan(stat1_meas.get_err())) { stat1_err.push_back(stat1_meas.get_err()); }
+			if(!isnan(stat2_meas.get_val())) { stat2_val.push_back(stat2_meas.get_val()); }
+			if(!isnan(stat2_meas.get_err())) { stat2_err.push_back(stat2_meas.get_err()); }
+			cent_vec.push_back((double)cent);
+			cent_err.push_back(0.0);
+		}
+
+		double y_max = numeric_limits<double>::min();
+		double y_min = numeric_limits<double>::max();
+		for(unsigned i = 0; i < cent_vec.size(); i++) {
+			cout << cent_vec[i] << "\t" << stat1_val[i] << " ± " << stat1_err[i] << "\t" << stat2_val[i]  << " ± " << stat2_err[i] << endl;
+			if(stat1_val[i] + stat1_err[i] > y_max) { y_max = stat1_val[i] + stat1_err[i]; }
+			if(stat2_val[i] + stat2_err[i] > y_max) { y_max = stat2_val[i] + stat2_err[i]; }
+			if(stat1_val[i] - stat1_err[i] < y_min) { y_min = stat1_val[i] - stat1_err[i]; }
+			if(stat2_val[i] - stat2_err[i] < y_min) { y_min = stat2_val[i] - stat2_err[i]; }
+		}
+
+		TGraphErrors *graph1 = graph_x_vs_y_err(cent_vec, stat1_val, cent_err, stat1_err);
+		graph1->SetNameTitle("Dylan");
+		graph1->SetMarkerStyle(26);
+		graph1->SetMarkerColor(kRed);
+		graph1->SetMarkerSize(1.5);
+		mg->Add(graph1, "AP");
+
+		TGraphErrors *graph2 = graph_x_vs_y_err(cent_vec, stat2_val, cent_err, stat2_err);
+		graph2->SetNameTitle("Roli");
+		graph2->SetMarkerStyle(24);
+		graph2->SetMarkerColor(kBlue);
+		graph2->SetMarkerSize(1.5);
+		mg->Add(graph2, "AP");
+
+		TGraphErrors *graph3 = graph_x_vs_y_err(cent_vec, stat2_val, cent_err, roli_sys);
+		mg->Add(graph3, "[]");
+
+		double y_range = y_max - y_min;
+
+		mg->GetXaxis()->SetLimits(0, 10);
+		mg->GetXaxis()->SetRangeUser(0, 10);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetXaxis()->SetTitle("Centrality Bin");
+
+		mg->Draw("AP");
+		gPad->BuildLegend(0.1, 0.5, 0.2, 0.55, "", "p");
+
+		can->Write(name.data());
+		delete can;
+	}
+}
