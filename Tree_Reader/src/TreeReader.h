@@ -106,6 +106,7 @@ public:
 
 	// Doers
 	void read_trees();
+	void write_read_info_file();
 
 	// Attributes
 	cut_values cut;
@@ -121,6 +122,7 @@ private:
 
 	string tree_name = "nsmTree";
 	string qa_name = "QA_CBWC_";
+	string info_file_name = "info.txt";
 
 	string in_path = "/home/dylan/Research/Trees/";
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";

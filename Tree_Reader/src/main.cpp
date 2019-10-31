@@ -80,6 +80,7 @@ void read_class() {
 		reader.mix_roli.set_divs(divs);
 		reader.mix_roli.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/"+to_string(energy)+"GeV/");
 		reader.mix_roli.set_max_events(100);
+		reader.write_read_info_file();
 		threads.push_back(thread(&TreeReader::read_trees, reader));
 	}
 	for(thread & th : threads) {

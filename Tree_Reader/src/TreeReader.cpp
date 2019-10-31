@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <vector>
 #include <cmath>
@@ -234,6 +235,51 @@ void TreeReader::read_tree(TTree* tree) {
 			}
 		}
 		event_index++;
+	}
+}
+
+
+// Write file to outpath containing information about TreeReader variables used.
+void TreeReader::write_read_info_file() {
+	ofstream out(out_path+to_string(energy)+"GeV/"+info_file_name);
+	if(!out) { cerr << "Couldn't open info_file path" << endl; }
+	else {
+		out << "Information file for TreeReader run." << endl;
+		out << "in_path: " << in_path << endl;
+		out << "out_path: " << out_path << endl;
+		out << "qa_path: " << qa_path << endl;
+		out << "qa_name: " << qa_name << endl;
+
+		out << "energy: " << to_string(energy) << endl;
+		out << "divs: { ";
+		for(int div:divs) { out << to_string(div) << " "; }
+		out << "}" << endl;
+
+		out << "cbwc: " << boolalpha << cbwc << endl;
+		out << "rotate_random: " << boolalpha << rotate_random << endl;
+		out << "event_plane: " << boolalpha << event_plane << endl;
+		out << "mixed: " << boolalpha << mixed << endl;
+		out << "mixed_roli: " << boolalpha << mixed_roli << endl;
+
+		out << "min_p: " << to_string(cut.min_p) << endl;
+		out << "max_p: " << to_string(cut.max_p) << endl;
+		out << "min_pt: " << to_string(cut.min_pt) << endl;
+		out << "max_pt: " << to_string(cut.max_pt) << endl;
+		out << "min_beta: " << to_string(cut.min_beta) << endl;
+		out << "max_beta: " << to_string(cut.max_beta) << endl;
+		out << "charge: " << to_string(cut.charge) << endl;
+		out << "min_eta: " << to_string(cut.min_eta) << endl;
+		out << "max_eta: " << to_string(cut.max_eta) << endl;
+		out << "min_nsigma: " << to_string(cut.min_nsigma) << endl;
+		out << "max_nsigma: " << to_string(cut.max_nsigma) << endl;
+		out << "min_dca: " << to_string(cut.min_dca) << endl;
+		out << "max_dca: " << to_string(cut.max_dca) << endl;
+		out << "min_m2: " << to_string(cut.min_m2) << endl;
+		out << "max_m2: " << to_string(cut.max_m2) << endl;
+		out << "min_pt_for_m: " << to_string(cut.min_pt_for_m) << endl;
+		out << "max_pt_for_m: " << to_string(cut.max_pt_for_m) << endl;
+
+		out << "min_multi: " << to_string(cut.min_multi) << endl;
 	}
 }
 
