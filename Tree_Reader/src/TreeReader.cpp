@@ -159,6 +159,7 @@ void TreeReader::read_trees() {
 		file_index++;
 	}
 
+	// Recreate Dir
 	write_qa();
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
