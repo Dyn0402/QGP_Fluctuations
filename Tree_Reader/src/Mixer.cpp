@@ -7,6 +7,8 @@
 
 
 #include <algorithm>
+#include <iostream>
+#include <cstdlib>
 
 #include "ratio_methods.h"
 #include "file_io.h"
@@ -104,5 +106,13 @@ void Mixer::write_mixed_data() {
 			mix_set(cent.first);
 		}
 	}
+	reset_out_dir();
 	write_tree_data("local", data, out_path);
+}
+
+
+// Remove out_path directory for energy if it exists and recreate it.
+void Mixer::reset_out_dir() {
+	if(!system(("test -d "+out_path).data())) { system(("rm -r " + out_path).data()); }
+	if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
 }

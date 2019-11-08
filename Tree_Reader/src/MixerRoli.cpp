@@ -90,5 +90,13 @@ void MixerRoli::get_mixed(int cent, int num_protons, int ref_mult2, int ep_bin) 
 
 // Write data to output directory
 void MixerRoli::write_mixed_data() {
+	reset_out_dir();
 	write_tree_data("local", data, out_path);
+}
+
+
+// Remove out_path directory for energy if it exists and recreate it.
+void MixerRoli::reset_out_dir() {
+	if(!system(("test -d "+out_path).data())) { system(("rm -r " + out_path).data()); }
+	if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
 }

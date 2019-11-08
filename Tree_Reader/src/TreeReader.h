@@ -106,7 +106,7 @@ public:
 
 	// Doers
 	void read_trees();
-	void write_read_info_file();
+	void write_info_file();
 
 	// Attributes
 	cut_values cut;
@@ -146,7 +146,6 @@ private:
 	bool check_event_good(event_leaves event, proton_leaves, int energy);
 	bool check_enough_protons(proton_leaves protons);
 	bool check_good_run(int run);
-
 	bool check_proton_good(proton_leaves protons, int proton_index);
 
 	int get_centrality(int refmult2, int energy);
@@ -157,6 +156,8 @@ private:
 	void fill_pre_track_qa(proton_leaves proton, int proton_index);
 	void fill_post_track_qa(proton_leaves proton, int proton_index);
 	void write_qa();
+
+	void reset_out_dir();
 
 	// QA Plots
 	TH2I cent_hist;

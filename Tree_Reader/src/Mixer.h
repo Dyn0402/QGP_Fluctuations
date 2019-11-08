@@ -33,6 +33,7 @@ public:
 
 	// Doers
 	void append_event(vector<double> angles, int ref_mult2);
+	void reset_out_dir();
 	void write_mixed_data();
 
 	// Attributes

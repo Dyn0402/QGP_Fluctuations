@@ -31,6 +31,7 @@ public:
 
 	// Doers
 	void append_event(vector<double> angles, int cent, int ref_mult2, double event_plane);
+	void reset_out_dir();
 	void write_mixed_data();
 
 	// Attributes

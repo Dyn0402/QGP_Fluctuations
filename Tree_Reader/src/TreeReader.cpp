@@ -14,6 +14,7 @@
 #include <thread>
 #include <ctime>
 #include <chrono>
+#include <cstdlib>
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -159,7 +160,8 @@ void TreeReader::read_trees() {
 		file_index++;
 	}
 
-	// Recreate Dir
+	reset_out_dir();
+	write_info_file();
 	write_qa();
 	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
@@ -241,7 +243,7 @@ void TreeReader::read_tree(TTree* tree) {
 
 
 // Write file to outpath containing information about TreeReader variables used.
-void TreeReader::write_read_info_file() {
+void TreeReader::write_info_file() {
 	ofstream out(out_path+to_string(energy)+"GeV/"+info_file_name);
 	if(!out) { cerr << "Couldn't open info_file path" << endl; }
 	else {
@@ -570,6 +572,14 @@ void TreeReader::write_qa() {
 	m2_can.Write();
 
 	qa.Close();
+}
+
+
+// Remove out_path directory for energy if it exists and recreate it.
+void TreeReader::reset_out_dir() {
+	string energy_path = out_path+to_string(energy)+"GeV/";
+	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
+	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
 }
 
 

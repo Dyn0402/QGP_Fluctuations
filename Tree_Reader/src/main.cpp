@@ -14,6 +14,7 @@
 #include <ctime>
 #include <chrono>
 #include <unistd.h>
+#include <cstdlib>
 
 #include <TFile.h>
 #include <TTree.h>
@@ -57,35 +58,46 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	vector<int> energy_list = {27, 39, 62, 19, 11, 7};
-	vector<int> divs = {2, 3, 4, 5, 6};
-	ROOT::EnableThreadSafety();
-	vector<thread> threads;
-	for(int energy:energy_list) {
-		TreeReader reader(energy);
-		reader.set_cbwc(true);
-		reader.set_rotate_random(false);
-		reader.set_in_path("/home/dylan/Research/Trees/");
-		reader.set_out_path("/home/dylan/local_server/dyn0402/Research/Data/");
-		reader.set_qa_path("/home/dylan/local_server/dyn0402/Research/QA/");
-		reader.set_qa_name("QA_Paper_");
-		reader.set_divs(divs);
-		reader.set_mixed(true);
-		reader.set_mixed_roli(true);
-		reader.set_event_plane(false);
-		reader.mix.set_divs(divs);
-		reader.mix.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix/"+to_string(energy)+"GeV/");
-		reader.mix.set_max_events(100);
-		reader.mix.set_use_leftover(true);
-		reader.mix_roli.set_divs(divs);
-		reader.mix_roli.set_out_path("/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/"+to_string(energy)+"GeV/");
-		reader.mix_roli.set_max_events(100);
-		reader.write_read_info_file();
-		threads.push_back(thread(&TreeReader::read_trees, reader));
+	string out_dir = "/home/dylan/local_server/dyn0402/Research/Data/";
+	string mix_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix/";
+	string mix_roli_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/";
+	vector<string> set_dirs;
+	for(int i = 0; i < 3; i++) {
+		set_dirs.push_back("Set" + to_string(i) + "/");
+		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
+		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
+		if(system(("test -d " + mix_roli_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_roli_out_dir + set_dirs.back()).data()); }
 	}
-	for(thread & th : threads) {
-		if(th.joinable()) {
-			th.join();
+	for(string set:set_dirs) {
+		vector<int> energy_list = {27, 39, 62, 19, 11, 7};
+		vector<int> divs = {2, 3, 4, 5, 6};
+		ROOT::EnableThreadSafety();
+		vector<thread> threads;
+		for(int energy:energy_list) {
+			TreeReader reader(energy);
+			reader.set_cbwc(true);
+			reader.set_rotate_random(false);
+			reader.set_in_path("/home/dylan/Research/Trees/");
+			reader.set_out_path(out_dir+set);
+			reader.set_qa_path(out_dir+set+to_string(energy)+"GeV/");
+			reader.set_qa_name("QA_");
+			reader.set_divs(divs);
+			reader.set_mixed(true);
+			reader.set_mixed_roli(true);
+			reader.set_event_plane(false);
+			reader.mix.set_divs(divs);
+			reader.mix.set_out_path(mix_out_dir+set+to_string(energy)+"GeV/");
+			reader.mix.set_max_events(100);
+			reader.mix.set_use_leftover(true);
+			reader.mix_roli.set_divs(divs);
+			reader.mix_roli.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");
+			reader.mix_roli.set_max_events(100);
+			threads.push_back(thread(&TreeReader::read_trees, reader));
+		}
+		for(thread & th : threads) {
+			if(th.joinable()) {
+				th.join();
+			}
 		}
 	}
 }
