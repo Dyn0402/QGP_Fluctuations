@@ -62,7 +62,7 @@ void read_class() {
 	string mix_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix/";
 	string mix_roli_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/";
 	vector<string> set_dirs;
-	for(int i = 0; i < 3; i++) {
+	for(int i = 3; i < 10; i++) {
 		set_dirs.push_back("Set" + to_string(i) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
@@ -167,8 +167,8 @@ void ref_mult_test() {
 		double bbc = 20000.0;
 		refmult2CorrUtil->initEvent(refmult2, vz, bbc);
 		int cent16 = refmult2CorrUtil->getCentralityBin16();
-		double reweight = refmult2CorrUtil->getWeight();
-		double refmult2Cor = refmult2CorrUtil->getRefMultCorr();
+//		double reweight = refmult2CorrUtil->getWeight();
+//		double refmult2Cor = refmult2CorrUtil->getRefMultCorr();
 		cout << cent16 << endl;
 	}
 }
