@@ -296,10 +296,10 @@ void analyze_CBWC() {
 
 
 	// Calculate standard deviations for systematics
-	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:raw_stats_sets.first) {
-		for(pair<int, map<int, map<string, Measure>>> div:energy.second) {
-			for(pair<int, map<string, Measure>> cent:div.second) {
-				for(pair<string, Measure> stat:cent.second) {
+	for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets.first) {
+		for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
+			for(pair<int, map<string, vector<Measure>>> cent:div.second) {
+				for(pair<string, vector<Measure>> stat:cent.second) {
 					raw_stats_sd.first[energy.first][div.first][cent.first][stat.first] = sample_sd(raw_stats_sets.first[energy.first][div.first][cent.first][stat.first]);
 					mix_stats_sd.first[energy.first][div.first][cent.first][stat.first] = sample_sd(mix_stats_sets.first[energy.first][div.first][cent.first][stat.first]);
 					divide_stats_sd.first[energy.first][div.first][cent.first][stat.first] = sample_sd(divide_stats_sets.first[energy.first][div.first][cent.first][stat.first]);
@@ -310,10 +310,10 @@ void analyze_CBWC() {
 			}
 		}
 	}
-	for(pair<int, map<int, map<int, map<int, Measure>>>> energy:raw_stats_sets.second) {
-		for(pair<int, map<int, map<int, Measure>>> div:energy.second) {
-			for(pair<int, map<int, Measure>> cent:div.second) {
-				for(pair<int, Measure> order:cent.second) {
+	for(pair<int, map<int, map<int, map<int, vector<Measure>>>>> energy:raw_stats_sets.second) {
+		for(pair<int, map<int, map<int, vector<Measure>>>> div:energy.second) {
+			for(pair<int, map<int, vector<Measure>>> cent:div.second) {
+				for(pair<int, vector<Measure>> order:cent.second) {
 					raw_stats_sd.second[energy.first][div.first][cent.first][order.first] = sample_sd(raw_stats_sets.second[energy.first][div.first][cent.first][order.first]);
 					mix_stats_sd.second[energy.first][div.first][cent.first][order.first] = sample_sd(mix_stats_sets.second[energy.first][div.first][cent.first][order.first]);
 					divide_stats_sd.second[energy.first][div.first][cent.first][order.first] = sample_sd(divide_stats_sets.second[energy.first][div.first][cent.first][order.first]);
