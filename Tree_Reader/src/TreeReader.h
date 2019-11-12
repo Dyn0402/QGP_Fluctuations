@@ -16,6 +16,7 @@
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TH2.h>
+#include <TRandom3.h>
 
 #include "../StRoot/StRefMultCorr/CentralityMaker.h"
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
@@ -123,6 +124,7 @@ private:
 	// Attributes
 	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
 	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
+	TRandom3 *trand = new TRandom3(0);
 
 	string tree_name = "nsmTree";
 	string qa_name = "QA_CBWC_";

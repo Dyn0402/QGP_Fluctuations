@@ -186,8 +186,6 @@ void TreeReader::read_tree(TTree* tree) {
 	event_leaves event = get_event_leaves(tree);
 	proton_leaves proton = get_proton_leaves(tree);
 
-	TRandom3 *rand = new TRandom3(0);
-
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 
@@ -225,13 +223,13 @@ void TreeReader::read_tree(TTree* tree) {
 					cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
 					good_proton_angles = rotate_angles(good_proton_angles, -event_plane);
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
-					good_proton_angles = rotate_angles(good_proton_angles, rand->Rndm() * 2 * M_PI);
+					good_proton_angles = rotate_angles(good_proton_angles, trand->Rndm() * 2 * M_PI);
 				}
 
 				// If mixed/rand flagged append event to mix/rand object.
 				if(mixed_roli) { mix_roli.append_event(good_proton_angles, cent9, event.ref_mult2->GetValue(), event.event_plane->GetValue()); }
 				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
-				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.ref_mult2->GetValue()); }
+				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.ref_mult2->GetValue(), trand); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
@@ -274,6 +272,7 @@ void TreeReader::write_info_file() {
 		out << "event_plane: " << boolalpha << event_plane << endl;
 		out << "mixed: " << boolalpha << mixed << endl;
 		out << "mixed_roli: " << boolalpha << mixed_roli << endl;
+		out << "rand_data: " << boolalpha << rand_data << endl;
 
 		out << "min_p: " << to_string(cut.min_p) << endl;
 		out << "max_p: " << to_string(cut.max_p) << endl;

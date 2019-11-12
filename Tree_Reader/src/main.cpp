@@ -63,7 +63,7 @@ void read_class() {
 	string mix_roli_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/";
 	string random_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Random/";
 	vector<string> set_dirs;
-	for(int i = 0; i < 2; i++) {
+	for(int i = 0; i < 10; i++) {
 		set_dirs.push_back("Set" + to_string(i) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
@@ -84,16 +84,17 @@ void read_class() {
 			reader.set_qa_path(out_dir+set+to_string(energy)+"GeV/");
 			reader.set_qa_name("QA_");
 			reader.set_divs(divs);
-			reader.set_mixed(true);
-			reader.set_mixed_roli(true);
 			reader.set_event_plane(false);
+			reader.set_mixed(true);
 			reader.mix.set_divs(divs);
 			reader.mix.set_out_path(mix_out_dir+set+to_string(energy)+"GeV/");
 			reader.mix.set_max_events(100);
 			reader.mix.set_use_leftover(true);
+			reader.set_mixed_roli(true);
 			reader.mix_roli.set_divs(divs);
 			reader.mix_roli.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");
 			reader.mix_roli.set_max_events(100);
+			reader.set_rand_data(true);
 			reader.random.set_divs(divs);
 			reader.random.set_out_path(random_out_dir+set+to_string(energy)+"GeV/");
 			threads.push_back(thread(&TreeReader::read_trees, reader));
