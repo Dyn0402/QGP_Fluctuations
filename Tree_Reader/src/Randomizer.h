@@ -11,6 +11,8 @@
 #include <map>
 #include <vector>
 
+#include <TRandom3.h>
+
 using namespace std;
 
 
@@ -28,7 +30,7 @@ public:
 	void set_divs(vector<int>);
 
 	// Doers
-	void append_event(int num_protons, int cent);
+	void append_event(int num_protons, int cent, TRandom3 *trand);
 	void reset_out_dir();
 	void write_random_data();
 

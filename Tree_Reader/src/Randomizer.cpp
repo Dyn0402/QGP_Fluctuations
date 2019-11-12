@@ -51,11 +51,11 @@ void Randomizer::set_divs(vector<int> divs) {
 // Doers
 
 // Append an event to the specified ref_mult2 pool of events.
-void Randomizer::append_event(int num_protons, int cent) {
+void Randomizer::append_event(int num_protons, int cent, TRandom3 *trand) {
 	// Generate num_protons random proton angles.
 	vector<double> angles;
 	for(int i=0; i < num_protons; i++) {
-		angles.push_back(rand() * 2.0 * M_PI);
+		angles.push_back(trand->Rndm() * 2.0 * M_PI);
 	}
 
 	// Get ratio values for random angles for each div and add values to data.
