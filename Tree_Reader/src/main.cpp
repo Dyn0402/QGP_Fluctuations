@@ -61,12 +61,14 @@ void read_class() {
 	string out_dir = "/home/dylan/local_server/dyn0402/Research/Data/";
 	string mix_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix/";
 	string mix_roli_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/";
+	string random_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Random/";
 	vector<string> set_dirs;
-	for(int i = 3; i < 10; i++) {
+	for(int i = 0; i < 2; i++) {
 		set_dirs.push_back("Set" + to_string(i) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_roli_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_roli_out_dir + set_dirs.back()).data()); }
+		if(system(("test -d " + random_out_dir + set_dirs.back()).data())) { system(("mkdir " + random_out_dir + set_dirs.back()).data()); }
 	}
 	for(string set:set_dirs) {
 		vector<int> energy_list = {27, 39, 62, 19, 11, 7};
@@ -92,6 +94,8 @@ void read_class() {
 			reader.mix_roli.set_divs(divs);
 			reader.mix_roli.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");
 			reader.mix_roli.set_max_events(100);
+			reader.random.set_divs(divs);
+			reader.random.set_out_path(random_out_dir+set+to_string(energy)+"GeV/");
 			threads.push_back(thread(&TreeReader::read_trees, reader));
 		}
 		for(thread & th : threads) {

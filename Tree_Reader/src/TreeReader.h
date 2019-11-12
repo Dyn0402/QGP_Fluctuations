@@ -23,6 +23,7 @@
 #include "ratio_methods.h"
 #include "Mixer.h"
 #include "MixerRoli.h"
+#include "Randomizer.h"
 
 using namespace std;
 
@@ -90,6 +91,7 @@ public:
 	bool get_event_plane();
 	bool get_mixed();
 	bool get_mixed_roli();
+	bool get_rand_data();
 
 	// Setters
 	void set_in_path(string path);
@@ -103,6 +105,7 @@ public:
 	void set_event_plane(bool event_plane);
 	void set_mixed(bool mixed);
 	void set_mixed_roli(bool mixed_roli);
+	void set_rand_data(bool rand_data);
 
 	// Doers
 	void read_trees();
@@ -114,6 +117,7 @@ public:
 	chrono::system_clock::time_point start_sys;
 	Mixer mix;
 	MixerRoli mix_roli;
+	Randomizer random;
 
 private:
 	// Attributes
@@ -131,11 +135,12 @@ private:
 	vector<int> divs = {2,3,4,5,6};
 	int energy;
 
-	bool cbwc;
+	bool cbwc; // Mixer/randomizers aren't prepared for this to be false.
 	bool rotate_random;
 	bool event_plane;
 	bool mixed;
 	bool mixed_roli;
+	bool rand_data;
 
 	// Doers
 	void read_tree(TTree* tree);
