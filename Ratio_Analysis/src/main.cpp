@@ -136,7 +136,7 @@ void analyze_CBWC() {
 	pair<map<int, map<int, map<int, map<string, vector<Measure>>>>>, map<int, map<int, map<int, map<int, vector<Measure>>>>>> mix_stats_sets;
 	pair<map<int, map<int, map<int, map<string, vector<Measure>>>>>, map<int, map<int, map<int, map<int, vector<Measure>>>>>> divide_stats_sets;
 
-	for(int i = 0; i < 2; i++) {
+	for(int i = 0; i < 10; i++) {
 		cout << "Starting Set " + to_string(i) << endl << endl;
 		map<int, map<int, map<int, RatioData>>> data;
 		map<int, map<int, map<int, RatioData>>> data_mix;

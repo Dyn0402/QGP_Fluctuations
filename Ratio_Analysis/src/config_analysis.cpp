@@ -25,15 +25,15 @@ namespace analysis {
 	string in_file_sufx = ".root";
 
 //	string in_path = "/home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/";
-	string in_path = "/home/dylan/local_server/dyn0402/Research/Data/";
-	string in_mix_path = "/home/dylan/local_server/dyn0402/Research/Data_Mix/";
+	string in_path = "/home/dylan/Research/Data/"; // "/home/dylan/local_server/dyn0402/Research/Data/"; //
+	string in_mix_path = "/home/dylan/Research/Data_Random/"; // "/home/dylan/local_server/dyn0402/Research/Data_Mix/"; //
 }
 
 
 namespace plot {
-	string out_path = "/home/dylan/local_server/dyn0402/Research/Results/";
+	string out_path = "/home/dylan/Research/Results/"; // "/home/dylan/local_server/dyn0402/Research/Results/"; //
 //	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
-	string out_root_name = "11-11-19_Set_Test.root";
+	string out_root_name = "11-11-19_Set_Test_Rand.root";
 	string ratio_dist_dir_name = "Ratio_Dists";
 	string dist_2d_dir_name = "2D_Dists";
 	string nproton_dist_dir_name = "NProton_Dists";

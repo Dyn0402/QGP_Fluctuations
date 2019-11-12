@@ -71,6 +71,7 @@ void read_class() {
 		if(system(("test -d " + random_out_dir + set_dirs.back()).data())) { system(("mkdir " + random_out_dir + set_dirs.back()).data()); }
 	}
 	for(string set:set_dirs) {
+		cout << endl << endl << "Starting " + set << endl << endl;
 		vector<int> energy_list = {27, 39, 62, 19, 11, 7};
 		vector<int> divs = {2, 3, 4, 5, 6};
 		ROOT::EnableThreadSafety();
