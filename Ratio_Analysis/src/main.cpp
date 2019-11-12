@@ -39,6 +39,8 @@ void calc_stat(RatioData *data, int energy, int div, int cent, map<int, map<int,
 pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats, int cent_type = 16);
 void comp_moments();
 map<int, map<string, Measure>> get_roli_moments(string path);
+double sample_sd(vector<double> data);
+double sample_sd(vector<Measure> data);
 int get_centrality(double refmult2, int energy);
 int get_centrality9(double refmult2, int energy);
 
@@ -130,6 +132,10 @@ void analyze() {
 void analyze_CBWC() {
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
+	pair<map<int, map<int, map<int, map<string, vector<Measure>>>>>, map<int, map<int, map<int, map<int, vector<Measure>>>>>> raw_stats_sets;
+	pair<map<int, map<int, map<int, map<string, vector<Measure>>>>>, map<int, map<int, map<int, map<int, vector<Measure>>>>>> mix_stats_sets;
+	pair<map<int, map<int, map<int, map<string, vector<Measure>>>>>, map<int, map<int, map<int, map<int, vector<Measure>>>>>> divide_stats_sets;
+
 	for(int i = 0; i < 2; i++) {
 		cout << "Starting Set " + to_string(i) << endl << endl;
 		map<int, map<int, map<int, RatioData>>> data;
@@ -206,6 +212,9 @@ void analyze_CBWC() {
 				for(pair<int, map<string, Measure>> cent:div.second) {
 					for(pair<string, Measure> stat:cent.second) {
 						stats_mix_divide.first[energy.first][div.first][cent.first][stat.first] = stat.second / stats_mix.first[energy.first][div.first][cent.first][stat.first];
+						raw_stats_sets.first[energy.first][div.first][cent.first][stat.first].push_back(stat.second);
+						mix_stats_sets.first[energy.first][div.first][cent.first][stat.first].push_back(stats_mix.first[energy.first][div.first][cent.first][stat.first]);
+						divide_stats_sets.first[energy.first][div.first][cent.first][stat.first].push_back(stats_mix_divide.first[energy.first][div.first][cent.first][stat.first]);
 					}
 				}
 			}
@@ -215,6 +224,9 @@ void analyze_CBWC() {
 				for(pair<int, map<int, Measure>> cent:div.second) {
 					for(pair<int, Measure> order:cent.second) {
 						stats_mix_divide.second[energy.first][div.first][cent.first][order.first] = order.second / stats_mix.second[energy.first][div.first][cent.first][order.first];
+						raw_stats_sets.second[energy.first][div.first][cent.first][order.first].push_back(order.second);
+						mix_stats_sets.second[energy.first][div.first][cent.first][order.first].push_back(stats_mix.second[energy.first][div.first][cent.first][order.first]);
+						divide_stats_sets.second[energy.first][div.first][cent.first][order.first].push_back(stats_mix_divide.second[energy.first][div.first][cent.first][order.first]);
 					}
 				}
 			}
@@ -272,50 +284,85 @@ void analyze_CBWC() {
 		roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {6}, "roli_thesis_stats_mix_divide6");
 	}
 
-//	TDirectory *set_dir = out_root->mkdir("Combined");
-//
-//	TDirectory *data_dir = set_dir->mkdir("Raw_Data");
-//	data_dir->cd();
+
+	pair<map<int, map<int, map<int, map<string, double>>>>, map<int, map<int, map<int, map<int, double>>>>> raw_stats_sd;
+	pair<map<int, map<int, map<int, map<string, double>>>>, map<int, map<int, map<int, map<int, double>>>>> mix_stats_sd;
+	pair<map<int, map<int, map<int, map<string, double>>>>, map<int, map<int, map<int, map<int, double>>>>> divide_stats_sd;
+
+	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> raw_stats_single;
+	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> mix_stats_single;
+	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> divide_stats_single;
+	int single_index = 0;
+
+
+	// Calculate standard deviations for systematics
+	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:raw_stats_sets.first) {
+		for(pair<int, map<int, map<string, Measure>>> div:energy.second) {
+			for(pair<int, map<string, Measure>> cent:div.second) {
+				for(pair<string, Measure> stat:cent.second) {
+					raw_stats_sd.first[energy.first][div.first][cent.first][stat.first] = sample_sd(raw_stats_sets.first[energy.first][div.first][cent.first][stat.first]);
+					mix_stats_sd.first[energy.first][div.first][cent.first][stat.first] = sample_sd(mix_stats_sets.first[energy.first][div.first][cent.first][stat.first]);
+					divide_stats_sd.first[energy.first][div.first][cent.first][stat.first] = sample_sd(divide_stats_sets.first[energy.first][div.first][cent.first][stat.first]);
+					raw_stats_single.first[energy.first][div.first][cent.first][stat.first] = raw_stats_sets.first[energy.first][div.first][cent.first][stat.first][single_index];
+					mix_stats_single.first[energy.first][div.first][cent.first][stat.first] = mix_stats_sets.first[energy.first][div.first][cent.first][stat.first][single_index];
+					divide_stats_single.first[energy.first][div.first][cent.first][stat.first] = divide_stats_sets.first[energy.first][div.first][cent.first][stat.first][single_index];
+				}
+			}
+		}
+	}
+	for(pair<int, map<int, map<int, map<int, Measure>>>> energy:raw_stats_sets.second) {
+		for(pair<int, map<int, map<int, Measure>>> div:energy.second) {
+			for(pair<int, map<int, Measure>> cent:div.second) {
+				for(pair<int, Measure> order:cent.second) {
+					raw_stats_sd.second[energy.first][div.first][cent.first][order.first] = sample_sd(raw_stats_sets.second[energy.first][div.first][cent.first][order.first]);
+					mix_stats_sd.second[energy.first][div.first][cent.first][order.first] = sample_sd(mix_stats_sets.second[energy.first][div.first][cent.first][order.first]);
+					divide_stats_sd.second[energy.first][div.first][cent.first][order.first] = sample_sd(divide_stats_sets.second[energy.first][div.first][cent.first][order.first]);
+					raw_stats_single.second[energy.first][div.first][cent.first][order.first] = raw_stats_sets.second[energy.first][div.first][cent.first][order.first][single_index];
+					mix_stats_single.second[energy.first][div.first][cent.first][order.first] = mix_stats_sets.second[energy.first][div.first][cent.first][order.first][single_index];
+					divide_stats_single.second[energy.first][div.first][cent.first][order.first] = divide_stats_sets.second[energy.first][div.first][cent.first][order.first][single_index];
+				}
+			}
+		}
+	}
+
+	TDirectory *set_dir = out_root->mkdir("Combined");
+
+	TDirectory *data_dir = set_dir->mkdir("Raw_Data");
+	data_dir->cd();
 //	cout << endl << "Making cumulant plots..." << endl;
 //	make_cumulant_plots(data_dir, stats.second);
 //	cout << endl << "Making stat plots..." << endl;
 //	make_stat_plots(data_dir, stats.first);
-//	cout << endl << "Making canvases..." << endl;
+	cout << endl << "Making canvases..." << endl;
 //	make_canvas_plots(data_dir, data_cent, stats.second, stats.first);
-//	roli_thesis_stats(stats.first, {15, 13, 11, 9}, {2,3,4,5,6}, "roli_thesis_stats");
-//
-//
-//	TDirectory *mix_dir = set_dir->mkdir("Mix_Data");
-//	mix_dir->cd();
-//	cout << endl << "Making ratio distribution plots..." << endl;
-//	make_ratio_dist_plots(mix_dir, data_cent_mix);
-//	cout << endl << "Making 2d distribution plots..." << endl;
-//	make_2d_dist_plots(mix_dir, data_cent_mix);
-//	cout << endl << "Making proton distribution plots..." << endl;
-//	make_proton_dist_plots(mix_dir, data_cent_mix);
+	roli_thesis_stats(raw_stats_single.first, raw_stats_sd.first, {15, 13, 11, 9}, {2,3,4,5,6}, "roli_thesis_stats");
+
+
+	TDirectory *mix_dir = set_dir->mkdir("Mix_Data");
+	mix_dir->cd();
 //	cout << endl << "Making cumulant plots..." << endl;
 //	make_cumulant_plots(mix_dir, stats_mix.second);
 //	cout << endl << "Making stat plots..." << endl;
 //	make_stat_plots(mix_dir, stats_mix.first);
-//	cout << endl << "Making canvases..." << endl;
+	cout << endl << "Making canvases..." << endl;
 //	make_canvas_plots(mix_dir, data_cent_mix, stats_mix.second, stats_mix.first);
-//	roli_thesis_stats(stats_mix.first, {15, 13, 11, 9}, {2,3,4,5,6}, "roli_thesis_stats_mix");
-//
-//
-//	TDirectory *mix_div_dir = set_dir->mkdir("Mix_Divded_Data");
-//	mix_div_dir->cd();
+	roli_thesis_stats(mix_stats_single.first, mix_stats_sd.first, {15, 13, 11, 9}, {2,3,4,5,6}, "roli_thesis_stats_mix");
+
+
+	TDirectory *mix_div_dir = set_dir->mkdir("Mix_Divded_Data");
+	mix_div_dir->cd();
 //	cout << endl << "Making cumulant plots..." << endl;
 //	make_cumulant_plots(mix_div_dir, stats_mix_divide.second);
 //	cout << endl << "Making stat plots..." << endl;
 //	make_stat_plots(mix_div_dir, stats_mix_divide.first);
-//	cout << endl << "Making canvases..." << endl;
+	cout << endl << "Making canvases..." << endl;
 //	make_canvas_plots(mix_div_dir, data_cent_mix, stats_mix_divide.second, stats_mix_divide.first);
-//	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {3,4,5,6}, "roli_thesis_stats_mix_divide");
-//	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {2}, "roli_thesis_stats_mix_divide2");
-//	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {3}, "roli_thesis_stats_mix_divide3");
-//	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {4}, "roli_thesis_stats_mix_divide4");
-//	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {5}, "roli_thesis_stats_mix_divide5");
-//	roli_thesis_stats(stats_mix_divide.first, {15, 13, 11, 9}, {6}, "roli_thesis_stats_mix_divide6");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {3,4,5,6}, "roli_thesis_stats_mix_divide");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {2}, "roli_thesis_stats_mix_divide2");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {3}, "roli_thesis_stats_mix_divide3");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {4}, "roli_thesis_stats_mix_divide4");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {5}, "roli_thesis_stats_mix_divide5");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {6}, "roli_thesis_stats_mix_divide6");
 
 	out_root->Close();
 }
@@ -618,6 +665,28 @@ map<int, map<string, Measure>> get_roli_moments(string path) {
 	return(moments);
 }
 
+
+double sample_sd(vector<double> data) {
+	double mean = 0.0, sd = 0.0;
+	for(double element:data) { mean += element; }
+	mean /= (int)data.size();
+	for(double element:data) { sd += pow(element - mean, 2); }
+	sd = pow(sd / ((int)data.size() - 1), 0.5);
+
+	return(sd);
+}
+
+
+double sample_sd(vector<Measure> data) {
+	vector<double> val_vec;
+	for(Measure element:data) {
+		val_vec.push_back(element.get_val());
+	}
+
+	double sd = sample_sd(val_vec);
+
+	return(sd);
+}
 
 
 //TH1F* get_roli_ratio_dist(string path) {
