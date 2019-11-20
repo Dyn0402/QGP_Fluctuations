@@ -69,7 +69,7 @@ struct cut_values {
 	double min_nsigma = -2.0;
 	double max_nsigma = 2.0;
 	double min_dca = 0.0;
-	double max_dca = 2.0;
+	double max_dca = 1.0; //2.0;
 	double min_m2 = 0.8;
 	double max_m2 = 1.0;
 	double min_pt_for_m = 0.8;

@@ -227,7 +227,13 @@ void TreeReader::read_tree(TTree* tree) {
 				}
 
 				// If mixed/rand flagged append event to mix/rand object.
-				if(mixed_roli) { mix_roli.append_event(good_proton_angles, cent9, event.ref_mult2->GetValue(), event.event_plane->GetValue()); }
+				if(mixed_roli) {
+					if(cbwc) {
+						mix_roli.append_event(good_proton_angles, event.ref_mult2->GetValue(), event.event_plane->GetValue(), event.vz->GetValue());
+					} else {
+						mix_roli.append_event(good_proton_angles, cent, event.event_plane->GetValue(), event.vz->GetValue());
+					}
+				}
 				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
 				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.ref_mult2->GetValue(), trand); }
 
