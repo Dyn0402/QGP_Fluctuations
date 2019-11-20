@@ -597,12 +597,12 @@ void analyze_no_CBWC() {
 //	make_stat_plots(mix_div_dir, stats_mix_divide.first);
 	cout << endl << "Making canvases..." << endl;
 //	make_canvas_plots(mix_div_dir, data_cent_mix, stats_mix_divide.second, stats_mix_divide.first);
-	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {3,4,5,6}, "roli_thesis_stats_mix_divide");
-	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {2}, "roli_thesis_stats_mix_divide2");
-	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {3}, "roli_thesis_stats_mix_divide3");
-	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {4}, "roli_thesis_stats_mix_divide4");
-	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {5}, "roli_thesis_stats_mix_divide5");
-	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 13, 11, 9}, {6}, "roli_thesis_stats_mix_divide6");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 14, 13, 2}, {3,4,5,6}, "roli_thesis_stats_mix_divide");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 14, 13, 2}, {2}, "roli_thesis_stats_mix_divide2");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 14, 13, 2}, {3}, "roli_thesis_stats_mix_divide3");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 14, 13, 2}, {4}, "roli_thesis_stats_mix_divide4");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 14, 13, 2}, {5}, "roli_thesis_stats_mix_divide5");
+	roli_thesis_stats(divide_stats_single.first, divide_stats_sd.first, {15, 14, 13, 2}, {6}, "roli_thesis_stats_mix_divide6");
 
 	out_root->Close();
 }

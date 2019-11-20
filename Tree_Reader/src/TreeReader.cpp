@@ -220,7 +220,7 @@ void TreeReader::read_tree(TTree* tree) {
 
 				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
 					double event_plane = event.event_plane->GetValue();
-					cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
+//					cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
 					good_proton_angles = rotate_angles(good_proton_angles, -event_plane);
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 					good_proton_angles = rotate_angles(good_proton_angles, trand->Rndm() * 2 * M_PI);
