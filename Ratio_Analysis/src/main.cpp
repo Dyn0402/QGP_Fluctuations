@@ -376,7 +376,7 @@ void analyze_no_CBWC() {
 	pair<map<int, map<int, map<int, map<string, vector<Measure>>>>>, map<int, map<int, map<int, map<int, vector<Measure>>>>>> mix_stats_sets;
 	pair<map<int, map<int, map<int, map<string, vector<Measure>>>>>, map<int, map<int, map<int, map<int, vector<Measure>>>>>> divide_stats_sets;
 
-	for(int i = 11; i < 12; i++) {
+	for(int i = 0; i < 10; i++) {
 		cout << "Starting Set " + to_string(i) << endl << endl;
 		map<int, map<int, map<int, RatioData>>> data;
 		map<int, map<int, map<int, RatioData>>> data_mix;
@@ -476,18 +476,19 @@ void analyze_no_CBWC() {
 
 		TDirectory *data_dir = set_dir->mkdir("Raw_Data");
 		data_dir->cd();
-		cout << endl << "Making ratio distribution plots..." << endl;
-		make_ratio_dist_plots(data_dir, data);
-		cout << endl << "Making 2d distribution plots..." << endl;
-		make_2d_dist_plots(data_dir, data);
-		cout << endl << "Making proton distribution plots..." << endl;
-		make_proton_dist_plots(data_dir, data);
+//		cout << endl << "Making ratio distribution plots..." << endl;
+//		make_ratio_dist_plots(data_dir, data);
+//		cout << endl << "Making 2d distribution plots..." << endl;
+//		make_2d_dist_plots(data_dir, data);
+//		cout << endl << "Making proton distribution plots..." << endl;
+//		make_proton_dist_plots(data_dir, data);
 		cout << endl << "Making cumulant plots..." << endl;
 		make_cumulant_plots(data_dir, stats.second);
 		cout << endl << "Making stat plots..." << endl;
 		make_stat_plots(data_dir, stats.first);
 		cout << endl << "Making canvases..." << endl;
-		make_canvas_plots(data_dir, data, stats.second, stats.first);
+//		make_canvas_plots(data_dir, data, stats.second, stats.first);
+		data_dir->cd();
 		roli_thesis_stats(stats.first, {15, 14, 13, 2}, {2,3,4,5,6}, "roli_thesis_stats");
 		roli_thesis_cumulants(stats.second, {15, 14, 13, 2}, {2,3,4,5,6}, "roli_thesis_cumulants");
 
@@ -500,12 +501,13 @@ void analyze_no_CBWC() {
 //		make_2d_dist_plots(mix_dir, data_mix);
 //		cout << endl << "Making proton distribution plots..." << endl;
 //		make_proton_dist_plots(mix_dir, data_mix);
-//		cout << endl << "Making cumulant plots..." << endl;
+		cout << endl << "Making cumulant plots..." << endl;
 		make_cumulant_plots(mix_dir, stats_mix.second);
 		cout << endl << "Making stat plots..." << endl;
 		make_stat_plots(mix_dir, stats_mix.first);
 		cout << endl << "Making canvases..." << endl;
-		make_canvas_plots(mix_dir, data_mix, stats_mix.second, stats_mix.first);
+//		make_canvas_plots(mix_dir, data_mix, stats_mix.second, stats_mix.first);
+		mix_dir->cd();
 		roli_thesis_stats(stats_mix.first, {15, 14, 13, 2}, {2,3,4,5,6}, "roli_thesis_stats_mix");
 		roli_thesis_cumulants(stats_mix.second, {15, 14, 13, 2}, {2,3,4,5,6}, "roli_thesis_cumulants_mix");
 
@@ -517,7 +519,8 @@ void analyze_no_CBWC() {
 		cout << endl << "Making stat plots..." << endl;
 		make_stat_plots(mix_div_dir, stats_mix_divide.first);
 		cout << endl << "Making canvases..." << endl;
-		make_canvas_plots(mix_div_dir, data_mix, stats_mix_divide.second, stats_mix_divide.first);
+//		make_canvas_plots(mix_div_dir, data_mix, stats_mix_divide.second, stats_mix_divide.first);
+		mix_div_dir->cd();
 		roli_thesis_stats(stats_mix_divide.first, {15, 14, 13, 2}, {3,4,5,6}, "roli_thesis_stats_mix_divide");
 		roli_thesis_stats(stats_mix_divide.first, {15, 14, 13, 2}, {2}, "roli_thesis_stats_mix_divide2");
 		roli_thesis_stats(stats_mix_divide.first, {15, 14, 13, 2}, {3}, "roli_thesis_stats_mix_divide3");
