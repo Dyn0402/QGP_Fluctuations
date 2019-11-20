@@ -63,6 +63,8 @@ void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>>
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, vector<int> cents, vector<int> divs, string name);
 void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, vector<int> cents, vector<int> divs, string name);
+void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, vector<int> cents, vector<int> divs, string name);
+void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<int, double>>>> sys, vector<int> cents, vector<int> divs, string name);
 
 void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
 void make_comp_stat_plot_hack(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
