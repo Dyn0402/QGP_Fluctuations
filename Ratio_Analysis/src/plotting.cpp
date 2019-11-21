@@ -605,7 +605,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 			mg->GetYaxis()->SetLabelSize(0.06);
 			if(can_index % 4 == 1) {
-				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitle((to_string((9-cent)*10)+"-"+to_string((9-cent+1)*10)+"%").data());
 				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
 			}
 			else { gPad->SetLeftMargin(0.08); }
@@ -668,7 +668,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 			mg->GetYaxis()->SetLabelSize(0.06);
 			if(can_index % (int)stat_names.size() == 1) {
-				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitle((to_string((9-cent)*10)+"-"+to_string((9-cent+1)*10)+"%").data());
 				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
 			}
 			else { gPad->SetLeftMargin(0.08); }
@@ -736,7 +736,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 			mg->GetYaxis()->SetLabelSize(0.06);
 			if(can_index % (int)stat_names.size() == 1) {
-				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitle((to_string((9-cent)*10)+"-"+to_string((9-cent+1)*10)+"%").data());
 				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
 			}
 			else { gPad->SetLeftMargin(0.08); }
@@ -808,7 +808,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 			mg->GetYaxis()->SetLabelSize(0.06);
 			if(can_index % (int)stat_names.size() == 1) {
-				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitle((to_string((9-cent)*10)+"-"+to_string((9-cent+1)*10)+"%").data());
 				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
 			}
 			else { gPad->SetLeftMargin(0.08); }
@@ -880,7 +880,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 			mg->GetYaxis()->SetLabelSize(0.06);
 			if(can_index % 4 == 1) {
-				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitle((to_string((9-cent)*10)+"-"+to_string((9-cent+1)*10)+"%").data());
 				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
 			}
 			else { gPad->SetLeftMargin(0.08); }
@@ -942,7 +942,7 @@ void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumul
 			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 			mg->GetYaxis()->SetLabelSize(0.06);
 			if(can_index % 4 == 1) {
-				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitle((to_string((9-cent)*10)+"-"+to_string((9-cent+1)*10)+"%").data());
 				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
 			}
 			else { gPad->SetLeftMargin(0.08); }
@@ -1009,7 +1009,7 @@ void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumul
 			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 			mg->GetYaxis()->SetLabelSize(0.06);
 			if(can_index % 4 == 1) {
-				mg->GetYaxis()->SetTitle((to_string((15-cent)*5)+"-"+to_string((15-cent+1)*5)+"%").data());
+				mg->GetYaxis()->SetTitle((to_string((9-cent)*10)+"-"+to_string((9-cent+1)*10)+"%").data());
 				mg->GetYaxis()->SetTitleSize(0.1); mg->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.2);
 			}
 			else { gPad->SetLeftMargin(0.08); }

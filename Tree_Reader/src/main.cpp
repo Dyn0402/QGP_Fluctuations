@@ -67,7 +67,7 @@ void read_class() {
 	string mix_roli_out_dir = "/home/dylan/Research/Data_Mix_Roli/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 	vector<string> set_dirs;
-	for(int set = 0; set < 20; set++) {
+	for(int set = 10; set < 20; set++) {
 		set_dirs.push_back("Set" + to_string(set) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
@@ -104,7 +104,7 @@ void read_class() {
 			reader.mix_roli.set_min_events(150);
 			reader.mix_roli.set_mixes_per_event(10);
 			if(energy <= 11) { reader.mix_roli.set_mixes_per_event(50); }
-			reader.set_rand_data(true);
+			reader.set_rand_data(false);
 			reader.random.set_divs(divs);
 			reader.random.set_out_path(random_out_dir+set+to_string(energy)+"GeV/");
 			threads.push_back(thread(&TreeReader::read_trees, reader));

@@ -376,7 +376,7 @@ void analyze_no_CBWC() {
 	vector<string> cumulant_names = {"cumulant 1", "cumulant 2", "cumulant 3", "cumulant 4"};
 	vector<string> raw_moment_names = {"raw moment 1", "raw moment 2", "raw moment 3", "raw moment 4"};
 	vector<string> central_moment_names = {"central moment 1", "central moment 2", "central moment 3", "central moment 4"};
-	vector<int> centralities = {15, 14, 10, 2};
+	vector<int> centralities = {9, 8, 5, 2};
 
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
