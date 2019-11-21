@@ -67,8 +67,8 @@ void read_class() {
 	string mix_roli_out_dir = "/home/dylan/Research/Data_Mix_Roli/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 	vector<string> set_dirs;
-	for(int i = 0; i < 10; i++) {
-		set_dirs.push_back("Set" + to_string(i) + "/");
+	for(int set = 0; set < 20; set++) {
+		set_dirs.push_back("Set" + to_string(set) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_roli_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_roli_out_dir + set_dirs.back()).data()); }
@@ -83,13 +83,15 @@ void read_class() {
 		for(int energy:energy_list) {
 			TreeReader reader(energy);
 			reader.set_cbwc(false);
+			reader.set_cent_binning(9);
 			reader.set_rotate_random(false);
 			reader.set_in_path("/home/dylan/Research/Trees/");
 			reader.set_out_path(out_dir+set);
 			reader.set_qa_path(out_dir+set+to_string(energy)+"GeV/");
 			reader.set_qa_name("QA_");
 			reader.set_divs(divs);
-			reader.set_event_plane(false);
+			if(stoi(set.substr(set.find('t')+1, set.find('/')-set.find('t')-1)) < 10) { reader.set_event_plane(true); }
+			else { reader.set_event_plane(false); }
 			reader.set_mixed(false);
 //			reader.mix.set_divs(divs);
 //			reader.mix.set_out_path(mix_out_dir+set+to_string(energy)+"GeV/");
@@ -99,7 +101,9 @@ void read_class() {
 			reader.mix_roli.set_divs(divs);
 			reader.mix_roli.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");
 			reader.mix_roli.set_max_events(250);
+			reader.mix_roli.set_min_events(150);
 			reader.mix_roli.set_mixes_per_event(10);
+			if(energy <= 11) { reader.mix_roli.set_mixes_per_event(50); }
 			reader.set_rand_data(true);
 			reader.random.set_divs(divs);
 			reader.random.set_out_path(random_out_dir+set+to_string(energy)+"GeV/");

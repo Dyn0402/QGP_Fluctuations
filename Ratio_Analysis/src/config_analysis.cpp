@@ -33,7 +33,7 @@ namespace analysis {
 namespace plot {
 	string out_path = "/home/dylan/Research/Results/"; // "/home/dylan/local_server/dyn0402/Research/Results/"; //
 //	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
-	string out_root_name = "11-20-19_noCBWC.root";
+	string out_root_name = "11-20-19_with_ratio_dists.root";
 	string ratio_dist_dir_name = "Ratio_Dists";
 	string dist_2d_dir_name = "2D_Dists";
 	string nproton_dist_dir_name = "NProton_Dists";
@@ -55,7 +55,7 @@ namespace plot {
 //	vector<int> div_marker_styles = {8, 8, 28, 24, 25, 26, 27};
 	vector<int> div_marker_styles = {8, 8, 34, 20, 21, 22, 33};
 	vector<int> div_marker_width = {2, 2, 2, 2, 2, 2, 2};
-	vector<int> div_marker_colors = {5, 5, 6, 1, 2, 8, 4};
+	vector<int> div_marker_colors = {5, 5, 6, 1, 2, 8, 4, 5};
 	vector<double> div_marker_sizes = {1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2};
 
 	map<int, int> energy_marker_styles = {{7,24}, {11,25}, {19,26}, {27,27}, {39,28}, {62,30}};

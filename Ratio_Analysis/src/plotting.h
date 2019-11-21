@@ -61,8 +61,14 @@ void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumul
 void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat, int cent, string name);
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
+
+void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
+void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
+void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
+
 void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, vector<int> cents, vector<int> divs, string name);
 void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, vector<int> cents, vector<int> divs, string name);
+void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<int> cents, vector<int> divs, string name);
 void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, vector<int> cents, vector<int> divs, string name);
 void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<int, double>>>> sys, vector<int> cents, vector<int> divs, string name);
 
