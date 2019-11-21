@@ -21,12 +21,14 @@ public:
 
 	// Getters
 	int get_max_events();
+	int get_min_events();
 	int get_mixes_per_event();
 	string get_out_path();
 	vector<int> get_divs();
 
 	// Setters
 	void set_max_events(int max_events);
+	void set_min_events(int min_events);
 	void set_mixes_per_event(int mixes_per_event);
 	void set_out_path(string path);
 	void set_divs(vector<int>);
@@ -41,6 +43,7 @@ public:
 
 private:
 	// Attributes
+	int min_events;
 	int max_events;
 	int mixes_per_event;
 	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]

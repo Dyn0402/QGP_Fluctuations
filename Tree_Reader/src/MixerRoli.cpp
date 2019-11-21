@@ -19,7 +19,8 @@
 // Structors
 
 MixerRoli::MixerRoli() {
-	max_events = 100;
+	min_events = 150;
+	max_events = 250;
 	mixes_per_event = 1;
 }
 
@@ -28,6 +29,10 @@ MixerRoli::MixerRoli() {
 
 int MixerRoli::get_max_events() {
 	return(max_events);
+}
+
+int MixerRoli::get_min_events() {
+	return(min_events);
 }
 
 int MixerRoli::get_mixes_per_event() {
@@ -49,6 +54,10 @@ void MixerRoli::set_max_events(int max_events) {
 	this->max_events = max_events;
 }
 
+void MixerRoli::set_min_events(int min_events) {
+	this->min_events = min_events;
+}
+
 void MixerRoli::set_mixes_per_event(int mixes_per_event) {
 	this->mixes_per_event = mixes_per_event;
 }
@@ -68,14 +77,18 @@ void MixerRoli::set_divs(vector<int> divs) {
 void MixerRoli::append_event_CBWC(vector<double> angles, int ref_mult2, double event_plane, double vz) {
 	int ep_bin = (int)((10*event_plane)/M_PI);  // Convert event_plane to bin like Roli did.
 	int vz_bin = get_vz_bin(vz);
+
 	if((int)this->angles[ref_mult2][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
 		int index = rand() % max_events;
 		this->angles[ref_mult2][ep_bin][vz_bin][index] = angles;
+	} else {  // Append event if there are not enough.
+		this->angles[ref_mult2][ep_bin][vz_bin].push_back(angles);
+	}
+
+	if((int)this->angles[ref_mult2][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
 		for(int i=0; i<mixes_per_event; i++) {
 			get_mixed((int)angles.size(), ref_mult2, ep_bin, vz_bin);
 		}
-	} else {  // Append event if there are not enough.
-		this->angles[ref_mult2][ep_bin][vz_bin].push_back(angles);
 	}
 }
 
@@ -107,11 +120,14 @@ void MixerRoli::append_event(vector<double> angles, int cent, double event_plane
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
 		int index = rand() % max_events;
 		this->angles[cent][ep_bin][vz_bin][index] = angles;
+	} else {  // Append event if there are not enough.
+		this->angles[cent][ep_bin][vz_bin].push_back(angles);
+	}
+
+	if((int)this->angles[cent][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
 		for(int i=0; i<mixes_per_event; i++) {
 			get_mixed(cent, (int)angles.size(), ep_bin, vz_bin);
 		}
-	} else {  // Append event if there are not enough.
-		this->angles[cent][ep_bin][vz_bin].push_back(angles);
 	}
 }
 
@@ -157,12 +173,12 @@ int MixerRoli::get_vz_bin(double vz) {
 	return(bin);
 }
 
-// Test
+// Ensure same angle is not used twice for a single mixed event.
 pair<int, int> MixerRoli::generate_index(vector<pair<int, int>> used_angles, int cent_ref, int ep_bin, int vz_bin) {
 	bool unique = false;
 	int event_index, angle_index;
 	while(!unique){
-		event_index = rand() % max_events;
+		event_index = rand() % (int)angles[cent_ref][ep_bin][vz_bin].size();
 		angle_index = rand() % (int)angles[cent_ref][ep_bin][vz_bin][event_index].size();
 		unique = true;
 		for(pair<int, int> angle:used_angles) {
