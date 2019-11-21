@@ -93,6 +93,7 @@ public:
 	bool get_mixed();
 	bool get_mixed_roli();
 	bool get_rand_data();
+	int get_cent_binning();
 
 	// Setters
 	void set_in_path(string path);
@@ -107,6 +108,7 @@ public:
 	void set_mixed(bool mixed);
 	void set_mixed_roli(bool mixed_roli);
 	void set_rand_data(bool rand_data);
+	void set_cent_binning(int cent_binning);
 
 	// Doers
 	void read_trees();
@@ -144,6 +146,8 @@ private:
 	bool mixed_roli;
 	bool rand_data;
 
+	int cent_binning;
+
 	// Doers
 	void read_tree(TTree* tree);
 
@@ -155,7 +159,7 @@ private:
 	bool check_good_run(int run);
 	bool check_proton_good(proton_leaves protons, int proton_index);
 
-	int get_centrality(int refmult2, int energy);
+	int get_centrality16(int refmult2, int energy);
 	int get_centrality9(int refmult2, int energy);
 	bool check_slope(int btof_mult, int ref_mult, int energy);
 

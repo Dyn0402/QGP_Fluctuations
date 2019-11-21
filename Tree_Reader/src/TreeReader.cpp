@@ -49,6 +49,8 @@ TreeReader::TreeReader(int energy) {
 	rand_data = false;
 	this->energy = energy;
 
+	cent_binning = 9;
+
 	define_qa();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
@@ -83,6 +85,10 @@ bool TreeReader::get_mixed_roli() {
 
 bool TreeReader::get_rand_data() {
 	return(rand_data);
+}
+
+int TreeReader::get_cent_binning() {
+	return(cent_binning);
 }
 
 
@@ -136,6 +142,10 @@ void TreeReader::set_rand_data(bool rand_data) {
 	this->rand_data = rand_data;
 }
 
+void TreeReader::set_cent_binning(int cent_binning) {
+	this->cent_binning = cent_binning;
+}
+
 
 // Doers
 
@@ -146,12 +156,6 @@ void TreeReader::read_trees() {
 
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
-
-	if(event_plane) { // If event_plane flagged, need to flatten event plane before using raw values.
-		for(string path:in_files) {
-			cout << "Need to implement event plane flattening" << endl;  // Need to implement
-		}
-	}
 
 	for(string path:in_files) {
 
@@ -201,7 +205,7 @@ void TreeReader::read_tree(TTree* tree) {
 			}
 
 			// Get centrality bin for event from ref_mult2 value
-			int cent = get_centrality(event.ref_mult2->GetValue(), energy);
+			int cent16 = get_centrality16(event.ref_mult2->GetValue(), energy);
 			int cent9 = get_centrality9(event.ref_mult2->GetValue(), energy);
 			int cent2 = -2;
 			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
@@ -209,12 +213,12 @@ void TreeReader::read_tree(TTree* tree) {
 				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
 				cent2 = refmult2CorrUtil->getCentralityBin16();
 			} //else { cout << "Refmult said was a bad run" << endl; }
-			cent_hist.Fill(cent, cent2);
+			cent_hist.Fill(cent16, cent2);
 
 			// If there are enough good protons, calculate ratios for each division and save to data.
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
 
-				cent16_events.Fill(cent);
+				cent16_events.Fill(cent16);
 				cent9_events.Fill(cent9);
 				event_cut_hist.Fill(4);
 
@@ -224,6 +228,13 @@ void TreeReader::read_tree(TTree* tree) {
 					good_proton_angles = rotate_angles(good_proton_angles, -event_plane);
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 					good_proton_angles = rotate_angles(good_proton_angles, trand->Rndm() * 2 * M_PI);
+				}
+
+				int cent;
+				if(cent_binning == 16) {
+					cent = cent16;
+				} else {
+					cent = cent9;
 				}
 
 				// If mixed/rand flagged append event to mix/rand object.
@@ -279,6 +290,7 @@ void TreeReader::write_info_file() {
 		out << "mixed: " << boolalpha << mixed << endl;
 		out << "mixed_roli: " << boolalpha << mixed_roli << endl;
 		out << "rand_data: " << boolalpha << rand_data << endl;
+		out << "cent_binning: " << cent_binning << endl;
 
 		out << "min_p: " << to_string(cut.min_p) << endl;
 		out << "max_p: " << to_string(cut.max_p) << endl;
@@ -601,7 +613,7 @@ void TreeReader::reset_out_dir() {
 
 //Taken directly from Roli.
 //Given energy and refmult2, will return centrality of event.
-int TreeReader::get_centrality(int refmult2, int energy){
+int TreeReader::get_centrality16(int refmult2, int energy){
 
     int cent = -1;
 
