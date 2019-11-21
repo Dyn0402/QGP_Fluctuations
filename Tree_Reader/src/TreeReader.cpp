@@ -207,19 +207,21 @@ void TreeReader::read_tree(TTree* tree) {
 			// Get centrality bin for event from ref_mult2 value
 			int cent16 = get_centrality16(event.ref_mult2->GetValue(), energy);
 			int cent9 = get_centrality9(event.ref_mult2->GetValue(), energy);
-			int cent2 = -2;
-			if(!refmult2CorrUtil->isBadRun(event.run->GetValue()) || true) { //Used || true as hack to include bad runs. Fix.
+			int cent16_corr = -2, cent9_corr = -2;
+			if(!refmult2CorrUtil->isBadRun(event.run->GetValue())) {
 				refmult2CorrUtil->init(event.run->GetValue());
 				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
-				cent2 = refmult2CorrUtil->getCentralityBin16();
-			} //else { cout << "Refmult said was a bad run" << endl; }
-			cent_hist.Fill(cent16, cent2);
+				cent16_corr = refmult2CorrUtil->getCentralityBin16();
+				cent9_corr = refmult2CorrUtil->getCentralityBin9();
+			} else { cout << "Refmult said was a bad run" << endl; }
+			if(cent_binning == 16) { cent_hist.Fill(cent16, cent16_corr); }
+			else { cent_hist.Fill(cent9, cent9_corr); }
 
 			// If there are enough good protons, calculate ratios for each division and save to data.
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
 
-				cent16_events.Fill(cent16);
-				cent9_events.Fill(cent9);
+				cent16_events.Fill(cent16_corr);
+				cent9_events.Fill(cent9_corr);
 				event_cut_hist.Fill(4);
 
 				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
@@ -232,9 +234,9 @@ void TreeReader::read_tree(TTree* tree) {
 
 				int cent;
 				if(cent_binning == 16) {
-					cent = cent16;
+					cent = cent16_corr;
 				} else {
-					cent = cent9;
+					cent = cent9_corr;
 				}
 
 				// If mixed/rand flagged append event to mix/rand object.
@@ -370,9 +372,10 @@ bool TreeReader::check_event_good(event_leaves event, proton_leaves proton, int 
 //Check the list of bad runs for input run.
 //If input run is contained in bad run list, return false (bad run) else return true (good run).
 bool TreeReader::check_good_run(int run) {
-	bool good_run = find(cut.bad_runs.begin(), cut.bad_runs.end(), run) == cut.bad_runs.end();
+	bool list_good_run = find(cut.bad_runs.begin(), cut.bad_runs.end(), run) == cut.bad_runs.end();
+	bool ref_good_run = !refmult2CorrUtil->isBadRun(run);
 
-	return(good_run);
+	return(list_good_run * ref_good_run);
 }
 
 
