@@ -67,7 +67,7 @@ void read_class() {
 	string mix_roli_out_dir = "/home/dylan/Research/Data_Mix_Roli/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 	vector<string> set_dirs;
-	for(int set = 0; set <= 0; set++) {
+	for(int set = 3; set <= 3; set++) {
 		set_dirs.push_back("Set" + to_string(set) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
@@ -76,6 +76,7 @@ void read_class() {
 	}
 	for(string set:set_dirs) {
 		cout << endl << endl << "Starting " + set << endl << endl;
+		int set_num = stoi(set.substr(set.find('t')+1, set.find('/')-set.find('t')-1));
 		vector<int> energy_list = {27, 39, 62, 19, 11, 7};
 		vector<int> divs = {2, 3, 4, 5, 6};
 		ROOT::EnableThreadSafety();
@@ -84,19 +85,27 @@ void read_class() {
 			TreeReader reader(energy);
 			reader.set_cbwc(false);
 			reader.set_cent_binning(9);
-			reader.set_rotate_random(false);
 			reader.set_in_path("/home/dylan/Research/Trees/");
 			reader.set_out_path(out_dir+set);
 			reader.set_qa_path(out_dir+set+to_string(energy)+"GeV/");
 			reader.set_qa_name("QA_");
 			reader.set_divs(divs);
-			if(stoi(set.substr(set.find('t')+1, set.find('/')-set.find('t')-1)) < 10) { reader.set_event_plane(true); }
-			else { reader.set_event_plane(false); }
+//			if(set_num < 6) { reader.set_event_plane(true); }
+//			else { reader.set_event_plane(false); }
+//			if(set_num >= 6 && set_num < 12) { reader.set_rotate_random(true); }
+//			else { reader.set_rotate_random(false); }
 			reader.set_mixed(false);
 //			reader.mix.set_divs(divs);
 //			reader.mix.set_out_path(mix_out_dir+set+to_string(energy)+"GeV/");
 //			reader.mix.set_max_events(250);
 //			reader.mix.set_use_leftover(true);
+
+//			if(set_num == 5 || set_num == 11) { reader.mix_rotate = true; }
+//			else { reader.mix_rotate = false; }
+
+			reader.set_event_plane(true);
+			reader.mix_rotate = true;
+
 			reader.set_mixed_roli(true);
 			reader.mix_roli.set_divs(divs);
 			reader.mix_roli.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");

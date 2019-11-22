@@ -122,6 +122,8 @@ public:
 	MixerRoli mix_roli;
 	Randomizer random;
 
+	bool mix_rotate;
+
 private:
 	// Attributes
 	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]

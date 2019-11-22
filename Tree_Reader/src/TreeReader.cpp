@@ -49,6 +49,8 @@ TreeReader::TreeReader(int energy) {
 	rand_data = false;
 	this->energy = energy;
 
+	mix_rotate = false;
+
 	cent_binning = 9;
 
 	define_qa();
@@ -224,12 +226,14 @@ void TreeReader::read_tree(TTree* tree) {
 				cent9_events.Fill(cent9_corr);
 				event_cut_hist.Fill(4);
 
+				double rotate_angle;
 				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
-					double event_plane = event.event_plane->GetValue();
+					rotate_angle = -event.event_plane->GetValue();
 //					cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
-					good_proton_angles = rotate_angles(good_proton_angles, -event_plane);
+					good_proton_angles = rotate_angles(good_proton_angles, rotate_angle);
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
-					good_proton_angles = rotate_angles(good_proton_angles, trand->Rndm() * 2 * M_PI);
+					rotate_angle = trand->Rndm() * 2 * M_PI;
+					good_proton_angles = rotate_angles(good_proton_angles, rotate_angle);
 				}
 
 				int cent;
@@ -242,9 +246,13 @@ void TreeReader::read_tree(TTree* tree) {
 				// If mixed/rand flagged append event to mix/rand object.
 				if(mixed_roli) {
 					if(cbwc) {
-						mix_roli.append_event(good_proton_angles, event.ref_mult2->GetValue(), event.event_plane->GetValue(), event.vz->GetValue());
+						mix_roli.append_event_CBWC(good_proton_angles, event.ref_mult2->GetValue(), event.event_plane->GetValue(), event.vz->GetValue());
 					} else {
-						mix_roli.append_event(good_proton_angles, cent, event.event_plane->GetValue(), event.vz->GetValue());
+						if(!mix_rotate) {
+							mix_roli.append_event(good_proton_angles, cent, event.event_plane->GetValue(), event.vz->GetValue());
+						} else {
+							mix_roli.append_event(good_proton_angles, cent, event.event_plane->GetValue(), event.vz->GetValue(), rotate_angle);
+						}
 					}
 				}
 				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
