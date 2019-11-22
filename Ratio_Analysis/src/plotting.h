@@ -66,14 +66,22 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
 void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
 
-void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, vector<int> cents, vector<int> divs, string name);
-void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, vector<int> cents, vector<int> divs, string name);
-void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<int> cents, vector<int> divs, string name);
-void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, vector<int> cents, vector<int> divs, string name);
-void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<int, double>>>> sys, vector<int> cents, vector<int> divs, string name);
+void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name);
+void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
+void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
+
+
+//void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, vector<int> cents, vector<int> divs, string name);
+//void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, vector<int> cents, vector<int> divs, string name);
+//void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<int> cents, vector<int> divs, string name);
+//void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, vector<int> cents, vector<int> divs, string name);
+//void roli_thesis_cumulants(map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<int, double>>>> sys, vector<int> cents, vector<int> divs, string name);
 
 void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
 void make_comp_stat_plot_hack(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
 
+
+pair<int, int> get_cent9_range(int bin);
+pair<int, int> get_canvas_div(int plots);
 
 #endif /* PLOTTING_H_ */

@@ -17,7 +17,7 @@ using namespace std;
 namespace analysis {
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
-	vector<int> centrals = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+	vector<int> centrals = {0,1,2,3,4,5,6,7,8};
 	vector<int> cumulant_orders = {1,2,3,4};
 	vector<string> stat_names = {"mean", "standard_deviation", "skewness", "kurtosis"};
 
@@ -33,7 +33,7 @@ namespace analysis {
 namespace plot {
 	string out_path = "/home/dylan/Research/Results/"; // "/home/dylan/local_server/dyn0402/Research/Results/"; //
 //	string out_path = "/star/u/dneff/Documents/Roli_Thesis/";
-	string out_root_name = "11-20-19_with_ratio_dists.root";
+	string out_root_name = "11-21-19_random_rotate.root";
 	string ratio_dist_dir_name = "Ratio_Dists";
 	string dist_2d_dir_name = "2D_Dists";
 	string nproton_dist_dir_name = "NProton_Dists";

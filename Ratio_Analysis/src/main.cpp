@@ -45,7 +45,7 @@ map<int, map<string, Measure>> get_roli_moments(string path);
 double sample_sd(vector<double> data);
 double sample_sd(vector<Measure> data);
 int get_centrality(double refmult2, int energy);
-int get_centrality9(double refmult2, int energy);
+//int get_centrality9(double refmult2, int energy);
 
 
 int main() {
@@ -372,11 +372,13 @@ void ratio_data_op_test() {
 
 
 void analyze_no_CBWC() {
-	vector<string> stat_names = {"mean", "standard_deviation", "skewness", "non_excess_kurtosis"};
-	vector<string> cumulant_names = {"cumulant 1", "cumulant 2", "cumulant 3", "cumulant 4"};
-	vector<string> raw_moment_names = {"raw moment 1", "raw moment 2", "raw moment 3", "raw moment 4"};
-	vector<string> central_moment_names = {"central moment 1", "central moment 2", "central moment 3", "central moment 4"};
-	vector<int> centralities = {9, 8, 5, 2};
+	vector<string> stat_names = {"standard_deviation", "skewness", "non_excess_kurtosis"};
+	vector<string> cumulant_names = {"cumulant 2", "cumulant 3", "cumulant 4"};
+	vector<string> raw_moment_names = {"raw moment 2", "raw moment 3", "raw moment 4"};
+	vector<string> central_moment_names = {"central moment 2", "central moment 3", "central moment 4"};
+	vector<int> centralities = {8, 7, 4, 1};
+	int single_index = 2;
+	int hist_index = 0;
 
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
@@ -385,7 +387,7 @@ void analyze_no_CBWC() {
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> divide_stats_sets;
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> reldiff_stats_sets;
 
-	for(int set = 0; set < 10; set++) {
+	for(int set = 2; set <= 2; set++) {
 		cout << "Starting Set " + to_string(set) << endl << endl;
 		map<int, map<int, map<int, RatioData>>> data;
 		map<int, map<int, map<int, RatioData>>> data_mix;
@@ -461,14 +463,14 @@ void analyze_no_CBWC() {
 
 		TDirectory *data_dir = set_dir->mkdir("Raw_Data");
 		data_dir->cd();
-		if(set == 0) {
+		if(set == hist_index) {
 			cout << endl << "Making raw ratio distribution plots..." << endl;
 			make_ratio_dist_plots(data_dir, data);
 			cout << endl << "Making raw 2d distribution plots..." << endl;
 			make_2d_dist_plots(data_dir, data);
+			cout << endl << "Making proton distribution plots..." << endl;
+			make_proton_dist_plots(data_dir, data);
 		}
-//		cout << endl << "Making proton distribution plots..." << endl;
-//		make_proton_dist_plots(data_dir, data);
 //		cout << endl << "Making cumulant plots..." << endl;
 //		make_cumulant_plots(data_dir, stats.second);
 //		cout << endl << "Making stat plots..." << endl;
@@ -484,11 +486,13 @@ void analyze_no_CBWC() {
 
 		TDirectory *mix_dir = set_dir->mkdir("Mix_Data");
 		mix_dir->cd();
-		if(set == 0) {
+		if(set == hist_index) {
 			cout << endl << "Making mixed ratio distribution plots..." << endl;
 			make_ratio_dist_plots(mix_dir, data_mix);
 			cout << endl << "Making mixed 2d distribution plots..." << endl;
 			make_2d_dist_plots(mix_dir, data_mix);
+			cout << endl << "Making proton distribution plots..." << endl;
+			make_proton_dist_plots(mix_dir, data_mix);
 		}
 //		cout << endl << "Making proton distribution plots..." << endl;
 //		make_proton_dist_plots(mix_dir, data_mix);
@@ -549,7 +553,6 @@ void analyze_no_CBWC() {
 	map<int, map<int, map<int, map<string, Measure>>>> raw_stats_single;
 	map<int, map<int, map<int, map<string, Measure>>>> mix_stats_single;
 	map<int, map<int, map<int, map<string, Measure>>>> divide_stats_single;
-	int single_index = 0;
 
 
 	// Calculate standard deviations for systematics
@@ -595,6 +598,7 @@ void analyze_no_CBWC() {
 	roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_comp4");
 	roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_comp5");
 	roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_comp6");
+	centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities6");
 
 	TDirectory *data_dir = set_dir->mkdir("Raw_Data");
 	data_dir->cd();
@@ -807,156 +811,156 @@ void comp_proton_dists() {
 
 
 
-pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats, int cent_type) {
-	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> binned_stats;
-	for(int energy:analysis::energy_list) {
-		for(int div:analysis::divs) {
-			map<int, int> bin_ratios;
-			for(pair<int, RatioData> cent:data[energy][div]) {
-				int cent_ratios = cent.second.get_num_ratios();
-				int cent_bin;
-				if(cent_type == 9) {
-					cent_bin = get_centrality9(cent.first, energy);
-				}
-				else{
-					cent_bin = get_centrality(cent.first, energy);
-				}
-				bin_ratios[cent_bin] += cent_ratios;
-//				if(div == 2) {
-//					string out = "Energy: " + to_string(energy) + " | " + "Cent: " + to_string(cent.first) + " | num: " + to_string(cent_ratios);
-//					out += " | Mean: " + to_string(stats.first[energy][div][cent.first]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["mean"].get_err());
-//					out += " | SD: " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_err());
-//					out += " | Skewness: " + to_string(stats.first[energy][div][cent.first]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["skewness"].get_err());
-//					out += " | Kurtosis: " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_err());
-//					cout << out << endl;
+//pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> calc_cbwc_stats(map<int, map<int, map<int, RatioData>>> data, pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> stats, int cent_type) {
+//	pair<map<int, map<int, map<int, map<string, Measure>>>>, map<int, map<int, map<int, map<int, Measure>>>>> binned_stats;
+//	for(int energy:analysis::energy_list) {
+//		for(int div:analysis::divs) {
+//			map<int, int> bin_ratios;
+//			for(pair<int, RatioData> cent:data[energy][div]) {
+//				int cent_ratios = cent.second.get_num_ratios();
+//				int cent_bin;
+//				if(cent_type == 9) {
+//					cent_bin = get_centrality9(cent.first, energy);
 //				}
-				if(stats.first[energy][div][cent.first]["standard_deviation"].get_val() != 0) {
-					for(string stat:analysis::stat_names) {
-						binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent.first][stat] * cent_ratios;
-						if(div == 2 && cent.first == 15 && energy == 39 && stat == "skewness") {
-							cout << "Energy: " << energy << " | Div: " << div << " | Stat: " << stat << " | Cent: " << cent.first << " | ratios: " << cent_ratios << " | new_val: " << stats.first[energy][div][cent.first][stat].get_val() << " | new_err: " << stats.first[energy][div][cent.first][stat].get_err() << " | err: " << binned_stats.first[energy][div][cent_bin][stat].get_err() << endl;
-						}
-					}
-					for(int order:analysis::cumulant_orders) {
-						binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent.first][order] * cent_ratios;
-					}
-				} else {
-					cout << "SD0 --> Energy: " << energy << " | Div: " << div  << " | Cent: " << cent.first << endl;
-				}
-			}
-			for(pair<int, map<string, Measure>> cent_bin:binned_stats.first[energy][div]) {
-				for(string stat:analysis::stat_names) {
-					binned_stats.first[energy][div][cent_bin.first][stat] = binned_stats.first[energy][div][cent_bin.first][stat] / bin_ratios[cent_bin.first];
-				}
-			}
-			for(pair<int, map<int, Measure>> cent_bin:binned_stats.second[energy][div]) {
-				for(int order:analysis::cumulant_orders) {
-					binned_stats.second[energy][div][cent_bin.first][order] = binned_stats.second[energy][div][cent_bin.first][order] / bin_ratios[cent_bin.first];
-				}
-			}
-		}
-	}
-
-	return(binned_stats);
-}
-
-
-void comp_moments() {
-	map<int, map<int, map<int, RatioData>>> data;
-	map<int, map<int, map<int, RatioData>>> data_cent;
-
-	vector<int> cent_bins = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-	int energy_num = 1;
-	int num_energies = analysis::energy_list.size();
-	for(int energy:analysis::energy_list) {
-		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
-		string path = analysis::in_mix_path + to_string(energy) + "GeV/";  // in_path or in_mix_path
-		for(int div:analysis::divs) {
-			// Initialize ratio object for each centrality bin
-			for(int cent:cent_bins) {
-				RatioData ratios(div);
-				data_cent[energy][div][cent] = ratios;
-			}
-			// Get centralities found in file names of given directory path.
-			for(int cent:get_centrals(path, div)) {
-				RatioData ratios(div);
-				ratios.read_ratios_from_dir(path, div, cent);  // Read ratios data from file
-				if(ratios.get_num_ratios() <= 2) {
-					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
-				} else {
-					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality value
-					data_cent[energy][div][get_centrality9(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
-				}
-			}
-		}
-		energy_num++;
-	}
-
-	cout << endl << "Calculating Cumulants..." << endl;
-	auto raw_stats = calculate_stats(data);
-	auto stats = calc_cbwc_stats(data, raw_stats, 9);
+//				else{
+//					cent_bin = get_centrality(cent.first, energy);
+//				}
+//				bin_ratios[cent_bin] += cent_ratios;
+////				if(div == 2) {
+////					string out = "Energy: " + to_string(energy) + " | " + "Cent: " + to_string(cent.first) + " | num: " + to_string(cent_ratios);
+////					out += " | Mean: " + to_string(stats.first[energy][div][cent.first]["mean"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["mean"].get_err());
+////					out += " | SD: " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["standard_deviation"].get_err());
+////					out += " | Skewness: " + to_string(stats.first[energy][div][cent.first]["skewness"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["skewness"].get_err());
+////					out += " | Kurtosis: " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_val()) + " ± " + to_string(stats.first[energy][div][cent.first]["kurtosis"].get_err());
+////					cout << out << endl;
+////				}
+//				if(stats.first[energy][div][cent.first]["standard_deviation"].get_val() != 0) {
+//					for(string stat:analysis::stat_names) {
+//						binned_stats.first[energy][div][cent_bin][stat] = binned_stats.first[energy][div][cent_bin][stat] + stats.first[energy][div][cent.first][stat] * cent_ratios;
+//						if(div == 2 && cent.first == 15 && energy == 39 && stat == "skewness") {
+//							cout << "Energy: " << energy << " | Div: " << div << " | Stat: " << stat << " | Cent: " << cent.first << " | ratios: " << cent_ratios << " | new_val: " << stats.first[energy][div][cent.first][stat].get_val() << " | new_err: " << stats.first[energy][div][cent.first][stat].get_err() << " | err: " << binned_stats.first[energy][div][cent_bin][stat].get_err() << endl;
+//						}
+//					}
+//					for(int order:analysis::cumulant_orders) {
+//						binned_stats.second[energy][div][cent_bin][order] = binned_stats.second[energy][div][cent_bin][order] + stats.second[energy][div][cent.first][order] * cent_ratios;
+//					}
+//				} else {
+//					cout << "SD0 --> Energy: " << energy << " | Div: " << div  << " | Cent: " << cent.first << endl;
+//				}
+//			}
+//			for(pair<int, map<string, Measure>> cent_bin:binned_stats.first[energy][div]) {
+//				for(string stat:analysis::stat_names) {
+//					binned_stats.first[energy][div][cent_bin.first][stat] = binned_stats.first[energy][div][cent_bin.first][stat] / bin_ratios[cent_bin.first];
+//				}
+//			}
+//			for(pair<int, map<int, Measure>> cent_bin:binned_stats.second[energy][div]) {
+//				for(int order:analysis::cumulant_orders) {
+//					binned_stats.second[energy][div][cent_bin.first][order] = binned_stats.second[energy][div][cent_bin.first][order] / bin_ratios[cent_bin.first];
+//				}
+//			}
+//		}
+//	}
+//
+//	return(binned_stats);
+//}
 
 
-	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/mixed11.txt");  // dataE.txt or mixedE.txt
-
-	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
-	cout << endl << "Making moment comparison..." << endl;
-	out_root->cd();
-	TDirectory *compare_dir = out_root->mkdir("Compare");
-	compare_dir->cd();
-	make_comp_stat_plot(stats.first[11][2], roli_moments);
-	TDirectory *compare_dir_sys = out_root->mkdir("Compare_sys");
-	compare_dir_sys->cd();
-	make_comp_stat_plot_hack(stats.first[11][2], roli_moments);
-
-	TFile *roli_loop = new TFile("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/loop_out_11GeV.root", "READ");
-	compare_dir->cd();
-	for(int cent:cent_bins) {
-		string roli_name = "hratio_2_" + to_string(cent);  // hratio_1_ for raw hratio_2_ for mixed
-		TH1F *roli_hist = (TH1F*) roli_loop->Get(roli_name.data());
-
-		TH1F *hist = new TH1F((roli_name+"_dylan").data(), (roli_name+"_dylan").data(), 100, -0.05, 1.05);
-		for(pair<int, map<int, int>> event:data_cent[11][2][cent].get_ratio_data()) {
-			for(pair<int, int> bin:event.second) {
-				for(int i=0; i<bin.second; i++) {
-					hist->Fill(((double)bin.first) / event.first);
-				}
-			}
-		}
-		TCanvas *can = new TCanvas((roli_name+"_Can").data());
-		can->SetLogy();
-		hist->SetLineColor(kRed);
-		hist->Draw();
-		roli_hist->Draw("sames");
-
-		can->Write();
-
-
-		delete hist;
-		delete can;
-		delete roli_hist;
-	}
-	roli_loop->Close();
-	delete roli_loop;
-
-	out_root->cd();
-	cout << endl << "Making ratio distribution plots..." << endl;
-	make_ratio_dist_plots(out_root, data);
-//	cout << endl << "Making 2d distribution plots..." << endl;
-//	make_2d_dist_plots(out_root, data);
-//	cout << endl << "Making proton distribution plots..." << endl;
-//	make_proton_dist_plots(out_root, data);
-	cout << endl << "Making cumulant plots..." << endl;
-	make_cumulant_plots(out_root, stats.second);
-	cout << endl << "Making stat plots..." << endl;
-	make_stat_plots(out_root, stats.first);
-	cout << endl << "Making canvases..." << endl;
-	make_canvas_plots(out_root, data, stats.second, stats.first);
-
-
-	out_root->Close();
-}
+//void comp_moments() {
+//	map<int, map<int, map<int, RatioData>>> data;
+//	map<int, map<int, map<int, RatioData>>> data_cent;
+//
+//	vector<int> cent_bins = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+//
+//	int energy_num = 1;
+//	int num_energies = analysis::energy_list.size();
+//	for(int energy:analysis::energy_list) {
+//		cout << "Working on " << energy << "GeV. " << energy_num << " of " << num_energies << endl;
+//		string path = analysis::in_mix_path + to_string(energy) + "GeV/";  // in_path or in_mix_path
+//		for(int div:analysis::divs) {
+//			// Initialize ratio object for each centrality bin
+//			for(int cent:cent_bins) {
+//				RatioData ratios(div);
+//				data_cent[energy][div][cent] = ratios;
+//			}
+//			// Get centralities found in file names of given directory path.
+//			for(int cent:get_centrals(path, div)) {
+//				RatioData ratios(div);
+//				ratios.read_ratios_from_dir(path, div, cent);  // Read ratios data from file
+//				if(ratios.get_num_ratios() <= 2) {
+//					cout << "Centrality " << cent << " with only " << ratios.get_num_ratios() << " entries. Skipping." << endl;
+//				} else {
+//					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality value
+//					data_cent[energy][div][get_centrality9(cent, energy)] += ratios;  // Append ratio data to corresponding centrality bin data
+//				}
+//			}
+//		}
+//		energy_num++;
+//	}
+//
+//	cout << endl << "Calculating Cumulants..." << endl;
+//	auto raw_stats = calculate_stats(data);
+//	auto stats = calc_cbwc_stats(data, raw_stats, 9);
+//
+//
+//	auto roli_moments = get_roli_moments("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/mixed11.txt");  // dataE.txt or mixedE.txt
+//
+//	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
+//	cout << endl << "Making moment comparison..." << endl;
+//	out_root->cd();
+//	TDirectory *compare_dir = out_root->mkdir("Compare");
+//	compare_dir->cd();
+//	make_comp_stat_plot(stats.first[11][2], roli_moments);
+//	TDirectory *compare_dir_sys = out_root->mkdir("Compare_sys");
+//	compare_dir_sys->cd();
+//	make_comp_stat_plot_hack(stats.first[11][2], roli_moments);
+//
+//	TFile *roli_loop = new TFile("/home/dylan/local_server/dyn0402/Research/Data_Roli_Self_Gen/loop_out_11GeV.root", "READ");
+//	compare_dir->cd();
+//	for(int cent:cent_bins) {
+//		string roli_name = "hratio_2_" + to_string(cent);  // hratio_1_ for raw hratio_2_ for mixed
+//		TH1F *roli_hist = (TH1F*) roli_loop->Get(roli_name.data());
+//
+//		TH1F *hist = new TH1F((roli_name+"_dylan").data(), (roli_name+"_dylan").data(), 100, -0.05, 1.05);
+//		for(pair<int, map<int, int>> event:data_cent[11][2][cent].get_ratio_data()) {
+//			for(pair<int, int> bin:event.second) {
+//				for(int i=0; i<bin.second; i++) {
+//					hist->Fill(((double)bin.first) / event.first);
+//				}
+//			}
+//		}
+//		TCanvas *can = new TCanvas((roli_name+"_Can").data());
+//		can->SetLogy();
+//		hist->SetLineColor(kRed);
+//		hist->Draw();
+//		roli_hist->Draw("sames");
+//
+//		can->Write();
+//
+//
+//		delete hist;
+//		delete can;
+//		delete roli_hist;
+//	}
+//	roli_loop->Close();
+//	delete roli_loop;
+//
+//	out_root->cd();
+//	cout << endl << "Making ratio distribution plots..." << endl;
+//	make_ratio_dist_plots(out_root, data);
+////	cout << endl << "Making 2d distribution plots..." << endl;
+////	make_2d_dist_plots(out_root, data);
+////	cout << endl << "Making proton distribution plots..." << endl;
+////	make_proton_dist_plots(out_root, data);
+//	cout << endl << "Making cumulant plots..." << endl;
+//	make_cumulant_plots(out_root, stats.second);
+//	cout << endl << "Making stat plots..." << endl;
+//	make_stat_plots(out_root, stats.first);
+//	cout << endl << "Making canvases..." << endl;
+//	make_canvas_plots(out_root, data, stats.second, stats.first);
+//
+//
+//	out_root->Close();
+//}
 
 
 
@@ -1200,115 +1204,115 @@ int get_centrality(double refmult2, int energy){
 }
 
 
-int get_centrality9(double mult, int energy) {
-
-    int central = -1;
-
-    if(energy == 7){
-
-        float centFull[9] = {32,41,51,64,78,95,114,137,165};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 11){
-
-        float centFull[9] = {41,52,65,80,98,118,143,172,206};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 19){
-
-        float centFull[9] = {51,65,81,100,123,149,180,215,258};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 27){
-
-        float centFull[9] = {56,71,90,111,135,164,198,237,284};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 39){
-
-        float centFull[9] = {61,78,97,121,147,179,215,257,307};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 62){
-
-        float centFull[9] = {66,84,106,131,160,194,233,279,334};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 200){
-
-        float centFull[9] = {85,108,135,167,204,247,297,355,421};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    return central;
-
-}
+//int get_centrality9(double mult, int energy) {
+//
+//    int central = -1;
+//
+//    if(energy == 7){
+//
+//        float centFull[9] = {32,41,51,64,78,95,114,137,165};
+//        if      (mult>=centFull[8]) central=9;
+//        else if (mult>=centFull[7]) central=8;
+//        else if (mult>=centFull[6]) central=7;
+//        else if (mult>=centFull[5]) central=6;
+//        else if (mult>=centFull[4]) central=5;
+//        else if (mult>=centFull[3]) central=4;
+//        else if (mult>=centFull[2]) central=3;
+//        else if (mult>=centFull[1]) central=2;
+//        else if (mult>=centFull[0]) central=1;
+//
+//    }
+//
+//    else if(energy == 11){
+//
+//        float centFull[9] = {41,52,65,80,98,118,143,172,206};
+//        if      (mult>=centFull[8]) central=9;
+//        else if (mult>=centFull[7]) central=8;
+//        else if (mult>=centFull[6]) central=7;
+//        else if (mult>=centFull[5]) central=6;
+//        else if (mult>=centFull[4]) central=5;
+//        else if (mult>=centFull[3]) central=4;
+//        else if (mult>=centFull[2]) central=3;
+//        else if (mult>=centFull[1]) central=2;
+//        else if (mult>=centFull[0]) central=1;
+//
+//    }
+//
+//    else if(energy == 19){
+//
+//        float centFull[9] = {51,65,81,100,123,149,180,215,258};
+//        if      (mult>=centFull[8]) central=9;
+//        else if (mult>=centFull[7]) central=8;
+//        else if (mult>=centFull[6]) central=7;
+//        else if (mult>=centFull[5]) central=6;
+//        else if (mult>=centFull[4]) central=5;
+//        else if (mult>=centFull[3]) central=4;
+//        else if (mult>=centFull[2]) central=3;
+//        else if (mult>=centFull[1]) central=2;
+//        else if (mult>=centFull[0]) central=1;
+//
+//    }
+//
+//    else if(energy == 27){
+//
+//        float centFull[9] = {56,71,90,111,135,164,198,237,284};
+//        if      (mult>=centFull[8]) central=9;
+//        else if (mult>=centFull[7]) central=8;
+//        else if (mult>=centFull[6]) central=7;
+//        else if (mult>=centFull[5]) central=6;
+//        else if (mult>=centFull[4]) central=5;
+//        else if (mult>=centFull[3]) central=4;
+//        else if (mult>=centFull[2]) central=3;
+//        else if (mult>=centFull[1]) central=2;
+//        else if (mult>=centFull[0]) central=1;
+//
+//    }
+//
+//    else if(energy == 39){
+//
+//        float centFull[9] = {61,78,97,121,147,179,215,257,307};
+//        if      (mult>=centFull[8]) central=9;
+//        else if (mult>=centFull[7]) central=8;
+//        else if (mult>=centFull[6]) central=7;
+//        else if (mult>=centFull[5]) central=6;
+//        else if (mult>=centFull[4]) central=5;
+//        else if (mult>=centFull[3]) central=4;
+//        else if (mult>=centFull[2]) central=3;
+//        else if (mult>=centFull[1]) central=2;
+//        else if (mult>=centFull[0]) central=1;
+//
+//    }
+//
+//    else if(energy == 62){
+//
+//        float centFull[9] = {66,84,106,131,160,194,233,279,334};
+//        if      (mult>=centFull[8]) central=9;
+//        else if (mult>=centFull[7]) central=8;
+//        else if (mult>=centFull[6]) central=7;
+//        else if (mult>=centFull[5]) central=6;
+//        else if (mult>=centFull[4]) central=5;
+//        else if (mult>=centFull[3]) central=4;
+//        else if (mult>=centFull[2]) central=3;
+//        else if (mult>=centFull[1]) central=2;
+//        else if (mult>=centFull[0]) central=1;
+//
+//    }
+//
+//    else if(energy == 200){
+//
+//        float centFull[9] = {85,108,135,167,204,247,297,355,421};
+//        if      (mult>=centFull[8]) central=9;
+//        else if (mult>=centFull[7]) central=8;
+//        else if (mult>=centFull[6]) central=7;
+//        else if (mult>=centFull[5]) central=6;
+//        else if (mult>=centFull[4]) central=5;
+//        else if (mult>=centFull[3]) central=4;
+//        else if (mult>=centFull[2]) central=3;
+//        else if (mult>=centFull[1]) central=2;
+//        else if (mult>=centFull[0]) central=1;
+//
+//    }
+//
+//    return central;
+//
+//}
