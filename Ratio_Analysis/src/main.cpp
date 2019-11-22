@@ -378,7 +378,7 @@ void analyze_no_CBWC() {
 	vector<string> central_moment_names = {"central moment 2", "central moment 3", "central moment 4"};
 	vector<int> centralities = {8, 7, 4, 1};
 	int single_index = 2;
-	int hist_index = 0;
+	int hist_index = 10;
 
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
@@ -387,7 +387,7 @@ void analyze_no_CBWC() {
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> divide_stats_sets;
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> reldiff_stats_sets;
 
-	for(int set = 2; set <= 2; set++) {
+	for(int set = 0; set <= 3; set++) {
 		cout << "Starting Set " + to_string(set) << endl << endl;
 		map<int, map<int, map<int, RatioData>>> data;
 		map<int, map<int, map<int, RatioData>>> data_mix;
