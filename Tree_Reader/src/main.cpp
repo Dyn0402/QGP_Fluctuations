@@ -67,7 +67,7 @@ void read_class() {
 	string mix_roli_out_dir = "/home/dylan/Research/Data_Mix_Roli/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 	vector<string> set_dirs;
-	for(int set = 0; set <= 18; set++) {
+	for(int set = 0; set <= 5; set++) {
 		set_dirs.push_back("Set" + to_string(set) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
@@ -100,7 +100,7 @@ void read_class() {
 //			reader.mix.set_max_events(250);
 //			reader.mix.set_use_leftover(true);
 
-			if(set_num == 5 || set_num == 11) { reader.mix_rotate = true; }
+			if(set_num == 1 || set_num == 11) { reader.mix_rotate = true; }
 			else { reader.mix_rotate = false; }
 
 //			reader.set_event_plane(true);
