@@ -34,24 +34,13 @@ using namespace std;
 
 
 void read_class();
-void io_test();
-void sum_tree_data_test();
-void ref_mult_test();
-void get_Rs_fast_test();
-//void vec_tree_test();
-//void obj_tree_test();
-//void real_tree_test();
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-//	read_class();
-	get_Rs_fast_test();
-//	vec_tree_test();
-//	obj_tree_test();
-//	real_tree_test();
+	read_class();
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -123,113 +112,4 @@ void read_class() {
 			}
 		}
 	}
-}
-
-
-void io_test() {
-	string testc = "hello_thie\tresse_reand\t11_.txt";
-	vector<string> split = split_string_by_char(testc, '\t');
-	for(string str:split) { cout << str << endl; }
-
-	map<int, map<int, map<int, map<int, int>>>> test;
-	test[2][15][0][0] = 152;
-	test[2][15][0][1] = 456;
-	test[2][15][0][2] = 1452;
-	test[1][15][1][3] = 343;
-	test[2][15][1][11] = 1;
-
-	write_ratios("Dafd4009", test);
-	write_ratios("Cafd4009", test);
-	write_ratios("Bafd4009", test);
-	map<int, map<int, int>> test_in = read_ratios("/home/dylan/git/Research/QGP_Fluctuations/Angular_Ratios/", 2, 15);
-	for(pair<int, map<int, int>> entry:test_in) {
-		cout << entry.first << "\t";
-		for(pair<int, int> entrya:entry.second) {
-			cout << entrya.first << ":" << entrya.second << " ";
-		}
-		cout << endl;
-	}
-
-	map<int, map<int, int>> testb;
-	testb[15][0] = 156;
-	testb[15][1] = 1584;
-	testb[15][2] = 657;
-
-
-	write_nprotons("Dafd4009", testb);
-	map<int, int> test_inb = read_nprotons("/home/dylan/git/Research/QGP_Fluctuations/Angular_Ratios/", 15);
-	for(pair<int, int> entry:test_inb) {
-		cout << entry.first << "\t" << entry.second << endl;
-	}
-}
-
-
-
-void sum_tree_data_test() {
-	tree_data data;
-	data.good_protons[0][10] += 10;
-	data.ratios[6][0][10][2] += 14;
-	tree_data new_data;
-	new_data.good_protons[0][10] += 5;
-	new_data.ratios[6][0][10][2] += 3;
-	sum_tree_data(&data, new_data);
-
-	cout << data.good_protons[0][10] << endl;
-	cout << data.ratios[6][0][10][2] << endl;
-
-}
-
-
-void ref_mult_test() {
-	StRefMultCorr *refmult2CorrUtil = CentralityMaker::instance()->getRefMult2Corr();
-	//StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
-	refmult2CorrUtil->init(11078000);
-	if(!refmult2CorrUtil->isBadRun(11078000)) {
-		int refmult2 = 100;
-		double vz = 20.0;
-		double bbc = 20000.0;
-		refmult2CorrUtil->initEvent(refmult2, vz, bbc);
-		int cent16 = refmult2CorrUtil->getCentralityBin16();
-//		double reweight = refmult2CorrUtil->getWeight();
-//		double refmult2Cor = refmult2CorrUtil->getRefMultCorr();
-		cout << cent16 << endl;
-	}
-}
-
-
-void get_Rs_fast_test() {
-	using namespace std::chrono;
-	int divs = 4;
-	vector<double> a = {0*M_PI, 0.5*M_PI, 0.6*M_PI, M_PI, 1.1*M_PI, 2*M_PI};
-	vector<int> original = get_Rs(a, divs);
-	vector<int> fast = get_Rs_fast(a, divs);
-
-	if(original.size() != fast.size()) { cout << "Size mismatch" << endl; }
-
-	for(unsigned i=0; i < original.size(); i++) {
-		cout << "Bin #" << i << ":  original " << original[i] << "  |  fast " << fast[i] << endl;
-	}
-
-
-	TRandom3 r(0);
-	vector<double> b;
-	int num = 1000000;
-	for(int i=0; i<num; i++) { b.push_back(r.Rndm() * 2 * M_PI); }
-
-	auto orig_start = high_resolution_clock::now();
-	vector<int> original2 = get_Rs(b, divs);
-	auto orig_stop = high_resolution_clock::now();
-	auto fast_start = high_resolution_clock::now();
-	vector<int> fast2 = get_Rs_fast(b, divs);
-	auto fast_stop = high_resolution_clock::now();
-
-	for(unsigned i=0; i < original.size(); i++) {
-		if(original[i] != fast[i]) { cout << "Disagreement" << endl; }
-	}
-
-	auto orig_dur = duration_cast<microseconds>(orig_stop - orig_start);
-	auto fast_dur = duration_cast<microseconds>(fast_stop - fast_start);
-
-	cout << "Original time: " << orig_dur.count() << endl;
-	cout << "Fast time: " << fast_dur.count() << endl;
 }
