@@ -22,8 +22,9 @@
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "ratio_methods.h"
+
 #include "Mixer.h"
-#include "MixerRoli.h"
+#include "MixerSets.h"
 #include "Randomizer.h"
 
 using namespace std;
@@ -90,8 +91,8 @@ public:
 	bool get_cbwc();
 	bool get_rotate_random();
 	bool get_event_plane();
+	bool get_mixed_sets();
 	bool get_mixed();
-	bool get_mixed_roli();
 	bool get_rand_data();
 	int get_cent_binning();
 
@@ -105,8 +106,8 @@ public:
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
-	void set_mixed(bool mixed);
-	void set_mixed_roli(bool mixed_roli);
+	void set_mixed_sets(bool mixed);
+	void set_mixed(bool mixed_roli);
 	void set_rand_data(bool rand_data);
 	void set_cent_binning(int cent_binning);
 
@@ -118,11 +119,9 @@ public:
 	cut_values cut;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
+	MixerSets mix_sets;
 	Mixer mix;
-	MixerRoli mix_roli;
 	Randomizer random;
-
-	bool mix_rotate;
 
 private:
 	// Attributes
@@ -141,11 +140,11 @@ private:
 	vector<int> divs = {2,3,4,5,6};
 	int energy;
 
-	bool cbwc; // Mixer/randomizers aren't prepared for this to be false.
+	bool cbwc; // MixerSets/randomizers aren't prepared for this to be false.
 	bool rotate_random;
 	bool event_plane;
+	bool mixed_sets;
 	bool mixed;
-	bool mixed_roli;
 	bool rand_data;
 
 	int cent_binning;
@@ -160,9 +159,6 @@ private:
 	bool check_enough_protons(proton_leaves protons);
 	bool check_good_run(int run);
 	bool check_proton_good(proton_leaves protons, int proton_index);
-
-	int get_centrality16(int refmult2, int energy);
-	int get_centrality9(int refmult2, int energy);
 	bool check_slope(int btof_mult, int ref_mult, int energy);
 
 	void define_qa();
