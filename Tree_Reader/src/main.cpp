@@ -37,6 +37,7 @@ void read_class();
 void io_test();
 void sum_tree_data_test();
 void ref_mult_test();
+void get_Rs_fast_test();
 //void vec_tree_test();
 //void obj_tree_test();
 //void real_tree_test();
@@ -46,7 +47,8 @@ auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-	read_class();
+//	read_class();
+	get_Rs_fast_test();
 //	vec_tree_test();
 //	obj_tree_test();
 //	real_tree_test();
@@ -63,14 +65,14 @@ void read_class() {
 //	string mix_roli_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/";
 //	string random_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Random/";
 	string out_dir = "/home/dylan/Research/Data/";
-	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
+	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix/";
 	string mix_roli_out_dir = "/home/dylan/Research/Data_Mix_Roli/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 	vector<string> set_dirs;
 	for(int set = 0; set <= 5; set++) {
 		set_dirs.push_back("Set" + to_string(set) + "/");
 		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
-		if(system(("test -d " + mix_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_out_dir + set_dirs.back()).data()); }
+		if(system(("test -d " + mix_sets_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_sets_out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + mix_roli_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_roli_out_dir + set_dirs.back()).data()); }
 		if(system(("test -d " + random_out_dir + set_dirs.back()).data())) { system(("mkdir " + random_out_dir + set_dirs.back()).data()); }
 	}
@@ -94,25 +96,22 @@ void read_class() {
 			else { reader.set_event_plane(false); }
 			if(set_num >= 6 && set_num < 12) { reader.set_rotate_random(true); }
 			else { reader.set_rotate_random(false); }
-			reader.set_mixed(false);
+			reader.set_mixed_sets(false);
 //			reader.mix.set_divs(divs);
 //			reader.mix.set_out_path(mix_out_dir+set+to_string(energy)+"GeV/");
 //			reader.mix.set_max_events(250);
 //			reader.mix.set_use_leftover(true);
 
-			if(set_num == 1 || set_num == 11) { reader.mix_rotate = true; }
-			else { reader.mix_rotate = false; }
-
 //			reader.set_event_plane(true);
 //			reader.mix_rotate = true;
 
-			reader.set_mixed_roli(true);
-			reader.mix_roli.set_divs(divs);
-			reader.mix_roli.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");
-			reader.mix_roli.set_max_events(250);
-			reader.mix_roli.set_min_events(150);
-			reader.mix_roli.set_mixes_per_event(10);
-			if(energy <= 11) { reader.mix_roli.set_mixes_per_event(50); }
+			reader.set_mixed(true);
+			reader.mix.set_divs(divs);
+			reader.mix.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");
+			reader.mix.set_max_events(250);
+			reader.mix.set_min_events(150);
+			reader.mix.set_mixes_per_event(10);
+			if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
 			reader.set_rand_data(false);
 			reader.random.set_divs(divs);
 			reader.random.set_out_path(random_out_dir+set+to_string(energy)+"GeV/");
@@ -197,3 +196,40 @@ void ref_mult_test() {
 	}
 }
 
+
+void get_Rs_fast_test() {
+	using namespace std::chrono;
+	int divs = 4;
+	vector<double> a = {0*M_PI, 0.5*M_PI, 0.6*M_PI, M_PI, 1.1*M_PI, 2*M_PI};
+	vector<int> original = get_Rs(a, divs);
+	vector<int> fast = get_Rs_fast(a, divs);
+
+	if(original.size() != fast.size()) { cout << "Size mismatch" << endl; }
+
+	for(unsigned i=0; i < original.size(); i++) {
+		cout << "Bin #" << i << ":  original " << original[i] << "  |  fast " << fast[i] << endl;
+	}
+
+
+	TRandom3 r(0);
+	vector<double> b;
+	int num = 1000000;
+	for(int i=0; i<num; i++) { b.push_back(r.Rndm() * 2 * M_PI); }
+
+	auto orig_start = high_resolution_clock::now();
+	vector<int> original2 = get_Rs(b, divs);
+	auto orig_stop = high_resolution_clock::now();
+	auto fast_start = high_resolution_clock::now();
+	vector<int> fast2 = get_Rs_fast(b, divs);
+	auto fast_stop = high_resolution_clock::now();
+
+	for(unsigned i=0; i < original.size(); i++) {
+		if(original[i] != fast[i]) { cout << "Disagreement" << endl; }
+	}
+
+	auto orig_dur = duration_cast<microseconds>(orig_stop - orig_start);
+	auto fast_dur = duration_cast<microseconds>(fast_stop - fast_start);
+
+	cout << "Original time: " << orig_dur.count() << endl;
+	cout << "Fast time: " << fast_dur.count() << endl;
+}
