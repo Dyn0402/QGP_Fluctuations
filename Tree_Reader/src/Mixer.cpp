@@ -23,6 +23,30 @@ Mixer::Mixer() {
 	min_events = 150;
 	max_events = 250;
 	mixes_per_event = 1;
+	vz_range.first = -30;
+	vz_range.second = 30;
+	ep_range.first = 0;
+	ep_range.second = M_PI;
+	vz_bins = 10;
+	ep_bins = 10;
+}
+
+Mixer::Mixer(int energy) {
+	this->energy = energy;
+	min_events = 150;
+	max_events = 250;
+	mixes_per_event = 1;
+	if(energy == 7) {
+		vz_range.first = -50;
+		vz_range.second = 50;
+	} else {
+		vz_range.first = -30;
+		vz_range.second = 30;
+	}
+	ep_range.first = 0;
+	ep_range.second = M_PI;
+	vz_bins = 10;
+	ep_bins = 10;
 }
 
 
@@ -42,6 +66,22 @@ int Mixer::get_min_events() {
 
 int Mixer::get_mixes_per_event() {
 	return(mixes_per_event);
+}
+
+int Mixer::get_vz_bins() {
+	return(vz_bins);
+}
+
+int Mixer::get_ep_bins() {
+	return(ep_bins);
+}
+
+pair<double, double> Mixer::get_vz_range() {
+	return(vz_range);
+}
+
+pair<double, double> Mixer::get_ep_range() {
+	return(ep_range);
 }
 
 string Mixer::get_out_path() {
@@ -69,6 +109,24 @@ void Mixer::set_min_events(int min_events) {
 
 void Mixer::set_mixes_per_event(int mixes_per_event) {
 	this->mixes_per_event = mixes_per_event;
+}
+
+void Mixer::set_vz_bins(int vz_bins) {
+	this->vz_bins = vz_bins;
+}
+
+void Mixer::set_ep_bins(int ep_bins) {
+	this->ep_bins = ep_bins;
+}
+
+void Mixer::set_vz_range(double vz_lower, double vz_upper) {
+	this->vz_range.first = vz_lower;
+	this->vz_range.second = vz_upper;
+}
+
+void Mixer::set_ep_range(double ep_lower, double ep_upper) {
+	this->ep_range.first = ep_lower;
+	this->ep_range.second = ep_upper;
 }
 
 void Mixer::set_out_path(string path) {
@@ -140,6 +198,7 @@ void Mixer::append_event(vector<double> angles, int cent, double event_plane, do
 	}
 }
 
+
 // Sample angles randomly for an event. For CBWC disabled.
 void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
@@ -163,8 +222,9 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 
 // Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC disabled. For rotation.
 void Mixer::append_event(vector<double> angles, int cent, double event_plane, double vz, double rotate) {
-	int ep_bin = (int)((10*event_plane)/M_PI);  // Convert event_plane to bin like Roli did.
+	int ep_bin = get_ep_bin(event_plane);
 	int vz_bin = get_vz_bin(vz);
+
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
 		int index = trand->Rndm() * max_events;
 		this->angles[cent][ep_bin][vz_bin][index] = angles;
@@ -178,6 +238,7 @@ void Mixer::append_event(vector<double> angles, int cent, double event_plane, do
 		}
 	}
 }
+
 
 // Sample angles randomly for an event. For CBWC disabled. For rotation.
 void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin, double rotate) {
@@ -200,32 +261,6 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin, double 
 	}
 }
 
-// Write data to output directory
-void Mixer::write_mixed_data() {
-	reset_out_dir();
-	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
-}
-
-
-// Remove out_path directory for energy if it exists and recreate it.
-// Create out_path if it does not exist.
-void Mixer::reset_out_dir() {
-	if(system(("test -d "+out_path).data())) {
-		if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
-	}
-
-	string energy_path = out_path+to_string(energy)+"GeV/";
-	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
-	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
-}
-
-
-// Bin vz
-int Mixer::get_vz_bin(double vz) {
-	int bin = (int)(vz / 10) + 5;  // Make attribute.
-	if(bin >= 10) { cout << "vz_bin bad" << endl; }
-	return(bin);
-}
 
 // Ensure same angle is not used twice for a single mixed event.
 pair<int, int> Mixer::generate_index(vector<pair<int, int>> used_angles, int cent_ref, int ep_bin, int vz_bin) {
@@ -245,5 +280,37 @@ pair<int, int> Mixer::generate_index(vector<pair<int, int>> used_angles, int cen
 	index.second = angle_index;
 
 	return(index);
+}
+
+
+// Bin event plane
+int Mixer::get_ep_bin(double event_plane) {
+	int bin = ep_bins * (event_plane  + ep_range.first) / (ep_range.second - ep_range.first);
+	return(bin);
+}
+
+// Bin vz
+int Mixer::get_vz_bin(double vz) {
+	int bin = vz_bins * (vz + vz_range.first) / (vz_range.second - vz_range.first);
+	return(bin);
+}
+
+// Write data to output directory
+void Mixer::write_mixed_data() {
+	reset_out_dir();
+	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+}
+
+
+// Remove out_path directory for energy if it exists and recreate it.
+// Create out_path if it does not exist.
+void Mixer::reset_out_dir() {
+	if(system(("test -d "+out_path).data())) {
+		if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
+	}
+
+	string energy_path = out_path+to_string(energy)+"GeV/";
+	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
+	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
 }
 
