@@ -48,10 +48,15 @@ TreeReader::TreeReader(int energy) {
 	mixed_sets = false;
 	mixed = false;
 	rand_data = false;
-	this->energy = energy;
-	mix.set_energy(energy);
+	pile_up = false;
+	efficiency = false;
+
+	pile_up_prob = 0;
+	efficiency_prob = 0;
 
 	cent_binning = 9;
+
+	this->energy = energy;
 
 	mix = Mixer(energy);
 
@@ -88,6 +93,22 @@ bool TreeReader::get_mixed() {
 
 bool TreeReader::get_rand_data() {
 	return(rand_data);
+}
+
+bool TreeReader::get_pile_up() {
+	return(pile_up);
+}
+
+bool TreeReader::get_efficiency() {
+	return(efficiency);
+}
+
+double TreeReader::get_pile_up_prob() {
+	return(pile_up_prob);
+}
+
+double TreeReader::get_efficiency_prob() {
+	return(efficiency_prob);
 }
 
 int TreeReader::get_cent_binning() {
@@ -145,6 +166,22 @@ void TreeReader::set_rand_data(bool rand_data) {
 	this->rand_data = rand_data;
 }
 
+void TreeReader::set_pile_up(bool pile_up) {
+	this->pile_up = pile_up;
+}
+
+void TreeReader::set_efficiency(bool efficiency) {
+	this->efficiency = efficiency;
+}
+
+void TreeReader::set_pile_up_prob(double pile_up_prob) {
+	this->pile_up_prob = pile_up_prob;
+}
+
+void TreeReader::set_efficiency_prob(double efficiency_prob) {
+	this->efficiency_prob = efficiency_prob;
+}
+
 void TreeReader::set_cent_binning(int cent_binning) {
 	this->cent_binning = cent_binning;
 }
@@ -196,6 +233,10 @@ void TreeReader::read_tree(TTree* tree) {
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 
+		if(pile_up) {
+			cout << "Pile up events, not implemented yet." << endl;
+		}
+
 		// Check if each event is good. Analyze if so, continue if not.
 		if(check_event_good(event, proton, energy)) {
 			vector<double> good_proton_angles = {};
@@ -203,6 +244,9 @@ void TreeReader::read_tree(TTree* tree) {
 			// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
 			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
 				if(check_proton_good(proton, proton_index)) {
+					if(efficiency) {
+						cout << "Efficiency, not implemented yet." << endl;
+					}
 					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
 				}
 			}
@@ -286,6 +330,10 @@ void TreeReader::write_info_file() {
 		out << "mixed_sets: " << boolalpha << mixed_sets << endl;
 		out << "mixed: " << boolalpha << mixed << endl;
 		out << "rand_data: " << boolalpha << rand_data << endl;
+		out << "pile_up: " << boolalpha << pile_up << endl;
+		out << "efficiency: " << boolalpha << efficiency << endl;
+		out << "pile_up_prob: " << pile_up_prob << endl;
+		out << "efficiency_prob: " << efficiency_prob << endl;
 		out << "cent_binning: " << cent_binning << endl;
 
 		out << "min_p: " << to_string(cut.min_p) << endl;

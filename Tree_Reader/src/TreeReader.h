@@ -72,7 +72,7 @@ struct cut_values {
 	double min_nsigma = -2.0;
 	double max_nsigma = 2.0;
 	double min_dca = 0.0;
-	double max_dca = 1.0; //2.0;
+	double max_dca = 1.0;
 	double min_m2 = 0.8;
 	double max_m2 = 1.0;
 	double min_pt_for_m = 0.8;
@@ -96,6 +96,10 @@ public:
 	bool get_mixed_sets();
 	bool get_mixed();
 	bool get_rand_data();
+	bool get_pile_up();
+	bool get_efficiency();
+	double get_pile_up_prob();
+	double get_efficiency_prob();
 	int get_cent_binning();
 
 	// Setters
@@ -111,6 +115,10 @@ public:
 	void set_mixed_sets(bool mixed);
 	void set_mixed(bool mixed_roli);
 	void set_rand_data(bool rand_data);
+	void set_pile_up(bool pile_up);
+	void set_efficiency(bool efficiency);
+	void set_pile_up_prob(double pile_up_prob);
+	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
 
 	// Doers
@@ -148,6 +156,11 @@ private:
 	bool mixed_sets;
 	bool mixed;
 	bool rand_data;
+	bool pile_up;
+	bool efficiency;
+
+	double pile_up_prob;
+	double efficiency_prob;
 
 	int cent_binning;
 
