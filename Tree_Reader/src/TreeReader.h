@@ -34,6 +34,8 @@ struct event_leaves {
 	TLeaf *ref_mult;
 	TLeaf *ref_mult2;
 	TLeaf *btof_mult;
+	TLeaf *vx;
+	TLeaf *vy;
 	TLeaf *vz;
 	TLeaf *event_plane;
 };
@@ -164,6 +166,8 @@ private:
 	void define_qa();
 	void fill_pre_track_qa(proton_leaves proton, int proton_index);
 	void fill_post_track_qa(proton_leaves proton, int proton_index);
+	void fill_pre_event_qa(event_leaves event);
+	void fill_post_event_qa(event_leaves event);
 	void write_qa();
 
 	void reset_out_dir();
@@ -177,10 +181,24 @@ private:
 	TH1I cent16_events;
 	TH1I cent9_events;
 
-	TH1I pre_m2_hist;
-	TH1I post_m2_hist;
-
 	TH1I pre_run_hist;
+	TH1I pre_vx_hist;
+	TH1I pre_vy_hist;
+	TH1I pre_vz_hist;
+	TH1I pre_ref_hist;
+	TH1I pre_ref2_hist;
+	TH1I pre_btof_hist;
+	TH1I pre_ep_hist;
+
+	TH1I post_run_hist;
+	TH1I post_vx_hist;
+	TH1I post_vy_hist;
+	TH1I post_vz_hist;
+	TH1I post_ref_hist;
+	TH1I post_ref2_hist;
+	TH1I post_btof_hist;
+	TH1I post_ep_hist;
+
 	TH1I pre_phi_hist;
 	TH1I pre_p_hist;
 	TH1I pre_pt_hist;
@@ -190,7 +208,6 @@ private:
 	TH1I pre_nsigma_hist;
 	TH1I pre_dca_hist;
 
-	TH1I post_run_hist;
 	TH1I post_phi_hist;
 	TH1I post_p_hist;
 	TH1I post_pt_hist;
@@ -199,6 +216,9 @@ private:
 	TH1I post_eta_hist;
 	TH1I post_nsigma_hist;
 	TH1I post_dca_hist;
+
+	TH1I pre_m2_hist;
+	TH1I post_m2_hist;
 
 };
 

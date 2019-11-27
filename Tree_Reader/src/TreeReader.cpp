@@ -53,6 +53,8 @@ TreeReader::TreeReader(int energy) {
 
 	cent_binning = 9;
 
+	mix = Mixer(energy);
+
 	define_qa();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
@@ -316,6 +318,8 @@ event_leaves TreeReader::get_event_leaves(TTree* tree) {
 	event.ref_mult = tree->GetLeaf("Nprim");
 	event.ref_mult2 = tree->GetLeaf("ref2");
 	event.btof_mult = tree->GetLeaf("btof");
+	event.vx = tree->GetLeaf("vtx_x");
+	event.vy = tree->GetLeaf("vtx_y");
 	event.vz = tree->GetLeaf("vtx_z");
 	event.run = tree->GetLeaf("run");
 	event.event_plane = tree->GetLeaf("event_plane");
@@ -344,14 +348,15 @@ proton_leaves TreeReader::get_proton_leaves(TTree* tree) {
 //Returns true if event is good, false if it is bad.
 bool TreeReader::check_event_good(event_leaves event, proton_leaves proton, int energy) {
 	bool good_event = false;
+	fill_pre_event_qa(event);
 	event_cut_hist.Fill(0);
-	pre_run_hist.Fill(event.run->GetValue());
 	if(check_good_run((int)event.run->GetValue())) {
 		event_cut_hist.Fill(1);
 		if(check_enough_protons(proton)) {
 			event_cut_hist.Fill(2);
 			if(check_slope(event.btof_mult->GetValue(), event.ref_mult->GetValue(), energy)) {
 				event_cut_hist.Fill(3);
+				fill_post_event_qa(event);
 				good_event = true;
 			}
 		}
@@ -457,10 +462,24 @@ void TreeReader::define_qa() {
 	cent16_events = TH1I(("cent16_events"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
 	cent9_events = TH1I(("cent9_events"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
 
-	pre_m2_hist = TH1I(("pre_m2"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
-	post_m2_hist = TH1I(("post_m2"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
-
 	pre_run_hist = TH1I(("pre_run"+to_string(energy)).data(), "pre_run", 1000, 1000000, 100000000);
+	pre_vx_hist = TH1I(("pre_vx"+to_string(energy)).data(), "pre_vx", 100, -2.5, 2.5);
+	pre_vy_hist = TH1I(("pre_vy"+to_string(energy)).data(), "pre_vy", 100, -2.5, 2.5);
+	pre_vz_hist = TH1I(("pre_vz"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
+	pre_ref_hist = TH1I(("pre_ref"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
+	pre_ref2_hist = TH1I(("pre_ref2"+to_string(energy)).data(), "pre_ref2", 801, -0.5, 800.5);
+	pre_btof_hist = TH1I(("pre_btof"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
+	pre_ep_hist = TH1I(("pre_ep"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
+
+	post_run_hist = TH1I(("post_run"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
+	post_vx_hist = TH1I(("post_vx"+to_string(energy)).data(), "post_vx", 100, -2.5, 2.5);
+	post_vy_hist = TH1I(("post_vy"+to_string(energy)).data(), "post_vy", 100, -2.5, 2.5);
+	post_vz_hist = TH1I(("post_vz"+to_string(energy)).data(), "post_vz", 100, -55, 55);
+	post_ref_hist = TH1I(("post_ref"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
+	post_ref2_hist = TH1I(("post_ref2"+to_string(energy)).data(), "post_ref2", 801, -0.5, 800.5);
+	post_btof_hist = TH1I(("post_btof"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
+	post_ep_hist = TH1I(("post_ep"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
+
 	pre_phi_hist = TH1I(("pre_phi"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
 	pre_p_hist = TH1I(("pre_p"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
 	pre_pt_hist = TH1I(("pre_pt"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
@@ -470,7 +489,6 @@ void TreeReader::define_qa() {
 	pre_nsigma_hist = TH1I(("pre_nsigma"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
 	pre_dca_hist = TH1I(("pre_dca"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
 
-	post_run_hist = TH1I(("post_run"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
 	post_phi_hist = TH1I(("post_phi"+to_string(energy)).data(), "post_phi", 100, 0.0, 7.0);
 	post_p_hist = TH1I(("post_p"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
 	post_pt_hist = TH1I(("post_pt"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
@@ -480,11 +498,14 @@ void TreeReader::define_qa() {
 	post_nsigma_hist = TH1I(("post_nsigma"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
 	post_dca_hist = TH1I(("post_dca"+to_string(energy)).data(), "post_dca", 100, 0.0, 2.5);
 
+	pre_m2_hist = TH1I(("pre_m2"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
+	post_m2_hist = TH1I(("post_m2"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
+
 }
 
 
-// Fill histograms for pre-qa
-void TreeReader:: fill_pre_track_qa(proton_leaves proton, int proton_index) {
+// Fill histograms for pre-qa for tracks
+void TreeReader::fill_pre_track_qa(proton_leaves proton, int proton_index) {
 	pre_phi_hist.Fill(proton.phi->GetValue(proton_index));
 	pre_p_hist.Fill(proton.p->GetValue(proton_index));
 	pre_pt_hist.Fill(proton.pt->GetValue(proton_index));
@@ -496,8 +517,8 @@ void TreeReader:: fill_pre_track_qa(proton_leaves proton, int proton_index) {
 }
 
 
-// Fill histograms for post-qa
-void TreeReader:: fill_post_track_qa(proton_leaves proton, int proton_index) {
+// Fill histograms for post-qa for tracks
+void TreeReader::fill_post_track_qa(proton_leaves proton, int proton_index) {
 	post_phi_hist.Fill(proton.phi->GetValue(proton_index));
 	post_p_hist.Fill(proton.p->GetValue(proton_index));
 	post_pt_hist.Fill(proton.pt->GetValue(proton_index));
@@ -506,6 +527,31 @@ void TreeReader:: fill_post_track_qa(proton_leaves proton, int proton_index) {
 	post_eta_hist.Fill(proton.eta->GetValue(proton_index));
 	post_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
 	post_dca_hist.Fill(proton.dca->GetValue(proton_index));
+}
+
+
+// Fill histograms for pre-qa for event
+void TreeReader::fill_pre_event_qa(event_leaves event) {
+	pre_run_hist.Fill(event.run->GetValue());
+	pre_vx_hist.Fill(event.vx->GetValue());
+	pre_vy_hist.Fill(event.vy->GetValue());
+	pre_vz_hist.Fill(event.vz->GetValue());
+	pre_ref_hist.Fill(event.ref_mult->GetValue());
+	pre_ref2_hist.Fill(event.ref_mult2->GetValue());
+	pre_btof_hist.Fill(event.btof_mult->GetValue());
+	pre_ep_hist.Fill(event.event_plane->GetValue());
+}
+
+// Fill histograms for post-qa for event
+void TreeReader::fill_post_event_qa(event_leaves event) {
+	post_run_hist.Fill(event.run->GetValue());
+	post_vx_hist.Fill(event.vx->GetValue());
+	post_vy_hist.Fill(event.vy->GetValue());
+	post_vz_hist.Fill(event.vz->GetValue());
+	post_ref_hist.Fill(event.ref_mult->GetValue());
+	post_ref2_hist.Fill(event.ref_mult2->GetValue());
+	post_btof_hist.Fill(event.btof_mult->GetValue());
+	post_ep_hist.Fill(event.event_plane->GetValue());
 }
 
 
@@ -526,8 +572,25 @@ void TreeReader::write_qa() {
 	track_cut_hist.Write();
 	cent16_events.Write();
 	cent9_events.Write();
-	pre_m2_hist.Write();
-	post_m2_hist.Write();
+
+	pre_run_hist.Write();
+	pre_vx_hist.Write();
+	pre_vy_hist.Write();
+	pre_vz_hist.Write();
+	pre_ref_hist.Write();
+	pre_ref2_hist.Write();
+	pre_btof_hist.Write();
+	pre_ep_hist.Write();
+
+	post_run_hist.Write();
+	post_vx_hist.Write();
+	post_vy_hist.Write();
+	post_vz_hist.Write();
+	post_ref_hist.Write();
+	post_ref2_hist.Write();
+	post_btof_hist.Write();
+	post_ep_hist.Write();
+
 	pre_phi_hist.Write();
 	pre_p_hist.Write();
 	pre_pt_hist.Write();
@@ -545,7 +608,50 @@ void TreeReader::write_qa() {
 	post_nsigma_hist.Write();
 	post_dca_hist.Write();
 
+	pre_m2_hist.Write();
+	post_m2_hist.Write();
+
 	// Make before/after canvases for each variable
+	TCanvas run_can("run_can");
+	pre_run_hist.Draw();
+	post_run_hist.SetLineColor(kRed);
+	post_run_hist.Draw("sames");
+	run_can.Write();
+	TCanvas vx_can("vx_can");
+	pre_vx_hist.Draw();
+	post_vx_hist.SetLineColor(kRed);
+	post_vx_hist.Draw("sames");
+	vx_can.Write();
+	TCanvas vy_can("vy_can");
+	pre_vy_hist.Draw();
+	post_vy_hist.SetLineColor(kRed);
+	post_vy_hist.Draw("sames");
+	vy_can.Write();
+	TCanvas vz_can("vz_can");
+	pre_vz_hist.Draw();
+	post_vz_hist.SetLineColor(kRed);
+	post_vz_hist.Draw("sames");
+	vz_can.Write();
+	TCanvas ref_can("ref_can");
+	pre_ref_hist.Draw();
+	post_ref_hist.SetLineColor(kRed);
+	post_ref_hist.Draw("sames");
+	ref_can.Write();
+	TCanvas ref2_can("ref2_can");
+	pre_ref2_hist.Draw();
+	post_ref2_hist.SetLineColor(kRed);
+	post_ref2_hist.Draw("sames");
+	ref2_can.Write();
+	TCanvas btof_can("btof_can");
+	pre_btof_hist.Draw();
+	post_btof_hist.SetLineColor(kRed);
+	post_btof_hist.Draw("sames");
+	btof_can.Write();
+	TCanvas ep_can("ep_can");
+	pre_ep_hist.Draw();
+	post_ep_hist.SetLineColor(kRed);
+	post_ep_hist.Draw("sames");
+	ep_can.Write();
 	TCanvas phi_can("phi_can");
 	pre_phi_hist.Draw();
 	post_phi_hist.SetLineColor(kRed);
