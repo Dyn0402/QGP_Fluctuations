@@ -49,6 +49,7 @@ TreeReader::TreeReader(int energy) {
 	mixed = false;
 	rand_data = false;
 	this->energy = energy;
+	mix.set_energy(energy);
 
 	cent_binning = 9;
 
@@ -58,7 +59,6 @@ TreeReader::TreeReader(int energy) {
 }
 
 TreeReader::~TreeReader() {
-//	delete refmult2CorrUtil;
 }
 
 
@@ -597,8 +597,13 @@ void TreeReader::write_qa() {
 
 
 // Remove out_path directory for energy if it exists and recreate it.
+// Create out_path directory if it does not exist.
 void TreeReader::reset_out_dir() {
+	if(system(("test -d "+out_path).data())) {
+		if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
+	}
+
 	string energy_path = out_path+to_string(energy)+"GeV/";
-	if(!system(("test -d "+energy_path).data())) { int ret = system(("rm -r " + energy_path).data()); }
+	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
 	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
 }

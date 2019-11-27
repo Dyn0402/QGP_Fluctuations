@@ -49,25 +49,21 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-//	string out_dir = "/home/dylan/local_server/dyn0402/Research/Data/";
-//	string mix_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix/";
-//	string mix_roli_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Mix_Roli/";
-//	string random_out_dir = "/home/dylan/local_server/dyn0402/Research/Data_Random/";
 	string out_dir = "/home/dylan/Research/Data/";
-	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix/";
-	string mix_roli_out_dir = "/home/dylan/Research/Data_Mix_Roli/";
+	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
+	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
+	string set_name = "test";
+	int set_num_min = 0, set_num_max = 5;
+
 	vector<string> set_dirs;
-	for(int set = 0; set <= 5; set++) {
-		set_dirs.push_back("Set" + to_string(set) + "/");
-		if(system(("test -d " + out_dir + set_dirs.back()).data())) { system(("mkdir " + out_dir + set_dirs.back()).data()); }
-		if(system(("test -d " + mix_sets_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_sets_out_dir + set_dirs.back()).data()); }
-		if(system(("test -d " + mix_roli_out_dir + set_dirs.back()).data())) { system(("mkdir " + mix_roli_out_dir + set_dirs.back()).data()); }
-		if(system(("test -d " + random_out_dir + set_dirs.back()).data())) { system(("mkdir " + random_out_dir + set_dirs.back()).data()); }
+	for(int set = set_num_min; set <= set_num_max; set++) {
+		set_dirs.push_back(set_name + to_string(set) + "/");
 	}
+
 	for(string set:set_dirs) {
 		cout << endl << endl << "Starting " + set << endl << endl;
-		int set_num = stoi(set.substr(set.find('t')+1, set.find('/')-set.find('t')-1));
+		int set_num = stoi(set.substr(set.find(set_name.back())+1, set.find('/')-set.find(set_name.back())-1));
 		vector<int> energy_list = {27, 39, 62, 19, 11, 7};
 		vector<int> divs = {2, 3, 4, 5, 6};
 		ROOT::EnableThreadSafety();
@@ -86,21 +82,14 @@ void read_class() {
 			if(set_num >= 6 && set_num < 12) { reader.set_rotate_random(true); }
 			else { reader.set_rotate_random(false); }
 			reader.set_mixed_sets(false);
-//			reader.mix.set_divs(divs);
-//			reader.mix.set_out_path(mix_out_dir+set+to_string(energy)+"GeV/");
-//			reader.mix.set_max_events(250);
-//			reader.mix.set_use_leftover(true);
-
-//			reader.set_event_plane(true);
-//			reader.mix_rotate = true;
 
 			reader.set_mixed(true);
 			reader.mix.set_divs(divs);
-			reader.mix.set_out_path(mix_roli_out_dir+set+to_string(energy)+"GeV/");
+			reader.mix.set_out_path(mix_out_dir+set);
 			reader.mix.set_max_events(250);
 			reader.mix.set_min_events(150);
-			reader.mix.set_mixes_per_event(10);
 			if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
+			else { reader.mix.set_mixes_per_event(10); }
 			reader.set_rand_data(false);
 			reader.random.set_divs(divs);
 			reader.random.set_out_path(random_out_dir+set+to_string(energy)+"GeV/");

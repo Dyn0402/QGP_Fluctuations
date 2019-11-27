@@ -20,6 +20,7 @@ public:
 	Mixer();
 
 	// Getters
+	int get_energy();
 	int get_max_events();
 	int get_min_events();
 	int get_mixes_per_event();
@@ -27,6 +28,7 @@ public:
 	vector<int> get_divs();
 
 	// Setters
+	void set_energy(int energy);
 	void set_max_events(int max_events);
 	void set_min_events(int min_events);
 	void set_mixes_per_event(int mixes_per_event);
@@ -47,6 +49,7 @@ public:
 
 private:
 	// Attributes
+	int energy;
 	int min_events;
 	int max_events;
 	int mixes_per_event;

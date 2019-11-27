@@ -19,6 +19,7 @@
 // Structors
 
 Mixer::Mixer() {
+	energy = 0;
 	min_events = 150;
 	max_events = 250;
 	mixes_per_event = 1;
@@ -26,6 +27,10 @@ Mixer::Mixer() {
 
 
 // Getters
+
+int Mixer::get_energy() {
+	return(energy);
+}
 
 int Mixer::get_max_events() {
 	return(max_events);
@@ -49,6 +54,10 @@ vector<int> Mixer::get_divs() {
 
 
 // Setters
+
+void Mixer::set_energy(int energy) {
+	this->energy = energy;
+}
 
 void Mixer::set_max_events(int max_events) {
 	this->max_events = max_events;
@@ -194,14 +203,20 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin, double 
 // Write data to output directory
 void Mixer::write_mixed_data() {
 	reset_out_dir();
-	write_tree_data("local", data, out_path);
+	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
 }
 
 
 // Remove out_path directory for energy if it exists and recreate it.
+// Create out_path if it does not exist.
 void Mixer::reset_out_dir() {
-	if(!system(("test -d "+out_path).data())) { system(("rm -r " + out_path).data()); }
-	if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
+	if(system(("test -d "+out_path).data())) {
+		if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
+	}
+
+	string energy_path = out_path+to_string(energy)+"GeV/";
+	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
+	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
 }
 
 
