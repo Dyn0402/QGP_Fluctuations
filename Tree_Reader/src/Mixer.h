@@ -11,6 +11,8 @@
 #include <map>
 #include <vector>
 
+#include <TRandom3.h>
+
 using namespace std;
 
 
@@ -57,6 +59,7 @@ private:
 	map<int, map<int, map<int, vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
 	vector<int> divs;
 	string out_path;
+	TRandom3 *trand = new TRandom3(0);
 
 	// Doers
 	void get_mixed_CBWC(int num_protons, int ref_mult2, int ep_bin, int vz_bin);

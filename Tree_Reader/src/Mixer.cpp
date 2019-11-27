@@ -166,7 +166,7 @@ void Mixer::append_event(vector<double> angles, int cent, double event_plane, do
 	int ep_bin = (int)((10*event_plane)/M_PI);  // Convert event_plane to bin like Roli did.
 	int vz_bin = get_vz_bin(vz);
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
-		int index = rand() % max_events;
+		int index = trand->Rndm() * max_events;
 		this->angles[cent][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
 		this->angles[cent][ep_bin][vz_bin].push_back(angles);
@@ -232,8 +232,8 @@ pair<int, int> Mixer::generate_index(vector<pair<int, int>> used_angles, int cen
 	bool unique = false;
 	int event_index, angle_index;
 	while(!unique){
-		event_index = rand() % (int)angles[cent_ref][ep_bin][vz_bin].size();
-		angle_index = rand() % (int)angles[cent_ref][ep_bin][vz_bin][event_index].size();
+		event_index = trand->Rndm() * angles[cent_ref][ep_bin][vz_bin].size();
+		angle_index = trand->Rndm() * angles[cent_ref][ep_bin][vz_bin][event_index].size();
 		unique = true;
 		for(pair<int, int> angle:used_angles) {
 			if(angle.first == event_index && angle.second == angle_index) { unique = false; }
