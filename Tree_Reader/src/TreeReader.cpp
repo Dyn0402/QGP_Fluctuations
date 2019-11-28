@@ -31,6 +31,8 @@
 #include "TreeReader.h"
 #include "file_io.h"
 #include "ratio_methods.h"
+#include "Event.h"
+#include "Track.h"
 
 #include "Mixer.h"
 #include "MixerSets.h"
@@ -227,33 +229,38 @@ void TreeReader::read_trees() {
 
 // Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
 void TreeReader::read_tree(TTree* tree) {
-	event_leaves event = get_event_leaves(tree);
-	proton_leaves proton = get_proton_leaves(tree);
+	tree_leaves leaves = get_tree_leaves(tree);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 
+		Event event(leaves);
+
 		if(pile_up) {
 			cout << "Pile up events, not implemented yet." << endl;
+			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
+				//
+			}
+
 		}
 
 		// Check if each event is good. Analyze if so, continue if not.
-		if(check_event_good(event, proton, energy)) {
+		if(check_event_good(event)) {
 			vector<double> good_proton_angles = {};
 
 			// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
-			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
-				if(check_proton_good(proton, proton_index)) {
+			for(Track proton:event.get_protons()) {
+				if(check_proton_good(proton)) {
 					if(efficiency) {
 						cout << "Efficiency, not implemented yet." << endl;
 					}
-					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
+					good_proton_angles.push_back(proton.get_phi());
 				}
 			}
 
 			// Get centrality bin for event from ref_mult2 value
-			refmult2CorrUtil->init(event.run->GetValue());
-			refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
+			refmult2CorrUtil->init(event.get_run());
+			refmult2CorrUtil->initEvent((int)event.get_ref2(), (double)event.get_vz());
 			int cent16_corr = refmult2CorrUtil->getCentralityBin16();
 			int cent9_corr = refmult2CorrUtil->getCentralityBin9();
 
@@ -272,7 +279,7 @@ void TreeReader::read_tree(TTree* tree) {
 				}
 
 				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
-					good_proton_angles = rotate_angles(good_proton_angles, -event.event_plane->GetValue());
+					good_proton_angles = rotate_angles(good_proton_angles, -event.get_event_plane());
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 					good_proton_angles = rotate_angles(good_proton_angles, trand->Rndm() * 2 * M_PI);
 				}
@@ -280,13 +287,13 @@ void TreeReader::read_tree(TTree* tree) {
 				// If mixed/rand flagged append event to mix/rand object.
 				if(mixed) {
 					if(cbwc) {
-						mix.append_event_CBWC(good_proton_angles, event.ref_mult2->GetValue(), event.event_plane->GetValue(), event.vz->GetValue());
+						mix.append_event_CBWC(good_proton_angles, event.get_ref2(), event.get_event_plane(), event.get_vz());
 					} else {
-						mix.append_event(good_proton_angles, cent, event.event_plane->GetValue(), event.vz->GetValue());
+						mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz());
 					}
 				}
-				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
-				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.ref_mult2->GetValue(), trand); }
+				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_ref2()); }
+				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_ref2(), trand); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
@@ -294,7 +301,7 @@ void TreeReader::read_tree(TTree* tree) {
 					// Save ratio values to data
 					for(int protons_in_bin:event_ratios) {
 						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-							data[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
+							data[div][event.get_ref2()][good_proton_angles.size()][protons_in_bin]++;
 						} else {
 							data[div][cent][good_proton_angles.size()][protons_in_bin]++;
 						}
@@ -359,50 +366,42 @@ void TreeReader::write_info_file() {
 }
 
 
-//Get event leaves and return them in an event_leaves struct.
-event_leaves TreeReader::get_event_leaves(TTree* tree) {
-	event_leaves event;
-	event.run = tree->GetLeaf("run");
-	event.ref_mult = tree->GetLeaf("Nprim");
-	event.ref_mult2 = tree->GetLeaf("ref2");
-	event.btof_mult = tree->GetLeaf("btof");
-	event.vx = tree->GetLeaf("vtx_x");
-	event.vy = tree->GetLeaf("vtx_y");
-	event.vz = tree->GetLeaf("vtx_z");
-	event.run = tree->GetLeaf("run");
-	event.event_plane = tree->GetLeaf("event_plane");
+//Get tree leaves and return them in a tree_leaves struct.
+tree_leaves TreeReader::get_tree_leaves(TTree* tree) {
+	tree_leaves leaves;
+	leaves.run = tree->GetLeaf("run");
+	leaves.ref_mult = tree->GetLeaf("Nprim");
+	leaves.ref_mult2 = tree->GetLeaf("ref2");
+	leaves.btof = tree->GetLeaf("btof");
+	leaves.vx = tree->GetLeaf("vtx_x");
+	leaves.vy = tree->GetLeaf("vtx_y");
+	leaves.vz = tree->GetLeaf("vtx_z");
+	leaves.run = tree->GetLeaf("run");
+	leaves.event_plane = tree->GetLeaf("event_plane");
 
-	return(event);
-}
+	leaves.pt = tree->GetLeaf("Proton.pt");
+	leaves.p = tree->GetLeaf("Proton.p");
+	leaves.phi = tree->GetLeaf("Proton.phi");
+	leaves.beta = tree->GetLeaf("Proton.beta");
+	leaves.charge = tree->GetLeaf("Proton.charge");
+	leaves.dca = tree->GetLeaf("Proton.dca");
+	leaves.nsigma = tree->GetLeaf("Proton.nsigma");
+	leaves.eta = tree->GetLeaf("Proton.eta");
 
-
-//Get proton leaves and return them in an protons_leaves struct.
-proton_leaves TreeReader::get_proton_leaves(TTree* tree) {
-	proton_leaves proton;
-	proton.pt = tree->GetLeaf("Proton.pt");
-	proton.p = tree->GetLeaf("Proton.p");
-	proton.phi = tree->GetLeaf("Proton.phi");
-	proton.beta = tree->GetLeaf("Proton.beta");
-	proton.dedx = tree->GetLeaf("Proton.dedx");
-	proton.charge = tree->GetLeaf("Proton.charge");
-	proton.dca = tree->GetLeaf("Proton.dca");
-	proton.nsigma = tree->GetLeaf("Proton.nsigma");
-	proton.eta = tree->GetLeaf("Proton.eta");
-
-	return(proton);
+	return(leaves);
 }
 
 
 //Returns true if event is good, false if it is bad.
-bool TreeReader::check_event_good(event_leaves event, proton_leaves proton, int energy) {
+bool TreeReader::check_event_good(Event event) {
 	bool good_event = false;
 	fill_pre_event_qa(event);
 	event_cut_hist.Fill(0);
-	if(check_good_run((int)event.run->GetValue())) {
+	if(check_good_run((int)event.get_run())) {
 		event_cut_hist.Fill(1);
-		if(check_enough_protons(proton)) {
+		if(check_enough_protons(event)) {
 			event_cut_hist.Fill(2);
-			if(check_slope(event.btof_mult->GetValue(), event.ref_mult->GetValue(), energy)) {
+			if(check_slope(event.get_btof(), event.get_ref())) {
 				event_cut_hist.Fill(3);
 				fill_post_event_qa(event);
 				good_event = true;
@@ -426,61 +425,57 @@ bool TreeReader::check_good_run(int run) {
 
 //Checks if there are enough protons in the event.
 //If more protons than minimum, return true, else false.
-bool TreeReader::check_enough_protons(proton_leaves protons) {
-	bool enough_protons = false;
-	if(protons.phi->GetLen() >=  cut.min_multi) {
-		enough_protons = true;
-	}
-
-	return(enough_protons);
+bool TreeReader::check_enough_protons(Event event) {
+	if((int)event.get_protons().size() >=  cut.min_multi) { return(true);	}
+	else { return(false); }
 }
 
 
 // Check slope of event. If within cuts, return true for good event, else false.
-bool TreeReader::check_slope(int btof_mult, int ref_mult, int energy) {
+bool TreeReader::check_slope(int btof, int ref_mult) {
 	bool good_event = true;
-	double slope = (double)btof_mult / ref_mult;
+	double slope = (double)btof / ref_mult;
 	if(slope > cut.max_slope[energy] || slope < cut.min_slope[energy]) {
 		good_event = false;
 	}
-	btof_ref_hist.Fill(btof_mult, ref_mult);
+	btof_ref_hist.Fill(btof, ref_mult);
 
 	return(good_event);
 }
 
 
 // Returns true if proton is good and false if proton is bad.
-bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
+bool TreeReader::check_proton_good(Track proton) {
 	bool good_proton = false;
 	track_cut_hist.Fill(0);
 
-	fill_pre_track_qa(protons, proton_index);
+	fill_pre_track_qa(proton);
 
-	double p = protons.p->GetValue(proton_index);
+	double p = proton.get_p();
 	if(p < cut.min_p) { return(good_proton); }
 	track_cut_hist.Fill(1);
 
-	double pt = protons.pt->GetValue(proton_index);
+	double pt = proton.get_pt();
 	if(!(pt >= cut.min_pt && pt <= cut.max_pt)) { return(good_proton); }
 	track_cut_hist.Fill(2);
 
-	if(!(protons.charge->GetValue(proton_index) == cut.charge)) { return(good_proton); }
+	if(!(proton.get_charge() == cut.charge)) { return(good_proton); }
 	track_cut_hist.Fill(3);
 
-	double eta = protons.eta->GetValue(proton_index);
+	double eta = proton.get_eta();
 	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return(good_proton); }
 	track_cut_hist.Fill(4);
 
-	double nsigma = protons.nsigma->GetValue(proton_index);
+	double nsigma = proton.get_nsigma();
 	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return(good_proton); }
 	track_cut_hist.Fill(5);
 
-	double dca = protons.dca->GetValue(proton_index);
+	double dca = proton.get_dca();
 	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return(good_proton); }
 	track_cut_hist.Fill(6);
 
 	if(pt >= cut.min_pt_for_m && pt <= cut.max_pt_for_m) {
-		double beta = protons.beta->GetValue(proton_index);
+		double beta = proton.get_beta();
 		if(beta > cut.min_beta) {
 			double m2 = pow(p, 2) * (pow(beta, -2) - 1.);
 			pre_m2_hist.Fill(m2);
@@ -494,7 +489,7 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	}
 	if(good_proton) { track_cut_hist.Fill(7); }
 
-	fill_post_track_qa(protons, proton_index);
+	fill_post_track_qa(proton);
 
 	return(good_proton);
 }
@@ -553,53 +548,53 @@ void TreeReader::define_qa() {
 
 
 // Fill histograms for pre-qa for tracks
-void TreeReader::fill_pre_track_qa(proton_leaves proton, int proton_index) {
-	pre_phi_hist.Fill(proton.phi->GetValue(proton_index));
-	pre_p_hist.Fill(proton.p->GetValue(proton_index));
-	pre_pt_hist.Fill(proton.pt->GetValue(proton_index));
-	pre_beta_hist.Fill(proton.beta->GetValue(proton_index));
-	pre_charge_hist.Fill(proton.charge->GetValue(proton_index));
-	pre_eta_hist.Fill(proton.eta->GetValue(proton_index));
-	pre_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
-	pre_dca_hist.Fill(proton.dca->GetValue(proton_index));
+void TreeReader::fill_pre_track_qa(Track proton) {
+	pre_phi_hist.Fill(proton.get_phi());
+	pre_p_hist.Fill(proton.get_p());
+	pre_pt_hist.Fill(proton.get_pt());
+	pre_beta_hist.Fill(proton.get_beta());
+	pre_charge_hist.Fill(proton.get_charge());
+	pre_eta_hist.Fill(proton.get_eta());
+	pre_nsigma_hist.Fill(proton.get_nsigma());
+	pre_dca_hist.Fill(proton.get_dca());
 }
 
 
 // Fill histograms for post-qa for tracks
-void TreeReader::fill_post_track_qa(proton_leaves proton, int proton_index) {
-	post_phi_hist.Fill(proton.phi->GetValue(proton_index));
-	post_p_hist.Fill(proton.p->GetValue(proton_index));
-	post_pt_hist.Fill(proton.pt->GetValue(proton_index));
-	post_beta_hist.Fill(proton.beta->GetValue(proton_index));
-	post_charge_hist.Fill(proton.charge->GetValue(proton_index));
-	post_eta_hist.Fill(proton.eta->GetValue(proton_index));
-	post_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
-	post_dca_hist.Fill(proton.dca->GetValue(proton_index));
+void TreeReader::fill_post_track_qa(Track proton) {
+	post_phi_hist.Fill(proton.get_phi());
+	post_p_hist.Fill(proton.get_p());
+	post_pt_hist.Fill(proton.get_pt());
+	post_beta_hist.Fill(proton.get_beta());
+	post_charge_hist.Fill(proton.get_charge());
+	post_eta_hist.Fill(proton.get_eta());
+	post_nsigma_hist.Fill(proton.get_nsigma());
+	post_dca_hist.Fill(proton.get_dca());
 }
 
 
 // Fill histograms for pre-qa for event
-void TreeReader::fill_pre_event_qa(event_leaves event) {
-	pre_run_hist.Fill(event.run->GetValue());
-	pre_vx_hist.Fill(event.vx->GetValue());
-	pre_vy_hist.Fill(event.vy->GetValue());
-	pre_vz_hist.Fill(event.vz->GetValue());
-	pre_ref_hist.Fill(event.ref_mult->GetValue());
-	pre_ref2_hist.Fill(event.ref_mult2->GetValue());
-	pre_btof_hist.Fill(event.btof_mult->GetValue());
-	pre_ep_hist.Fill(event.event_plane->GetValue());
+void TreeReader::fill_pre_event_qa(Event event) {
+	pre_run_hist.Fill(event.get_run());
+	pre_vx_hist.Fill(event.get_vx());
+	pre_vy_hist.Fill(event.get_vy());
+	pre_vz_hist.Fill(event.get_vz());
+	pre_ref_hist.Fill(event.get_ref());
+	pre_ref2_hist.Fill(event.get_ref2());
+	pre_btof_hist.Fill(event.get_btof());
+	pre_ep_hist.Fill(event.get_event_plane());
 }
 
 // Fill histograms for post-qa for event
-void TreeReader::fill_post_event_qa(event_leaves event) {
-	post_run_hist.Fill(event.run->GetValue());
-	post_vx_hist.Fill(event.vx->GetValue());
-	post_vy_hist.Fill(event.vy->GetValue());
-	post_vz_hist.Fill(event.vz->GetValue());
-	post_ref_hist.Fill(event.ref_mult->GetValue());
-	post_ref2_hist.Fill(event.ref_mult2->GetValue());
-	post_btof_hist.Fill(event.btof_mult->GetValue());
-	post_ep_hist.Fill(event.event_plane->GetValue());
+void TreeReader::fill_post_event_qa(Event event) {
+	post_run_hist.Fill(event.get_run());
+	post_vx_hist.Fill(event.get_vx());
+	post_vy_hist.Fill(event.get_vy());
+	post_vz_hist.Fill(event.get_vz());
+	post_ref_hist.Fill(event.get_ref());
+	post_ref2_hist.Fill(event.get_ref2());
+	post_btof_hist.Fill(event.get_btof());
+	post_ep_hist.Fill(event.get_event_plane());
 }
 
 

@@ -23,34 +23,15 @@
 
 #include "ratio_methods.h"
 
+#include "Event.h"
+#include "Track.h"
+
 #include "Mixer.h"
 #include "MixerSets.h"
 #include "Randomizer.h"
 
 using namespace std;
 
-struct event_leaves {
-	TLeaf *run;
-	TLeaf *ref_mult;
-	TLeaf *ref_mult2;
-	TLeaf *btof_mult;
-	TLeaf *vx;
-	TLeaf *vy;
-	TLeaf *vz;
-	TLeaf *event_plane;
-};
-
-struct proton_leaves {
-	TLeaf *phi;
-	TLeaf *pt;
-	TLeaf *p;
-	TLeaf *beta;
-	TLeaf *dedx;
-	TLeaf *charge;
-	TLeaf *dca;
-	TLeaf *nsigma;
-	TLeaf *eta;
-};
 
 struct cut_values {
 	//Event cuts
@@ -167,20 +148,19 @@ private:
 	// Doers
 	void read_tree(TTree* tree);
 
-	event_leaves get_event_leaves(TTree* tree);
-	proton_leaves get_proton_leaves(TTree* tree);
+	tree_leaves get_tree_leaves(TTree* tree);
 
-	bool check_event_good(event_leaves event, proton_leaves, int energy);
-	bool check_enough_protons(proton_leaves protons);
+	bool check_event_good(Event event);
+	bool check_enough_protons(Event event);
 	bool check_good_run(int run);
-	bool check_proton_good(proton_leaves protons, int proton_index);
-	bool check_slope(int btof_mult, int ref_mult, int energy);
+	bool check_slope(int btof, int ref_mult);
+	bool check_proton_good(Track proton);
 
 	void define_qa();
-	void fill_pre_track_qa(proton_leaves proton, int proton_index);
-	void fill_post_track_qa(proton_leaves proton, int proton_index);
-	void fill_pre_event_qa(event_leaves event);
-	void fill_post_event_qa(event_leaves event);
+	void fill_pre_track_qa(Track proton);
+	void fill_post_track_qa(Track proton);
+	void fill_pre_event_qa(Event event);
+	void fill_post_event_qa(Event event);
 	void write_qa();
 
 	void reset_out_dir();
