@@ -52,10 +52,6 @@ public:
 	void reset_out_dir();
 	void write_mixed_data();
 
-	void append_event(vector<double> angles, int cent, double event_plane, double vz, double rotate);
-	void get_mixed(int cent, int num_protons, int ep_bin, int vz_bin, double rotate);
-
-
 	// Attributes
 
 private:

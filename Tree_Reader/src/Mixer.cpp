@@ -182,10 +182,11 @@ void Mixer::get_mixed_CBWC(int num_protons, int ref_mult2, int ep_bin, int vz_bi
 
 // Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC disabled.
 void Mixer::append_event(vector<double> angles, int cent, double event_plane, double vz) {
-	int ep_bin = (int)((10*event_plane)/M_PI);  // Convert event_plane to bin like Roli did.
+	int ep_bin = get_ep_bin(event_plane);
 	int vz_bin = get_vz_bin(vz);
+
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
-		int index = rand() % max_events;
+		int index = trand->Rndm() * max_events;
 		this->angles[cent][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
 		this->angles[cent][ep_bin][vz_bin].push_back(angles);
@@ -209,48 +210,6 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 		mix_angles.push_back(angles[cent][ep_bin][vz_bin][index.first][index.second]);
 		used_angles.push_back(index);
 	}
-	for(int div:divs) {
-		vector<int> event_ratios = get_Rs(mix_angles, div);  // Convert proton angles in event to ratio values.
-
-		// Save ratio values to data
-		for(int protons_in_bin:event_ratios) {
-			data[div][cent][mix_angles.size()][protons_in_bin]++;
-		}
-	}
-}
-
-
-// Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC disabled. For rotation.
-void Mixer::append_event(vector<double> angles, int cent, double event_plane, double vz, double rotate) {
-	int ep_bin = get_ep_bin(event_plane);
-	int vz_bin = get_vz_bin(vz);
-
-	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
-		int index = trand->Rndm() * max_events;
-		this->angles[cent][ep_bin][vz_bin][index] = angles;
-	} else {  // Append event if there are not enough.
-		this->angles[cent][ep_bin][vz_bin].push_back(angles);
-	}
-
-	if((int)this->angles[cent][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
-		for(int i=0; i<mixes_per_event; i++) {
-			get_mixed(cent, (int)angles.size(), ep_bin, vz_bin, rotate);
-		}
-	}
-}
-
-
-// Sample angles randomly for an event. For CBWC disabled. For rotation.
-void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin, double rotate) {
-	vector<double> mix_angles;
-	vector<pair<int, int>> used_angles;
-	pair<int, int> index;
-	while((int)mix_angles.size() < num_protons) {
-		index = generate_index(used_angles, cent, ep_bin, vz_bin);
-		mix_angles.push_back(angles[cent][ep_bin][vz_bin][index.first][index.second]);
-		used_angles.push_back(index);
-	}
-	mix_angles = rotate_angles(mix_angles, rotate);
 	for(int div:divs) {
 		vector<int> event_ratios = get_Rs(mix_angles, div);  // Convert proton angles in event to ratio values.
 
