@@ -71,6 +71,7 @@ public:
 	string get_in_path();
 	string get_out_path();
 	string get_qa_path();
+	string get_set_name();
 	bool get_cbwc();
 	bool get_rotate_random();
 	bool get_event_plane();
@@ -88,6 +89,7 @@ public:
 	void set_out_path(string path);
 	void set_qa_path(string path);
 	void set_qa_name(string name);
+	void set_set_name(string set_name);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_cbwc(bool cbwc);
@@ -123,6 +125,7 @@ private:
 	string tree_name = "nsmTree";
 	string qa_name = "QA_CBWC_";
 	string info_file_name = "info.txt";
+	string set_name = "";
 
 	string in_path = "/home/dylan/Research/Trees/";
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";
