@@ -65,7 +65,7 @@ void read_class() {
 		for(pair<string, int> set_pair:set_pairs) {
 			for(int set_num = 0; set_num < set_pair.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
-				cout << endl << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
+				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
 				vector<int> energy_list = {39, 27, 62, 19, 11, 7};
 				vector<int> divs = {2, 3, 4, 5, 6};
 				for(int energy:energy_list) {
@@ -104,8 +104,8 @@ void read_class() {
 					else { reader.mix.set_mixes_per_event(10); }
 					pool.enqueue(&TreeReader::read_trees, reader);
 				}
+				this_thread::sleep_for(chrono::seconds(sleep));
 			}
-			this_thread::sleep_for(chrono::seconds(sleep));
 		}
 	}
 }
