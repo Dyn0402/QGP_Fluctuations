@@ -26,17 +26,6 @@ Event::Event(tree_leaves leaves) {
 	read_tree_event(leaves);
 }
 
-Event::Event(double vx, double vy, double vz, double event_plane, unsigned ref, unsigned run, unsigned ref2, unsigned btof) {
-	this->vx = vx;
-	this->vy = vy;
-	this->vz = vz;
-	this->event_plane = event_plane;
-	this->ref = ref;
-	this->run = run;
-	this->ref2 = ref2;
-	this->btof = btof;
-}
-
 Event::~Event() {}
 
 
@@ -94,6 +83,8 @@ void Event::set_vz(double vz) {
 }
 
 void Event::set_event_plane(double event_plane) {
+	while(event_plane >= M_PI) { event_plane -= M_PI; }
+	while(event_plane < 0) { event_plane += M_PI; }
 	this->event_plane = event_plane;
 }
 
@@ -163,4 +154,13 @@ void Event::clear() {
 	run = 0;
 	ref2 = 0;
 	btof = 0;
+}
+
+// Pile up input pile event onto this event.
+void Event::pile_up(Event pile) {
+	ref += pile.get_ref();
+	ref2 += pile.get_ref2();
+	btof += pile.get_btof();
+	vector<Track> pile_protons = pile.get_protons();
+	protons.insert(protons.end(), pile_protons.begin(), pile_protons.end());
 }

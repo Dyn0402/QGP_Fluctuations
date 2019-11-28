@@ -44,7 +44,6 @@ public:
 	// Structors
 	Event();
 	Event(tree_leaves leaves);
-	Event(double vx, double vy, double vz, double event_plane, unsigned ref, unsigned run, unsigned ref2, unsigned btof);
 	~Event();
 
 	// Getters
@@ -73,6 +72,7 @@ public:
 	void read_tree_event(tree_leaves leaves);
 	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned ref2, unsigned btof);
 	void clear();
+	void pile_up(Event pile);
 
 private:
 	vector<Track> protons;
