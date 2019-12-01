@@ -377,8 +377,11 @@ void analyze_no_CBWC() {
 	vector<string> raw_moment_names = {"raw moment 2", "raw moment 3", "raw moment 4"};
 	vector<string> central_moment_names = {"central moment 2", "central moment 3", "central moment 4"};
 	vector<int> centralities = {8, 7, 4, 1};
-	int single_index = 2;
+	int single_index = 6;
+	int start_set = 6;
+	int end_set = 10;
 	int hist_index = 0;
+	single_index -= start_set;
 
 	TFile *out_root = new TFile((plot::out_path+plot::out_root_name).data(), "RECREATE");
 
@@ -387,7 +390,8 @@ void analyze_no_CBWC() {
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> divide_stats_sets;
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> reldiff_stats_sets;
 
-	for(int set = 2; set <= 2; set++) {
+	for(int set = start_set; set <= end_set; set++) {
+		if(set >= 17 && set <= 19) { continue; }
 		cout << "Starting Set " + to_string(set) << endl << endl;
 		map<int, map<int, map<int, RatioData>>> data;
 		map<int, map<int, map<int, RatioData>>> data_mix;
@@ -598,7 +602,21 @@ void analyze_no_CBWC() {
 	roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_comp4");
 	roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_comp5");
 	roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_comp6");
-	centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities6");
+	centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_non_excess_kurtosis6");
+	centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_non_excess_kurtosis5");
+	centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_non_excess_kurtosis4");
+	centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_non_excess_kurtosis3");
+	centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_non_excess_kurtosis2");
+	centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_skewness6");
+	centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_skewness5");
+	centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_skewness4");
+	centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_skewness3");
+	centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_skewness2");
+	centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_standard_deviation6");
+	centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_standard_deviation5");
+	centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_standard_deviation4");
+	centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_standard_deviation3");
+	centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_standard_deviation2");
 
 	TDirectory *data_dir = set_dir->mkdir("Raw_Data");
 	data_dir->cd();
@@ -652,6 +670,21 @@ void analyze_no_CBWC() {
 	roli_thesis_stats(divide_stats_single, divide_stats_sd, central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_divide4");
 	roli_thesis_stats(divide_stats_single, divide_stats_sd, central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_divide5");
 	roli_thesis_stats(divide_stats_single, divide_stats_sd, central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_divide6");
+	centralities_stat(divide_stats_single, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_non_excess_kurtosis6");
+	centralities_stat(divide_stats_single, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_non_excess_kurtosis5");
+	centralities_stat(divide_stats_single, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_non_excess_kurtosis4");
+	centralities_stat(divide_stats_single, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_non_excess_kurtosis3");
+	centralities_stat(divide_stats_single, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_non_excess_kurtosis2");
+	centralities_stat(divide_stats_single, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_skewness6");
+	centralities_stat(divide_stats_single, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_skewness5");
+	centralities_stat(divide_stats_single, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_skewness4");
+	centralities_stat(divide_stats_single, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_skewness3");
+	centralities_stat(divide_stats_single, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_skewness2");
+	centralities_stat(divide_stats_single, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_standard_deviation6");
+	centralities_stat(divide_stats_single, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_standard_deviation5");
+	centralities_stat(divide_stats_single, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_standard_deviation4");
+	centralities_stat(divide_stats_single, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_standard_deviation3");
+	centralities_stat(divide_stats_single, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_standard_deviation2");
 
 	out_root->Close();
 }
