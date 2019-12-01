@@ -62,10 +62,8 @@ void analyze_no_CBWC() {
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> raw_stats_sets;
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> mix_stats_sets;
 	map<int, map<int, map<int, map<string, vector<Measure>>>>> divide_stats_sets;
-	map<int, map<int, map<int, map<string, vector<Measure>>>>> reldiff_stats_sets;
 
 	for(int set = start_set; set <= end_set; set++) {
-		if(set >= 17 && set <= 19) { continue; }
 		cout << "Starting Set " + to_string(set) << endl << endl;
 		map<int, map<int, map<int, RatioData>>> data;
 		map<int, map<int, map<int, RatioData>>> data_mix;
@@ -127,7 +125,6 @@ void analyze_no_CBWC() {
 				for(pair<int, map<string, Measure>> cent:div.second) {
 					for(pair<string, Measure> stat:cent.second) {
 						stats_mix_divide[energy.first][div.first][cent.first][stat.first] = stat.second / stats_mix[energy.first][div.first][cent.first][stat.first];
-//						stats_mix_reldiff[energy.first][div.first][cent.first][stat.first] = (stat.second
 
 						raw_stats_sets[energy.first][div.first][cent.first][stat.first].push_back(stat.second);
 						mix_stats_sets[energy.first][div.first][cent.first][stat.first].push_back(stats_mix[energy.first][div.first][cent.first][stat.first]);
