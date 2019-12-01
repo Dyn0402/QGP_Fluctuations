@@ -566,7 +566,7 @@ void StRefMultCorr::read()
     Error("StRefMultCorr::read", "cannot open %s", inputFileName);
     return;
   }
-  cout << "StRefMultCorr::read  Open " << inputFileName << flush ;
+//  cout << "StRefMultCorr::read  Open " << inputFileName << flush ;
 
   string line ;
   getline(ParamFile,line);
@@ -631,7 +631,7 @@ void StRefMultCorr::read()
   }
   ParamFile.close();
 
-  cout << " [OK]" << endl;
+//  cout << " [OK]" << endl;
 }
 
 //______________________________________________________________________________
@@ -641,22 +641,22 @@ void StRefMultCorr::readBadRuns()
   //   - From year 2010 - 2014
   //   - If input file doesn't exist, skip to the next year without warning
   for(Int_t i=0; i<5; i++) {
-    cout << "StRefMultCorr::readBadRuns  For " << mName << ": open " << flush ;
+//    cout << "StRefMultCorr::readBadRuns  For " << mName << ": open " << flush ;
     const Int_t year = 2010 + i ;
     const Char_t* inputFileName(Form("StRoot/StRefMultCorr/bad_runs_refmult_year%d.txt", year));
     ifstream fin(inputFileName);
     if(!fin){
       //      Error("StRefMultCorr::readBadRuns", "can't open %s", inputFileName);
-      cout << endl;
+//      cout << endl;
       continue;
     }
-    cout << "  " << inputFileName << flush;
+//    cout << "  " << inputFileName << flush;
 
     Int_t runId = 0 ;
     while( fin >> runId ) {
       mBadRun.push_back(runId);
     }
-    cout << " [OK]" << endl;
+//    cout << " [OK]" << endl;
   }
 }
 

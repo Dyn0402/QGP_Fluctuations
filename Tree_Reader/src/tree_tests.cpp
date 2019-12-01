@@ -143,7 +143,7 @@ void real_tree_test() {
 //	cout << rtracks.size() << endl;
 
 	rtree->GetEvent(100);
-	cout << revent->get_vtx_x() << endl;
+	cout << revent->get_vx() << endl;
 	cout << rtracks->size() << endl;
 	for(unsigned i=0; i<rtracks->size(); i++) {
 		cout << (*rtracks)[i].get_pt() << endl;
@@ -152,7 +152,7 @@ void real_tree_test() {
 	cout << endl << endl;
 
 	rtree->GetEvent(103);
-	cout << revent->get_vtx_x() << endl;
+	cout << revent->get_vx() << endl;
 	cout << rtracks->size() << endl;
 	for(unsigned i=0; i<rtracks->size(); i++) {
 		cout << (*rtracks)[i].get_pt() << endl;

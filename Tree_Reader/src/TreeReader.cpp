@@ -29,10 +29,13 @@
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "TreeReader.h"
-#include "Mixer.h"
 #include "file_io.h"
 #include "ratio_methods.h"
-#include "MixerRoli.h"
+#include "Event.h"
+#include "Track.h"
+
+#include "Mixer.h"
+#include "MixerSets.h"
 
 using namespace std;
 
@@ -44,26 +47,45 @@ TreeReader::TreeReader(int energy) {
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
+	mixed_sets = false;
 	mixed = false;
-	mixed_roli = false;
 	rand_data = false;
-	this->energy = energy;
+	pile_up = false;
+	efficiency = false;
 
-	mix_rotate = false;
+	pile_up_prob = 0;
+	efficiency_prob = 0;
 
 	cent_binning = 9;
 
-	define_qa();
+	this->energy = energy;
+
+	mix = Mixer(energy);
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
 
 TreeReader::~TreeReader() {
-//	delete refmult2CorrUtil;
 }
 
 
 // Getters
+
+string TreeReader::get_in_path() {
+	return(in_path);
+}
+
+string TreeReader::get_out_path() {
+	return(out_path);
+}
+
+string TreeReader::get_qa_path() {
+	return(qa_path);
+}
+
+string TreeReader::get_set_name() {
+	return(set_name);
+}
 
 bool TreeReader::get_cbwc() {
 	return(cbwc);
@@ -77,16 +99,32 @@ bool TreeReader::get_event_plane() {
 	return(event_plane);
 }
 
+bool TreeReader::get_mixed_sets() {
+	return(mixed_sets);
+}
+
 bool TreeReader::get_mixed() {
 	return(mixed);
 }
 
-bool TreeReader::get_mixed_roli() {
-	return(mixed_roli);
-}
-
 bool TreeReader::get_rand_data() {
 	return(rand_data);
+}
+
+bool TreeReader::get_pile_up() {
+	return(pile_up);
+}
+
+bool TreeReader::get_efficiency() {
+	return(efficiency);
+}
+
+double TreeReader::get_pile_up_prob() {
+	return(pile_up_prob);
+}
+
+double TreeReader::get_efficiency_prob() {
+	return(efficiency_prob);
 }
 
 int TreeReader::get_cent_binning() {
@@ -112,6 +150,10 @@ void TreeReader::set_qa_name(string name) {
 	qa_name = name;
 }
 
+void TreeReader::set_set_name(string set_name) {
+	this->set_name = set_name;
+}
+
 void TreeReader::set_energy(int energy) {
 	this->energy = energy;
 }
@@ -132,16 +174,32 @@ void TreeReader::set_event_plane(bool event_plane) {
 	this->event_plane = event_plane;
 }
 
-void TreeReader::set_mixed(bool mixed) {
-	this->mixed = mixed;
+void TreeReader::set_mixed_sets(bool mixed) {
+	this->mixed_sets = mixed;
 }
 
-void TreeReader::set_mixed_roli(bool mixed_roli) {
-	this->mixed_roli = mixed_roli;
+void TreeReader::set_mixed(bool mixed_roli) {
+	this->mixed = mixed_roli;
 }
 
 void TreeReader::set_rand_data(bool rand_data) {
 	this->rand_data = rand_data;
+}
+
+void TreeReader::set_pile_up(bool pile_up) {
+	this->pile_up = pile_up;
+}
+
+void TreeReader::set_efficiency(bool efficiency) {
+	this->efficiency = efficiency;
+}
+
+void TreeReader::set_pile_up_prob(double pile_up_prob) {
+	this->pile_up_prob = pile_up_prob;
+}
+
+void TreeReader::set_efficiency_prob(double efficiency_prob) {
+	this->efficiency_prob = efficiency_prob;
 }
 
 void TreeReader::set_cent_binning(int cent_binning) {
@@ -153,7 +211,9 @@ void TreeReader::set_cent_binning(int cent_binning) {
 
 // Read files for single energy and write results to text files.
 void TreeReader::read_trees() {
-	cout << "Reading " + to_string(energy) + "GeV trees." << endl;
+	define_qa();
+
+	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
 
 	unsigned num_files = in_files.size();
@@ -164,7 +224,7 @@ void TreeReader::read_trees() {
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
@@ -178,10 +238,11 @@ void TreeReader::read_trees() {
 	reset_out_dir();
 	write_info_file();
 	write_qa();
-	cout << " Writing " + to_string(energy) + "GeV trees." << endl;
+	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
-	if(mixed_roli) { mix_roli.write_mixed_data(); }
 	if(mixed) { mix.write_mixed_data(); }
+	if(mixed_sets) { mix_sets.write_mixed_data(); }
 	if(rand_data) {random.write_random_data(); }
 	cout << endl;
 }
@@ -189,35 +250,40 @@ void TreeReader::read_trees() {
 
 // Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
 void TreeReader::read_tree(TTree* tree) {
-	event_leaves event = get_event_leaves(tree);
-	proton_leaves proton = get_proton_leaves(tree);
+	tree_leaves leaves = get_tree_leaves(tree);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 
+		Event event(leaves);
+
+		if(pile_up) {
+			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
+				event_index++;
+				Event event2(leaves);
+				event.pile_up(event2);
+			}
+		}
+
 		// Check if each event is good. Analyze if so, continue if not.
-		if(check_event_good(event, proton, energy)) {
+		if(check_event_good(event)) {
 			vector<double> good_proton_angles = {};
 
 			// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
-			for(int proton_index = 0; proton_index<proton.phi->GetLen(); proton_index++) {
-				if(check_proton_good(proton, proton_index)) {
-					good_proton_angles.push_back(proton.phi->GetValue(proton_index));
+			for(Track proton:event.get_protons()) {
+				if(check_proton_good(proton)) {
+					if(efficiency) {  // Skip good proton with chance efficiency_prob
+						if(trand->Rndm() < efficiency_prob) { continue; }
+					}
+					good_proton_angles.push_back(proton.get_phi());
 				}
 			}
 
 			// Get centrality bin for event from ref_mult2 value
-			int cent16 = get_centrality16(event.ref_mult2->GetValue(), energy);
-			int cent9 = get_centrality9(event.ref_mult2->GetValue(), energy);
-			int cent16_corr = -2, cent9_corr = -2;
-			if(!refmult2CorrUtil->isBadRun(event.run->GetValue())) {
-				refmult2CorrUtil->init(event.run->GetValue());
-				refmult2CorrUtil->initEvent((int)event.ref_mult2->GetValue(), (double)event.vz->GetValue());
-				cent16_corr = refmult2CorrUtil->getCentralityBin16();
-				cent9_corr = refmult2CorrUtil->getCentralityBin9();
-			} else { cout << "Refmult said was a bad run" << endl; }
-			if(cent_binning == 16) { cent_hist.Fill(cent16, cent16_corr); }
-			else { cent_hist.Fill(cent9, cent9_corr); }
+			refmult2CorrUtil->init(event.get_run());
+			refmult2CorrUtil->initEvent((int)event.get_ref2(), (double)event.get_vz());
+			int cent16_corr = refmult2CorrUtil->getCentralityBin16();
+			int cent9_corr = refmult2CorrUtil->getCentralityBin9();
 
 			// If there are enough good protons, calculate ratios for each division and save to data.
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
@@ -226,16 +292,6 @@ void TreeReader::read_tree(TTree* tree) {
 				cent9_events.Fill(cent9_corr);
 				event_cut_hist.Fill(4);
 
-				double rotate_angle;
-				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
-					rotate_angle = -event.event_plane->GetValue();
-//					cout << "Need to flatten event plane angles before using. Need to implement" << endl;  // Need to implement.
-					good_proton_angles = rotate_angles(good_proton_angles, rotate_angle);
-				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
-					rotate_angle = trand->Rndm() * 2 * M_PI;
-					good_proton_angles = rotate_angles(good_proton_angles, rotate_angle);
-				}
-
 				int cent;
 				if(cent_binning == 16) {
 					cent = cent16_corr;
@@ -243,20 +299,24 @@ void TreeReader::read_tree(TTree* tree) {
 					cent = cent9_corr;
 				}
 
+				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
+					good_proton_angles = rotate_angles(good_proton_angles, -event.get_event_plane());
+				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
+					double rand_angle = trand->Rndm() * 2 * M_PI;
+					good_proton_angles = rotate_angles(good_proton_angles, rand_angle);
+					event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));
+				}
+
 				// If mixed/rand flagged append event to mix/rand object.
-				if(mixed_roli) {
+				if(mixed) {
 					if(cbwc) {
-						mix_roli.append_event_CBWC(good_proton_angles, event.ref_mult2->GetValue(), event.event_plane->GetValue(), event.vz->GetValue());
+						mix.append_event_CBWC(good_proton_angles, event.get_ref2(), event.get_event_plane(), event.get_vz());
 					} else {
-						if(!mix_rotate) {
-							mix_roli.append_event(good_proton_angles, cent, event.event_plane->GetValue(), event.vz->GetValue());
-						} else {
-							mix_roli.append_event(good_proton_angles, cent, event.event_plane->GetValue(), event.vz->GetValue(), rotate_angle);
-						}
+						mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz());
 					}
 				}
-				if(mixed) { mix.append_event(good_proton_angles, event.ref_mult2->GetValue()); }
-				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.ref_mult2->GetValue(), trand); }
+				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_ref2()); }
+				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_ref2(), trand); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
@@ -264,7 +324,7 @@ void TreeReader::read_tree(TTree* tree) {
 					// Save ratio values to data
 					for(int protons_in_bin:event_ratios) {
 						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-							data[div][event.ref_mult2->GetValue()][good_proton_angles.size()][protons_in_bin]++;
+							data[div][event.get_ref2()][good_proton_angles.size()][protons_in_bin]++;
 						} else {
 							data[div][cent][good_proton_angles.size()][protons_in_bin]++;
 						}
@@ -297,9 +357,13 @@ void TreeReader::write_info_file() {
 		out << "cbwc: " << boolalpha << cbwc << endl;
 		out << "rotate_random: " << boolalpha << rotate_random << endl;
 		out << "event_plane: " << boolalpha << event_plane << endl;
+		out << "mixed_sets: " << boolalpha << mixed_sets << endl;
 		out << "mixed: " << boolalpha << mixed << endl;
-		out << "mixed_roli: " << boolalpha << mixed_roli << endl;
 		out << "rand_data: " << boolalpha << rand_data << endl;
+		out << "pile_up: " << boolalpha << pile_up << endl;
+		out << "efficiency: " << boolalpha << efficiency << endl;
+		out << "pile_up_prob: " << pile_up_prob << endl;
+		out << "efficiency_prob: " << efficiency_prob << endl;
 		out << "cent_binning: " << cent_binning << endl;
 
 		out << "min_p: " << to_string(cut.min_p) << endl;
@@ -325,49 +389,44 @@ void TreeReader::write_info_file() {
 }
 
 
-//Get event leaves and return them in an event_leaves struct.
-event_leaves TreeReader::get_event_leaves(TTree* tree) {
-	event_leaves event;
-	event.run = tree->GetLeaf("run");
-	event.ref_mult = tree->GetLeaf("Nprim");
-	event.ref_mult2 = tree->GetLeaf("ref2");
-	event.btof_mult = tree->GetLeaf("btof");
-	event.vz = tree->GetLeaf("vtx_z");
-	event.run = tree->GetLeaf("run");
-	event.event_plane = tree->GetLeaf("event_plane");
+//Get tree leaves and return them in a tree_leaves struct.
+tree_leaves TreeReader::get_tree_leaves(TTree* tree) {
+	tree_leaves leaves;
+	leaves.run = tree->GetLeaf("run");
+	leaves.ref_mult = tree->GetLeaf("Nprim");
+	leaves.ref_mult2 = tree->GetLeaf("ref2");
+	leaves.btof = tree->GetLeaf("btof");
+	leaves.vx = tree->GetLeaf("vtx_x");
+	leaves.vy = tree->GetLeaf("vtx_y");
+	leaves.vz = tree->GetLeaf("vtx_z");
+	leaves.run = tree->GetLeaf("run");
+	leaves.event_plane = tree->GetLeaf("event_plane");
 
-	return(event);
-}
+	leaves.pt = tree->GetLeaf("Proton.pt");
+	leaves.p = tree->GetLeaf("Proton.p");
+	leaves.phi = tree->GetLeaf("Proton.phi");
+	leaves.beta = tree->GetLeaf("Proton.beta");
+	leaves.charge = tree->GetLeaf("Proton.charge");
+	leaves.dca = tree->GetLeaf("Proton.dca");
+	leaves.nsigma = tree->GetLeaf("Proton.nsigma");
+	leaves.eta = tree->GetLeaf("Proton.eta");
 
-
-//Get proton leaves and return them in an protons_leaves struct.
-proton_leaves TreeReader::get_proton_leaves(TTree* tree) {
-	proton_leaves proton;
-	proton.pt = tree->GetLeaf("Proton.pt");
-	proton.p = tree->GetLeaf("Proton.p");
-	proton.phi = tree->GetLeaf("Proton.phi");
-	proton.beta = tree->GetLeaf("Proton.beta");
-	proton.dedx = tree->GetLeaf("Proton.dedx");
-	proton.charge = tree->GetLeaf("Proton.charge");
-	proton.dca = tree->GetLeaf("Proton.dca");
-	proton.nsigma = tree->GetLeaf("Proton.nsigma");
-	proton.eta = tree->GetLeaf("Proton.eta");
-
-	return(proton);
+	return(leaves);
 }
 
 
 //Returns true if event is good, false if it is bad.
-bool TreeReader::check_event_good(event_leaves event, proton_leaves proton, int energy) {
+bool TreeReader::check_event_good(Event event) {
 	bool good_event = false;
+	fill_pre_event_qa(event);
 	event_cut_hist.Fill(0);
-	pre_run_hist.Fill(event.run->GetValue());
-	if(check_good_run((int)event.run->GetValue())) {
+	if(check_good_run((int)event.get_run())) {
 		event_cut_hist.Fill(1);
-		if(check_enough_protons(proton)) {
+		if(check_enough_protons(event)) {
 			event_cut_hist.Fill(2);
-			if(check_slope(event.btof_mult->GetValue(), event.ref_mult->GetValue(), energy)) {
+			if(check_slope(event.get_btof(), event.get_ref())) {
 				event_cut_hist.Fill(3);
+				fill_post_event_qa(event);
 				good_event = true;
 			}
 		}
@@ -383,69 +442,63 @@ bool TreeReader::check_good_run(int run) {
 	bool list_good_run = find(cut.bad_runs.begin(), cut.bad_runs.end(), run) == cut.bad_runs.end();
 	bool ref_good_run = !refmult2CorrUtil->isBadRun(run);
 
-	return(list_good_run * ref_good_run);
+	return(list_good_run && ref_good_run);
 }
 
 
 //Checks if there are enough protons in the event.
 //If more protons than minimum, return true, else false.
-bool TreeReader::check_enough_protons(proton_leaves protons) {
-	bool enough_protons = false;
-	if(protons.phi->GetLen() >=  cut.min_multi) {
-		enough_protons = true;
-	}
-
-	return(enough_protons);
+bool TreeReader::check_enough_protons(Event event) {
+	if((int)event.get_protons().size() >=  cut.min_multi) { return(true);	}
+	else { return(false); }
 }
 
 
 // Check slope of event. If within cuts, return true for good event, else false.
-bool TreeReader::check_slope(int btof_mult, int ref_mult, int energy) {
+bool TreeReader::check_slope(int btof, int ref_mult) {
 	bool good_event = true;
-	double slope = (double)btof_mult / ref_mult;
+	double slope = (double)btof / ref_mult;
 	if(slope > cut.max_slope[energy] || slope < cut.min_slope[energy]) {
 		good_event = false;
 	}
-	btof_ref_hist.Fill(btof_mult, ref_mult);
+	btof_ref_hist.Fill(btof, ref_mult);
 
 	return(good_event);
 }
 
 
 // Returns true if proton is good and false if proton is bad.
-bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
+bool TreeReader::check_proton_good(Track proton) {
 	bool good_proton = false;
 	track_cut_hist.Fill(0);
 
-	fill_pre_track_qa(protons, proton_index);
+	fill_pre_track_qa(proton);
 
-	double p = protons.p->GetValue(proton_index);
+	double p = proton.get_p();
 	if(p < cut.min_p) { return(good_proton); }
 	track_cut_hist.Fill(1);
 
-	double pt = protons.pt->GetValue(proton_index);
+	double pt = proton.get_pt();
 	if(!(pt >= cut.min_pt && pt <= cut.max_pt)) { return(good_proton); }
 	track_cut_hist.Fill(2);
 
-	double beta = protons.beta->GetValue(proton_index);
-//	if(!(beta > cut.min_beta && beta < cut.max_beta)) { return(good_proton); }
-
-	if(!(protons.charge->GetValue(proton_index) == cut.charge)) { return(good_proton); }
+	if(!(proton.get_charge() == cut.charge)) { return(good_proton); }
 	track_cut_hist.Fill(3);
 
-	double eta = protons.eta->GetValue(proton_index);
+	double eta = proton.get_eta();
 	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return(good_proton); }
 	track_cut_hist.Fill(4);
 
-	double nsigma = protons.nsigma->GetValue(proton_index);
+	double nsigma = proton.get_nsigma();
 	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return(good_proton); }
 	track_cut_hist.Fill(5);
 
-	double dca = protons.dca->GetValue(proton_index);
+	double dca = proton.get_dca();
 	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return(good_proton); }
 	track_cut_hist.Fill(6);
 
 	if(pt >= cut.min_pt_for_m && pt <= cut.max_pt_for_m) {
+		double beta = proton.get_beta();
 		if(beta > cut.min_beta) {
 			double m2 = pow(p, 2) * (pow(beta, -2) - 1.);
 			pre_m2_hist.Fill(m2);
@@ -459,7 +512,7 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 	}
 	if(good_proton) { track_cut_hist.Fill(7); }
 
-	fill_post_track_qa(protons, proton_index);
+	fill_post_track_qa(proton);
 
 	return(good_proton);
 }
@@ -467,63 +520,104 @@ bool TreeReader::check_proton_good(proton_leaves protons, int proton_index) {
 
 // Define all histograms collected for qa.
 void TreeReader::define_qa() {
-	cent_hist = TH2I(("cent_comp"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
-	btof_ref_hist = TH2I(("btof_ref"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
+	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
+	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
 
-	event_cut_hist = TH1I(("event_cut"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
-	track_cut_hist = TH1I(("track_cut"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
-	cent16_events = TH1I(("cent16_events"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
-	cent9_events = TH1I(("cent9_events"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
+	event_cut_hist = TH1I(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
+	track_cut_hist = TH1I(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
+	cent16_events = TH1I(("cent16_events"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
+	cent9_events = TH1I(("cent9_events"+set_name+"_"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
 
-	pre_m2_hist = TH1I(("pre_m2"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
-	post_m2_hist = TH1I(("post_m2"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
+	pre_run_hist = TH1I(("pre_run"+set_name+"_"+to_string(energy)).data(), "pre_run", 1000, 1000000, 100000000);
+	pre_vx_hist = TH1I(("pre_vx"+set_name+"_"+to_string(energy)).data(), "pre_vx", 100, -2.5, 2.5);
+	pre_vy_hist = TH1I(("pre_vy"+set_name+"_"+to_string(energy)).data(), "pre_vy", 100, -2.5, 2.5);
+	pre_vz_hist = TH1I(("pre_vz"+set_name+"_"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
+	pre_ref_hist = TH1I(("pre_ref"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
+	pre_ref2_hist = TH1I(("pre_reftwo"+set_name+"_"+to_string(energy)).data(), "pre_ref2", 801, -0.5, 800.5);
+	pre_btof_hist = TH1I(("pre_btof"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
+	pre_ep_hist = TH1I(("pre_ep"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
-	pre_run_hist = TH1I(("pre_run"+to_string(energy)).data(), "pre_run", 1000, 1000000, 100000000);
-	pre_phi_hist = TH1I(("pre_phi"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
-	pre_p_hist = TH1I(("pre_p"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
-	pre_pt_hist = TH1I(("pre_pt"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
-	pre_beta_hist = TH1I(("pre_beta"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
-	pre_charge_hist = TH1I(("pre_charge"+to_string(energy)).data(), "pre_charge", 100, -2.5, 2.5);
-	pre_eta_hist = TH1I(("pre_eta"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
-	pre_nsigma_hist = TH1I(("pre_nsigma"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
-	pre_dca_hist = TH1I(("pre_dca"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
+	post_run_hist = TH1I(("post_run"+set_name+"_"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
+	post_vx_hist = TH1I(("post_vx"+set_name+"_"+to_string(energy)).data(), "post_vx", 100, -2.5, 2.5);
+	post_vy_hist = TH1I(("post_vy"+set_name+"_"+to_string(energy)).data(), "post_vy", 100, -2.5, 2.5);
+	post_vz_hist = TH1I(("post_vz"+set_name+"_"+to_string(energy)).data(), "post_vz", 100, -55, 55);
+	post_ref_hist = TH1I(("post_ref"+set_name+"_"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
+	post_ref2_hist = TH1I(("post_reftwo"+set_name+"_"+to_string(energy)).data(), "post_ref2", 801, -0.5, 800.5);
+	post_btof_hist = TH1I(("post_btof"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
+	post_ep_hist = TH1I(("post_ep"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
-	post_run_hist = TH1I(("post_run"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
-	post_phi_hist = TH1I(("post_phi"+to_string(energy)).data(), "post_phi", 100, 0.0, 7.0);
-	post_p_hist = TH1I(("post_p"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
-	post_pt_hist = TH1I(("post_pt"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
-	post_beta_hist = TH1I(("post_beta"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);
-	post_charge_hist = TH1I(("post_charge"+to_string(energy)).data(), "post_charge", 100, -2.5, 2.5);
-	post_eta_hist = TH1I(("post_eta"+to_string(energy)).data(), "post_eta", 100, -1.0, 1.0);
-	post_nsigma_hist = TH1I(("post_nsigma"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
-	post_dca_hist = TH1I(("post_dca"+to_string(energy)).data(), "post_dca", 100, 0.0, 2.5);
+	pre_phi_hist = TH1I(("pre_phi"+set_name+"_"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
+	pre_p_hist = TH1I(("pre_p"+set_name+"_"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
+	pre_pt_hist = TH1I(("pre_pt"+set_name+"_"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
+	pre_beta_hist = TH1I(("pre_beta"+set_name+"_"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
+	pre_charge_hist = TH1I(("pre_charge"+set_name+"_"+to_string(energy)).data(), "pre_charge", 100, -2.5, 2.5);
+	pre_eta_hist = TH1I(("pre_eta"+set_name+"_"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
+	pre_nsigma_hist = TH1I(("pre_nsigma"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
+	pre_dca_hist = TH1I(("pre_dca"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
+
+	post_phi_hist = TH1I(("post_phi"+set_name+"_"+to_string(energy)).data(), "post_phi", 100, 0.0, 7.0);
+	post_p_hist = TH1I(("post_p"+set_name+"_"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
+	post_pt_hist = TH1I(("post_pt"+set_name+"_"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
+	post_beta_hist = TH1I(("post_beta"+set_name+"_"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);
+	post_charge_hist = TH1I(("post_charge"+set_name+"_"+to_string(energy)).data(), "post_charge", 100, -2.5, 2.5);
+	post_eta_hist = TH1I(("post_eta"+set_name+"_"+to_string(energy)).data(), "post_eta", 100, -1.0, 1.0);
+	post_nsigma_hist = TH1I(("post_nsigma"+set_name+"_"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
+	post_dca_hist = TH1I(("post_dca"+set_name+"_"+to_string(energy)).data(), "post_dca", 100, 0.0, 2.5);
+
+	pre_m2_hist = TH1I(("pre_m2"+set_name+"_"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
+	post_m2_hist = TH1I(("post_m2"+set_name+"_"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
 
 }
 
 
-// Fill histograms for pre-qa
-void TreeReader:: fill_pre_track_qa(proton_leaves proton, int proton_index) {
-	pre_phi_hist.Fill(proton.phi->GetValue(proton_index));
-	pre_p_hist.Fill(proton.p->GetValue(proton_index));
-	pre_pt_hist.Fill(proton.pt->GetValue(proton_index));
-	pre_beta_hist.Fill(proton.beta->GetValue(proton_index));
-	pre_charge_hist.Fill(proton.charge->GetValue(proton_index));
-	pre_eta_hist.Fill(proton.eta->GetValue(proton_index));
-	pre_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
-	pre_dca_hist.Fill(proton.dca->GetValue(proton_index));
+// Fill histograms for pre-qa for tracks
+void TreeReader::fill_pre_track_qa(Track proton) {
+	pre_phi_hist.Fill(proton.get_phi());
+	pre_p_hist.Fill(proton.get_p());
+	pre_pt_hist.Fill(proton.get_pt());
+	pre_beta_hist.Fill(proton.get_beta());
+	pre_charge_hist.Fill(proton.get_charge());
+	pre_eta_hist.Fill(proton.get_eta());
+	pre_nsigma_hist.Fill(proton.get_nsigma());
+	pre_dca_hist.Fill(proton.get_dca());
 }
 
 
-// Fill histograms for post-qa
-void TreeReader:: fill_post_track_qa(proton_leaves proton, int proton_index) {
-	post_phi_hist.Fill(proton.phi->GetValue(proton_index));
-	post_p_hist.Fill(proton.p->GetValue(proton_index));
-	post_pt_hist.Fill(proton.pt->GetValue(proton_index));
-	post_beta_hist.Fill(proton.beta->GetValue(proton_index));
-	post_charge_hist.Fill(proton.charge->GetValue(proton_index));
-	post_eta_hist.Fill(proton.eta->GetValue(proton_index));
-	post_nsigma_hist.Fill(proton.nsigma->GetValue(proton_index));
-	post_dca_hist.Fill(proton.dca->GetValue(proton_index));
+// Fill histograms for post-qa for tracks
+void TreeReader::fill_post_track_qa(Track proton) {
+	post_phi_hist.Fill(proton.get_phi());
+	post_p_hist.Fill(proton.get_p());
+	post_pt_hist.Fill(proton.get_pt());
+	post_beta_hist.Fill(proton.get_beta());
+	post_charge_hist.Fill(proton.get_charge());
+	post_eta_hist.Fill(proton.get_eta());
+	post_nsigma_hist.Fill(proton.get_nsigma());
+	post_dca_hist.Fill(proton.get_dca());
+}
+
+
+// Fill histograms for pre-qa for event
+void TreeReader::fill_pre_event_qa(Event event) {
+	pre_run_hist.Fill(event.get_run());
+	pre_vx_hist.Fill(event.get_vx());
+	pre_vy_hist.Fill(event.get_vy());
+	pre_vz_hist.Fill(event.get_vz());
+	pre_ref_hist.Fill(event.get_ref());
+	pre_ref2_hist.Fill(event.get_ref2());
+	pre_btof_hist.Fill(event.get_btof());
+	pre_ep_hist.Fill(event.get_event_plane());
+}
+
+// Fill histograms for post-qa for event
+void TreeReader::fill_post_event_qa(Event event) {
+	post_run_hist.Fill(event.get_run());
+	post_vx_hist.Fill(event.get_vx());
+	post_vy_hist.Fill(event.get_vy());
+	post_vz_hist.Fill(event.get_vz());
+	post_ref_hist.Fill(event.get_ref());
+	post_ref2_hist.Fill(event.get_ref2());
+	post_btof_hist.Fill(event.get_btof());
+	post_ep_hist.Fill(event.get_event_plane());
 }
 
 
@@ -544,8 +638,25 @@ void TreeReader::write_qa() {
 	track_cut_hist.Write();
 	cent16_events.Write();
 	cent9_events.Write();
-	pre_m2_hist.Write();
-	post_m2_hist.Write();
+
+	pre_run_hist.Write();
+	pre_vx_hist.Write();
+	pre_vy_hist.Write();
+	pre_vz_hist.Write();
+	pre_ref_hist.Write();
+	pre_ref2_hist.Write();
+	pre_btof_hist.Write();
+	pre_ep_hist.Write();
+
+	post_run_hist.Write();
+	post_vx_hist.Write();
+	post_vy_hist.Write();
+	post_vz_hist.Write();
+	post_ref_hist.Write();
+	post_ref2_hist.Write();
+	post_btof_hist.Write();
+	post_ep_hist.Write();
+
 	pre_phi_hist.Write();
 	pre_p_hist.Write();
 	pre_pt_hist.Write();
@@ -563,7 +674,50 @@ void TreeReader::write_qa() {
 	post_nsigma_hist.Write();
 	post_dca_hist.Write();
 
+	pre_m2_hist.Write();
+	post_m2_hist.Write();
+
 	// Make before/after canvases for each variable
+	TCanvas run_can("run_can");
+	pre_run_hist.Draw();
+	post_run_hist.SetLineColor(kRed);
+	post_run_hist.Draw("sames");
+	run_can.Write();
+	TCanvas vx_can("vx_can");
+	pre_vx_hist.Draw();
+	post_vx_hist.SetLineColor(kRed);
+	post_vx_hist.Draw("sames");
+	vx_can.Write();
+	TCanvas vy_can("vy_can");
+	pre_vy_hist.Draw();
+	post_vy_hist.SetLineColor(kRed);
+	post_vy_hist.Draw("sames");
+	vy_can.Write();
+	TCanvas vz_can("vz_can");
+	pre_vz_hist.Draw();
+	post_vz_hist.SetLineColor(kRed);
+	post_vz_hist.Draw("sames");
+	vz_can.Write();
+	TCanvas ref_can("ref_can");
+	pre_ref_hist.Draw();
+	post_ref_hist.SetLineColor(kRed);
+	post_ref_hist.Draw("sames");
+	ref_can.Write();
+	TCanvas ref2_can("ref2_can");
+	pre_ref2_hist.Draw();
+	post_ref2_hist.SetLineColor(kRed);
+	post_ref2_hist.Draw("sames");
+	ref2_can.Write();
+	TCanvas btof_can("btof_can");
+	pre_btof_hist.Draw();
+	post_btof_hist.SetLineColor(kRed);
+	post_btof_hist.Draw("sames");
+	btof_can.Write();
+	TCanvas ep_can("ep_can");
+	pre_ep_hist.Draw();
+	post_ep_hist.SetLineColor(kRed);
+	post_ep_hist.Draw("sames");
+	ep_can.Write();
 	TCanvas phi_can("phi_can");
 	pre_phi_hist.Draw();
 	post_phi_hist.SetLineColor(kRed);
@@ -615,312 +769,13 @@ void TreeReader::write_qa() {
 
 
 // Remove out_path directory for energy if it exists and recreate it.
+// Create out_path directory if it does not exist.
 void TreeReader::reset_out_dir() {
+	if(system(("test -d "+out_path).data())) {
+		if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
+	}
+
 	string energy_path = out_path+to_string(energy)+"GeV/";
 	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
 	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
-}
-
-
-//Taken directly from Roli.
-//Given energy and refmult2, will return centrality of event.
-int TreeReader::get_centrality16(int refmult2, int energy){
-
-    int cent = -1;
-
-    if(energy == 7){
-
-        if(refmult2 >= 165) cent = 15;
-        else if(refmult2 >= 137 && refmult2 < 165) cent = 14;
-        else if(refmult2 >= 114 && refmult2 < 137) cent = 13;
-        else if(refmult2 >= 95 && refmult2 < 114) cent = 12;
-        else if(refmult2 >= 78 && refmult2 < 95) cent = 11;
-        else if(refmult2 >= 64 && refmult2 < 78) cent = 10;
-        else if(refmult2 >= 51 && refmult2 < 64) cent = 9;
-        else if(refmult2 >= 41 && refmult2 < 51) cent = 8;
-        else if(refmult2 >= 32 && refmult2 < 41) cent = 7;
-        else if(refmult2 >= 25 && refmult2 < 32) cent = 6;
-        else if(refmult2 >= 19 && refmult2 < 25) cent = 5;
-        else if(refmult2 >= 14 && refmult2 < 19) cent = 4;
-        else if(refmult2 >= 10 && refmult2 < 14) cent = 3;
-        else if(refmult2 >= 7 && refmult2 < 10) cent = 2;
-        else if(refmult2 >= 5 && refmult2 < 7) cent = 1;
-        else if(refmult2 >= 3 && refmult2 < 5) cent = 0;
-
-    }
-
-    else if(energy == 11){
-
-        if(refmult2 >= 206) cent = 15;
-        else if(refmult2 >= 172 && refmult2 < 206) cent = 14;
-        else if(refmult2 >= 143 && refmult2 < 172) cent = 13;
-        else if(refmult2 >= 118 && refmult2 < 143) cent = 12;
-        else if(refmult2 >= 98 && refmult2 < 118) cent = 11;
-        else if(refmult2 >= 80 && refmult2 < 98) cent = 10;
-        else if(refmult2 >= 65 && refmult2 < 80) cent = 9;
-        else if(refmult2 >= 52 && refmult2 < 65) cent = 8;
-        else if(refmult2 >= 41 && refmult2 < 52) cent = 7;
-        else if(refmult2 >= 32 && refmult2 < 41) cent = 6;
-        else if(refmult2 >= 24 && refmult2 < 32) cent = 5;
-        else if(refmult2 >= 18 && refmult2 < 24) cent = 4;
-        else if(refmult2 >= 13 && refmult2 < 18) cent = 3;
-        else if(refmult2 >= 9 && refmult2 < 13) cent = 2;
-        else if(refmult2 >= 6 && refmult2 < 9) cent = 1;
-        else if(refmult2 >= 4 && refmult2 < 6) cent = 0;
-
-    }
-
-    else if(energy == 14){ ///// we take refmult here
-
-        if(refmult2 >= 239) cent = 15;
-        else if(refmult2 >= 200 && refmult2 < 239) cent = 14;
-        else if(refmult2 >= 167 && refmult2 < 200) cent = 13;
-        else if(refmult2 >= 139 && refmult2 < 167) cent = 12;
-        else if(refmult2 >= 115 && refmult2 < 139) cent = 11;
-        else if(refmult2 >= 94 && refmult2 < 115) cent = 10;
-        else if(refmult2 >= 76 && refmult2 < 94) cent = 9;
-        else if(refmult2 >= 61 && refmult2 < 76) cent = 8;
-        else if(refmult2 >= 48 && refmult2 < 61) cent = 7;
-        else if(refmult2 >= 37 && refmult2 < 48) cent = 6;
-        else if(refmult2 >= 28 && refmult2 < 37) cent = 5;
-        else if(refmult2 >= 21 && refmult2 < 28) cent = 4;
-        else if(refmult2 >= 16 && refmult2 < 21) cent = 3;
-        else if(refmult2 >= 11 && refmult2 < 16) cent = 2;
-        else if(refmult2 >= 8 && refmult2 < 11) cent = 1;
-        else if(refmult2 >= 5 && refmult2 < 8) cent = 0;
-
-    }
-
-    else if(energy == 19){
-
-        if(refmult2 >= 258) cent = 15;
-        else if(refmult2 >= 215 && refmult2 < 258) cent = 14;
-        else if(refmult2 >= 180 && refmult2 < 215) cent = 13;
-        else if(refmult2 >= 149 && refmult2 < 180) cent = 12;
-        else if(refmult2 >= 123 && refmult2 < 149) cent = 11;
-        else if(refmult2 >= 100 && refmult2 < 123) cent = 10;
-        else if(refmult2 >= 81 && refmult2 < 100) cent = 9;
-        else if(refmult2 >= 65 && refmult2 < 81) cent = 8;
-        else if(refmult2 >= 51 && refmult2 < 65) cent = 7;
-        else if(refmult2 >= 40 && refmult2 < 51) cent = 6;
-        else if(refmult2 >= 30 && refmult2 < 40) cent = 5;
-        else if(refmult2 >= 22 && refmult2 < 30) cent = 4;
-        else if(refmult2 >= 16 && refmult2 < 22) cent = 3;
-        else if(refmult2 >= 12 && refmult2 < 16) cent = 2;
-        else if(refmult2 >= 8 && refmult2 < 12) cent = 1;
-        else if(refmult2 >= 5 && refmult2 < 8) cent = 0;
-
-    }
-
-    else if(energy == 27){
-
-        if(refmult2 >= 284) cent = 15;
-        else if(refmult2 >= 237 && refmult2 < 284) cent = 14;
-        else if(refmult2 >= 198 && refmult2 < 237) cent = 13;
-        else if(refmult2 >= 164 && refmult2 < 198) cent = 12;
-        else if(refmult2 >= 135 && refmult2 < 164) cent = 11;
-        else if(refmult2 >= 111 && refmult2 < 135) cent = 10;
-        else if(refmult2 >= 90 && refmult2 < 111) cent = 9;
-        else if(refmult2 >= 71 && refmult2 < 90) cent = 8;
-        else if(refmult2 >= 56 && refmult2 < 71) cent = 7;
-        else if(refmult2 >= 43 && refmult2 < 56) cent = 6;
-        else if(refmult2 >= 33 && refmult2 < 43) cent = 5;
-        else if(refmult2 >= 25 && refmult2 < 33) cent = 4;
-        else if(refmult2 >= 18 && refmult2 < 25) cent = 3;
-        else if(refmult2 >= 13 && refmult2 < 18) cent = 2;
-        else if(refmult2 >= 9 && refmult2 < 13) cent = 1;
-        else if(refmult2 >= 6 && refmult2 < 9) cent = 0;
-
-    }
-
-    else if(energy == 39){
-
-        if(refmult2 >= 307) cent = 15;
-        else if(refmult2 >= 257 && refmult2 < 307) cent = 14;
-        else if(refmult2 >= 215 && refmult2 < 257) cent = 13;
-        else if(refmult2 >= 179 && refmult2 < 215) cent = 12;
-        else if(refmult2 >= 147 && refmult2 < 179) cent = 11;
-        else if(refmult2 >= 121 && refmult2 < 147) cent = 10;
-        else if(refmult2 >= 97 && refmult2 < 121) cent = 9;
-        else if(refmult2 >= 78 && refmult2 < 97) cent = 8;
-        else if(refmult2 >= 61 && refmult2 < 78) cent = 7;
-        else if(refmult2 >= 47 && refmult2 < 61) cent = 6;
-        else if(refmult2 >= 36 && refmult2 < 47) cent = 5;
-        else if(refmult2 >= 27 && refmult2 < 36) cent = 4;
-        else if(refmult2 >= 20 && refmult2 < 27) cent = 3;
-        else if(refmult2 >= 14 && refmult2 < 20) cent = 2;
-        else if(refmult2 >= 10 && refmult2 < 14) cent = 1;
-        else if(refmult2 >= 7 && refmult2 < 10) cent = 0;
-
-    }
-
-    else if(energy == 62){
-
-        if(refmult2 >= 334) cent = 15;
-        else if(refmult2 >= 279 && refmult2 < 334) cent = 14;
-        else if(refmult2 >= 233 && refmult2 < 279) cent = 13;
-        else if(refmult2 >= 194 && refmult2 < 233) cent = 12;
-        else if(refmult2 >= 160 && refmult2 < 194) cent = 11;
-        else if(refmult2 >= 131 && refmult2 < 160) cent = 10;
-        else if(refmult2 >= 106 && refmult2 < 131) cent = 9;
-        else if(refmult2 >= 84 && refmult2 < 106) cent = 8;
-        else if(refmult2 >= 66 && refmult2 < 84) cent = 7;
-        else if(refmult2 >= 51 && refmult2 < 66) cent = 6;
-        else if(refmult2 >= 39 && refmult2 < 51) cent = 5;
-        else if(refmult2 >= 29 && refmult2 < 39) cent = 4;
-        else if(refmult2 >= 21 && refmult2 < 29) cent = 3;
-        else if(refmult2 >= 15 && refmult2 < 21) cent = 2;
-        else if(refmult2 >= 10 && refmult2 < 15) cent = 1;
-        else if(refmult2 >= 7 && refmult2 < 10) cent = 0;
-
-    }
-
-    else if(energy == 200){
-
-        if(refmult2 >= 421) cent = 15;
-        else if(refmult2 >= 355 && refmult2 < 421) cent = 14;
-        else if(refmult2 >= 297 && refmult2 < 355) cent = 13;
-        else if(refmult2 >= 247 && refmult2 < 297) cent = 12;
-        else if(refmult2 >= 204 && refmult2 < 247) cent = 11;
-        else if(refmult2 >= 167 && refmult2 < 204) cent = 10;
-        else if(refmult2 >= 135 && refmult2 < 167) cent = 9;
-        else if(refmult2 >= 108 && refmult2 < 135) cent = 8;
-        else if(refmult2 >= 85 && refmult2 < 108) cent = 7;
-        else if(refmult2 >= 65 && refmult2 < 85) cent = 6;
-        else if(refmult2 >= 50 && refmult2 < 65) cent = 5;
-        else if(refmult2 >= 37 && refmult2 < 50) cent = 4;
-        else if(refmult2 >= 27 && refmult2 < 37) cent = 3;
-        else if(refmult2 >= 19 && refmult2 < 27) cent = 2;
-        else if(refmult2 >= 13 && refmult2 < 19) cent = 1;
-        else if(refmult2 >= 9 && refmult2 < 13) cent = 0;
-
-    }
-
-    else {
-    	cout << "Unimplemented energy " << energy << " returned centrality " << cent << endl;
-    }
-
-
-    return cent;
-
-}
-
-
-//Taken directly from Roli.
-//Given energy and refmult2, will return centrality of event.
-int TreeReader::get_centrality9(int mult, int energy){
-
-    int central = -1;
-
-    if(energy == 7){
-
-        float centFull[9] = {32,41,51,64,78,95,114,137,165};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 11){
-
-        float centFull[9] = {41,52,65,80,98,118,143,172,206};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 19){
-
-        float centFull[9] = {51,65,81,100,123,149,180,215,258};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 27){
-
-        float centFull[9] = {56,71,90,111,135,164,198,237,284};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 39){
-
-        float centFull[9] = {61,78,97,121,147,179,215,257,307};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 62){
-
-        float centFull[9] = {66,84,106,131,160,194,233,279,334};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else if(energy == 200){
-
-        float centFull[9] = {85,108,135,167,204,247,297,355,421};
-        if      (mult>=centFull[8]) central=9;
-        else if (mult>=centFull[7]) central=8;
-        else if (mult>=centFull[6]) central=7;
-        else if (mult>=centFull[5]) central=6;
-        else if (mult>=centFull[4]) central=5;
-        else if (mult>=centFull[3]) central=4;
-        else if (mult>=centFull[2]) central=3;
-        else if (mult>=centFull[1]) central=2;
-        else if (mult>=centFull[0]) central=1;
-
-    }
-
-    else {
-		cout << "Unimplemented energy " << energy << " returned centrality " << central << endl;
-	}
-
-    return central;
-
 }

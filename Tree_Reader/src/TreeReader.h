@@ -22,32 +22,16 @@
 #include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 
 #include "ratio_methods.h"
+
+#include "Event.h"
+#include "Track.h"
+
 #include "Mixer.h"
-#include "MixerRoli.h"
+#include "MixerSets.h"
 #include "Randomizer.h"
 
 using namespace std;
 
-struct event_leaves {
-	TLeaf *run;
-	TLeaf *ref_mult;
-	TLeaf *ref_mult2;
-	TLeaf *btof_mult;
-	TLeaf *vz;
-	TLeaf *event_plane;
-};
-
-struct proton_leaves {
-	TLeaf *phi;
-	TLeaf *pt;
-	TLeaf *p;
-	TLeaf *beta;
-	TLeaf *dedx;
-	TLeaf *charge;
-	TLeaf *dca;
-	TLeaf *nsigma;
-	TLeaf *eta;
-};
 
 struct cut_values {
 	//Event cuts
@@ -69,7 +53,7 @@ struct cut_values {
 	double min_nsigma = -2.0;
 	double max_nsigma = 2.0;
 	double min_dca = 0.0;
-	double max_dca = 1.0; //2.0;
+	double max_dca = 1.0;
 	double min_m2 = 0.8;
 	double max_m2 = 1.0;
 	double min_pt_for_m = 0.8;
@@ -87,12 +71,17 @@ public:
 	string get_in_path();
 	string get_out_path();
 	string get_qa_path();
+	string get_set_name();
 	bool get_cbwc();
 	bool get_rotate_random();
 	bool get_event_plane();
+	bool get_mixed_sets();
 	bool get_mixed();
-	bool get_mixed_roli();
 	bool get_rand_data();
+	bool get_pile_up();
+	bool get_efficiency();
+	double get_pile_up_prob();
+	double get_efficiency_prob();
 	int get_cent_binning();
 
 	// Setters
@@ -100,14 +89,19 @@ public:
 	void set_out_path(string path);
 	void set_qa_path(string path);
 	void set_qa_name(string name);
+	void set_set_name(string set_name);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
-	void set_mixed(bool mixed);
-	void set_mixed_roli(bool mixed_roli);
+	void set_mixed_sets(bool mixed);
+	void set_mixed(bool mixed_roli);
 	void set_rand_data(bool rand_data);
+	void set_pile_up(bool pile_up);
+	void set_efficiency(bool efficiency);
+	void set_pile_up_prob(double pile_up_prob);
+	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
 
 	// Doers
@@ -118,11 +112,9 @@ public:
 	cut_values cut;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
+	MixerSets mix_sets;
 	Mixer mix;
-	MixerRoli mix_roli;
 	Randomizer random;
-
-	bool mix_rotate;
 
 private:
 	// Attributes
@@ -133,6 +125,7 @@ private:
 	string tree_name = "nsmTree";
 	string qa_name = "QA_CBWC_";
 	string info_file_name = "info.txt";
+	string set_name = "";
 
 	string in_path = "/home/dylan/Research/Trees/";
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";
@@ -141,33 +134,36 @@ private:
 	vector<int> divs = {2,3,4,5,6};
 	int energy;
 
-	bool cbwc; // Mixer/randomizers aren't prepared for this to be false.
+	bool cbwc; // MixerSets/randomizers aren't prepared for this to be false.
 	bool rotate_random;
 	bool event_plane;
+	bool mixed_sets;
 	bool mixed;
-	bool mixed_roli;
 	bool rand_data;
+	bool pile_up;
+	bool efficiency;
+
+	double pile_up_prob;
+	double efficiency_prob;
 
 	int cent_binning;
 
 	// Doers
 	void read_tree(TTree* tree);
 
-	event_leaves get_event_leaves(TTree* tree);
-	proton_leaves get_proton_leaves(TTree* tree);
+	tree_leaves get_tree_leaves(TTree* tree);
 
-	bool check_event_good(event_leaves event, proton_leaves, int energy);
-	bool check_enough_protons(proton_leaves protons);
+	bool check_event_good(Event event);
+	bool check_enough_protons(Event event);
 	bool check_good_run(int run);
-	bool check_proton_good(proton_leaves protons, int proton_index);
-
-	int get_centrality16(int refmult2, int energy);
-	int get_centrality9(int refmult2, int energy);
-	bool check_slope(int btof_mult, int ref_mult, int energy);
+	bool check_slope(int btof, int ref_mult);
+	bool check_proton_good(Track proton);
 
 	void define_qa();
-	void fill_pre_track_qa(proton_leaves proton, int proton_index);
-	void fill_post_track_qa(proton_leaves proton, int proton_index);
+	void fill_pre_track_qa(Track proton);
+	void fill_post_track_qa(Track proton);
+	void fill_pre_event_qa(Event event);
+	void fill_post_event_qa(Event event);
 	void write_qa();
 
 	void reset_out_dir();
@@ -181,10 +177,24 @@ private:
 	TH1I cent16_events;
 	TH1I cent9_events;
 
-	TH1I pre_m2_hist;
-	TH1I post_m2_hist;
-
 	TH1I pre_run_hist;
+	TH1I pre_vx_hist;
+	TH1I pre_vy_hist;
+	TH1I pre_vz_hist;
+	TH1I pre_ref_hist;
+	TH1I pre_ref2_hist;
+	TH1I pre_btof_hist;
+	TH1I pre_ep_hist;
+
+	TH1I post_run_hist;
+	TH1I post_vx_hist;
+	TH1I post_vy_hist;
+	TH1I post_vz_hist;
+	TH1I post_ref_hist;
+	TH1I post_ref2_hist;
+	TH1I post_btof_hist;
+	TH1I post_ep_hist;
+
 	TH1I pre_phi_hist;
 	TH1I pre_p_hist;
 	TH1I pre_pt_hist;
@@ -194,7 +204,6 @@ private:
 	TH1I pre_nsigma_hist;
 	TH1I pre_dca_hist;
 
-	TH1I post_run_hist;
 	TH1I post_phi_hist;
 	TH1I post_p_hist;
 	TH1I post_pt_hist;
@@ -203,6 +212,9 @@ private:
 	TH1I post_eta_hist;
 	TH1I post_nsigma_hist;
 	TH1I post_dca_hist;
+
+	TH1I pre_m2_hist;
+	TH1I post_m2_hist;
 
 };
 
