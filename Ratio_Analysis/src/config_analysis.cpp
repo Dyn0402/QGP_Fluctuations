@@ -26,7 +26,7 @@ namespace analysis {
 
 //	string in_path = "/home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/";
 	string in_path = "/home/dylan/Research/Data/"; // "/home/dylan/local_server/dyn0402/Research/Data/"; //
-	string in_mix_path = "/home/dylan/Research/Data_Mix_Roli/"; // "/home/dylan/local_server/dyn0402/Research/Data_Mix/"; //
+	string in_mix_path = "/home/dylan/Research/Data_Mix/"; // "/home/dylan/local_server/dyn0402/Research/Data_Mix/"; //
 }
 
 
