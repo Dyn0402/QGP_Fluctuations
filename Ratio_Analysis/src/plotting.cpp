@@ -45,14 +45,14 @@ void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, Rati
 
 void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<int, RatioData>>> data) {
 	ratio_dist_dir->cd();
-	for(int energy:analysis::energy_list) {
-		TDirectory *energy_dir = ratio_dist_dir->mkdir((to_string(energy) + "GeV").data());
+	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+		TDirectory *energy_dir = ratio_dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
-		for(int div:analysis::divs) {
-			TDirectory *div_dir = energy_dir->mkdir((to_string(div) + "_Divs").data());
+		for(pair<int, map<int, RatioData>> div:energy.second) {
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
 			div_dir->cd();
-			for(int cent:analysis::centrals) {
-				data[energy][div][cent].canvas_1d_dist(to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent));
+			for(pair<int, RatioData> cent:div.second) {
+				cent.second.canvas_1d_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first));
 			}
 		}
 	}
@@ -89,14 +89,15 @@ void make_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioDa
 
 void create_2d_dist_plots(TDirectory *dist_dir, map<int, map<int, map<int, RatioData>>> data) {
 	dist_dir->cd();
-	for(int energy:analysis::energy_list) {
-		TDirectory *energy_dir = dist_dir->mkdir((to_string(energy) + "GeV").data());
+
+	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+		TDirectory *energy_dir = dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
-		for(int div:analysis::divs) {
-			TDirectory *div_dir = energy_dir->mkdir((to_string(div) + "_Divs").data());
+		for(pair<int, map<int, RatioData>> div:energy.second) {
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
 			div_dir->cd();
-			for(int cent:analysis::centrals) {
-				data[energy][div][cent].canvas_2d_dist(to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent));
+			for(pair<int, RatioData> cent:div.second) {
+				cent.second.canvas_2d_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first));
 			}
 		}
 	}
@@ -131,11 +132,11 @@ void make_proton_dist_plots(TDirectory *out_root, map<int, map<int, map<int, Rat
 
 void create_proton_dist_plots(TDirectory *nproton_dist_dir, map<int, map<int, map<int, RatioData>>> data) {
 	nproton_dist_dir->cd();
-	for(int energy:analysis::energy_list) {
-		TDirectory *energy_dir = nproton_dist_dir->mkdir((to_string(energy) + "GeV").data());
+	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+		TDirectory *energy_dir = nproton_dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
-		for(int cent:analysis::centrals) {
-			(*data[energy].begin()).second[cent].canvas_proton_dist(to_string(energy) + "GeV protons Centrality " + to_string(cent));
+		for(pair<int, RatioData> cent:energy.second.begin()->second) {
+			cent.second.canvas_proton_dist(to_string(energy.first) + "GeV protons Centrality " + to_string(cent.first));
 		}
 	}
 }
