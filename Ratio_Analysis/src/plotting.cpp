@@ -596,6 +596,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
 				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(graph, "AP");
 			}
 			double y_range = y_max - y_min;
@@ -663,8 +664,10 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
 				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(graph, "AP");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
+				sys_graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(sys_graph, "[]");
 			}
 			double y_range = y_max - y_min;
@@ -735,8 +738,10 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 					graph->SetMarkerStyle(plot::div_marker_styles[div]);
 					graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 					graph->SetMarkerSize(plot::div_marker_sizes[div]);
+					graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 					mg->Add(graph, "AP");
 					TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
+					sys_graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 					mg->Add(sys_graph, "[]");
 					if(can_index == 1) { leg->AddEntry(graph, (data_set.first + " " + to_string(div) + " divs").data(), "p"); }
 					set_num++;
@@ -808,8 +813,10 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
 				graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 				mg->Add(graph, "AP");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
+				sys_graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 				mg->Add(sys_graph, "[]");
 				set_num++;
 				if(can_index == 1) {
@@ -899,8 +906,10 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			graph->SetMarkerStyle(plot::div_marker_styles[div]);
 			graph->SetMarkerColor(plot::div_marker_colors[div]);
 			graph->SetMarkerSize(plot::div_marker_sizes[div]);
+			graph->SetLineColor(plot::div_marker_colors[div]);
 			mg->Add(graph, "AP");
 			TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
+			sys_graph->SetLineColor(plot::div_marker_colors[div]);
 			mg->Add(sys_graph, "[]");
 			if(can_index == 1) {
 				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
