@@ -712,6 +712,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 			if(can_index <= (int)stat_names.size()) { mg->SetNameTitle(stat.data(), stat.data()); }
 			double y_max = numeric_limits<double>::min();
 			double y_min = numeric_limits<double>::max();
+			TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
 			for(int div:divs) {
 				int set_num = 0;
 				for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
@@ -732,11 +733,12 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 					TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
 					graph->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
 					graph->SetMarkerStyle(plot::div_marker_styles[div]);
-					graph->SetMarkerColor(plot::div_marker_colors[div+set_num]);
+					graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 					graph->SetMarkerSize(plot::div_marker_sizes[div]);
 					mg->Add(graph, "AP");
 					TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 					mg->Add(sys_graph, "[]");
+					if(can_index == 1) { leg->AddEntry(graph, (data_set.first + " " + to_string(div) + " divs").data(), "p"); }
 					set_num++;
 				}
 			}
@@ -759,9 +761,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 			else { gPad->SetTopMargin(0.08); }
 			gPad->SetRightMargin(0.02);
 			mg->Draw("AP"); // Multigraph memory leak, fix.
-			if(can_index == 1) {
-				gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
-			}
+			if(can_index == 1) { leg->Draw(); }
 			can_index++;
 		}
 	}
@@ -785,6 +785,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"%").data());
 		double y_max = numeric_limits<double>::min();
 		double y_min = numeric_limits<double>::max();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
 		for(int div:divs) {
 			int set_num = 0;
 			for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
@@ -805,12 +806,15 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
 				graph->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[div+set_num]);
+				graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
 				mg->Add(graph, "AP");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 				mg->Add(sys_graph, "[]");
 				set_num++;
+				if(can_index == 1) {
+					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				}
 			}
 		}
 		double y_range = y_max - y_min;
@@ -826,9 +830,10 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		else { gPad->SetTopMargin(0.08); }
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
-		if(can_index == 1) {
-			gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
-		}
+		if(can_index == 1) { leg->Draw(); }
+//		if(can_index == 1) {
+//			gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
+//		}
 		can_index++;
 	}
 	can->Update();
@@ -873,6 +878,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"%").data());
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
 		for(int div:divs) {
 			vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 			Measure stat_meas;
@@ -896,6 +902,9 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			mg->Add(graph, "AP");
 			TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 			mg->Add(sys_graph, "[]");
+			if(can_index == 1) {
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
+			}
 		}
 		double y_range = y_max - y_min;
 		mg->GetXaxis()->SetLimits(0, 80);
@@ -910,9 +919,10 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		else { gPad->SetTopMargin(0.08); }
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
-		if(can_index == 1) {
-			gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
-		}
+		if(can_index == 1) { leg->Draw(); }
+//		if(can_index == 1) {
+//			gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
+//		}
 		can_index++;
 	}
 
