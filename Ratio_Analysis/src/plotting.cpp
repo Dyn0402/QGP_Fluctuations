@@ -722,7 +722,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 					vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 					Measure stat_meas;
 					for(int energy:analysis::energy_list) {
-						energy_val.push_back(plot::energy_match[energy]);
+						energy_val.push_back(plot::energy_match[energy] + set_num*0.4);  // Offset sets on x (Energy) axis.
 						energy_err.push_back(0.0);
 						stat_meas = data_set.second[energy][div][cent][stat];
 						stat_vals.push_back(stat_meas.get_val());
@@ -797,7 +797,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 				Measure stat_meas;
 				for(int energy:analysis::energy_list) {
-					energy_val.push_back(plot::energy_match[energy]);
+					energy_val.push_back(plot::energy_match[energy] + set_num*0.4);  // Offset sets on x (Energy) axis.
 					energy_err.push_back(0.0);
 					stat_meas = data_set.second[energy][div][cent][stat_name];
 					stat_vals.push_back(stat_meas.get_val());
