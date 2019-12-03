@@ -228,6 +228,7 @@ void TreeReader::read_trees() {
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
+		add_cut_hists(file);
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		read_tree(tree);  // Read tree from file into data
 		file->Close();
@@ -290,7 +291,7 @@ void TreeReader::read_tree(TTree* tree) {
 
 				cent16_events.Fill(cent16_corr);
 				cent9_events.Fill(cent9_corr);
-				event_cut_hist.Fill(4);
+				event_cut_hist.Fill("Enough Good Protons", 1);
 
 				int cent;
 				if(cent_binning == 16) {
@@ -415,17 +416,26 @@ tree_leaves TreeReader::get_tree_leaves(TTree* tree) {
 }
 
 
+// Add file's event/track cut hists to corresponding collected histogram for energy.
+void TreeReader::add_cut_hists(TFile *file) {
+	TH1I *event_hist = (TH1I*)file->Get(event_cut_hist_name.data());
+	TH1I *track_hist = (TH1I*)file->Get(track_cut_hist_name.data());
+	event_cut_tree_maker.Add(event_hist);
+	track_cut_tree_maker.Add(track_hist);
+}
+
+
 //Returns true if event is good, false if it is bad.
 bool TreeReader::check_event_good(Event event) {
 	bool good_event = false;
 	fill_pre_event_qa(event);
-	event_cut_hist.Fill(0);
+	event_cut_hist.Fill("Original", 1);
 	if(check_good_run((int)event.get_run())) {
-		event_cut_hist.Fill(1);
+		event_cut_hist.Fill("Good Run", 1);
 		if(check_enough_protons(event)) {
-			event_cut_hist.Fill(2);
+			event_cut_hist.Fill("Enough Protons", 1);
 			if(check_slope(event.get_btof(), event.get_ref())) {
-				event_cut_hist.Fill(3);
+				event_cut_hist.Fill("Pile Up Rejected", 1);
 				fill_post_event_qa(event);
 				good_event = true;
 			}
@@ -470,32 +480,32 @@ bool TreeReader::check_slope(int btof, int ref_mult) {
 // Returns true if proton is good and false if proton is bad.
 bool TreeReader::check_proton_good(Track proton) {
 	bool good_proton = false;
-	track_cut_hist.Fill(0);
+	track_cut_hist.Fill("Original", 1);
 
 	fill_pre_track_qa(proton);
 
 	double p = proton.get_p();
 	if(p < cut.min_p) { return(good_proton); }
-	track_cut_hist.Fill(1);
+	track_cut_hist.Fill("Good p", 1);
 
 	double pt = proton.get_pt();
 	if(!(pt >= cut.min_pt && pt <= cut.max_pt)) { return(good_proton); }
-	track_cut_hist.Fill(2);
+	track_cut_hist.Fill("Good pt", 1);
 
 	if(!(proton.get_charge() == cut.charge)) { return(good_proton); }
-	track_cut_hist.Fill(3);
+	track_cut_hist.Fill("Good charge", 1);
 
 	double eta = proton.get_eta();
 	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return(good_proton); }
-	track_cut_hist.Fill(4);
+	track_cut_hist.Fill("Good eta", 1);
 
 	double nsigma = proton.get_nsigma();
 	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return(good_proton); }
-	track_cut_hist.Fill(5);
+	track_cut_hist.Fill("Good nsigma", 1);
 
 	double dca = proton.get_dca();
 	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return(good_proton); }
-	track_cut_hist.Fill(6);
+	track_cut_hist.Fill("Good dca", 1);
 
 	if(pt >= cut.min_pt_for_m && pt <= cut.max_pt_for_m) {
 		double beta = proton.get_beta();
@@ -510,7 +520,7 @@ bool TreeReader::check_proton_good(Track proton) {
 	} else {
 		good_proton = true;
 	}
-	if(good_proton) { track_cut_hist.Fill(7); }
+	if(good_proton) { track_cut_hist.Fill("Good mass*", 1); }
 
 	fill_post_track_qa(proton);
 
@@ -523,8 +533,44 @@ void TreeReader::define_qa() {
 	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
 
+	event_cut_hist = TH1I(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 7, -0.5, 6.5);
+	event_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
+	event_cut_hist.GetXaxis()->SetBinLabel(2, "Bad Runs");
+	event_cut_hist.GetXaxis()->SetBinLabel(3, "Vertex Non-Zero");
+	event_cut_hist.GetXaxis()->SetBinLabel(4, "Trigger");
+	event_cut_hist.GetXaxis()->SetBinLabel(5, "Vertex z");
+	event_cut_hist.GetXaxis()->SetBinLabel(6, "Vertex r");
+	event_cut_hist.GetXaxis()->SetBinLabel(7, "VPD Vertex z");
+	track_cut_hist = TH1I(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 12, -0.5, 11.5);
+	track_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
+	track_cut_hist.GetXaxis()->SetBinLabel(2, "Charge");
+	track_cut_hist.GetXaxis()->SetBinLabel(3, "p_low");
+	track_cut_hist.GetXaxis()->SetBinLabel(4, "ratio_low");
+	track_cut_hist.GetXaxis()->SetBinLabel(5, "ratio_high");
+	track_cut_hist.GetXaxis()->SetBinLabel(6, "nHitsFit");
+	track_cut_hist.GetXaxis()->SetBinLabel(7, "nHitsDedx");
+	track_cut_hist.GetXaxis()->SetBinLabel(8, "nsigmaproton");
+	track_cut_hist.GetXaxis()->SetBinLabel(9, "eta");
+	track_cut_hist.GetXaxis()->SetBinLabel(10, "dca");
+	track_cut_hist.GetXaxis()->SetBinLabel(11, "pt_low");
+	track_cut_hist.GetXaxis()->SetBinLabel(12, "pt_high");
 	event_cut_hist = TH1I(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
+	event_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
+	event_cut_hist.GetXaxis()->SetBinLabel(2, "Good Run");
+	event_cut_hist.GetXaxis()->SetBinLabel(3, "Enough Protons");
+	event_cut_hist.GetXaxis()->SetBinLabel(4, "Pile Up Rejected");
+	event_cut_hist.GetXaxis()->SetBinLabel(5, "Enough Good Protons");
 	track_cut_hist = TH1I(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
+	track_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
+	track_cut_hist.GetXaxis()->SetBinLabel(2, "Good p");
+	track_cut_hist.GetXaxis()->SetBinLabel(3, "Good pt");
+	track_cut_hist.GetXaxis()->SetBinLabel(4, "Good charge");
+	track_cut_hist.GetXaxis()->SetBinLabel(5, "Good eta");
+	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good nsigma");
+	track_cut_hist.GetXaxis()->SetBinLabel(7, "Good dca");
+	track_cut_hist.GetXaxis()->SetBinLabel(8, "Good mass*");
+
+
 	cent16_events = TH1I(("cent16_events"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
 	cent9_events = TH1I(("cent9_events"+set_name+"_"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
 
@@ -634,6 +680,8 @@ void TreeReader::write_qa() {
 	pile_can.Write();
 
 	btof_ref_hist.Write();
+	event_cut_tree_maker.Write();
+	track_cut_tree_maker.Write();
 	event_cut_hist.Write();
 	track_cut_hist.Write();
 	cent16_events.Write();

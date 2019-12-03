@@ -123,6 +123,8 @@ private:
 	TRandom3 *trand = new TRandom3(0);
 
 	string tree_name = "nsmTree";
+	string event_cut_hist_name = "Event Cut Hist";
+	string track_cut_hist_name = "Track Cut Hist";
 	string qa_name = "QA_CBWC_";
 	string info_file_name = "info.txt";
 	string set_name = "";
@@ -160,6 +162,7 @@ private:
 	bool check_proton_good(Track proton);
 
 	void define_qa();
+	void add_cut_hists(TFile* file);
 	void fill_pre_track_qa(Track proton);
 	void fill_post_track_qa(Track proton);
 	void fill_pre_event_qa(Event event);
@@ -172,6 +175,8 @@ private:
 	TH2I cent_hist;
 	TH2I btof_ref_hist;
 
+	TH1I event_cut_tree_maker;
+	TH1I track_cut_tree_maker;
 	TH1I event_cut_hist;
 	TH1I track_cut_hist;
 	TH1I cent16_events;
