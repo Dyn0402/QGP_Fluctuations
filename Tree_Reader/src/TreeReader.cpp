@@ -725,6 +725,25 @@ void TreeReader::write_qa() {
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
 
+
+	// Make bar plots for event/track cut histograms
+	TCanvas event_cut_maker_can("event_cut_maker_can");
+	gPad->SetLeftMargin(0.15);
+	event_cut_tree_maker.Draw("hbar");
+	event_cut_maker_can.Write();
+	TCanvas track_cut_maker_can("track_cut_maker_can");
+	gPad->SetLeftMargin(0.15);
+	track_cut_tree_maker.Draw("hbar");
+	track_cut_maker_can.Write();
+	TCanvas event_cut_hist_can("event_cut_hist_can");
+	gPad->SetLeftMargin(0.15);
+	event_cut_hist.Draw("hbar");
+	event_cut_hist_can.Write();
+	TCanvas track_cut_hist_can("track_cut_hist_can");
+	gPad->SetLeftMargin(0.15);
+	track_cut_hist.Draw("hbar");
+	track_cut_hist_can.Write();
+
 	// Make before/after canvases for each variable
 	TCanvas run_can("run_can");
 	pre_run_hist.Draw();
