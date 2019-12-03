@@ -57,7 +57,7 @@ void analyze_no_CBWC() {
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> orders = {1,2,3,4};
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "12-02-19_sets_comparison.root";
+	string out_root_name = "12-02-19_sets_comp2.root";
 
 	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 24, 0}}, {"No_Rotate", {0, 9, 0}}, {"EP_Rotate", {0, 9, 0}}, {"Efficiency_05_", {0, 9, 0}}, {"Pile_Up_05_", {0, 9, 0}}};
 
