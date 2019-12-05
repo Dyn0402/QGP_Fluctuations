@@ -533,14 +533,16 @@ void TreeReader::define_qa() {
 	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
 
-	event_cut_tree_maker = TH1I(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 7, -0.5, 6.5);
+	event_cut_tree_maker = TH1I(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 8, -0.5, 7.5);
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Original");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Bad Runs");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Vertex Non-Zero");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Trigger");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(5, "Vertex z");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(6, "Vertex r");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(7, "VPD Vertex z");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Is muEvent");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Good Trigger");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Good Run");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(5, "Good Vz");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(6, "Good Vr");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Vertex Non-Zero");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(8, "Good VPD Vz");
+
 	track_cut_tree_maker = TH1I(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 12, -0.5, 11.5);
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Original");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Charge");
@@ -729,19 +731,31 @@ void TreeReader::write_qa() {
 	// Make bar plots for event/track cut histograms
 	TCanvas event_cut_maker_can("event_cut_maker_can");
 	gPad->SetLeftMargin(0.15);
-	event_cut_tree_maker.Draw("hbar");
+	event_cut_tree_maker.SetFillColor(45);
+	event_cut_maker_can.SetFillColor(42);
+	gPad->SetFrameFillColor(33);
+	event_cut_tree_maker.Draw("hbar2");
 	event_cut_maker_can.Write();
 	TCanvas track_cut_maker_can("track_cut_maker_can");
 	gPad->SetLeftMargin(0.15);
-	track_cut_tree_maker.Draw("hbar");
+	track_cut_tree_maker.SetFillColor(45);
+	track_cut_maker_can.SetFillColor(42);
+	gPad->SetFrameFillColor(33);
+	track_cut_tree_maker.Draw("hbar2");
 	track_cut_maker_can.Write();
 	TCanvas event_cut_hist_can("event_cut_hist_can");
 	gPad->SetLeftMargin(0.15);
-	event_cut_hist.Draw("hbar");
+	event_cut_hist.SetFillColor(45);
+	event_cut_hist_can.SetFillColor(42);
+	gPad->SetFrameFillColor(33);
+	event_cut_hist.Draw("hbar2");
 	event_cut_hist_can.Write();
 	TCanvas track_cut_hist_can("track_cut_hist_can");
 	gPad->SetLeftMargin(0.15);
-	track_cut_hist.Draw("hbar");
+	track_cut_hist.SetFillColor(45);
+	track_cut_hist_can.SetFillColor(42);
+	gPad->SetFrameFillColor(33);
+	track_cut_hist.Draw("hbar2");
 	track_cut_hist_can.Write();
 
 	// Make before/after canvases for each variable
