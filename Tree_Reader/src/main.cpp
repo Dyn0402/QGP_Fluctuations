@@ -55,15 +55,15 @@ void read_class() {
 	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-	map<string, int> set_pairs = {{"No_Rotate",7}, {"Rand_Rotate",20}, {"EP_Rotate",7}, {"Pile_Up_01_",7}, {"Pile_Up_005_",7}, {"Pile_Up_002_",7}, {"Efficiency_05_",7}, {"Efficiency_025_",7}, {"Efficiency_001_",7}};
+	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,7}}, {"Rand_Rotate",{0,20}}, {"EP_Rotate",{0,7}}, {"Pile_Up_01_",{0,7}}, {"Pile_Up_005_",{0,7}}, {"Pile_Up_002_",{0,7}}, {"Efficiency_05_",{0,7}}, {"Efficiency_025_",{0,7}}, {"Efficiency_001_",{0,7}}};
 
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
 	{
 		ThreadPool pool(thread::hardware_concurrency());
-		for(pair<string, int> set_pair:set_pairs) {
-			for(int set_num = 0; set_num < set_pair.second; set_num++) {
+		for(pair<string, pair<int, int>> set_pair:set_pairs) {
+			for(int set_num = set_pair.second.first; set_num < set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
 				vector<int> energy_list = {39, 27, 62, 19, 11, 7};
