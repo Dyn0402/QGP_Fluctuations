@@ -52,16 +52,20 @@ void analyze_no_CBWC() {
 	vector<string> cumulant_names = {"cumulant 2", "cumulant 3", "cumulant 4"};
 	vector<string> raw_moment_names = {"raw moment 2", "raw moment 3", "raw moment 4"};
 	vector<string> central_moment_names = {"central moment 2", "central moment 3", "central moment 4"};
+	map<string, vector<string>> names = {{"stat",stat_names}, {"cumulant",cumulant_names}, {"raw_moment",raw_moment_names}, {"central_moment",central_moment_names}};
 	vector<int> centralities = {8, 7, 4, 1};
+	vector<int> all_centralities = {8,7,6,5,4,3,2,1,0};
 	string in_path = "/home/dylan/Research/Data/";
 	string in_mix_path = "/home/dylan/Research/Data_Mix/";
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> orders = {1,2,3,4};
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "12-02-19_sets_comp2.root";
+	string out_root_name = "12-06-19_plot_test.root";
 
-	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_001_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
+//	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_001_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
+	map<string, vector<int>> sets = {{"Rand_Rotate", {0,3}}, {"Pile_Up_001_", {0,2}}};
+
 
 	TFile *out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
 
@@ -154,10 +158,25 @@ void analyze_no_CBWC() {
 			make_2d_dist_plots(data_dir, data);
 			make_proton_dist_plots(data_dir, data);
 			data_dir->cd();
-			roli_thesis_stats(stats, stat_names, centralities, {2,3,4,5,6}, "roli_thesis_stats");
-			roli_thesis_stats(stats, cumulant_names, centralities, {2,3,4,5,6}, "roli_thesis_cumulants");
-			roli_thesis_stats(stats, raw_moment_names, centralities, {2,3,4,5,6}, "roli_thesis_raw_moments");
-			roli_thesis_stats(stats, central_moment_names, centralities, {2,3,4,5,6}, "roli_thesis_central_moments");
+
+			{
+				TDirectory *roli_thesis_dir = data_dir->mkdir("roli_thesis");
+				for(pair<string, vector<string>> name:names) {
+					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+					name_dir->cd();
+					for(int div:divs) {
+						roli_thesis_stats(stats, name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+					}
+				}
+				TDirectory *centralities_dir = data_dir->mkdir("centralities");
+				for(string name:stat_names) {
+					TDirectory *name_dir = centralities_dir->mkdir(name.data());
+					name_dir->cd();
+					for(int div:divs) {
+						centralities_stat(stats, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+					}
+				}
+			}
 
 
 			TDirectory *mix_dir = set_num_dir->mkdir("Mix_Data");
@@ -166,39 +185,58 @@ void analyze_no_CBWC() {
 			make_2d_dist_plots(mix_dir, data_mix);
 			make_proton_dist_plots(mix_dir, data_mix);
 			mix_dir->cd();
-			roli_thesis_stats(stats_mix, stat_names, centralities, {2,3,4,5,6}, "roli_thesis_stats");
-			roli_thesis_stats(stats_mix, cumulant_names, centralities, {2,3,4,5,6}, "roli_thesis_cumulants");
-			roli_thesis_stats(stats_mix, raw_moment_names, centralities, {2,3,4,5,6}, "roli_thesis_raw_moments");
-			roli_thesis_stats(stats_mix, central_moment_names, centralities, {2,3,4,5,6}, "roli_thesis_central_moments");
 
+			{
+				TDirectory *roli_thesis_dir = mix_dir->mkdir("roli_thesis");
+				for(pair<string, vector<string>> name:names) {
+					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+					name_dir->cd();
+					for(int div:divs) {
+						roli_thesis_stats(stats_mix, name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+					}
+				}
+				TDirectory *centralities_dir = mix_dir->mkdir("centralities");
+				for(string name:stat_names) {
+					TDirectory *name_dir = centralities_dir->mkdir(name.data());
+					name_dir->cd();
+					for(int div:divs) {
+						centralities_stat(stats_mix, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+					}
+				}
+			}
+
+			for(int div:divs) {
+				for(pair<string, vector<string>> name:names) {
+					roli_thesis_stats(stats_mix, name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+				}
+				for(string name:stat_names) {
+					centralities_stat(stats_mix, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+				}
+			}
 
 
 			TDirectory *mix_div_dir = set_num_dir->mkdir("Mix_Divded_Data");
 			mix_div_dir->cd();
-			roli_thesis_stats(stats_mix_divide, stat_names, centralities, {3,4,5,6}, "roli_thesis_stats_mix_divide");
-			roli_thesis_stats(stats_mix_divide, stat_names, centralities, {2}, "roli_thesis_stats_mix_divide2");
-			roli_thesis_stats(stats_mix_divide, stat_names, centralities, {3}, "roli_thesis_stats_mix_divide3");
-			roli_thesis_stats(stats_mix_divide, stat_names, centralities, {4}, "roli_thesis_stats_mix_divide4");
-			roli_thesis_stats(stats_mix_divide, stat_names, centralities, {5}, "roli_thesis_stats_mix_divide5");
-			roli_thesis_stats(stats_mix_divide, stat_names, centralities, {6}, "roli_thesis_stats_mix_divide6");
-			roli_thesis_stats(stats_mix_divide, cumulant_names, centralities, {3,4,5,6}, "roli_thesis_cumulants_mix_divide");
-			roli_thesis_stats(stats_mix_divide, cumulant_names, centralities, {2}, "roli_thesis_cumulants_mix_divide2");
-			roli_thesis_stats(stats_mix_divide, cumulant_names, centralities, {3}, "roli_thesis_cumulants_mix_divide3");
-			roli_thesis_stats(stats_mix_divide, cumulant_names, centralities, {4}, "roli_thesis_cumulants_mix_divide4");
-			roli_thesis_stats(stats_mix_divide, cumulant_names, centralities, {5}, "roli_thesis_cumulants_mix_divide5");
-			roli_thesis_stats(stats_mix_divide, cumulant_names, centralities, {6}, "roli_thesis_cumulants_mix_divide6");
-			roli_thesis_stats(stats_mix_divide, raw_moment_names, centralities, {3,4,5,6}, "roli_thesis_raw_moments_mix_divide");
-			roli_thesis_stats(stats_mix_divide, raw_moment_names, centralities, {2}, "roli_thesis_raw_moments_mix_divide2");
-			roli_thesis_stats(stats_mix_divide, raw_moment_names, centralities, {3}, "roli_thesis_raw_moments_mix_divide3");
-			roli_thesis_stats(stats_mix_divide, raw_moment_names, centralities, {4}, "roli_thesis_raw_moments_mix_divide4");
-			roli_thesis_stats(stats_mix_divide, raw_moment_names, centralities, {5}, "roli_thesis_raw_moments_mix_divide5");
-			roli_thesis_stats(stats_mix_divide, raw_moment_names, centralities, {6}, "roli_thesis_raw_moments_mix_divide6");
-			roli_thesis_stats(stats_mix_divide, central_moment_names, centralities, {3,4,5,6}, "roli_thesis_central_moments_mix_divide");
-			roli_thesis_stats(stats_mix_divide, central_moment_names, centralities, {2}, "roli_thesis_central_moments_mix_divide2");
-			roli_thesis_stats(stats_mix_divide, central_moment_names, centralities, {3}, "roli_thesis_central_moments_mix_divide3");
-			roli_thesis_stats(stats_mix_divide, central_moment_names, centralities, {4}, "roli_thesis_central_moments_mix_divide4");
-			roli_thesis_stats(stats_mix_divide, central_moment_names, centralities, {5}, "roli_thesis_central_moments_mix_divide5");
-			roli_thesis_stats(stats_mix_divide, central_moment_names, centralities, {6}, "roli_thesis_central_moments_mix_divide6");
+
+			{
+				TDirectory *roli_thesis_dir = mix_div_dir->mkdir("roli_thesis");
+				for(pair<string, vector<string>> name:names) {
+					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+					name_dir->cd();
+					for(int div:divs) {
+						roli_thesis_stats(stats_mix_divide, name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
+					}
+				}
+				TDirectory *centralities_dir = mix_div_dir->mkdir("centralities");
+				for(string name:stat_names) {
+					TDirectory *name_dir = centralities_dir->mkdir(name.data());
+					name_dir->cd();
+					for(int div:divs) {
+						centralities_stat(stats_mix_divide, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+					}
+				}
+			}
+
 		}
 
 		cout << "Combining set_nums" << endl;
@@ -225,92 +263,96 @@ void analyze_no_CBWC() {
 		TDirectory *comp_dir = comb_dir->mkdir("Comparison");
 		comp_dir->cd();
 		map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_mixed = {{"raw",raw_stats_median[set.first]}, {"mixed",mix_stats_median[set.first]}};
-		map<string, map<int, map<int, map<int, map<string, double>>>>> raw_mixed_sys = {{"raw",raw_stats_sd[set.first]}, {"mixed",mix_stats_sd[set.first]}};
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, stat_names, centralities, {2}, "roli_thesis_raw_mix_stat_comp2");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, stat_names, centralities, {3}, "roli_thesis_raw_mix_stat_comp3");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, stat_names, centralities, {4}, "roli_thesis_raw_mix_stat_comp4");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, stat_names, centralities, {5}, "roli_thesis_raw_mix_stat_comp5");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, stat_names, centralities, {6}, "roli_thesis_raw_mix_stat_comp6");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, cumulant_names, centralities, {2}, "roli_thesis_raw_mix_cumulant_comp2");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, cumulant_names, centralities, {3}, "roli_thesis_raw_mix_cumulant_comp3");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, cumulant_names, centralities, {4}, "roli_thesis_raw_mix_cumulant_comp4");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, cumulant_names, centralities, {5}, "roli_thesis_raw_mix_cumulant_comp5");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, cumulant_names, centralities, {6}, "roli_thesis_raw_mix_cumulant_comp6");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, raw_moment_names, centralities, {2}, "roli_thesis_raw_mix_raw_moment_comp2");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, raw_moment_names, centralities, {3}, "roli_thesis_raw_mix_raw_moment_comp3");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, raw_moment_names, centralities, {4}, "roli_thesis_raw_mix_raw_moment_comp4");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, raw_moment_names, centralities, {5}, "roli_thesis_raw_mix_raw_moment_comp5");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, raw_moment_names, centralities, {6}, "roli_thesis_raw_mix_raw_moment_comp6");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {2}, "roli_thesis_raw_mix_central_moment_comp2");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {3}, "roli_thesis_raw_mix_central_moment_comp3");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_comp4");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_comp5");
-		roli_thesis_stats(raw_mixed, raw_mixed_sys, central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_comp6");
-		centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_non_excess_kurtosis6");
-		centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_non_excess_kurtosis5");
-		centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_non_excess_kurtosis4");
-		centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_non_excess_kurtosis3");
-		centralities_stat(raw_mixed, raw_mixed_sys, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_non_excess_kurtosis2");
-		centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_skewness6");
-		centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_skewness5");
-		centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_skewness4");
-		centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_skewness3");
-		centralities_stat(raw_mixed, raw_mixed_sys, "skewness", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_skewness2");
-		centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_standard_deviation6");
-		centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_standard_deviation5");
-		centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_standard_deviation4");
-		centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_standard_deviation3");
-		centralities_stat(raw_mixed, raw_mixed_sys, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_standard_deviation2");
+		map<string, map<int, map<int, map<int, map<string, double>>>>> raw_mixed_sd = {{"raw",raw_stats_sd[set.first]}, {"mixed",mix_stats_sd[set.first]}};
+
+		{
+			TDirectory *roli_thesis_dir = comp_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(raw_mixed, raw_mixed_sd, name.second, centralities, {div}, "roli_thesis_raw_mix_comp_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = comp_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, {div}, "centralities_raw_mix_comp_"+name+to_string(div));
+				}
+			}
+		}
+
 
 		TDirectory *data_dir = comb_dir->mkdir("Raw_Data");
 		data_dir->cd();
-		roli_thesis_stats(raw_stats_median[set.first], raw_stats_sd[set.first], stat_names, centralities, {2,3,4,5,6}, "roli_thesis_stats");
-		roli_thesis_stats(raw_stats_median[set.first], raw_stats_sd[set.first], cumulant_names, centralities, {2,3,4,5,6}, "roli_thesis_cumulants");
+
+		{
+			TDirectory *roli_thesis_dir = data_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(raw_stats_median[set.first], raw_stats_sd[set.first], name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = data_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(raw_stats_median[set.first], raw_stats_sd[set.first], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+				}
+			}
+		}
 
 
 		TDirectory *mix_dir = comb_dir->mkdir("Mix_Data");
 		mix_dir->cd();
-		roli_thesis_stats(mix_stats_median[set.first], mix_stats_sd[set.first], stat_names, centralities, {2,3,4,5,6}, "roli_thesis_stats_mix");
-		roli_thesis_stats(mix_stats_median[set.first], mix_stats_sd[set.first], cumulant_names, centralities, {2,3,4,5,6}, "roli_thesis_cumulants_mix");
+
+		{
+			TDirectory *roli_thesis_dir = mix_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(mix_stats_median[set.first], mix_stats_sd[set.first], name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = mix_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(mix_stats_median[set.first], mix_stats_sd[set.first], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+				}
+			}
+		}
 
 
 		TDirectory *mix_div_dir = comb_dir->mkdir("Mix_Divded_Data");
 		mix_div_dir->cd();
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], stat_names, centralities, {2}, "roli_thesis_raw_mix_stat_divide2");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], stat_names, centralities, {3}, "roli_thesis_raw_mix_stat_divide3");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], stat_names, centralities, {4}, "roli_thesis_raw_mix_stat_divide4");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], stat_names, centralities, {5}, "roli_thesis_raw_mix_stat_divide5");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], stat_names, centralities, {6}, "roli_thesis_raw_mix_stat_divide6");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], cumulant_names, centralities, {2}, "roli_thesis_raw_mix_cumulant_divide2");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], cumulant_names, centralities, {3}, "roli_thesis_raw_mix_cumulant_divide3");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], cumulant_names, centralities, {4}, "roli_thesis_raw_mix_cumulant_divide4");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], cumulant_names, centralities, {5}, "roli_thesis_raw_mix_cumulant_divide5");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], cumulant_names, centralities, {6}, "roli_thesis_raw_mix_cumulant_divide6");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], raw_moment_names, centralities, {2}, "roli_thesis_raw_mix_raw_moment_divide2");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], raw_moment_names, centralities, {3}, "roli_thesis_raw_mix_raw_moment_divide3");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], raw_moment_names, centralities, {4}, "roli_thesis_raw_mix_raw_moment_divide4");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], raw_moment_names, centralities, {5}, "roli_thesis_raw_mix_raw_moment_divide5");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], raw_moment_names, centralities, {6}, "roli_thesis_raw_mix_raw_moment_divide6");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], central_moment_names, centralities, {2}, "roli_thesis_raw_mix_central_moment_divide2");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], central_moment_names, centralities, {3}, "roli_thesis_raw_mix_central_moment_divide3");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_divide4");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_divide5");
-		roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_divide6");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_non_excess_kurtosis6");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_non_excess_kurtosis5");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_non_excess_kurtosis4");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_non_excess_kurtosis3");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_non_excess_kurtosis2");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "skewness", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_skewness6");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "skewness", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_skewness5");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "skewness", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_skewness4");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "skewness", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_skewness3");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "skewness", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_skewness2");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "standard_deviation", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_standard_deviation6");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "standard_deviation", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_standard_deviation5");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "standard_deviation", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_standard_deviation4");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "standard_deviation", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_standard_deviation3");
-		centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], "standard_deviation", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_standard_deviation2");
+
+		{
+			TDirectory *roli_thesis_dir = mix_div_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(divide_stats_median[set.first], divide_stats_sd[set.first], name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = mix_div_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(divide_stats_median[set.first], divide_stats_sd[set.first], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+				}
+			}
+		}
+
 	}
 
 	cout << "Combining all sets" << endl;
@@ -319,125 +361,71 @@ void analyze_no_CBWC() {
 
 	TDirectory *data_dir = sets_dir->mkdir("Raw_Data");
 	data_dir->cd();
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, stat_names, centralities, {2,3,4,5,6}, "roli_thesis_stats");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, cumulant_names, centralities, {2,3,4,5,6}, "roli_thesis_cumulants");
 
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, stat_names, centralities, {2}, "roli_thesis_raw_mix_stat_divide2");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, stat_names, centralities, {3}, "roli_thesis_raw_mix_stat_divide3");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, stat_names, centralities, {4}, "roli_thesis_raw_mix_stat_divide4");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, stat_names, centralities, {5}, "roli_thesis_raw_mix_stat_divide5");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, stat_names, centralities, {6}, "roli_thesis_raw_mix_stat_divide6");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, cumulant_names, centralities, {2}, "roli_thesis_raw_mix_cumulant_divide2");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, cumulant_names, centralities, {3}, "roli_thesis_raw_mix_cumulant_divide3");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, cumulant_names, centralities, {4}, "roli_thesis_raw_mix_cumulant_divide4");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, cumulant_names, centralities, {5}, "roli_thesis_raw_mix_cumulant_divide5");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, cumulant_names, centralities, {6}, "roli_thesis_raw_mix_cumulant_divide6");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, raw_moment_names, centralities, {2}, "roli_thesis_raw_mix_raw_moment_divide2");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, raw_moment_names, centralities, {3}, "roli_thesis_raw_mix_raw_moment_divide3");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, raw_moment_names, centralities, {4}, "roli_thesis_raw_mix_raw_moment_divide4");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, raw_moment_names, centralities, {5}, "roli_thesis_raw_mix_raw_moment_divide5");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, raw_moment_names, centralities, {6}, "roli_thesis_raw_mix_raw_moment_divide6");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, central_moment_names, centralities, {2}, "roli_thesis_raw_mix_central_moment_divide2");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, central_moment_names, centralities, {3}, "roli_thesis_raw_mix_central_moment_divide3");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_divide4");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_divide5");
-	roli_thesis_stats(raw_stats_median, raw_stats_sd, central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_divide6");
-	centralities_stat(raw_stats_median, raw_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_non_excess_kurtosis6");
-	centralities_stat(raw_stats_median, raw_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_non_excess_kurtosis5");
-	centralities_stat(raw_stats_median, raw_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_non_excess_kurtosis4");
-	centralities_stat(raw_stats_median, raw_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_non_excess_kurtosis3");
-	centralities_stat(raw_stats_median, raw_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_non_excess_kurtosis2");
-	centralities_stat(raw_stats_median, raw_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_skewness6");
-	centralities_stat(raw_stats_median, raw_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_skewness5");
-	centralities_stat(raw_stats_median, raw_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_skewness4");
-	centralities_stat(raw_stats_median, raw_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_skewness3");
-	centralities_stat(raw_stats_median, raw_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_skewness2");
-	centralities_stat(raw_stats_median, raw_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_standard_deviation6");
-	centralities_stat(raw_stats_median, raw_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_standard_deviation5");
-	centralities_stat(raw_stats_median, raw_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_standard_deviation4");
-	centralities_stat(raw_stats_median, raw_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_standard_deviation3");
-	centralities_stat(raw_stats_median, raw_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_standard_deviation2");
-
+	{
+		TDirectory *roli_thesis_dir = data_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(raw_stats_median, raw_stats_sd, name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = data_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(raw_stats_median, raw_stats_sd, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+			}
+		}
+	}
 
 	TDirectory *mix_dir = sets_dir->mkdir("Mix_Data");
 	mix_dir->cd();
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, stat_names, centralities, {2,3,4,5,6}, "roli_thesis_stats_mix");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, cumulant_names, centralities, {2,3,4,5,6}, "roli_thesis_cumulants_mix");
 
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, stat_names, centralities, {2}, "roli_thesis_raw_mix_stat_divide2");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, stat_names, centralities, {3}, "roli_thesis_raw_mix_stat_divide3");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, stat_names, centralities, {4}, "roli_thesis_raw_mix_stat_divide4");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, stat_names, centralities, {5}, "roli_thesis_raw_mix_stat_divide5");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, stat_names, centralities, {6}, "roli_thesis_raw_mix_stat_divide6");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, cumulant_names, centralities, {2}, "roli_thesis_raw_mix_cumulant_divide2");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, cumulant_names, centralities, {3}, "roli_thesis_raw_mix_cumulant_divide3");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, cumulant_names, centralities, {4}, "roli_thesis_raw_mix_cumulant_divide4");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, cumulant_names, centralities, {5}, "roli_thesis_raw_mix_cumulant_divide5");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, cumulant_names, centralities, {6}, "roli_thesis_raw_mix_cumulant_divide6");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, raw_moment_names, centralities, {2}, "roli_thesis_raw_mix_raw_moment_divide2");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, raw_moment_names, centralities, {3}, "roli_thesis_raw_mix_raw_moment_divide3");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, raw_moment_names, centralities, {4}, "roli_thesis_raw_mix_raw_moment_divide4");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, raw_moment_names, centralities, {5}, "roli_thesis_raw_mix_raw_moment_divide5");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, raw_moment_names, centralities, {6}, "roli_thesis_raw_mix_raw_moment_divide6");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, central_moment_names, centralities, {2}, "roli_thesis_raw_mix_central_moment_divide2");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, central_moment_names, centralities, {3}, "roli_thesis_raw_mix_central_moment_divide3");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_divide4");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_divide5");
-	roli_thesis_stats(mix_stats_median, mix_stats_sd, central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_divide6");
-	centralities_stat(mix_stats_median, mix_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_non_excess_kurtosis6");
-	centralities_stat(mix_stats_median, mix_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_non_excess_kurtosis5");
-	centralities_stat(mix_stats_median, mix_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_non_excess_kurtosis4");
-	centralities_stat(mix_stats_median, mix_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_non_excess_kurtosis3");
-	centralities_stat(mix_stats_median, mix_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_non_excess_kurtosis2");
-	centralities_stat(mix_stats_median, mix_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_skewness6");
-	centralities_stat(mix_stats_median, mix_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_skewness5");
-	centralities_stat(mix_stats_median, mix_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_skewness4");
-	centralities_stat(mix_stats_median, mix_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_skewness3");
-	centralities_stat(mix_stats_median, mix_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_skewness2");
-	centralities_stat(mix_stats_median, mix_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_standard_deviation6");
-	centralities_stat(mix_stats_median, mix_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_standard_deviation5");
-	centralities_stat(mix_stats_median, mix_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_standard_deviation4");
-	centralities_stat(mix_stats_median, mix_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_standard_deviation3");
-	centralities_stat(mix_stats_median, mix_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_standard_deviation2");
+	{
+		TDirectory *roli_thesis_dir = mix_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(mix_stats_median, mix_stats_sd, name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = mix_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(mix_stats_median, mix_stats_sd, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+			}
+		}
+	}
 
 
 	TDirectory *mix_div_dir = sets_dir->mkdir("Mix_Divded_Data");
 	mix_div_dir->cd();
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, stat_names, centralities, {2}, "roli_thesis_raw_mix_stat_divide2");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, stat_names, centralities, {3}, "roli_thesis_raw_mix_stat_divide3");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, stat_names, centralities, {4}, "roli_thesis_raw_mix_stat_divide4");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, stat_names, centralities, {5}, "roli_thesis_raw_mix_stat_divide5");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, stat_names, centralities, {6}, "roli_thesis_raw_mix_stat_divide6");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, cumulant_names, centralities, {2}, "roli_thesis_raw_mix_cumulant_divide2");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, cumulant_names, centralities, {3}, "roli_thesis_raw_mix_cumulant_divide3");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, cumulant_names, centralities, {4}, "roli_thesis_raw_mix_cumulant_divide4");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, cumulant_names, centralities, {5}, "roli_thesis_raw_mix_cumulant_divide5");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, cumulant_names, centralities, {6}, "roli_thesis_raw_mix_cumulant_divide6");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, raw_moment_names, centralities, {2}, "roli_thesis_raw_mix_raw_moment_divide2");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, raw_moment_names, centralities, {3}, "roli_thesis_raw_mix_raw_moment_divide3");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, raw_moment_names, centralities, {4}, "roli_thesis_raw_mix_raw_moment_divide4");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, raw_moment_names, centralities, {5}, "roli_thesis_raw_mix_raw_moment_divide5");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, raw_moment_names, centralities, {6}, "roli_thesis_raw_mix_raw_moment_divide6");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, central_moment_names, centralities, {2}, "roli_thesis_raw_mix_central_moment_divide2");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, central_moment_names, centralities, {3}, "roli_thesis_raw_mix_central_moment_divide3");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, central_moment_names, centralities, {4}, "roli_thesis_raw_mix_central_moment_divide4");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, central_moment_names, centralities, {5}, "roli_thesis_raw_mix_central_moment_divide5");
-	roli_thesis_stats(divide_stats_median, divide_stats_sd, central_moment_names, centralities, {6}, "roli_thesis_raw_mix_central_moment_divide6");
-	centralities_stat(divide_stats_median, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_non_excess_kurtosis6");
-	centralities_stat(divide_stats_median, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_non_excess_kurtosis5");
-	centralities_stat(divide_stats_median, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_non_excess_kurtosis4");
-	centralities_stat(divide_stats_median, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_non_excess_kurtosis3");
-	centralities_stat(divide_stats_median, divide_stats_sd, "non_excess_kurtosis", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_non_excess_kurtosis2");
-	centralities_stat(divide_stats_median, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_skewness6");
-	centralities_stat(divide_stats_median, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_skewness5");
-	centralities_stat(divide_stats_median, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_skewness4");
-	centralities_stat(divide_stats_median, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_skewness3");
-	centralities_stat(divide_stats_median, divide_stats_sd, "skewness", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_skewness2");
-	centralities_stat(divide_stats_median, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {6}, "centralities_standard_deviation6");
-	centralities_stat(divide_stats_median, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {5}, "centralities_standard_deviation5");
-	centralities_stat(divide_stats_median, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {4}, "centralities_standard_deviation4");
-	centralities_stat(divide_stats_median, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {3}, "centralities_standard_deviation3");
-	centralities_stat(divide_stats_median, divide_stats_sd, "standard_deviation", {8,7,6,5,4,3,2,1,0}, {2}, "centralities_standard_deviation2");
+
+	{
+		TDirectory *roli_thesis_dir = mix_div_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(divide_stats_median, divide_stats_sd, name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = mix_div_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(divide_stats_median, divide_stats_sd, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+			}
+		}
+	}
+
 
 	out_root->Close();
 }
