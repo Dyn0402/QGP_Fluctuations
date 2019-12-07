@@ -55,8 +55,7 @@ void read_class() {
 	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{7,10}}, {"Rand_Rotate",{20,30}}, {"EP_Rotate",{7,10}}, {"Pile_Up_001_",{0,7}}, {"Pile_Up_008_",{0,7}}, {"Efficiency_08_",{0,7}}};
-
+	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{11,11}}, {"Rand_Rotate",{31,31}}, {"EP_Rotate",{11,11}}, {"Pile_Up_01_",{8,11}}, {"Pile_Up_005_",{8,11}}, {"Pile_Up_002_",{8,11}}, {"Pile_Up_001_",{8,11}}, {"Pile_Up_008_",{8,11}}, {"Efficiency_05_",{8,11}}, {"Efficiency_025_",{8,11}}, {"Efficiency_001_",{8,11}}, {"Efficiency_08_",{8,11}}};
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
