@@ -55,7 +55,7 @@ void read_class() {
 	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,7}}, {"Rand_Rotate",{0,20}}, {"EP_Rotate",{0,7}}, {"Pile_Up_01_",{0,7}}, {"Pile_Up_005_",{0,7}}, {"Pile_Up_002_",{0,7}}, {"Efficiency_05_",{0,7}}, {"Efficiency_025_",{0,7}}, {"Efficiency_001_",{0,7}}};
+	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{7,10}}, {"Rand_Rotate",{20,30}}, {"EP_Rotate",{7,10}}, {"Pile_Up_001_",{0,7}}, {"Pile_Up_008_",{0,7}}, {"Efficiency_08_",{0,7}}};
 
 	int sleep = 60;
 
@@ -63,7 +63,7 @@ void read_class() {
 	{
 		ThreadPool pool(thread::hardware_concurrency());
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
-			for(int set_num = set_pair.second.first; set_num < set_pair.second.second; set_num++) {
+			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
 				vector<int> energy_list = {39, 27, 62, 19, 11, 7};
@@ -87,11 +87,14 @@ void read_class() {
 					else{ reader.set_rotate_random(false); }
 
 					if(set_pair.first == "Pile_Up_01_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
+					else if(set_pair.first == "Pile_Up_008_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
 					else if(set_pair.first == "Pile_Up_005_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
 					else if(set_pair.first == "Pile_Up_002_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
+					else if(set_pair.first == "Pile_Up_001_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
 					else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
 
-					if(set_pair.first == "Efficiency_05_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
+					if(set_pair.first == "Efficiency_08_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
+					else if(set_pair.first == "Efficiency_05_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
 					else if(set_pair.first == "Efficiency_025_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
 					else if(set_pair.first == "Efficiency_01_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
 					else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
