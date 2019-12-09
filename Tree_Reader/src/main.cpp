@@ -56,7 +56,7 @@ void read_class() {
 	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,6}}, {"Rand_Rotate",{0,12}}, {"EP_Rotate",{0,6}}, {"Pile_Up_01_",{0,6}}, {"Pile_Up_008_",{0,6}}, {"Pile_Up_005_",{0,6}}, {"Pile_Up_002_",{0,6}}, {"Pile_Up_001_",{0,6}}, {"Efficiency_08_",{0,6}}, {"Efficiency_05_",{0,6}}, {"Efficiency_025_",{0,6}}, {"Efficiency_01_",{0,6}}};
+	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
@@ -81,7 +81,7 @@ void read_class() {
 					reader.set_set_name(set_pair.first + to_string(set_num));
 
 					if(set_pair.first == "EP_Rotate")  { reader.set_event_plane(true); }
-					else { reader.set_event_plane(true); }
+					else { reader.set_event_plane(false); }
 
 					if(set_pair.first == "No_Rotate" || set_pair.first == "EP_Rotate") { reader.set_rotate_random(false); }
 					else{ reader.set_rotate_random(true); }
