@@ -64,7 +64,9 @@ void analyze_no_CBWC() {
 	string out_root_name = "12-06-19_plot_test.root";
 
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_001_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
-	map<string, vector<int>> sets = {{"Rand_Rotate", {0,3}}, {"Pile_Up_001_", {0,2}}};
+//	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_001_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
+	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 2}}, {"No_Rotate", {0, 2}}, {"EP_Rotate", {0, 2}}, {"Efficiency_001_", {0, 2}}, {"Efficiency_08_", {0, 2}}, {"Efficiency_025_", {0, 2}}, {"Efficiency_05_", {0, 2}}, {"Pile_Up_001_", {0, 2}}, {"Pile_Up_01_", {0, 2}}, {"Pile_Up_002_", {0, 2}}, {"Pile_Up_005_", {0, 2}}, {"Pile_Up_008_", {0, 2}}};
+//	map<string, vector<int>> sets = {{"Rand_Rotate", {0,3}}, {"Pile_Up_001_", {0,2}}};
 
 
 	TFile *out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
@@ -359,69 +361,111 @@ void analyze_no_CBWC() {
 
 	TDirectory *sets_dir = out_root->mkdir("Sets_Comp");
 
-	TDirectory *data_dir = sets_dir->mkdir("Raw_Data");
-	data_dir->cd();
+	map<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pairs = {
+			{"Rand_Pile", {
+					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_median["Pile_Up_008_"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_median["Pile_Up_008_"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", divide_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", divide_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", divide_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", divide_stats_median["Pile_Up_008_"]}}}}
+			},
+			{"Rand_Efficiency", {
+					{"raw", {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Efficiency 0.1%", raw_stats_median["Efficiency_001_"]}, {"Efficiency 8%", raw_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", raw_stats_median["Efficiency_025_"]}, {"Efficiency 5%", raw_stats_median["Efficiency_05_"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Efficiency 0.1%", mix_stats_median["Efficiency_001_"]}, {"Efficiency 8%", mix_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", mix_stats_median["Efficiency_025_"]}, {"Efficiency 5%", mix_stats_median["Efficiency_05_"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Efficiency 0.1%", divide_stats_median["Efficiency_001_"]}, {"Efficiency 8%", divide_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", divide_stats_median["Efficiency_025_"]}, {"Efficiency 5%", divide_stats_median["Efficiency_05_"]}}}}
+			},
+			{"Rotates", {
+					{"raw", {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"No_Rotate", raw_stats_median["No_Rotate"]}, {"EP_Rotate", raw_stats_median["EP_Rotate"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"No_Rotate", mix_stats_median["No_Rotate"]}, {"EP_Rotate", mix_stats_median["EP_Rotate"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"No_Rotate", divide_stats_median["No_Rotate"]}, {"EP_Rotate", divide_stats_median["EP_Rotate"]}}}}
+			},
+			{"All", {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}}}
+	};
 
-	{
-		TDirectory *roli_thesis_dir = data_dir->mkdir("roli_thesis");
-		for(pair<string, vector<string>> name:names) {
-			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-			name_dir->cd();
-			for(int div:divs) {
-				roli_thesis_stats(raw_stats_median, raw_stats_sd, name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+	map<string, map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>>> set_pairs_sd = {
+			{"Rand_Pile", {
+					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_sd["Pile_Up_008_"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_sd["Pile_Up_008_"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", divide_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", divide_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", divide_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", divide_stats_sd["Pile_Up_008_"]}}}}
+			},
+			{"Rand_Efficiency", {
+					{"raw", {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Efficiency 0.1%", raw_stats_sd["Efficiency_001_"]}, {"Efficiency 8%", raw_stats_sd["Efficiency_08_"]}, {"Efficiency 2.5%", raw_stats_sd["Efficiency_025_"]}, {"Efficiency 5%", raw_stats_sd["Efficiency_05_"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Efficiency 0.1%", mix_stats_sd["Efficiency_001_"]}, {"Efficiency 8%", mix_stats_sd["Efficiency_08_"]}, {"Efficiency 2.5%", mix_stats_sd["Efficiency_025_"]}, {"Efficiency 5%", mix_stats_sd["Efficiency_05_"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"Efficiency 0.1%", divide_stats_sd["Efficiency_001_"]}, {"Efficiency 8%", divide_stats_sd["Efficiency_08_"]}, {"Efficiency 2.5%", divide_stats_sd["Efficiency_025_"]}, {"Efficiency 5%", divide_stats_sd["Efficiency_05_"]}}}}
+			},
+			{"Rotates", {
+					{"raw", {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"No_Rotate", raw_stats_sd["No_Rotate"]}, {"EP_Rotate", raw_stats_sd["EP_Rotate"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"No_Rotate", mix_stats_sd["No_Rotate"]}, {"EP_Rotate", mix_stats_sd["EP_Rotate"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"No_Rotate", divide_stats_sd["No_Rotate"]}, {"EP_Rotate", divide_stats_sd["EP_Rotate"]}}}}
+			},
+			{"All", {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}}}
+	};
+
+	for(pair<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pair:set_pairs) {
+		TDirectory *set_pair_dir = sets_dir->mkdir(set_pair.first.data());
+
+		TDirectory *data_dir = set_pair_dir->mkdir("Raw_Data");
+		data_dir->cd();
+
+		{
+			TDirectory *roli_thesis_dir = data_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = data_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+				}
 			}
 		}
-		TDirectory *centralities_dir = data_dir->mkdir("centralities");
-		for(string name:stat_names) {
-			TDirectory *name_dir = centralities_dir->mkdir(name.data());
-			name_dir->cd();
-			for(int div:divs) {
-				centralities_stat(raw_stats_median, raw_stats_sd, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+
+		TDirectory *mix_dir = set_pair_dir->mkdir("Mix_Data");
+		mix_dir->cd();
+
+		{
+			TDirectory *roli_thesis_dir = mix_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = mix_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+				}
 			}
 		}
-	}
 
-	TDirectory *mix_dir = sets_dir->mkdir("Mix_Data");
-	mix_dir->cd();
 
-	{
-		TDirectory *roli_thesis_dir = mix_dir->mkdir("roli_thesis");
-		for(pair<string, vector<string>> name:names) {
-			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-			name_dir->cd();
-			for(int div:divs) {
-				roli_thesis_stats(mix_stats_median, mix_stats_sd, name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+		TDirectory *mix_div_dir = set_pair_dir->mkdir("Mix_Divded_Data");
+		mix_div_dir->cd();
+
+		{
+			TDirectory *roli_thesis_dir = mix_div_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
+				}
 			}
-		}
-		TDirectory *centralities_dir = mix_dir->mkdir("centralities");
-		for(string name:stat_names) {
-			TDirectory *name_dir = centralities_dir->mkdir(name.data());
-			name_dir->cd();
-			for(int div:divs) {
-				centralities_stat(mix_stats_median, mix_stats_sd, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
-			}
-		}
-	}
-
-
-	TDirectory *mix_div_dir = sets_dir->mkdir("Mix_Divded_Data");
-	mix_div_dir->cd();
-
-	{
-		TDirectory *roli_thesis_dir = mix_div_dir->mkdir("roli_thesis");
-		for(pair<string, vector<string>> name:names) {
-			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-			name_dir->cd();
-			for(int div:divs) {
-				roli_thesis_stats(divide_stats_median, divide_stats_sd, name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
-			}
-		}
-		TDirectory *centralities_dir = mix_div_dir->mkdir("centralities");
-		for(string name:stat_names) {
-			TDirectory *name_dir = centralities_dir->mkdir(name.data());
-			name_dir->cd();
-			for(int div:divs) {
-				centralities_stat(divide_stats_median, divide_stats_sd, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+			TDirectory *centralities_dir = mix_div_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+				}
 			}
 		}
 	}

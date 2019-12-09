@@ -128,7 +128,7 @@ void read_comb_sys() {
 	map<string, pair<int, int>> set_pairs = {{"Final_Set",{0,100}}};
 	pair<float, float> pile_up_range = {0.0, 0.01};
 	pair<float, float> efficiency_range = {0.0, 0.05};
-	TRandom3 par_rand(0);
+	TRandom3 sys_rand(0);
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
@@ -153,22 +153,13 @@ void read_comb_sys() {
 					reader.set_set_name(set_pair.first + to_string(set_num));
 
 					reader.set_event_plane(false);
+					reader.set_rotate_random(true);
 
-					if(set_pair.first == "No_Rotate" || set_pair.first == "EP_Rotate") { reader.set_rotate_random(true); }
-					else{ reader.set_rotate_random(false); }
+					reader.set_pile_up(true);
+					reader.set_pile_up_prob(sys_rand.Rndm() * (pile_up_range.second - pile_up_range.first) + pile_up_range.second);
 
-					if(set_pair.first == "Pile_Up_01_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
-					else if(set_pair.first == "Pile_Up_008_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
-					else if(set_pair.first == "Pile_Up_005_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
-					else if(set_pair.first == "Pile_Up_002_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
-					else if(set_pair.first == "Pile_Up_001_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
-					else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
-
-					if(set_pair.first == "Efficiency_08_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
-					else if(set_pair.first == "Efficiency_05_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
-					else if(set_pair.first == "Efficiency_025_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
-					else if(set_pair.first == "Efficiency_01_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
-					else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
+					reader.set_efficiency(true);
+					reader.set_efficiency_prob(sys_rand.Rndm() * (efficiency_range.second - efficiency_range.first) + efficiency_range.second);
 
 					reader.set_mixed_sets(false);
 					reader.set_rand_data(false);
