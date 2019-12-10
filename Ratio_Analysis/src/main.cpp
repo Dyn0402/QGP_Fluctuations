@@ -470,6 +470,104 @@ void analyze_no_CBWC() {
 		}
 	}
 
+	// Calculate standard deviations for systematics
+	for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_median["Rand_Rotate"]) {
+		for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
+			for(pair<int, map<string, vector<Measure>>> cent:div.second) {
+				for(pair<string, vector<Measure>> stat:cent.second) {
+					double raw_sd = raw_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
+					Measure raw_med = raw_stats_median["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
+					Measure raw_eff_med = raw_stats_median["Efficiency_05_"][energy.first][div.first][cent.first][stat.first];
+					Measure raw_pile_med = raw_stats_median["Pile_Up_01_"][energy.first][div.first][cent.first][stat.first];
+					raw_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first] = pow( pow(raw_sd, 2) + pow(raw_med.get_val() - raw_eff_med.get_val(), 2) + pow(raw_med.get_val() - raw_pile_med.get_val(), 2), 0.5);
+
+					double mix_sd = mix_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
+					Measure mix_med = mix_stats_median["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
+					Measure mix_eff_med = mix_stats_median["Efficiency_05_"][energy.first][div.first][cent.first][stat.first];
+					Measure mix_pile_med = mix_stats_median["Pile_Up_01_"][energy.first][div.first][cent.first][stat.first];
+					mix_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first] = pow( pow(mix_sd, 2) + pow(mix_med.get_val() - mix_eff_med.get_val(), 2) + pow(mix_med.get_val() - mix_pile_med.get_val(), 2), 0.5);
+
+					double divide_sd = divide_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
+					Measure divide_med = divide_stats_median["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
+					Measure divide_eff_med = divide_stats_median["Efficiency_05_"][energy.first][div.first][cent.first][stat.first];
+					Measure divide_pile_med = divide_stats_median["Pile_Up_01_"][energy.first][div.first][cent.first][stat.first];
+					divide_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first] = pow( pow(divide_sd, 2) + pow(divide_med.get_val() - divide_eff_med.get_val(), 2) + pow(divide_med.get_val() - divide_pile_med.get_val(), 2), 0.5);
+				}
+			}
+		}
+	}
+
+
+	TDirectory *finals_dir = sets_dir->mkdir("Final_Systematics");
+
+	TDirectory *data_dir = finals_dir->mkdir("Raw_Data");
+	data_dir->cd();
+
+	{
+		TDirectory *roli_thesis_dir = data_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(raw_stats_median["Rand_Rotate"], raw_stats_sd["Rand_Rotate"], name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = data_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(raw_stats_median["Rand_Rotate"], raw_stats_sd["Rand_Rotate"], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+			}
+		}
+	}
+
+	TDirectory *mix_dir = finals_dir->mkdir("Mix_Data");
+	mix_dir->cd();
+
+	{
+		TDirectory *roli_thesis_dir = mix_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(mix_stats_median["Rand_Rotate"], mix_stats_sd["Rand_Rotate"], name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = mix_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(mix_stats_median["Rand_Rotate"], mix_stats_sd["Rand_Rotate"], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+			}
+		}
+	}
+
+
+	TDirectory *mix_div_dir = finals_dir->mkdir("Mix_Divded_Data");
+	mix_div_dir->cd();
+
+	{
+		TDirectory *roli_thesis_dir = mix_div_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(divide_stats_median["Rand_Rotate"], divide_stats_sd["Rand_Rotate"], name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = mix_div_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(divide_stats_median["Rand_Rotate"], divide_stats_sd["Rand_Rotate"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+			}
+		}
+	}
+
+
 
 	out_root->Close();
 }
