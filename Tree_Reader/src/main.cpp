@@ -56,7 +56,9 @@ void read_class() {
 	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
+	map<string, pair<int, int>> set_pairs = {{"Pile_Up_01_",{9,20}}, {"Pile_Up_008_",{9,20}}, {"Pile_Up_005_",{9,20}}, {"Pile_Up_002_",{9,20}}, {"Pile_Up_001_",{9,20}}, {"Efficiency_08_",{9,20}}, {"Efficiency_05_",{9,20}}, {"Efficiency_025_",{9,20}}, {"Efficiency_01_",{9,20}}};
+//	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{9,20}}, {"Rand_Rotate",{5,8}}, {"EP_Rotate",{9,20}}, {"Pile_Up_01_",{9,20}}, {"Pile_Up_008_",{9,20}}, {"Pile_Up_005_",{9,20}}, {"Pile_Up_002_",{9,20}}, {"Pile_Up_001_",{9,20}}, {"Efficiency_08_",{9,20}}, {"Efficiency_05_",{9,20}}, {"Efficiency_025_",{9,20}}, {"Efficiency_01_",{9,20}}};
+//	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{31,50}}};
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
@@ -91,6 +93,9 @@ void read_class() {
 					else if(set_pair.first == "Pile_Up_005_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
 					else if(set_pair.first == "Pile_Up_002_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
 					else if(set_pair.first == "Pile_Up_001_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
+					else if(set_pair.first == "Pile_Up_0008_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.0008); }
+					else if(set_pair.first == "Pile_Up_0005_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.0005); }
+					else if(set_pair.first == "Pile_Up_0002_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.0002); }
 					else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
 
 					if(set_pair.first == "Efficiency_08_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
