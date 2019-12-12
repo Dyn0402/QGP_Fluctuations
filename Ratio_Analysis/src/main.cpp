@@ -66,7 +66,7 @@ void analyze_no_CBWC() {
 
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
-	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_01_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}};
+	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0,50}}};
 
 
@@ -444,10 +444,20 @@ void analyze_no_CBWC() {
 	TDirectory *sets_dir = out_root->mkdir("Sets_Comp");
 
 	map<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pairs = {
-			{"Rand_Pile", {
+			{"Rand_Pile_Large", {
 					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_median["Pile_Up_008_"]}}},
 					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_median["Pile_Up_008_"]}}},
 					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", divide_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", divide_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", divide_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", divide_stats_median["Pile_Up_008_"]}}}}
+			},
+			{"Rand_Pile_Small", {
+					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}, {"Pile_Up 0.08%", raw_stats_median["Pile_Up_0008_"]}, {"Pile_Up 0.05%", raw_stats_median["Pile_Up_0005_"]}}, {"Pile_Up 0.02%", raw_stats_median["Pile_Up_0002_"]}},
+					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}, {"Pile_Up 0.08%", mix_stats_median["Pile_Up_0008_"]}, {"Pile_Up 0.05%", mix_stats_median["Pile_Up_0005_"]}}, {"Pile_Up 0.02%", mix_stats_median["Pile_Up_0002_"]}},
+					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_median["Pile_Up_001_"]}, {"Pile_Up 0.08%", divide_stats_median["Pile_Up_0008_"]}, {"Pile_Up 0.05%", divide_stats_median["Pile_Up_0005_"]}}, {"Pile_Up 0.02%", divide_stats_median["Pile_Up_0002_"]}}}
+			},
+			{"Rand_Pile_RejCut", {
+					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"No BTof_Ref Cut", raw_stats_median["No_BTof_Rej"]}, {"Pile_Up 0.02%", raw_stats_median["Pile_Up_0002_"]}, {"Pile_Up 0.05%", raw_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"No BTof_Ref Cut", mix_stats_median["No_BTof_Rej"]}, {"Pile_Up 0.02%", mix_stats_median["Pile_Up_0002_"]}, {"Pile_Up 0.05%", mix_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"No BTof_Ref Cut", divide_stats_median["No_BTof_Rej"]}, {"Pile_Up 0.02%", divide_stats_median["Pile_Up_0002_"]}, {"Pile_Up 0.05%", divide_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.1%", divide_stats_median["Pile_Up_001_"]}}}}
 			},
 			{"Rand_Efficiency", {
 					{"raw", {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Efficiency 1%", raw_stats_median["Efficiency_01_"]}, {"Efficiency 8%", raw_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", raw_stats_median["Efficiency_025_"]}, {"Efficiency 5%", raw_stats_median["Efficiency_05_"]}}},
@@ -463,10 +473,20 @@ void analyze_no_CBWC() {
 	};
 
 	map<string, map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>>> set_pairs_sd = {
-			{"Rand_Pile", {
+			{"Rand_Pile_Large", {
 					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_sd["Pile_Up_008_"]}}},
 					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_sd["Pile_Up_008_"]}}},
 					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", divide_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", divide_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", divide_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", divide_stats_sd["Pile_Up_008_"]}}}}
+			},
+			{"Rand_Pile_Small", {
+					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}, {"Pile_Up 0.08%", raw_stats_sd["Pile_Up_0008_"]}, {"Pile_Up 0.05%", raw_stats_sd["Pile_Up_0005_"]}}, {"Pile_Up 0.02%", raw_stats_sd["Pile_Up_0002_"]}},
+					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}, {"Pile_Up 0.08%", mix_stats_sd["Pile_Up_0008_"]}, {"Pile_Up 0.05%", mix_stats_sd["Pile_Up_0005_"]}}, {"Pile_Up 0.02%", mix_stats_sd["Pile_Up_0002_"]}},
+					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_sd["Pile_Up_001_"]}, {"Pile_Up 0.08%", divide_stats_sd["Pile_Up_0008_"]}, {"Pile_Up 0.05%", divide_stats_sd["Pile_Up_0005_"]}}, {"Pile_Up 0.02%", divide_stats_sd["Pile_Up_0002_"]}}}
+			},
+			{"Rand_Pile_RejCut", {
+					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"No BTof_Ref Cut", raw_stats_sd["No_BTof_Rej"]}, {"Pile_Up 0.02%", raw_stats_sd["Pile_Up_0002_"]}, {"Pile_Up 0.05%", raw_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}}},
+					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"No BTof_Ref Cut", mix_stats_sd["No_BTof_Rej"]}, {"Pile_Up 0.02%", mix_stats_sd["Pile_Up_0002_"]}, {"Pile_Up 0.05%", mix_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}}},
+					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"No BTof_Ref Cut", divide_stats_sd["No_BTof_Rej"]}, {"Pile_Up 0.02%", divide_stats_sd["Pile_Up_0002_"]}, {"Pile_Up 0.05%", divide_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.1%", divide_stats_sd["Pile_Up_001_"]}}}}
 			},
 			{"Rand_Efficiency", {
 					{"raw", {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Efficiency 1%", raw_stats_sd["Efficiency_01_"]}, {"Efficiency 8%", raw_stats_sd["Efficiency_08_"]}, {"Efficiency 2.5%", raw_stats_sd["Efficiency_025_"]}, {"Efficiency 5%", raw_stats_sd["Efficiency_05_"]}}},
@@ -561,19 +581,19 @@ void analyze_no_CBWC() {
 					double raw_sd = raw_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
 					Measure raw_med = raw_stats_median["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
 					Measure raw_eff_med = raw_stats_median["Efficiency_05_"][energy.first][div.first][cent.first][stat.first];
-					Measure raw_pile_med = raw_stats_median["Pile_Up_001_"][energy.first][div.first][cent.first][stat.first];
+					Measure raw_pile_med = raw_stats_median["Pile_Up_0005_"][energy.first][div.first][cent.first][stat.first];
 					raw_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first] = pow( pow(raw_sd, 2) + pow(raw_med.get_val() - raw_eff_med.get_val(), 2) + pow(raw_med.get_val() - raw_pile_med.get_val(), 2), 0.5);
 
 					double mix_sd = mix_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
 					Measure mix_med = mix_stats_median["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
 					Measure mix_eff_med = mix_stats_median["Efficiency_05_"][energy.first][div.first][cent.first][stat.first];
-					Measure mix_pile_med = mix_stats_median["Pile_Up_001_"][energy.first][div.first][cent.first][stat.first];
+					Measure mix_pile_med = mix_stats_median["Pile_Up_0005_"][energy.first][div.first][cent.first][stat.first];
 					mix_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first] = pow( pow(mix_sd, 2) + pow(mix_med.get_val() - mix_eff_med.get_val(), 2) + pow(mix_med.get_val() - mix_pile_med.get_val(), 2), 0.5);
 
 					double divide_sd = divide_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
 					Measure divide_med = divide_stats_median["Rand_Rotate"][energy.first][div.first][cent.first][stat.first];
 					Measure divide_eff_med = divide_stats_median["Efficiency_05_"][energy.first][div.first][cent.first][stat.first];
-					Measure divide_pile_med = divide_stats_median["Pile_Up_001_"][energy.first][div.first][cent.first][stat.first];
+					Measure divide_pile_med = divide_stats_median["Pile_Up_0005_"][energy.first][div.first][cent.first][stat.first];
 					divide_stats_sd["Rand_Rotate"][energy.first][div.first][cent.first][stat.first] = pow( pow(divide_sd, 2) + pow(divide_med.get_val() - divide_eff_med.get_val(), 2) + pow(divide_med.get_val() - divide_pile_med.get_val(), 2), 0.5);
 				}
 			}
