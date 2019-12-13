@@ -56,8 +56,9 @@ void read_class() {
 	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-//	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{7,8}}, {"Rand_Rotate",{9,12}}, {"EP_Rotate",{7,8}}, {"Pile_Up_01_",{7,8}}, {"Pile_Up_008_",{7,8}}, {"Pile_Up_005_",{7,8}}, {"Pile_Up_002_",{7,8}}, {"Pile_Up_001_",{7,8}}, {"Efficiency_08_",{7,8}}, {"Efficiency_05_",{7,8}}, {"Efficiency_025_",{7,8}}, {"Efficiency_01_",{7,8}}};
-	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{13,30}}};
+//	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
+//	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{3,4}}};
+	map<string, pair<int, int>> set_pairs = {{"No_BTof_Rej",{0,8}}, {"Pile_Up_0008_",{0,8}}, {"Pile_Up_0005_",{0,8}}, {"Pile_Up_0002_",{0,8}}};
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
@@ -92,7 +93,16 @@ void read_class() {
 					else if(set_pair.first == "Pile_Up_005_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
 					else if(set_pair.first == "Pile_Up_002_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
 					else if(set_pair.first == "Pile_Up_001_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
+					else if(set_pair.first == "Pile_Up_0008_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.0008); }
+					else if(set_pair.first == "Pile_Up_0005_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.0005); }
+					else if(set_pair.first == "Pile_Up_0002_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.0002); }
 					else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
+
+					if(set_pair.first == "No_BTof_Rej") {
+						reader.cut.max_slope = {{7, 999}, {11, 999}, {14, 999}, {19, 999}, {27, 999}, {39, 999}, {62, 999}, {200, 999}};
+						reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
+
+					}
 
 					if(set_pair.first == "Efficiency_08_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
 					else if(set_pair.first == "Efficiency_05_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
