@@ -61,8 +61,9 @@ void analyze_no_CBWC() {
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> orders = {1,2,3,4};
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "12-12-19_final_data.root";
+	string out_root_name = "12-12-19_dist_canvas.root";
 	bool plot_dists = true;
+	bool plot_dist_canvases = true;
 
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
@@ -162,6 +163,9 @@ void analyze_no_CBWC() {
 				make_2d_dist_plots(data_dir, data);
 				make_proton_dist_plots(data_dir, data);
 			}
+			if(plot_dist_canvases) {
+				make_canvas_plots(data_dir, data);
+			}
 			data_dir->cd();
 
 			{
@@ -190,6 +194,9 @@ void analyze_no_CBWC() {
 				make_ratio_dist_plots(mix_dir, data_mix);
 				make_2d_dist_plots(mix_dir, data_mix);
 				make_proton_dist_plots(mix_dir, data_mix);
+			}
+			if(plot_dist_canvases) {
+				make_canvas_plots(mix_dir, data_mix);
 			}
 			mix_dir->cd();
 
@@ -293,7 +300,6 @@ void analyze_no_CBWC() {
 		}
 
 
-		// All plotting does not work.
 		TDirectory *data_dir = comb_dir->mkdir("Raw_Data");
 		data_dir->cd();
 
@@ -572,7 +578,6 @@ void analyze_no_CBWC() {
 		}
 	}
 
-//	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_stats_median;
 	// Calculate standard deviations for systematics
 	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:raw_stats_median["Rand_Rotate"]) {
 		for(pair<int, map<int, map<string, Measure>>> div:energy.second) {
@@ -602,6 +607,30 @@ void analyze_no_CBWC() {
 
 
 	TDirectory *finals_dir = sets_dir->mkdir("Final_Systematics");
+
+	TDirectory *comp_dir = finals_dir->mkdir("Comparison");
+	comp_dir->cd();
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_mixed = {{"raw",raw_stats_median["Rand_Rotate"]}, {"mixed",mix_stats_median["Rand_Rotate"]}};
+	map<string, map<int, map<int, map<int, map<string, double>>>>> raw_mixed_sd = {{"raw",raw_stats_sd["Rand_Rotate"]}, {"mixed",mix_stats_sd["Rand_Rotate"]}};
+
+	{
+		TDirectory *roli_thesis_dir = comp_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(raw_mixed, raw_mixed_sd, name.second, centralities, {div}, "roli_thesis_raw_mix_comp_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = comp_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, {div}, "centralities_raw_mix_comp_"+name+to_string(div));
+			}
+		}
+	}
 
 	TDirectory *data_dir = finals_dir->mkdir("Raw_Data");
 	data_dir->cd();

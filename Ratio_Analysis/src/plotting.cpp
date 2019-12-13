@@ -59,19 +59,20 @@ void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<i
 }
 
 
-void hist_ratio_dist(map<double, int> ratios, int energy, int div, int cent, string mode) {
+void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int cent, string mode) {
 	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
 	TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
-	for(pair<double, int> ratio:ratios) {
-		for(int i=0; i<ratio.second; i++) {
-			ratio_hist->Fill(ratio.first);
+	for(pair<int, map<int, int>> event:ratios) {
+		for(pair<int, int> bin:event.second) {
+			ratio_hist->Fill(((double)bin.first) / event.first, bin.second);
 		}
 	}
+
 	if(mode == "write") {
 		ratio_hist->Write();
 		delete ratio_hist;
 	} else if(mode == "draw") {
-		ratio_hist->Draw();
+		ratio_hist->Draw("HIST");
 	}
 }
 
@@ -146,15 +147,13 @@ void hist_proton_dist(map<int, int> nprotons, int energy, int cent, string mode)
 	string name = to_string(energy) + "GeV protons Centrality " + to_string(cent);
 	TH1D *protons_hist = new TH1D(name.data(), name.data(), plot::protons_hist_bins, plot::protons_hist_low, plot::protons_hist_high);
 	for(pair<int, int> protons:nprotons) {
-		for(int i=0; i<protons.second; i++) {
-			protons_hist->Fill(protons.first);
-		}
+		protons_hist->Fill(protons.first, protons.second);
 	}
 	if(mode == "write") {
 		protons_hist->Write();
 		delete protons_hist;
 	} else if(mode == "draw") {
-		protons_hist->Draw();
+		protons_hist->Draw("HIST");
 	}
 }
 
@@ -300,18 +299,18 @@ TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double
 
 
 
-void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats) {
+void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
-	create_canvas_plots(can_dir, data, cumulants, stats);
+	create_canvas_plots(can_dir, data);
 }
 
-void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats) {
+void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
-	create_canvas_plots(can_dir, data, cumulants, stats);
+	create_canvas_plots(can_dir, data);
 }
 
 
-void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats) {
+void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioData>>> data) {
 	can_dir->cd();
 
 	// Proton distribution canvases
@@ -331,35 +330,6 @@ void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioDa
 			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
 		}
 	}
-
-	// Cumulant canvases
-	TDirectory *cumulant_can_dir = can_dir->mkdir(plot::cumulant_dir_name.data());
-	cumulant_can_dir->cd();
-	for(int order:analysis::cumulant_orders) {
-		TDirectory *order_dir = cumulant_can_dir->mkdir((to_string(order) + "_Order").data());
-		order_dir->cd();
-		for(int cent:analysis::centrals) {
-			string name = "Order " + to_string(order) + " Centrality " + to_string(cent);
-			canvas_cumulant_dists(cumulants, order, cent, name);
-		}
-	}
-
-	// Stat canvases
-	TDirectory *stat_can_dir = can_dir->mkdir(plot::stat_dir_name.data());
-	stat_can_dir->cd();
-	for(string stat:analysis::stat_names) {
-		TDirectory *stat_dir = stat_can_dir->mkdir(stat.data());
-		stat_dir->cd();
-		for(int cent:analysis::centrals) {
-			string name = stat + " Centrality " + to_string(cent);
-			canvas_stat_dists(stats, stat, cent, name);
-		}
-	}
-
-	// Athic canvases
-	can_dir->cd();
-	athic_stat_vs_energy(stats, "ATHIC Stat vs Energy");
-	athic_stat_vs_centrality(stats, "ATHIC Stat vs Centrality");
 }
 
 
@@ -388,7 +358,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, int div, i
 	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
 		ratio_can->cd(can_index);
 		gPad->SetLogy();
-		hist_ratio_dist(energy.second[div][cent].get_ratio_hist(), energy.first, div, cent, "draw");
+		hist_ratio_dist(energy.second[div][cent].get_ratio_data(), energy.first, div, cent, "draw");
 		can_index++;
 	}
 	ratio_can->Write(name.data());

@@ -25,7 +25,7 @@ using namespace std;
 void make_ratio_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data);
 void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data);
 void create_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data);
-void hist_ratio_dist(map<double, int> , int energy, int div, int cent, string mode="write");
+void hist_ratio_dist(map<int, map<int, int>> , int energy, int div, int cent, string mode="write");
 
 void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data);
 void make_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data);
@@ -52,9 +52,9 @@ void graph_stat_vs_divs(map<int, map<int, map<int, map<string, Measure>>>> stats
 void graph_x_vs_y(vector<int> x, vector<double> y, string name);
 TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double> x_err={}, vector<double> y_err={});
 
-void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats);
-void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats);
-void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioData>>> data, map<int, map<int, map<int, map<int, Measure>>>> cumulants, map<int, map<int, map<int, map<string, Measure>>>> stats);
+void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data);
+void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data);
+void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioData>>> data);
 void canvas_nprotons(map<int, map<int, map<int, RatioData>>> data, int cent, string name);
 void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, int div, int cent, string name);
 void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumulants, int order, int cent, string name);
