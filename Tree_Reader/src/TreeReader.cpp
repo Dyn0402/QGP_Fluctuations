@@ -52,6 +52,7 @@ TreeReader::TreeReader(int energy) {
 	rand_data = false;
 	pile_up = false;
 	efficiency = false;
+	single_ratio = false;
 
 	pile_up_prob = 0;
 	efficiency_prob = 0;
@@ -117,6 +118,10 @@ bool TreeReader::get_pile_up() {
 
 bool TreeReader::get_efficiency() {
 	return(efficiency);
+}
+
+bool TreeReader::get_single_ratio() {
+	return(single_ratio);
 }
 
 double TreeReader::get_pile_up_prob() {
@@ -192,6 +197,10 @@ void TreeReader::set_pile_up(bool pile_up) {
 
 void TreeReader::set_efficiency(bool efficiency) {
 	this->efficiency = efficiency;
+}
+
+void TreeReader::set_single_ratio(bool single_ratio) {
+	this->single_ratio = single_ratio;
 }
 
 void TreeReader::set_pile_up_prob(double pile_up_prob) {
@@ -323,11 +332,19 @@ void TreeReader::read_tree(TTree* tree) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
 
 					// Save ratio values to data
-					for(int protons_in_bin:event_ratios) {
-						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-							data[div][event.get_ref2()][good_proton_angles.size()][protons_in_bin]++;
+					if(single_ratio) { // Only save a single ratio per event at random.
+						if(cbwc) {
+							data[div][event.get_ref2()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
 						} else {
-							data[div][cent][good_proton_angles.size()][protons_in_bin]++;
+							data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+						}
+					} else { // Save all ratios from event.
+						for(int protons_in_bin:event_ratios) {
+							if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
+								data[div][event.get_ref2()][good_proton_angles.size()][protons_in_bin]++;
+							} else {
+								data[div][cent][good_proton_angles.size()][protons_in_bin]++;
+							}
 						}
 					}
 
@@ -363,6 +380,7 @@ void TreeReader::write_info_file() {
 		out << "rand_data: " << boolalpha << rand_data << endl;
 		out << "pile_up: " << boolalpha << pile_up << endl;
 		out << "efficiency: " << boolalpha << efficiency << endl;
+		out << "single_ratio: " << boolalpha << single_ratio << endl;
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;
 		out << "cent_binning: " << cent_binning << endl;

@@ -80,6 +80,7 @@ public:
 	bool get_rand_data();
 	bool get_pile_up();
 	bool get_efficiency();
+	bool get_single_ratio();
 	double get_pile_up_prob();
 	double get_efficiency_prob();
 	int get_cent_binning();
@@ -100,6 +101,7 @@ public:
 	void set_rand_data(bool rand_data);
 	void set_pile_up(bool pile_up);
 	void set_efficiency(bool efficiency);
+	void set_single_ratio(bool single_ratio);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
@@ -144,6 +146,7 @@ private:
 	bool rand_data;
 	bool pile_up;
 	bool efficiency;
+	bool single_ratio;
 
 	double pile_up_prob;
 	double efficiency_prob;

@@ -19,6 +19,7 @@
 // Structors
 
 Mixer::Mixer() {
+	single_ratio = false;
 	energy = 0;
 	min_events = 150;
 	max_events = 250;
@@ -32,6 +33,7 @@ Mixer::Mixer() {
 }
 
 Mixer::Mixer(int energy) {
+	single_ratio = false;
 	this->energy = energy;
 	min_events = 150;
 	max_events = 250;
@@ -51,6 +53,10 @@ Mixer::Mixer(int energy) {
 
 
 // Getters
+
+bool Mixer::get_single_ratio() {
+	return(single_ratio);
+}
 
 int Mixer::get_energy() {
 	return(energy);
@@ -94,6 +100,10 @@ vector<int> Mixer::get_divs() {
 
 
 // Setters
+
+void Mixer::set_single_ratio(bool single_ratio) {
+	this->single_ratio = single_ratio;
+}
 
 void Mixer::set_energy(int energy) {
 	this->energy = energy;
@@ -173,8 +183,12 @@ void Mixer::get_mixed_CBWC(int num_protons, int ref_mult2, int ep_bin, int vz_bi
 		vector<int> event_ratios = get_Rs(mix_angles, div);  // Convert proton angles in event to ratio values.
 
 		// Save ratio values to data
-		for(int protons_in_bin:event_ratios) {
-			data[div][ref_mult2][mix_angles.size()][protons_in_bin]++;
+		if(single_ratio) {
+			data[div][ref_mult2][mix_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+		} else {
+			for(int protons_in_bin:event_ratios) {
+				data[div][ref_mult2][mix_angles.size()][protons_in_bin]++;
+			}
 		}
 	}
 }
@@ -214,8 +228,12 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 		vector<int> event_ratios = get_Rs(mix_angles, div);  // Convert proton angles in event to ratio values.
 
 		// Save ratio values to data
-		for(int protons_in_bin:event_ratios) {
-			data[div][cent][mix_angles.size()][protons_in_bin]++;
+		if(single_ratio) {
+			data[div][cent][mix_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+		} else {
+			for(int protons_in_bin:event_ratios) {
+				data[div][cent][mix_angles.size()][protons_in_bin]++;
+			}
 		}
 	}
 }

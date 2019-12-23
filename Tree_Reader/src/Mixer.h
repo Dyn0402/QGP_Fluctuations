@@ -23,6 +23,7 @@ public:
 	Mixer(int energy);
 
 	// Getters
+	bool get_single_ratio();
 	int get_energy();
 	int get_max_events();
 	int get_min_events();
@@ -35,6 +36,7 @@ public:
 	vector<int> get_divs();
 
 	// Setters
+	void set_single_ratio(bool single_ratio);
 	void set_energy(int energy);
 	void set_max_events(int max_events);
 	void set_min_events(int min_events);
@@ -56,6 +58,7 @@ public:
 
 private:
 	// Attributes
+	bool single_ratio;
 	int energy;
 	int min_events;
 	int max_events;
