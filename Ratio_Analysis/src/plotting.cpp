@@ -636,7 +636,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
 				graph->SetLineColor(plot::div_marker_colors[div]);
-				mg->Add(graph, "AP");
+				mg->Add(graph, "APZ");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 				sys_graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(sys_graph, "[]");
@@ -709,7 +709,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 					graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 					graph->SetMarkerSize(plot::div_marker_sizes[div]);
 					graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
-					mg->Add(graph, "AP");
+					mg->Add(graph, "APZ");
 					TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 					sys_graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 					mg->Add(sys_graph, "[]");
@@ -854,7 +854,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
 				graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
-				mg->Add(graph, "AP");
+				mg->Add(graph, "APZ");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 				sys_graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
 				mg->Add(sys_graph, "[]");
@@ -1010,7 +1010,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			graph->SetMarkerColor(plot::div_marker_colors[div]);
 			graph->SetMarkerSize(plot::div_marker_sizes[div]);
 			graph->SetLineColor(plot::div_marker_colors[div]);
-			mg->Add(graph, "AP");
+			mg->Add(graph, "APZ");
 			TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 			sys_graph->SetLineColor(plot::div_marker_colors[div]);
 			mg->Add(sys_graph, "[]");

@@ -61,7 +61,7 @@ void analyze_no_CBWC() {
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> orders = {1,2,3,4};
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "12-22-19_single_ratio.root";
+	string out_root_name = "1-9-20_straight_error_lines.root";
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
 
