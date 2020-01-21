@@ -25,7 +25,7 @@ using namespace std;
 void make_ratio_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data);
 void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data);
 void create_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data);
-void hist_ratio_dist(map<int, map<int, int>> , int energy, int div, int cent, string mode="write");
+void hist_ratio_dist(map<int, map<int, int>> , int energy, int div, int cent, string mode="write", int color=4);
 
 void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data);
 void make_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data);
@@ -57,6 +57,7 @@ void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioDat
 void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioData>>> data);
 void canvas_nprotons(map<int, map<int, map<int, RatioData>>> data, int cent, string name);
 void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, int div, int cent, string name);
+void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, vector<int> div, vector<int> cent, string name);
 void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumulants, int order, int cent, string name);
 void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat, int cent, string name);
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
@@ -73,10 +74,10 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
 void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name);
 
-
 void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
 void make_comp_stat_plot_hack(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
 
+void type_per_row(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<string> types, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
 
 pair<int, int> get_cent9_range(int bin);
 pair<int, int> get_canvas_div(int plots);

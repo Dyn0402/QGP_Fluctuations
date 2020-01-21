@@ -49,9 +49,11 @@ int main() {
 
 void analyze_no_CBWC() {
 	vector<string> stat_names = {"standard_deviation", "skewness", "non_excess_kurtosis"};
+	vector<string> stat_names_rows = {"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis"};
 	vector<string> cumulant_names = {"cumulant 2", "cumulant 3", "cumulant 4"};
 	vector<string> raw_moment_names = {"raw moment 2", "raw moment 3", "raw moment 4"};
 	vector<string> central_moment_names = {"central moment 2", "central moment 3", "central moment 4"};
+	vector<string> row_types = {"raw", "mix", "divide"};
 	map<string, vector<string>> names = {{"stat",stat_names}, {"cumulant",cumulant_names}, {"raw_moment",raw_moment_names}, {"central_moment",central_moment_names}};
 	vector<int> centralities = {8, 7, 4, 1};
 	vector<int> all_centralities = {8,7,6,5,4,3,2,1,0};
@@ -60,15 +62,17 @@ void analyze_no_CBWC() {
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> orders = {1,2,3,4};
+	vector<int> plot_divs = {6};
+	vector<int> plot_cents = {8,5,1};//{0,1,2,3,4,5,6,7,8,9};
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "1-9-20_straight_error_lines.root";
+	string out_root_name = "1-20-20_roli_plots.root";
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
 
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
-	map<string, vector<int>> sets = {{"Rand_Rotate", {0,8}}, {"Single_Ratio", {0,8}}};
+	map<string, vector<int>> sets = {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
 
 
 	TFile *out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
@@ -165,6 +169,7 @@ void analyze_no_CBWC() {
 			}
 			if(plot_dist_canvases) {
 				make_canvas_plots(data_dir, data);
+				canvas_ratio_dists(data, plot_divs, plot_cents, "Ratio Distribution Canvas");
 			}
 			data_dir->cd();
 
@@ -197,6 +202,7 @@ void analyze_no_CBWC() {
 			}
 			if(plot_dist_canvases) {
 				make_canvas_plots(mix_dir, data_mix);
+				canvas_ratio_dists(data_mix, plot_divs, plot_cents, "Ratio Distribution Canvas");
 			}
 			mix_dir->cd();
 
@@ -506,6 +512,22 @@ void analyze_no_CBWC() {
 //			},
 			{"All", {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}}}
 	};
+
+	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> set_type;
+	map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>> set_type_sd;
+	for(pair<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> data_type:set_pairs["All"]) {
+		for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:data_type.second) {
+			set_type[data_set.first][data_type.first] = data_set.second;
+			set_type_sd[data_set.first][data_type.first] = set_pairs_sd["All"][data_type.first][data_set.first];
+		}
+	}
+
+	TDirectory *type_rows_dir = sets_dir->mkdir("Type_Rows");
+	type_rows_dir->cd();
+	for(pair<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> data_set:set_type) {
+		type_per_row(data_set.second, set_type_sd[data_set.first], row_types, stat_names_rows, plot_cents, plot_divs, data_set.first);
+	}
+
 
 	for(pair<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pair:set_pairs) {
 		TDirectory *set_pair_dir = sets_dir->mkdir(set_pair.first.data());

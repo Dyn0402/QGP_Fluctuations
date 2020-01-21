@@ -16,6 +16,7 @@
 #include <TCanvas.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <THStack.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
 #include <TGraphErrors.h>
@@ -59,9 +60,10 @@ void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<i
 }
 
 
-void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int cent, string mode) {
+void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int cent, string mode, int color) {
 	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
 	TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
+	ratio_hist->SetLineColor(color);
 	for(pair<int, map<int, int>> event:ratios) {
 		for(pair<int, int> bin:event.second) {
 			ratio_hist->Fill(((double)bin.first) / event.first, bin.second);
@@ -73,6 +75,8 @@ void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int ce
 		delete ratio_hist;
 	} else if(mode == "draw") {
 		ratio_hist->Draw("HIST");
+	} else if(mode == "draw_same") {
+		ratio_hist->Draw("HISTsame");
 	}
 }
 
@@ -307,6 +311,7 @@ void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> 
 void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
 	create_canvas_plots(can_dir, data);
+	can_dir->cd();
 }
 
 
@@ -362,6 +367,70 @@ void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, int div, i
 		can_index++;
 	}
 	ratio_can->Write(name.data());
+	delete ratio_can;
+}
+
+
+void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, vector<int> divs, vector<int> cents, string name) {
+//	double y_max = numeric_limits<double>::min(); //---
+//	double y_min = numeric_limits<double>::max(); //---
+
+	vector<TH1D*> hists;
+	vector<THStack*> stacks;
+	vector<TLegend*> legends;
+
+	TCanvas *ratio_can = new TCanvas();
+	ratio_can->SetTitle(name.data());
+	ratio_can->SetName(name.data());
+	gStyle->SetTitleFontSize(0.09);
+	gStyle->SetTitleOffset(1.2);
+
+	pair<int, int> can_div = {ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5)))};
+	ratio_can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	int can_index = 0;
+
+	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+		ratio_can->cd(++can_index);
+		THStack *stack = new THStack((to_string(energy.first) + "GeV").data(), (to_string(energy.first) + "GeV").data());
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+		stacks.push_back(stack);
+		legends.push_back(leg);
+
+		for(int cent:cents) {
+			for(int div:divs) {
+				string name = to_string(energy.first) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
+				TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
+				ratio_hist->SetLineColor(plot::cent_marker_colors[cent]);
+				for(pair<int, map<int, int>> event:energy.second[div][cent].get_ratio_data()) {
+					for(pair<int, int> bin:event.second) {
+						ratio_hist->Fill(((double)bin.first) / event.first, bin.second);
+					}
+				}
+				hists.push_back(ratio_hist);
+				stack->Add(ratio_hist);
+
+				if(can_index == 1) {
+					pair<int, int> range = get_cent9_range(cent);
+					leg->AddEntry(ratio_hist, (to_string(div) + " divisions \t" + to_string(range.first)+"-"+to_string(range.second)+"% central").data(), "l");
+				}
+			}
+		}
+		stack->Draw("nostackHIST");
+		gStyle->SetOptStat(0);
+		gPad->SetLogy();
+		if(can_index > can_div.first*(can_div.second-1)) { gPad->SetBottomMargin(0.12); }
+		else { gPad->SetBottomMargin(0.05); }
+		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
+		else { gPad->SetTopMargin(0.08); }
+		gPad->SetRightMargin(0.02);
+		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+
+	}
+	ratio_can->Update();
+	ratio_can->Write(name.data());
+	for(TH1D* hist:hists) { delete hist; }
+	for(THStack* stack:stacks) { delete stack; }
+	for(TLegend* legend:legends) { delete legend; }
 	delete ratio_can;
 }
 
@@ -1113,6 +1182,97 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
+	}
+
+	can->Update();
+	can->Write(name.data());
+	delete can;
+}
+
+
+void type_per_row(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<string> types, vector<string> stat_names, vector<int> cents, vector<int> divs, string name) {
+//	for(int cent:cents) {
+//		for(int div:divs) {
+//			vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
+//			Measure stat_meas;
+//			for(int energy:analysis::energy_list) {
+//				energy_val.push_back(plot::energy_match[energy]);
+//				energy_err.push_back(0.0);
+//				stat_meas = stats[energy][div][cent][stat_names];
+//				stat_vals.push_back(stat_meas.get_val());
+//				stat_err.push_back(stat_meas.get_err());
+//				stat_sys.push_back(sys[energy][div][cent][stat_names]);
+//				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+//				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+//				if(stat_meas.get_val() + stat_sys.back() > y_max) { y_max = stat_meas.get_val() + stat_sys.back(); }
+//				if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
+//			}
+//		}
+//	}
+
+
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	gStyle->SetTitleFontSize(0.09);
+	gStyle->SetTitleOffset(1.2);
+	pair<int, int> can_div = {stat_names.size(), stats.size()};
+	can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	int can_index = 0;
+	for(string type:types) {
+//	for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats){
+		for(string stat_name:stat_names) {
+			can->cd(++can_index);
+			double y_max = numeric_limits<double>::min();
+			double y_min = numeric_limits<double>::max();
+			auto *mg = new TMultiGraph();
+			mg->SetNameTitle((type + " " + stat_name).data(), (type + " " + stat_name).data());
+			TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+			for(int cent:cents) {
+				for(int div:divs) {
+					vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
+					Measure stat_meas;
+					for(int energy:analysis::energy_list) {
+						energy_val.push_back(plot::energy_match[energy]);
+						energy_err.push_back(0.0);
+						stat_meas = stats[type][energy][div][cent][stat_name];
+						stat_vals.push_back(stat_meas.get_val());
+						stat_err.push_back(stat_meas.get_err());
+						stat_sys.push_back(sys[type][energy][div][cent][stat_name]);
+						if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+						if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+						if(stat_meas.get_val() + stat_sys.back() > y_max) { y_max = stat_meas.get_val() + stat_sys.back(); }
+						if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
+					}
+					TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
+					pair<int, int> range = get_cent9_range(cent);
+					graph->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"% " + to_string(div) + " divisions").data());
+					graph->SetMarkerStyle(plot::div_marker_styles[div]);
+					graph->SetMarkerColor(plot::cent_marker_colors[cent]);
+					graph->SetMarkerSize(plot::div_marker_sizes[div]);
+					graph->SetLineColor(plot::cent_marker_colors[cent]);
+					mg->Add(graph, "APZ");
+					TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
+					sys_graph->SetLineColor(plot::cent_marker_colors[cent]);
+					mg->Add(sys_graph, "[]");
+					if(can_index == 1) {
+						leg->AddEntry(graph, (to_string(div) + " divisions \t" + to_string(range.first)+"-"+to_string(range.second)+"% Centrality").data(), "p");
+					}
+				}
+			}
+			double y_range = y_max - y_min;
+			mg->GetXaxis()->SetLimits(0, 80);
+			mg->GetXaxis()->SetRangeUser(0, 80);
+			mg->GetXaxis()->SetLabelSize(0.06);
+			mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+			mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+			mg->GetYaxis()->SetLabelSize(0.06);
+			if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+			else { gPad->SetBottomMargin(0.05); }
+			if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
+			else { gPad->SetTopMargin(0.08); }
+			gPad->SetRightMargin(0.02);
+			mg->Draw("AP"); // Multigraph memory leak, fix.
+			if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+		}
 	}
 
 	can->Update();
