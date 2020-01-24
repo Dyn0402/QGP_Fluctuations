@@ -25,35 +25,37 @@
 
 #include "ratio_methods.h"
 #include "plotting.h"
+
+#include <AzimuthBinData.h>
+
 #include "config_analysis.h"
 #include "Stats.h"
 #include "Measure.h"
-#include "RatioData.h"
 
 using namespace std;
 
 
 
-void make_ratio_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_ratio_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *ratio_dist_dir = out_root->mkdir(plot::ratio_dist_dir_name.data());
 	create_ratio_dist_plots(ratio_dist_dir, data);
 }
 
-void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *ratio_dist_dir = out_root->mkdir(plot::ratio_dist_dir_name.data());
 	create_ratio_dist_plots(ratio_dist_dir, data);
 }
 
-void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<int, RatioData>>> data) {
+void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	ratio_dist_dir->cd();
-	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
 		TDirectory *energy_dir = ratio_dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
-		for(pair<int, map<int, RatioData>> div:energy.second) {
+		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
 			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
 			div_dir->cd();
-			for(pair<int, RatioData> cent:div.second) {
-				cent.second.canvas_1d_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first));
+			for(pair<int, AzimuthBinData> cent:div.second) {
+				cent.second.canvas_ratio_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first));
 			}
 		}
 	}
@@ -81,27 +83,27 @@ void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int ce
 }
 
 
-void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *dist_dir = out_root->mkdir(plot::dist_2d_dir_name.data());
 	create_2d_dist_plots(dist_dir, data);
 }
 
-void make_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *dist_dir = out_root->mkdir(plot::dist_2d_dir_name.data());
 	create_2d_dist_plots(dist_dir, data);
 }
 
 
-void create_2d_dist_plots(TDirectory *dist_dir, map<int, map<int, map<int, RatioData>>> data) {
+void create_2d_dist_plots(TDirectory *dist_dir, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	dist_dir->cd();
 
-	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
 		TDirectory *energy_dir = dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
-		for(pair<int, map<int, RatioData>> div:energy.second) {
+		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
 			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
 			div_dir->cd();
-			for(pair<int, RatioData> cent:div.second) {
+			for(pair<int, AzimuthBinData> cent:div.second) {
 				cent.second.canvas_2d_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first));
 			}
 		}
@@ -125,22 +127,22 @@ void canvas_2d_dist(map<int, map<int, int>> dist, int energy, int div, int cent)
 }
 
 
-void make_proton_dist_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_proton_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *nproton_dist_dir = out_root->mkdir(plot::nproton_dist_dir_name.data());
 	create_proton_dist_plots(nproton_dist_dir, data);
 }
 
-void make_proton_dist_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_proton_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *nproton_dist_dir = out_root->mkdir(plot::nproton_dist_dir_name.data());
 	create_proton_dist_plots(nproton_dist_dir, data);
 }
 
-void create_proton_dist_plots(TDirectory *nproton_dist_dir, map<int, map<int, map<int, RatioData>>> data) {
+void create_proton_dist_plots(TDirectory *nproton_dist_dir, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	nproton_dist_dir->cd();
-	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
 		TDirectory *energy_dir = nproton_dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
-		for(pair<int, RatioData> cent:energy.second.begin()->second) {
+		for(pair<int, AzimuthBinData> cent:energy.second.begin()->second) {
 			cent.second.canvas_proton_dist(to_string(energy.first) + "GeV protons Centrality " + to_string(cent.first));
 		}
 	}
@@ -303,19 +305,19 @@ TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double
 
 
 
-void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
 	create_canvas_plots(can_dir, data);
 }
 
-void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, RatioData>>> data) {
+void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
 	create_canvas_plots(can_dir, data);
 	can_dir->cd();
 }
 
 
-void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioData>>> data) {
+void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	can_dir->cd();
 
 	// Proton distribution canvases
@@ -338,13 +340,13 @@ void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, RatioDa
 }
 
 
-void canvas_nprotons(map<int, map<int, map<int, RatioData>>> data, int cent, string name) {
+void canvas_nprotons(map<int, map<int, map<int, AzimuthBinData>>> data, int cent, string name) {
 	TCanvas *proton_can = new TCanvas();
 	proton_can->SetTitle(name.data());
 	proton_can->SetName(name.data());
 	proton_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))));
 	int can_index = 1;
-	for(pair<int, map<int, map<int, RatioData>>>  energy:data) {
+	for(pair<int, map<int, map<int, AzimuthBinData>>>  energy:data) {
 		proton_can->cd(can_index);
 		hist_proton_dist((*energy.second.begin()).second[cent].get_proton_dist(), energy.first, cent, "draw"); // Memory leak
 		can_index++;
@@ -354,16 +356,16 @@ void canvas_nprotons(map<int, map<int, map<int, RatioData>>> data, int cent, str
 }
 
 
-void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, int div, int cent, string name) {
+void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int div, int cent, string name) {
 	TCanvas *ratio_can = new TCanvas();
 	ratio_can->SetTitle(name.data());
 	ratio_can->SetName(name.data());
 	ratio_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))));
 	int can_index = 1;
-	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
 		ratio_can->cd(can_index);
 		gPad->SetLogy();
-		hist_ratio_dist(energy.second[div][cent].get_ratio_data(), energy.first, div, cent, "draw");
+		hist_ratio_dist(energy.second[div][cent].get_bin_data(), energy.first, div, cent, "draw");
 		can_index++;
 	}
 	ratio_can->Write(name.data());
@@ -371,7 +373,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, int div, i
 }
 
 
-void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, vector<int> divs, vector<int> cents, string name) {
+void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> divs, vector<int> cents, string name) {
 //	double y_max = numeric_limits<double>::min(); //---
 //	double y_min = numeric_limits<double>::max(); //---
 
@@ -389,7 +391,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, vector<int
 	ratio_can->Divide(can_div.first, can_div.second, 0.001, 0.001);
 	int can_index = 0;
 
-	for(pair<int, map<int, map<int, RatioData>>> energy:data) {
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
 		ratio_can->cd(++can_index);
 		THStack *stack = new THStack((to_string(energy.first) + "GeV").data(), (to_string(energy.first) + "GeV").data());
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
@@ -401,7 +403,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, RatioData>>> data, vector<int
 				string name = to_string(energy.first) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
 				TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
 				ratio_hist->SetLineColor(plot::cent_marker_colors[cent]);
-				for(pair<int, map<int, int>> event:energy.second[div][cent].get_ratio_data()) {
+				for(pair<int, map<int, int>> event:energy.second[div][cent].get_bin_data()) {
 					for(pair<int, int> bin:event.second) {
 						ratio_hist->Fill(((double)bin.first) / event.first, bin.second);
 					}

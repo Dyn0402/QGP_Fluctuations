@@ -22,9 +22,10 @@
 #include "../src/Simulator2.h"
 #include "Measure.h"
 #include "Plotter.h"
-#include "RatioData.h"
-
 #include "performance.h"
+
+#include <AzimuthBinData.h>
+
 #include "moments_vs_sim_pars2.h"
 
 

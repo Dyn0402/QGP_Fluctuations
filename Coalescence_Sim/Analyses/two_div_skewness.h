@@ -8,12 +8,12 @@
 #ifndef TWO_DIV_SKEWNESS_H_
 #define TWO_DIV_SKEWNESS_H_
 
+#include <AzimuthBinData.h>
 #include <string>
 #include <map>
 
 #include <TFile.h>
 
-#include "RatioData.h"
 #include "Measure.h"
 
 using namespace std;

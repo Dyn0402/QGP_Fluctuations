@@ -8,12 +8,12 @@
 #ifndef MOMENTS_VS_SIM_PARS_H_
 #define MOMENTS_VS_SIM_PARS_H_
 
+#include <AzimuthBinData.h>
 #include <string>
 #include <map>
 
 #include <TFile.h>
 
-#include "RatioData.h"
 #include "Measure.h"
 
 using namespace std;

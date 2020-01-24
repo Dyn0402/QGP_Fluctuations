@@ -26,13 +26,14 @@
 #include <TF1.h>
 
 #include "two_div_skewness.h"
+
+#include <AzimuthBinData.h>
 #include "ratio_methods.h"
 #include "ThreadPool.h"
 #include "Stats.h"
 #include "../src/Simulator.h"
 #include "Measure.h"
 #include "Plotter.h"
-#include "RatioData.h"
 
 using namespace std;
 

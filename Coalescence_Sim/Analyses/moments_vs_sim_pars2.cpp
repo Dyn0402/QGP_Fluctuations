@@ -25,13 +25,14 @@
 #include <TF1.h>
 
 #include "moments_vs_sim_pars2.h"
+
+#include <AzimuthBinData.h>
 #include "ratio_methods.h"
 #include "ThreadPool.h"
 #include "Stats.h"
 #include "../src/Simulator2.h"
 #include "Measure.h"
 #include "Plotter.h"
-#include "RatioData.h"
 
 using namespace std;
 
