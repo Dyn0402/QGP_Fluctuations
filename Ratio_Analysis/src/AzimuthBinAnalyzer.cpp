@@ -26,7 +26,7 @@ AzimuthBinAnalyzer::AzimuthBinAnalyzer() {
 }
 
 AzimuthBinAnalyzer::~AzimuthBinAnalyzer() {
-	// Nothing
+	out_root->Close();
 }
 
 
@@ -42,11 +42,27 @@ void AzimuthBinAnalyzer::analyze() {
 	analyze_sets();
 }
 
+
 void AzimuthBinAnalyzer::analyze_sets() {
 	for(pair<string, vector<int>> set:sets) {
 		analyze_set(set.first, set.second);
 	}
 
+	combine_sets();
+}
+
+
+void AzimuthBinAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
+	TDirectory *set_dir = out_root->mkdir(set_name.data());
+	for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
+		analyze_subset(set_name, set_num, set_dir);
+	}
+
+	combine_set(set_name, set_dir);
+}
+
+
+void AzimuthBinAnalyzer::combine_sets() {
 	cout << "Combining all sets" << endl;
 
 	TDirectory *sets_dir = out_root->mkdir("Sets_Comp");
@@ -316,219 +332,211 @@ void AzimuthBinAnalyzer::analyze_sets() {
 //			}
 //		}
 //	}
-
-
-
-	out_root->Close();
 }
 
 
-void AzimuthBinAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
-		TDirectory *set_dir = out_root->mkdir(set_name.data());
-		for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
-			analyze_subset(set_name, set_num, set_dir);
-		}
+void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
+	cout << "Combining set_nums" << endl;
 
-		cout << "Combining set_nums" << endl;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_stats_all;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> mix_stats_all;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_all;
 
-		map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_stats_all;
-		map<string, map<int, map<int, map<int, map<string, Measure>>>>> mix_stats_all;
-		map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_all;
+	// Calculate standard deviations for systematics
+	for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets[set_name]) {
+		for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
+			for(pair<int, map<string, vector<Measure>>> cent:div.second) {
+				for(pair<string, vector<Measure>> stat:cent.second) {
+					raw_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					mix_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					divide_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
-		// Calculate standard deviations for systematics
-		for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets[set_name]) {
-			for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
-				for(pair<int, map<string, vector<Measure>>> cent:div.second) {
-					for(pair<string, vector<Measure>> stat:cent.second) {
-						raw_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
-						mix_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
-						divide_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					raw_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					mix_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
-						raw_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
-						mix_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
-						divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
-
-						for(int i=0; i<(int)raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].size(); i++) {
-							raw_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-							mix_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-							divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-						}
+					for(int i=0; i<(int)raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].size(); i++) {
+						raw_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
+						mix_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
+						divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 					}
 				}
 			}
 		}
+	}
 
 
-		TDirectory *comb_dir = set_dir->mkdir("Combined");
+	TDirectory *comb_dir = set_dir->mkdir("Combined");
 
-		TDirectory *comp_dir = comb_dir->mkdir("Comparison");
-		comp_dir->cd();
-		map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_mixed = {{"raw",raw_stats_median[set_name]}, {"mixed",mix_stats_median[set_name]}};
-		map<string, map<int, map<int, map<int, map<string, double>>>>> raw_mixed_sd = {{"raw",raw_stats_sd[set_name]}, {"mixed",mix_stats_sd[set_name]}};
+	TDirectory *comp_dir = comb_dir->mkdir("Comparison");
+	comp_dir->cd();
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_mixed = {{"raw",raw_stats_median[set_name]}, {"mixed",mix_stats_median[set_name]}};
+	map<string, map<int, map<int, map<int, map<string, double>>>>> raw_mixed_sd = {{"raw",raw_stats_sd[set_name]}, {"mixed",mix_stats_sd[set_name]}};
+
+	{
+		TDirectory *roli_thesis_dir = comp_dir->mkdir("roli_thesis");
+		for(pair<string, vector<string>> name:names) {
+			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+			name_dir->cd();
+			for(int div:divs) {
+				roli_thesis_stats(raw_mixed, raw_mixed_sd, name.second, centralities, {div}, "roli_thesis_raw_mix_comp_"+name.first+to_string(div));
+			}
+		}
+		TDirectory *centralities_dir = comp_dir->mkdir("centralities");
+		for(string name:stat_names) {
+			TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			name_dir->cd();
+			for(int div:divs) {
+				centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, {div}, "centralities_raw_mix_comp_"+name+to_string(div));
+			}
+		}
+	}
+
+
+	TDirectory *data_dir = comb_dir->mkdir("Raw_Data");
+	data_dir->cd();
+
+	{
+		TDirectory *median_dir = data_dir->mkdir("Median");
 
 		{
-			TDirectory *roli_thesis_dir = comp_dir->mkdir("roli_thesis");
+			TDirectory *roli_thesis_dir = median_dir->mkdir("roli_thesis");
 			for(pair<string, vector<string>> name:names) {
 				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
 				name_dir->cd();
 				for(int div:divs) {
-					roli_thesis_stats(raw_mixed, raw_mixed_sd, name.second, centralities, {div}, "roli_thesis_raw_mix_comp_"+name.first+to_string(div));
+					roli_thesis_stats(raw_stats_median[set_name], raw_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
 				}
 			}
-			TDirectory *centralities_dir = comp_dir->mkdir("centralities");
+			TDirectory *centralities_dir = median_dir->mkdir("centralities");
 			for(string name:stat_names) {
 				TDirectory *name_dir = centralities_dir->mkdir(name.data());
 				name_dir->cd();
 				for(int div:divs) {
-					centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, {div}, "centralities_raw_mix_comp_"+name+to_string(div));
+					centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
 				}
 			}
 		}
 
-
-		TDirectory *data_dir = comb_dir->mkdir("Raw_Data");
-		data_dir->cd();
+		TDirectory *all_dir = data_dir->mkdir("All");
 
 		{
-			TDirectory *median_dir = data_dir->mkdir("Median");
-
-			{
-				TDirectory *roli_thesis_dir = median_dir->mkdir("roli_thesis");
-				for(pair<string, vector<string>> name:names) {
-					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-					name_dir->cd();
-					for(int div:divs) {
-						roli_thesis_stats(raw_stats_median[set_name], raw_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
-					}
-				}
-				TDirectory *centralities_dir = median_dir->mkdir("centralities");
-				for(string name:stat_names) {
-					TDirectory *name_dir = centralities_dir->mkdir(name.data());
-					name_dir->cd();
-					for(int div:divs) {
-						centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
-					}
+			TDirectory *roli_thesis_dir = all_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(raw_stats_all, name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
 				}
 			}
-
-			TDirectory *all_dir = data_dir->mkdir("All");
-
-			{
-				TDirectory *roli_thesis_dir = all_dir->mkdir("roli_thesis");
-				for(pair<string, vector<string>> name:names) {
-					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-					name_dir->cd();
-					for(int div:divs) {
-						roli_thesis_stats(raw_stats_all, name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
-					}
-				}
-				TDirectory *centralities_dir = all_dir->mkdir("centralities");
-				for(string name:stat_names) {
-					TDirectory *name_dir = centralities_dir->mkdir(name.data());
-					name_dir->cd();
-					for(int div:divs) {
-						centralities_stat(raw_stats_all, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
-					}
+			TDirectory *centralities_dir = all_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(raw_stats_all, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
 				}
 			}
 		}
+	}
 
 
-		TDirectory *mix_dir = comb_dir->mkdir("Mix_Data");
-		mix_dir->cd();
+	TDirectory *mix_dir = comb_dir->mkdir("Mix_Data");
+	mix_dir->cd();
+
+	{
+		TDirectory *median_dir = mix_dir->mkdir("Median");
 
 		{
-			TDirectory *median_dir = mix_dir->mkdir("Median");
-
-			{
-				TDirectory *roli_thesis_dir = median_dir->mkdir("roli_thesis");
-				for(pair<string, vector<string>> name:names) {
-					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-					name_dir->cd();
-					for(int div:divs) {
-						roli_thesis_stats(mix_stats_median[set_name], mix_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
-					}
-				}
-				TDirectory *centralities_dir = median_dir->mkdir("centralities");
-				for(string name:stat_names) {
-					TDirectory *name_dir = centralities_dir->mkdir(name.data());
-					name_dir->cd();
-					for(int div:divs) {
-						centralities_stat(mix_stats_median[set_name], mix_stats_sd[set_name], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
-					}
+			TDirectory *roli_thesis_dir = median_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(mix_stats_median[set_name], mix_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
 				}
 			}
-
-			TDirectory *all_dir = mix_dir->mkdir("All");
-
-			{
-				TDirectory *roli_thesis_dir = all_dir->mkdir("roli_thesis");
-				for(pair<string, vector<string>> name:names) {
-					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-					name_dir->cd();
-					for(int div:divs) {
-						roli_thesis_stats(mix_stats_all, name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
-					}
-				}
-				TDirectory *centralities_dir = all_dir->mkdir("centralities");
-				for(string name:stat_names) {
-					TDirectory *name_dir = centralities_dir->mkdir(name.data());
-					name_dir->cd();
-					for(int div:divs) {
-						centralities_stat(mix_stats_all, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
-					}
+			TDirectory *centralities_dir = median_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(mix_stats_median[set_name], mix_stats_sd[set_name], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
 			}
 		}
 
-
-		TDirectory *mix_div_dir = comb_dir->mkdir("Mix_Divded_Data");
-		mix_div_dir->cd();
+		TDirectory *all_dir = mix_dir->mkdir("All");
 
 		{
-			TDirectory *median_dir = mix_div_dir->mkdir("Median");
-
-			{
-				TDirectory *roli_thesis_dir = median_dir->mkdir("roli_thesis");
-				for(pair<string, vector<string>> name:names) {
-					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-					name_dir->cd();
-					for(int div:divs) {
-						roli_thesis_stats(divide_stats_median[set_name], divide_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
-					}
-				}
-				TDirectory *centralities_dir = median_dir->mkdir("centralities");
-				for(string name:stat_names) {
-					TDirectory *name_dir = centralities_dir->mkdir(name.data());
-					name_dir->cd();
-					for(int div:divs) {
-						centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
-					}
+			TDirectory *roli_thesis_dir = all_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(mix_stats_all, name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
 				}
 			}
-
-			TDirectory *all_dir = mix_div_dir->mkdir("All");
-
-			{
-				TDirectory *roli_thesis_dir = all_dir->mkdir("roli_thesis");
-				for(pair<string, vector<string>> name:names) {
-					TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
-					name_dir->cd();
-					for(int div:divs) {
-						roli_thesis_stats(divide_stats_all, name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
-					}
-				}
-				TDirectory *centralities_dir = all_dir->mkdir("centralities");
-				for(string name:stat_names) {
-					TDirectory *name_dir = centralities_dir->mkdir(name.data());
-					name_dir->cd();
-					for(int div:divs) {
-						centralities_stat(divide_stats_all, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
-					}
+			TDirectory *centralities_dir = all_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(mix_stats_all, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
 			}
 		}
+	}
+
+
+	TDirectory *mix_div_dir = comb_dir->mkdir("Mix_Divded_Data");
+	mix_div_dir->cd();
+
+	{
+		TDirectory *median_dir = mix_div_dir->mkdir("Median");
+
+		{
+			TDirectory *roli_thesis_dir = median_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(divide_stats_median[set_name], divide_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = median_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+				}
+			}
+		}
+
+		TDirectory *all_dir = mix_div_dir->mkdir("All");
+
+		{
+			TDirectory *roli_thesis_dir = all_dir->mkdir("roli_thesis");
+			for(pair<string, vector<string>> name:names) {
+				TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
+				name_dir->cd();
+				for(int div:divs) {
+					roli_thesis_stats(divide_stats_all, name.second, centralities, {div}, "roli_thesis_divide_"+name.first+to_string(div));
+				}
+			}
+			TDirectory *centralities_dir = all_dir->mkdir("centralities");
+			for(string name:stat_names) {
+				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+				name_dir->cd();
+				for(int div:divs) {
+					centralities_stat(divide_stats_all, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+				}
+			}
+		}
+	}
 }
+
 
 void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *set_dir) {
 
@@ -548,28 +556,28 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 
 			// Get centralities found in file names of given directory path.
 			for(int cent:get_centrals(path, div)) {
-				AzimuthBinData ratios(div);
-				ratios.read_data_from_dir(path, div, cent);  // Read ratio data from file path
+				AzimuthBinData az_data(div);
+				az_data.read_data_from_dir(path, div, cent);  // Read azimuthal bin data from file path
 
-				if(ratios.get_num_ratios() / div <= min_num_events) {
+				if(az_data.get_num_bins() / div <= min_num_events) {
 					if(div == divs[0]) {
-						cout << "Raw centrality " << cent << " with only " << ratios.get_num_ratios() / div << " events. Skipping." << endl;
+						cout << "Raw centrality " << cent << " with only " << az_data.get_num_bins() / div << " events. Skipping." << endl;
 					}
 				} else {
-					data[energy][div][cent] = ratios;  // Store ratio data in data under corresponding centrality (refmult2) value
+					data[energy][div][cent] = az_data;  // Store azimuthal bin data in data under corresponding centrality (refmult2) value
 				}
 
 			}
 
 			// Get centralities found in file names of given directory path.
 			for(int cent:get_centrals(path_mix, div)) {
-				AzimuthBinData ratios(div);
-				ratios.read_data_from_dir(path_mix, div, cent);  // Read ratio data from file path
+				AzimuthBinData az_data(div);
+				az_data.read_data_from_dir(path_mix, div, cent);  // Read azimuthal bin data from file path
 
-				if(ratios.get_num_ratios() / div <= min_num_events) {
-					cout << "Mixed centrality " << cent << " with only " << ratios.get_num_ratios() / div << " events. Skipping." << endl;
+				if(az_data.get_num_bins() / div <= min_num_events) {
+					cout << "Mixed centrality " << cent << " with only " << az_data.get_num_bins() / div << " events. Skipping." << endl;
 				} else {
-					data_mix[energy][div][cent] = ratios;  // Store ratio data in data_mix under corresponding centrality (refmult2) value
+					data_mix[energy][div][cent] = az_data;  // Store azimuthal bin data in data_mix under corresponding centrality (refmult2) value
 				}
 
 			}
@@ -577,24 +585,31 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 		energy_num++;
 	}
 
-	auto stats = calculate_stats(data, orders);
-	auto stats_mix = calculate_stats(data_mix, orders);
+	auto ratio_stats = calculate_stats(data, "ratio", orders);
+	auto ratio_stats_mix = calculate_stats(data_mix, "ratio", orders);
+
+	auto diff_stats = calculate_stats(data, "diff", orders);
+	auto diff_stats_mix = calculate_stats(data_mix, "diff", orders);
 
 	map<int, map<int, map<int, map<string, Measure>>>> stats_mix_divide;
 
-	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:stats) {
+	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:ratio_stats) {
 		for(pair<int, map<int, map<string, Measure>>> div:energy.second) {
 			for(pair<int, map<string, Measure>> cent:div.second) {
+				cout << "Energy: " + to_string(energy.first) + "GeV " + "Cent: " + to_string(cent.first) + " Div: " + to_string(div.first) + " Mix_Diff_Sd: " + to_string(diff_stats_mix[energy.first][div.first][cent.first]["standard_deviation"].get_val()) << endl;
+				data[energy.first][div.first][cent.first].set_diff_divisor(diff_stats_mix[energy.first][div.first][cent.first]["standard_deviation"].get_val());
 				for(pair<string, Measure> stat:cent.second) {
-					stats_mix_divide[energy.first][div.first][cent.first][stat.first] = stat.second / stats_mix[energy.first][div.first][cent.first][stat.first];
+					stats_mix_divide[energy.first][div.first][cent.first][stat.first] = stat.second / ratio_stats_mix[energy.first][div.first][cent.first][stat.first];
 
 					raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second);
-					mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stats_mix[energy.first][div.first][cent.first][stat.first]);
+					mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(ratio_stats_mix[energy.first][div.first][cent.first][stat.first]);
 					divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stats_mix_divide[energy.first][div.first][cent.first][stat.first]);
 				}
 			}
 		}
 	}
+
+	auto pull_stats = calculate_stats(data, "diff", orders);
 
 	TDirectory *set_num_dir = set_dir->mkdir((set_name + to_string(set_num)).data());
 
@@ -602,6 +617,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	data_dir->cd();
 	if(plot_dists) {
 		make_ratio_dist_plots(data_dir, data);
+		make_diff_dist_plots(data_dir, data);
 		make_2d_dist_plots(data_dir, data);
 		make_proton_dist_plots(data_dir, data);
 	}
@@ -617,7 +633,9 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
 			name_dir->cd();
 			for(int div:divs) {
-				roli_thesis_stats(stats, name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+				roli_thesis_stats(ratio_stats, name.second, centralities, {div}, "roli_thesis_raw_ratio_"+name.first+to_string(div));
+				roli_thesis_stats(diff_stats, name.second, centralities, {div}, "roli_thesis_raw_diff_"+name.first+to_string(div));
+				roli_thesis_stats(pull_stats, name.second, centralities, {div}, "roli_thesis_raw_pull_"+name.first+to_string(div));
 			}
 		}
 		TDirectory *centralities_dir = data_dir->mkdir("centralities");
@@ -625,7 +643,9 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 			TDirectory *name_dir = centralities_dir->mkdir(name.data());
 			name_dir->cd();
 			for(int div:divs) {
-				centralities_stat(stats, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+				centralities_stat(ratio_stats, name, all_centralities, {div}, "centralities_raw_ratio_"+name+to_string(div));
+				centralities_stat(diff_stats, name, all_centralities, {div}, "centralities_raw_diff_"+name+to_string(div));
+				centralities_stat(pull_stats, name, all_centralities, {div}, "centralities_raw_pull_"+name+to_string(div));
 			}
 		}
 	}
@@ -635,6 +655,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	mix_dir->cd();
 	if(plot_dists) {
 		make_ratio_dist_plots(mix_dir, data_mix);
+		make_diff_dist_plots(mix_dir, data_mix);
 		make_2d_dist_plots(mix_dir, data_mix);
 		make_proton_dist_plots(mix_dir, data_mix);
 	}
@@ -650,7 +671,8 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 			TDirectory *name_dir = roli_thesis_dir->mkdir(name.first.data());
 			name_dir->cd();
 			for(int div:divs) {
-				roli_thesis_stats(stats_mix, name.second, centralities, {div}, "roli_thesis_mix_"+name.first+to_string(div));
+				roli_thesis_stats(ratio_stats_mix, name.second, centralities, {div}, "roli_thesis_mix_ratio_"+name.first+to_string(div));
+				roli_thesis_stats(diff_stats_mix, name.second, centralities, {div}, "roli_thesis_mix_diff_"+name.first+to_string(div));
 			}
 		}
 		TDirectory *centralities_dir = mix_dir->mkdir("centralities");
@@ -658,7 +680,8 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 			TDirectory *name_dir = centralities_dir->mkdir(name.data());
 			name_dir->cd();
 			for(int div:divs) {
-				centralities_stat(stats_mix, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+				centralities_stat(ratio_stats_mix, name, all_centralities, {div}, "centralities_mix_ratio_"+name+to_string(div));
+				centralities_stat(diff_stats_mix, name, all_centralities, {div}, "centralities_mix_diff_"+name+to_string(div));
 			}
 		}
 	}
@@ -688,7 +711,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 }
 
 //Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
-map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> orders) {
+map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders) {
 	map<int, map<int, map<int, map<string, Measure>>>> stats;
 	ROOT::EnableThreadSafety();
 	{
@@ -696,7 +719,7 @@ map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate
 		for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
 			for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
 				for(pair<int, AzimuthBinData> cent:div.second) {
-					pool.enqueue(&AzimuthBinAnalyzer::calc_stat, this, &(data[energy.first][div.first][cent.first]), energy.first, div.first, cent.first, orders, &stats);
+					pool.enqueue(&AzimuthBinAnalyzer::calc_stat, this, &(data[energy.first][div.first][cent.first]), type, energy.first, div.first, cent.first, orders, &stats);
 				}
 			}
 		}
@@ -706,8 +729,10 @@ map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate
 }
 
 
-void AzimuthBinAnalyzer::calc_stat(AzimuthBinData *data, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats) {
-	Stats stat(data->get_ratio_hist());
+void AzimuthBinAnalyzer::calc_stat(AzimuthBinData *data, string type, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats) {
+	Stats stat;
+	if(type == "ratio") { stat.set_distribution(data->get_ratio_hist()); }
+	if(type == "diff") { stat.set_distribution(data->get_diff_hist()); }
 	(*stats)[energy][div][cent]["mean"] = stat.get_mean();
 	(*stats)[energy][div][cent]["standard_deviation"] = stat.get_standard_deviation();
 	(*stats)[energy][div][cent]["skewness"] = stat.get_skewness();

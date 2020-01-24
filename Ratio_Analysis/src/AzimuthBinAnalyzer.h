@@ -64,7 +64,7 @@ private:
 	vector<int> plot_divs = {6};
 	vector<int> plot_cents = {8,5,1};//{0,1,2,3,4,5,6,7,8,9};
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "1-23-20_analyzer_class_test.root";
+	string out_root_name = "1-24-20_pull_test.root";
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
@@ -90,12 +90,15 @@ private:
 
 
 	// Doers
-	void analyze_subset(string set_name, int set_num, TDirectory *set_dir);
-	void analyze_set(string set_name, vector<int> set_nums);
 	void analyze_sets();
+	void analyze_set(string set_name, vector<int> set_nums);
+	void analyze_subset(string set_name, int set_num, TDirectory *set_dir);
 
-	map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> orders);
-	void calc_stat(AzimuthBinData *data, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats);
+	void combine_sets();
+	void combine_set(string set_name, TDirectory *set_dir);
+
+	map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders);
+	void calc_stat(AzimuthBinData *data, string type, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats);
 	double sample_sd(vector<double> data);
 	double sample_sd(vector<Measure> data);
 	Measure median(vector<Measure> data);

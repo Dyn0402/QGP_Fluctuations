@@ -82,6 +82,32 @@ void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int ce
 	}
 }
 
+void make_diff_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
+	TDirectory *diff_dist_dir = out_root->mkdir("Difference_Plots");
+	create_diff_dist_plots(diff_dist_dir, data);
+}
+
+void make_diff_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
+	TDirectory *diff_dist_dir = out_root->mkdir("Difference_Plots");
+	create_diff_dist_plots(diff_dist_dir, data);
+}
+
+void create_diff_dist_plots(TDirectory *diff_dist_dir, map<int, map<int, map<int, AzimuthBinData>>> data) {
+	diff_dist_dir->cd();
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
+		TDirectory *energy_dir = diff_dist_dir->mkdir((to_string(energy.first) + "GeV").data());
+		energy_dir->cd();
+		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
+			div_dir->cd();
+			for(pair<int, AzimuthBinData> cent:div.second) {
+				cent.second.canvas_diff_dist("Diff " +to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first), "no");
+				cent.second.canvas_diff_dist("Pull " + to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first), "yes");
+			}
+		}
+	}
+}
+
 
 void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *dist_dir = out_root->mkdir(plot::dist_2d_dir_name.data());

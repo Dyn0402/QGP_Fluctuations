@@ -27,6 +27,10 @@ void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, Azim
 void create_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
 void hist_ratio_dist(map<int, map<int, int>> , int energy, int div, int cent, string mode="write", int color=4);
 
+void make_diff_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
+void make_diff_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
+void create_diff_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
+
 void make_2d_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
 void make_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
 void create_2d_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
