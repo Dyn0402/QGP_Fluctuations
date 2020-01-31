@@ -541,49 +541,12 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *set_dir) {
 
 	cout << "Starting Set " + set_name + to_string(set_num) << endl << endl;
-	map<int, map<int, map<int, AzimuthBinData>>> data;
-	map<int, map<int, map<int, AzimuthBinData>>> data_mix;
 
-	int min_num_events = 1;
+	string path = in_path + set_name + to_string(set_num) + "/";
+	string path_mix = in_mix_path + set_name + to_string(set_num) + "/";
 
-	int energy_num = 1;
-	for(int energy:energy_list) {
-
-		string path = in_path + set_name + to_string(set_num) + "/" + to_string(energy) + "GeV/";
-		string path_mix = in_mix_path + set_name + to_string(set_num) + "/" + to_string(energy) + "GeV/";
-
-		for(int div:divs) {
-
-			// Get centralities found in file names of given directory path.
-			for(int cent:get_centrals(path, div)) {
-				AzimuthBinData az_data(div);
-				az_data.read_data_from_dir(path, div, cent);  // Read azimuthal bin data from file path
-
-				if(az_data.get_num_bins() / div <= min_num_events) {
-					if(div == divs[0]) {
-						cout << "Raw centrality " << cent << " with only " << az_data.get_num_bins() / div << " events. Skipping." << endl;
-					}
-				} else {
-					data[energy][div][cent] = az_data;  // Store azimuthal bin data in data under corresponding centrality (refmult2) value
-				}
-
-			}
-
-			// Get centralities found in file names of given directory path.
-			for(int cent:get_centrals(path_mix, div)) {
-				AzimuthBinData az_data(div);
-				az_data.read_data_from_dir(path_mix, div, cent);  // Read azimuthal bin data from file path
-
-				if(az_data.get_num_bins() / div <= min_num_events) {
-					cout << "Mixed centrality " << cent << " with only " << az_data.get_num_bins() / div << " events. Skipping." << endl;
-				} else {
-					data_mix[energy][div][cent] = az_data;  // Store azimuthal bin data in data_mix under corresponding centrality (refmult2) value
-				}
-
-			}
-		}
-		energy_num++;
-	}
+	map<int, map<int, map<int, AzimuthBinData>>> data = get_data(path);
+	map<int, map<int, map<int, AzimuthBinData>>> data_mix = get_data(path_mix);
 
 	auto ratio_stats = calculate_stats(data, "ratio", orders);
 	auto ratio_stats_mix = calculate_stats(data_mix, "ratio", orders);
@@ -709,6 +672,37 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	}
 
 }
+
+
+map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string path, int min_num_events) {
+	map<int, map<int, map<int, AzimuthBinData>>> data;
+
+	for(int energy:energy_list) {
+
+		path += to_string(energy) + "GeV/";
+
+		for(int div:divs) {
+
+			// Get centralities found in file names of given directory path.
+			for(int cent:get_centrals(path, div)) {
+				AzimuthBinData az_data(div);
+				az_data.read_data_from_dir(path, div, cent);  // Read azimuthal bin data from file path
+
+				if(az_data.get_num_bins() / div <= min_num_events) {
+					if(div == divs[0]) {
+						cout << "Centrality " << cent << " with only " << az_data.get_num_bins() / div << " events. Skipping." << endl;
+					}
+				} else {
+					data[energy][div][cent] = az_data;  // Store azimuthal bin data in data under corresponding centrality (refmult2) value
+				}
+
+			}
+		}
+	}
+
+	return data;
+}
+
 
 //Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
 map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders) {

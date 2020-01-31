@@ -64,6 +64,8 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int d
 void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> div, vector<int> cent, string name);
 void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumulants, int order, int cent, string name);
 void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat, int cent, string name);
+void canvas_diff_dists(TDirectory *can_dir, map<string, map<int, map<int, map<int, AzimuthBinData>>>> data, vector<int> div, vector<int> cent, string name);
+
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 
