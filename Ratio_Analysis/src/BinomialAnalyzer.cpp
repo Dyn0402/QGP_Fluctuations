@@ -58,6 +58,8 @@ void BinomialAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *
 	map<int, map<int, map<int, AzimuthBinData>>> data = get_data(path);
 	map<int, map<int, map<int, AzimuthBinData>>> data_mix = get_data(path_mix);
 
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> slice_stats = get_slice_stats(data);
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> slice_stats_mix = get_slice_stats(data_mix);
 	draw_proton_bin_plots(data);
 }
 
@@ -91,6 +93,36 @@ map<int, map<int, map<int, AzimuthBinData>>> BinomialAnalyzer::get_data(string p
 	return data;
 }
 
+
+// Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
+map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::get_slice_stats(map<int, map<int, map<int, AzimuthBinData>>> data) {
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> stats;
+	ROOT::EnableThreadSafety();
+	{
+		ThreadPool pool(stat_threads);
+		for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
+			for(pair<int, map<int, AzimuthBinData>> cent:energy.second) {
+				for(pair<int, AzimuthBinData> div:cent.second) {
+					for(pair<int, map<int, int>> total_proton:div.second.get_bin_data()) {
+						pool.enqueue(&BinomialAnalyzer::calc_stat, this, total_proton.second, energy.first, div.first, cent.first, &stats);
+					}
+				}
+			}
+		}
+	}
+	return stats;
+}
+
+
+// Calculate statistics for total_proton slice histogram data.
+void BinomialAnalyzer::calc_stat(map<int, int> slice_data, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats) {
+	Stats stat(slice_data);
+	(*stats)[energy][div][cent]["mean"] = stat.get_mean();
+	(*stats)[energy][div][cent]["standard_deviation"] = stat.get_standard_deviation();
+	(*stats)[energy][div][cent]["skewness"] = stat.get_skewness();
+	(*stats)[energy][div][cent]["kurtosis"] = stat.get_kurtosis();
+	(*stats)[energy][div][cent]["non_excess_kurtosis"] = stat.get_non_excess_kurtosis();
+}
 
 void BinomialAnalyzer::draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data) {
 	TDirectory *out_dir = out_root->mkdir("Proton_Bin_Plots");

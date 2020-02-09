@@ -65,6 +65,7 @@ private:
 	vector<int> plot_cents = {8,5,1};//{0,1,2,3,4,5,6,7,8,9};
 	string out_path = "/home/dylan/Research/Results/";
 	string out_root_name = "1-25-20_pull_test.root";
+
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};

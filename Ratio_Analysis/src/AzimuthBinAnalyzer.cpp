@@ -670,7 +670,6 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 			}
 		}
 	}
-
 }
 
 

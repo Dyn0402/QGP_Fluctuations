@@ -58,6 +58,8 @@ private:
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> centralities = {8,7,6,5,4,3,2,1,0};
 
+	int stat_threads = 1;
+
 	// Temporary Parameters
 	string set_name = "Single_Ratio";
 	int set_num = 0;
@@ -69,7 +71,13 @@ private:
 	void analyze_subset(string set_name, int set_num, TDirectory *set_dir);
 	map<int, map<int, map<int, AzimuthBinData>>> get_data(string path, int min_num_events = 1);  // [energy][div][cent]
 
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> get_slice_stats(map<int, map<int, map<int, AzimuthBinData>>> data);
+	void calc_stat(map<int, int> slice_data, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats);
+
 	void draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data);
+
+	// Plotters
+	void slice_stats_plot(map<int, map<int, map<int, map<int, map<string, Measure>>>>> slice_stats)
 };
 
 
