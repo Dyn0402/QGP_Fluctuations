@@ -521,70 +521,70 @@ void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats,
 }
 
 
-void canvas_diff_dists(TDirectory *can_dir, map<string, map<int, map<int, map<int, AzimuthBinData>>>> data, vector<int> divs, vector<int> cents, string name) {
-//	double y_max = numeric_limits<double>::min(); //---
-//	double y_min = numeric_limits<double>::max(); //---
-
-
-
-	vector<TH1D*> hists;
-	vector<THStack*> stacks;
-	vector<TLegend*> legends;
-
-	TCanvas *ratio_can = new TCanvas();
-	ratio_can->SetTitle(name.data());
-	ratio_can->SetName(name.data());
-	gStyle->SetTitleFontSize(0.09);
-	gStyle->SetTitleOffset(1.2);
-
-	pair<int, int> can_div = {ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5)))};
-	ratio_can->Divide(can_div.first, can_div.second, 0.001, 0.001);
-	int can_index = 0;
-
-	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
-		ratio_can->cd(++can_index);
-		THStack *stack = new THStack((to_string(energy.first) + "GeV").data(), (to_string(energy.first) + "GeV").data());
-		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-		stacks.push_back(stack);
-		legends.push_back(leg);
-
-		for(int cent:cents) {
-			for(int div:divs) {
-				string name = to_string(energy.first) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
-				TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
-				ratio_hist->SetLineColor(plot::cent_marker_colors[cent]);
-				for(pair<int, map<int, int>> event:energy.second[div][cent].get_bin_data()) {
-					for(pair<int, int> bin:event.second) {
-						ratio_hist->Fill(((double)bin.first) / event.first, bin.second);
-					}
-				}
-				hists.push_back(ratio_hist);
-				stack->Add(ratio_hist);
-
-				if(can_index == 1) {
-					pair<int, int> range = get_cent9_range(cent);
-					leg->AddEntry(ratio_hist, (to_string(div) + " divisions \t" + to_string(range.first)+"-"+to_string(range.second)+"% central").data(), "l");
-				}
-			}
-		}
-		stack->Draw("nostackHIST");
-		gStyle->SetOptStat(0);
-		gPad->SetLogy();
-		if(can_index > can_div.first*(can_div.second-1)) { gPad->SetBottomMargin(0.12); }
-		else { gPad->SetBottomMargin(0.05); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
-		else { gPad->SetTopMargin(0.08); }
-		gPad->SetRightMargin(0.02);
-		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
-
-	}
-	ratio_can->Update();
-	ratio_can->Write(name.data());
-	for(TH1D* hist:hists) { delete hist; }
-	for(THStack* stack:stacks) { delete stack; }
-	for(TLegend* legend:legends) { delete legend; }
-	delete ratio_can;
-}
+//void canvas_diff_dists(TDirectory *can_dir, map<string, map<int, map<int, map<int, AzimuthBinData>>>> data, vector<int> divs, vector<int> cents, string name) {
+////	double y_max = numeric_limits<double>::min(); //---
+////	double y_min = numeric_limits<double>::max(); //---
+//
+//
+//
+//	vector<TH1D*> hists;
+//	vector<THStack*> stacks;
+//	vector<TLegend*> legends;
+//
+//	TCanvas *ratio_can = new TCanvas();
+//	ratio_can->SetTitle(name.data());
+//	ratio_can->SetName(name.data());
+//	gStyle->SetTitleFontSize(0.09);
+//	gStyle->SetTitleOffset(1.2);
+//
+//	pair<int, int> can_div = {ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5)))};
+//	ratio_can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+//	int can_index = 0;
+//
+//	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
+//		ratio_can->cd(++can_index);
+//		THStack *stack = new THStack((to_string(energy.first) + "GeV").data(), (to_string(energy.first) + "GeV").data());
+//		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+//		stacks.push_back(stack);
+//		legends.push_back(leg);
+//
+//		for(int cent:cents) {
+//			for(int div:divs) {
+//				string name = to_string(energy.first) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
+//				TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
+//				ratio_hist->SetLineColor(plot::cent_marker_colors[cent]);
+//				for(pair<int, map<int, int>> event:energy.second[div][cent].get_bin_data()) {
+//					for(pair<int, int> bin:event.second) {
+//						ratio_hist->Fill(((double)bin.first) / event.first, bin.second);
+//					}
+//				}
+//				hists.push_back(ratio_hist);
+//				stack->Add(ratio_hist);
+//
+//				if(can_index == 1) {
+//					pair<int, int> range = get_cent9_range(cent);
+//					leg->AddEntry(ratio_hist, (to_string(div) + " divisions \t" + to_string(range.first)+"-"+to_string(range.second)+"% central").data(), "l");
+//				}
+//			}
+//		}
+//		stack->Draw("nostackHIST");
+//		gStyle->SetOptStat(0);
+//		gPad->SetLogy();
+//		if(can_index > can_div.first*(can_div.second-1)) { gPad->SetBottomMargin(0.12); }
+//		else { gPad->SetBottomMargin(0.05); }
+//		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
+//		else { gPad->SetTopMargin(0.08); }
+//		gPad->SetRightMargin(0.02);
+//		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+//
+//	}
+//	ratio_can->Update();
+//	ratio_can->Write(name.data());
+//	for(TH1D* hist:hists) { delete hist; }
+//	for(THStack* stack:stacks) { delete stack; }
+//	for(TLegend* legend:legends) { delete legend; }
+//	delete ratio_can;
+//}
 
 
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name) {

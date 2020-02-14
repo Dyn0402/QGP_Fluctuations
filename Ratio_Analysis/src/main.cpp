@@ -26,12 +26,15 @@
 #include "ThreadPool.h"
 #include "AzimuthBinData.h"
 #include "AzimuthBinAnalyzer.h"
+#include "BinomialAnalyzer.h"
 
 using namespace std;
 
 
 int main() {
-	AzimuthBinAnalyzer analyzer;
+//	AzimuthBinAnalyzer analyzer;
+//	analyzer.analyze();
+	BinomialAnalyzer analyzer;
 	analyzer.analyze();
 
 	cout << "donzo" << endl;
