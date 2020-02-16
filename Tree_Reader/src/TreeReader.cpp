@@ -66,6 +66,31 @@ TreeReader::TreeReader(int energy) {
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
 
+TreeReader::TreeReader() {
+	start_sys = chrono::system_clock::now();
+	cbwc = false;
+	rotate_random = false;
+	event_plane = false;
+	mixed_sets = false;
+	mixed = false;
+	rand_data = false;
+	pile_up = false;
+	efficiency = false;
+	single_ratio = false;
+
+	pile_up_prob = 0;
+	efficiency_prob = 0;
+
+	cent_binning = 9;
+
+	this->energy = 7;
+
+	mix = Mixer(energy);
+
+	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
+}
+
+
 TreeReader::~TreeReader() {
 }
 
@@ -86,6 +111,18 @@ string TreeReader::get_qa_path() {
 
 string TreeReader::get_set_name() {
 	return(set_name);
+}
+
+string TreeReader::get_tree_name() {
+	return(tree_name);
+}
+
+string TreeReader::get_event_cut_hist_name() {
+	return(event_cut_hist_name);
+}
+
+string TreeReader::get_track_cut_hist_name() {
+	return(track_cut_hist_name);
 }
 
 bool TreeReader::get_cbwc() {

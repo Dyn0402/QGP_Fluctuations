@@ -65,6 +65,7 @@ class TreeReader {
 public:
 	// Structors
 	TreeReader(int energy);
+	TreeReader();
 	~TreeReader();
 
 	// Getters
@@ -72,6 +73,9 @@ public:
 	string get_out_path();
 	string get_qa_path();
 	string get_set_name();
+	string get_tree_name();
+	string get_event_cut_hist_name();
+	string get_track_cut_hist_name();
 	bool get_cbwc();
 	bool get_rotate_random();
 	bool get_event_plane();
