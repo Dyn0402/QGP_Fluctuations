@@ -36,13 +36,15 @@ using namespace std;
 
 void read_class();
 void read_comb_sys();
+void real_event_tree_test();
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-	read_class();
+//	read_class();
+	real_event_tree_test();
 
 	cout << endl << "donzo" << endl;
 	return(0);

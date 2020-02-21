@@ -160,3 +160,81 @@ void real_tree_test() {
 
 	delete rfile;
 }
+
+
+void real_event_tree_test() {
+	// Write
+	TFile *file = new TFile("/home/dylan/Desktop/real_tree_test.root", "RECREATE");
+
+	if(!file) { cout << "Could not open file" << endl; return; }
+
+	Event event;
+
+	TTree *tree = new TTree("test_tree", "Test Tree");
+	tree->Branch("event", &event);
+
+	int ntracks = 0;
+
+	TRandom3 *rand = new TRandom3(0);
+
+	for(int i=0; i<10000; i++) {
+		event.set_event(rand->Gaus(0,5), rand->Gaus(0,4), rand->Gaus(1, 6), (unsigned) rand->Gaus(20,2), (unsigned) rand->Gaus(40,3), (unsigned) rand->Gaus(60,5), (unsigned) rand->Gaus(80,7));
+		vector<Track> tracks;
+		for(int j=0; j<rand->Gaus(15, 0.5); j++) {
+			Track track;
+			track.set_track(rand->Gaus(10, 2), rand->Gaus(15, 3), rand->Gaus(3, 2), rand->Gaus(0, 3), rand->Gaus(0, 3), rand->Gaus(2, 0.5), rand->Gaus(0.5, 0.1), (short)rand->Gaus(0, 0.5));
+			tracks.push_back(track);
+			ntracks++;
+		}
+		event.set_protons(tracks);
+		tree->Fill();
+	}
+	file->Write();
+	delete file;
+
+	cout << ntracks << endl;
+
+
+	// Read
+	TFile *rfile = new TFile("/home/dylan/Desktop/real_tree_test.root", "READ");
+
+	if(!rfile) { cout << "Could not open file" << endl; return; }
+
+	TTree *rtree = (TTree*) rfile->Get("test_tree");
+
+//	Event *revent;
+//	vector<Track> *rtracks;
+
+	Event *revent = new Event;
+
+	auto bevent = rtree->GetBranch("event");
+
+	bevent->SetAddress(&revent);
+
+	auto nevent = rtree->GetEntries();
+	cout << nevent << endl;
+
+//	rtree->GetEvent(100);
+//	cout << revent.get_vtx_x() << endl;
+//	cout << rtracks.size() << endl;
+
+	rtree->GetEvent(100);
+	vector<Track> protons = revent->get_protons();
+	cout << revent->get_vx() << endl;
+	cout << protons.size() << endl;
+	for(unsigned i=0; i<protons.size(); i++) {
+		cout << protons[i].get_pt() << endl;
+	}
+
+	cout << endl << endl;
+
+	rtree->GetEvent(103);
+	protons = revent->get_protons();
+	cout << revent->get_vx() << endl;
+	cout << protons.size() << endl;
+	for(unsigned i=0; i<protons.size(); i++) {
+		cout << protons[i].get_pt() << endl;
+	}
+
+	delete rfile;
+}
