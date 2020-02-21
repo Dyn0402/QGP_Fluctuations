@@ -50,7 +50,7 @@ private:
 	string in_path = "/home/dylan/Research/Data/";
 	string in_mix_path = "/home/dylan/Research/Data_Mix/";
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "2-13-20_BinomialAnalyzer_Test.root";
+	string out_root_name = "2-16-20_Binomial_Rand0_stderr.root";
 
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
@@ -59,8 +59,8 @@ private:
 
 	int stat_threads = 1;
 
-	int canvas_width = 1000;
-	int canvas_height = 1000;
+	int canvas_width = 1100;
+	int canvas_height = 7000;
 
 	vector<int> div_marker_style = {8, 8, 34, 20, 21, 22, 33};
 	vector<int> div_marker_color = {28, 9, 6, 1, 2, 8, 4};
@@ -83,7 +83,7 @@ private:
 	pair<int, int> plot_x_range = {0, 40};
 
 	// Temporary Parameters
-	string set_name = "Single_Ratio";
+	string set_name = "Rand_Rotate";
 	int set_num = 0;
 
 	// Data Containers

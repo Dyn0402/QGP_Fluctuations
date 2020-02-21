@@ -347,8 +347,10 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, plot_x_range.second);
 		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, plot_x_range.second);
 		mgs.back()->GetXaxis()->SetLabelSize(0.06);
-		mgs.back()->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mgs.back()->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mgs.back()->GetYaxis()->SetLimits(0.8, 1.15);
+		mgs.back()->GetYaxis()->SetRangeUser(0.8, 1.15);
 		mgs.back()->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mgs.back()->GetXaxis()->SetTitle("Total Protons"); mgs.back()->GetXaxis()->SetTitleSize(0.06); mgs.back()->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.05); }
