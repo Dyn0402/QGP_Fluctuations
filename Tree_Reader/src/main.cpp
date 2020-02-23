@@ -44,6 +44,10 @@ auto start_sys = chrono::system_clock::now();
 
 int main(int argc, char** argv) {
 //	read_class();
+	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
+	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
+	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
 	real_event_tree_test();
 
 	cout << endl << "donzo" << endl;
