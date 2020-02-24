@@ -64,6 +64,7 @@ struct cut_values {
 class TreeReader {
 public:
 	// Structors
+	TreeReader(int energy, int ref_num);
 	TreeReader(int energy);
 	TreeReader();
 	~TreeReader();
@@ -88,6 +89,7 @@ public:
 	double get_pile_up_prob();
 	double get_efficiency_prob();
 	int get_cent_binning();
+	int get_ref_num();
 
 	// Setters
 	void set_in_path(string path);
@@ -109,6 +111,7 @@ public:
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
+	void set_ref_num(int ref_num);
 
 	// Doers
 	void read_trees();
@@ -125,7 +128,7 @@ public:
 private:
 	// Attributes
 	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
-	StRefMultCorr *refmult2CorrUtil = new StRefMultCorr("refmult2");
+	StRefMultCorr *refmultCorrUtil;
 	TRandom3 *trand = new TRandom3(0);
 
 	string tree_name = "nsmTree";
@@ -156,6 +159,7 @@ private:
 	double efficiency_prob;
 
 	int cent_binning;
+	int ref_num;
 
 	// Doers
 	void read_tree(TTree* tree);
@@ -194,7 +198,7 @@ private:
 	TH1I pre_vy_hist;
 	TH1I pre_vz_hist;
 	TH1I pre_ref_hist;
-	TH1I pre_ref2_hist;
+	TH1I pre_refn_hist;
 	TH1I pre_btof_hist;
 	TH1I pre_ep_hist;
 
@@ -203,7 +207,7 @@ private:
 	TH1I post_vy_hist;
 	TH1I post_vz_hist;
 	TH1I post_ref_hist;
-	TH1I post_ref2_hist;
+	TH1I post_refn_hist;
 	TH1I post_btof_hist;
 	TH1I post_ep_hist;
 

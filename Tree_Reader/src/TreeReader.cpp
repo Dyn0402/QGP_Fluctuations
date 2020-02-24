@@ -42,6 +42,33 @@ using namespace std;
 
 // Structors
 
+TreeReader::TreeReader(int energy, int ref_num) {
+	start_sys = chrono::system_clock::now();
+	cbwc = false;
+	rotate_random = false;
+	event_plane = false;
+	mixed_sets = false;
+	mixed = false;
+	rand_data = false;
+	pile_up = false;
+	efficiency = false;
+	single_ratio = false;
+
+	pile_up_prob = 0;
+	efficiency_prob = 0;
+
+	cent_binning = 9;
+	this->ref_num = ref_num;
+
+	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+
+	this->energy = energy;
+
+	mix = Mixer(energy);
+
+	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
+}
+
 TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
 	cbwc = false;
@@ -58,6 +85,9 @@ TreeReader::TreeReader(int energy) {
 	efficiency_prob = 0;
 
 	cent_binning = 9;
+	ref_num = 2;
+
+	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
 	this->energy = energy;
 
@@ -82,6 +112,9 @@ TreeReader::TreeReader() {
 	efficiency_prob = 0;
 
 	cent_binning = 9;
+	ref_num = 2;
+
+	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
 	this->energy = 7;
 
@@ -173,6 +206,9 @@ int TreeReader::get_cent_binning() {
 	return(cent_binning);
 }
 
+int TreeReader::get_ref_num() {
+	return(ref_num);
+}
 
 // Setters
 
@@ -252,6 +288,11 @@ void TreeReader::set_cent_binning(int cent_binning) {
 	this->cent_binning = cent_binning;
 }
 
+void TreeReader::set_ref_num(int ref_num) {
+	this->ref_num = ref_num;
+	if(refmultCorrUtil) { delete refmultCorrUtil; }
+	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+}
 
 // Doers
 
@@ -326,11 +367,11 @@ void TreeReader::read_tree(TTree* tree) {
 				}
 			}
 
-			// Get centrality bin for event from ref_mult2 value
-			refmult2CorrUtil->init(event.get_run());
-			refmult2CorrUtil->initEvent((int)event.get_ref2(), (double)event.get_vz());
-			int cent16_corr = refmult2CorrUtil->getCentralityBin16();
-			int cent9_corr = refmult2CorrUtil->getCentralityBin9();
+			// Get centrality bin for event from ref_multn value
+			refmultCorrUtil->init(event.get_run());
+			refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+			int cent16_corr = refmultCorrUtil->getCentralityBin16();
+			int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
 			// If there are enough good protons, calculate ratios for each division and save to data.
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
@@ -357,13 +398,13 @@ void TreeReader::read_tree(TTree* tree) {
 				// If mixed/rand flagged append event to mix/rand object.
 				if(mixed) {
 					if(cbwc) {
-						mix.append_event_CBWC(good_proton_angles, event.get_ref2(), event.get_event_plane(), event.get_vz());
+						mix.append_event_CBWC(good_proton_angles, event.get_refn(), event.get_event_plane(), event.get_vz());
 					} else {
 						mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz());
 					}
 				}
-				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_ref2()); }
-				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_ref2(), trand); }
+				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_refn()); }
+				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_refn(), trand); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
@@ -371,14 +412,14 @@ void TreeReader::read_tree(TTree* tree) {
 					// Save ratio values to data
 					if(single_ratio) { // Only save a single ratio per event at random.
 						if(cbwc) {
-							data[div][event.get_ref2()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+							data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
 						} else {
 							data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
 						}
 					} else { // Save all ratios from event.
 						for(int protons_in_bin:event_ratios) {
 							if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-								data[div][event.get_ref2()][good_proton_angles.size()][protons_in_bin]++;
+								data[div][event.get_refn()][good_proton_angles.size()][protons_in_bin]++;
 							} else {
 								data[div][cent][good_proton_angles.size()][protons_in_bin]++;
 							}
@@ -450,7 +491,7 @@ tree_leaves TreeReader::get_tree_leaves(TTree* tree) {
 	tree_leaves leaves;
 	leaves.run = tree->GetLeaf("run");
 	leaves.ref_mult = tree->GetLeaf("Nprim");
-	leaves.ref_mult2 = tree->GetLeaf("ref2");
+	leaves.ref_multn = tree->GetLeaf("refn");
 	leaves.btof = tree->GetLeaf("btof");
 	leaves.vx = tree->GetLeaf("vtx_x");
 	leaves.vy = tree->GetLeaf("vtx_y");
@@ -505,7 +546,7 @@ bool TreeReader::check_event_good(Event event) {
 //If input run is contained in bad run list, return false (bad run) else return true (good run).
 bool TreeReader::check_good_run(int run) {
 	bool list_good_run = find(cut.bad_runs.begin(), cut.bad_runs.end(), run) == cut.bad_runs.end();
-	bool ref_good_run = !refmult2CorrUtil->isBadRun(run);
+	bool ref_good_run = !refmultCorrUtil->isBadRun(run);
 
 	return(list_good_run && ref_good_run);
 }
@@ -636,7 +677,7 @@ void TreeReader::define_qa() {
 	pre_vy_hist = TH1I(("pre_vy"+set_name+"_"+to_string(energy)).data(), "pre_vy", 100, -2.5, 2.5);
 	pre_vz_hist = TH1I(("pre_vz"+set_name+"_"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
 	pre_ref_hist = TH1I(("pre_ref"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
-	pre_ref2_hist = TH1I(("pre_reftwo"+set_name+"_"+to_string(energy)).data(), "pre_ref2", 801, -0.5, 800.5);
+	pre_refn_hist = TH1I(("pre_reftwo"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
 	pre_btof_hist = TH1I(("pre_btof"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
 	pre_ep_hist = TH1I(("pre_ep"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
@@ -645,7 +686,7 @@ void TreeReader::define_qa() {
 	post_vy_hist = TH1I(("post_vy"+set_name+"_"+to_string(energy)).data(), "post_vy", 100, -2.5, 2.5);
 	post_vz_hist = TH1I(("post_vz"+set_name+"_"+to_string(energy)).data(), "post_vz", 100, -55, 55);
 	post_ref_hist = TH1I(("post_ref"+set_name+"_"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
-	post_ref2_hist = TH1I(("post_reftwo"+set_name+"_"+to_string(energy)).data(), "post_ref2", 801, -0.5, 800.5);
+	post_refn_hist = TH1I(("post_reftwo"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
 	post_btof_hist = TH1I(("post_btof"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
 	post_ep_hist = TH1I(("post_ep"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
@@ -706,7 +747,7 @@ void TreeReader::fill_pre_event_qa(Event event) {
 	pre_vy_hist.Fill(event.get_vy());
 	pre_vz_hist.Fill(event.get_vz());
 	pre_ref_hist.Fill(event.get_ref());
-	pre_ref2_hist.Fill(event.get_ref2());
+	pre_refn_hist.Fill(event.get_refn());
 	pre_btof_hist.Fill(event.get_btof());
 	pre_ep_hist.Fill(event.get_event_plane());
 }
@@ -718,7 +759,7 @@ void TreeReader::fill_post_event_qa(Event event) {
 	post_vy_hist.Fill(event.get_vy());
 	post_vz_hist.Fill(event.get_vz());
 	post_ref_hist.Fill(event.get_ref());
-	post_ref2_hist.Fill(event.get_ref2());
+	post_refn_hist.Fill(event.get_refn());
 	post_btof_hist.Fill(event.get_btof());
 	post_ep_hist.Fill(event.get_event_plane());
 }
@@ -749,7 +790,7 @@ void TreeReader::write_qa() {
 	pre_vy_hist.Write();
 	pre_vz_hist.Write();
 	pre_ref_hist.Write();
-	pre_ref2_hist.Write();
+	pre_refn_hist.Write();
 	pre_btof_hist.Write();
 	pre_ep_hist.Write();
 
@@ -758,7 +799,7 @@ void TreeReader::write_qa() {
 	post_vy_hist.Write();
 	post_vz_hist.Write();
 	post_ref_hist.Write();
-	post_ref2_hist.Write();
+	post_refn_hist.Write();
 	post_btof_hist.Write();
 	post_ep_hist.Write();
 
@@ -839,11 +880,11 @@ void TreeReader::write_qa() {
 	post_ref_hist.SetLineColor(kRed);
 	post_ref_hist.Draw("sames");
 	ref_can.Write();
-	TCanvas ref2_can("ref2_can");
-	pre_ref2_hist.Draw();
-	post_ref2_hist.SetLineColor(kRed);
-	post_ref2_hist.Draw("sames");
-	ref2_can.Write();
+	TCanvas refn_can("refn_can");
+	pre_refn_hist.Draw();
+	post_refn_hist.SetLineColor(kRed);
+	post_refn_hist.Draw("sames");
+	refn_can.Write();
 	TCanvas btof_can("btof_can");
 	pre_btof_hist.Draw();
 	post_btof_hist.SetLineColor(kRed);
