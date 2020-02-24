@@ -21,7 +21,7 @@ using namespace std;
 struct tree_leaves {
 	TLeaf *run;
 	TLeaf *ref_mult;
-	TLeaf *ref_mult2;
+	TLeaf *ref_multn;
 	TLeaf *btof;
 	TLeaf *vx;
 	TLeaf *vy;
@@ -53,7 +53,7 @@ public:
 	double get_event_plane();
 	unsigned get_ref();
 	unsigned get_run();
-	unsigned get_ref2();
+	unsigned get_refn();
 	unsigned get_btof();
 	vector<Track> get_protons();
 
@@ -64,13 +64,13 @@ public:
 	void set_event_plane(double event_plane);
 	void set_ref(unsigned ref);
 	void set_run(unsigned run);
-	void set_ref2(unsigned ref2);
+	void set_refn(unsigned refn);
 	void set_btof(unsigned btof);
 	void set_protons(vector<Track> protons);
 
 	// Doers
 	void read_tree_event(tree_leaves leaves);
-	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned ref2, unsigned btof, double event_plane);
+	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned refn, unsigned btof, double event_plane);
 	void clear();
 	void pile_up(Event pile);
 
@@ -84,7 +84,7 @@ private:
 
 	unsigned ref;
 	unsigned run;
-	unsigned ref2;
+	unsigned refn;  // Referring to refmult2, refmult3, etc
 	unsigned btof;
 };
 

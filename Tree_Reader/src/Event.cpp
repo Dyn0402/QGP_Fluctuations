@@ -18,7 +18,7 @@ Event::Event() {
 	event_plane = 0;
 	ref = 0;
 	run = 0;
-	ref2 = 0;
+	refn = 0;
 	btof = 0;
 }
 
@@ -55,8 +55,8 @@ unsigned Event::get_run() {
 	return(run);
 }
 
-unsigned Event::get_ref2() {
-	return(ref2);
+unsigned Event::get_refn() {
+	return(refn);
 }
 
 unsigned Event::get_btof() {
@@ -96,8 +96,8 @@ void Event::set_run(unsigned run) {
 	this->run = run;
 }
 
-void Event::set_ref2(unsigned ref2) {
-	this->ref2 = ref2;
+void Event::set_refn(unsigned refn) {
+	this->refn = refn;
 }
 
 void Event::set_btof(unsigned btof) {
@@ -114,7 +114,7 @@ void Event::set_protons(vector<Track> protons) {
 void Event::read_tree_event(tree_leaves leaves) {
 	run = leaves.run->GetValue();
 	ref = leaves.ref_mult->GetValue();
-	ref2 = leaves.ref_mult2->GetValue();
+	refn = leaves.ref_multn->GetValue();
 	btof = leaves.btof->GetValue();
 	vx = leaves.vx->GetValue();
 	vy = leaves.vy->GetValue();
@@ -136,13 +136,13 @@ void Event::read_tree_event(tree_leaves leaves) {
 
 }
 
-void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned ref2, unsigned btof, double event_plane) {
+void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned refn, unsigned btof, double event_plane) {
 	this->vx = vx;
 	this->vy = vy;
 	this->vz = vz;
 	this->ref = ref;
 	this->run = run;
-	this->ref2 = ref2;
+	this->refn = refn;
 	this->btof = btof;
 	this->event_plane = event_plane;
 }
@@ -153,7 +153,7 @@ void Event::clear() {
 	vz = 0;
 	ref = 0;
 	run = 0;
-	ref2 = 0;
+	refn = 0;
 	btof = 0;
 	event_plane = 0;
 }
@@ -161,7 +161,7 @@ void Event::clear() {
 // Pile up input pile event onto this event.
 void Event::pile_up(Event pile) {
 	ref += pile.get_ref();
-	ref2 += pile.get_ref2();
+	refn += pile.get_refn();
 	btof += pile.get_btof();
 	vector<Track> pile_protons = pile.get_protons();
 	protons.insert(protons.end(), pile_protons.begin(), pile_protons.end());
