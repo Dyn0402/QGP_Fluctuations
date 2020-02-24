@@ -61,6 +61,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	this->ref_num = ref_num;
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+	if(ref_num == 3) { cut.min_eta = -1.0; cut.max_eta = 1.0; }
 
 	this->energy = energy;
 
@@ -292,6 +293,8 @@ void TreeReader::set_ref_num(int ref_num) {
 	this->ref_num = ref_num;
 	if(refmultCorrUtil) { delete refmultCorrUtil; }
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+	if(ref_num == 2) { cut.min_eta = -0.5; cut.max_eta = 0.5; }
+	else if(ref_num == 3) { cut.min_eta = -1.0; cut.max_eta = 1.0; }
 }
 
 // Doers
