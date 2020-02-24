@@ -70,7 +70,7 @@ public:
 
 	// Doers
 	void read_tree_event(tree_leaves leaves);
-	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned ref2, unsigned btof);
+	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned ref2, unsigned btof, double event_plane);
 	void clear();
 	void pile_up(Event pile);
 

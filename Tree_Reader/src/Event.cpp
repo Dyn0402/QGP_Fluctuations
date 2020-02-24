@@ -136,7 +136,7 @@ void Event::read_tree_event(tree_leaves leaves) {
 
 }
 
-void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned ref2, unsigned btof) {
+void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned ref2, unsigned btof, double event_plane) {
 	this->vx = vx;
 	this->vy = vy;
 	this->vz = vz;
@@ -144,6 +144,7 @@ void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned ru
 	this->run = run;
 	this->ref2 = ref2;
 	this->btof = btof;
+	this->event_plane = event_plane;
 }
 
 void Event::clear() {
@@ -154,6 +155,7 @@ void Event::clear() {
 	run = 0;
 	ref2 = 0;
 	btof = 0;
+	event_plane = 0;
 }
 
 // Pile up input pile event onto this event.
