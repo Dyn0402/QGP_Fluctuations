@@ -228,18 +228,21 @@ void real_event_tree_test() {
 //	cout << rtracks.size() << endl;
 
 	rtree->GetEvent(100);
+	Event local_event = *revent;
 	cout << endl << "Event 100" << endl;
-	vector<Track> protons = revent->get_protons();
-	cout << "vx: " << revent->get_vx() << endl;
+	vector<Track> protons = local_event.get_protons();
+	cout << "vx: " << local_event.get_vx() << endl;
+	local_event.set_vx(1 + local_event.get_vx());
 	cout << "Num Protons: " << protons.size() << endl;
 	for(unsigned i=0; i<protons.size(); i++) {
 		cout << "Proton " << i << ": " << protons[i].get_pt() << endl;
+		protons[i].set_pt(protons[i].get_pt() + 1);
 	}
 
 	cout << endl << endl;
 
-	rtree->GetEvent(101);
-	cout << endl << "Event 101" << endl;
+	rtree->GetEvent(100);
+	cout << endl << "Event 100" << endl;
 	protons = revent->get_protons();
 	cout << "vx: " << revent->get_vx() << endl;
 	cout << "Num Protons: " << protons.size() << endl;
