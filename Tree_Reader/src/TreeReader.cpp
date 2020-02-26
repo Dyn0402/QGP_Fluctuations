@@ -439,6 +439,7 @@ void TreeReader::read_tree(TTree* tree) {
 		}
 		event_index++;
 	}
+	delete event_pointer;
 }
 
 

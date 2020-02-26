@@ -156,6 +156,8 @@ void Event::clear() {
 	refn = 0;
 	btof = 0;
 	event_plane = 0;
+
+	protons.clear();
 }
 
 // Pile up input pile event onto this event.
