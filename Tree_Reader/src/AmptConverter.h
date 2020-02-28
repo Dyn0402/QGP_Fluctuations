@@ -56,6 +56,7 @@ struct track_params {
 class AmptConverter {
 public:
 	// Structors
+	AmptConverter(string in_path, string out_path);
 	AmptConverter();
 	~AmptConverter();
 
@@ -70,18 +71,20 @@ public:
 	// Doers
 	void convert_trees();
 
+protected:
+	// Attributes
+	string tree_name = "tr";
+	map<int, string> pid_codes = {{2212, "proton"}, {2112, "neutron"}, {22, "photon"}};
+	TreeReader reader_pars;
+
 private:
 	// Attributes
 	string in_path;
 	string out_path;
 
-	string tree_name = "tr";
+
 
 	int threads = 1;
-
-	map<int, string> pid_codes = {{2212, "proton"}, {2112, "neutron"}, {22, "photon"}};
-
-	TreeReader reader_pars;
 
 	// Doers
 
@@ -89,11 +92,14 @@ private:
 
 
 
-class TreeConverter : private AmptConverter {
+class TreeConverter : public AmptConverter {
 public:
 	// Structors
 	TreeConverter(string in_file_path, string out_file_path);
 	~TreeConverter();
+
+	// Doers
+	void convert_tree();
 
 private:
 	// Attributes
@@ -108,7 +114,6 @@ private:
 	event_params event_default;
 
 	// Doers
-	void convert_tree();
 	void generate_cut_hists();
 	nsm_ampt_leaves get_nsm_ampt_leaves();
 	void get_proton_info(nsm_ampt_leaves leaves, Event &event);

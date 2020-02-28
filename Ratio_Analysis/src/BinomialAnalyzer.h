@@ -50,7 +50,7 @@ private:
 	string in_path = "/home/dylan/Research/Data/";
 	string in_mix_path = "/home/dylan/Research/Data_Mix/";
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "2-16-20_Binomial_Rand0_stderr.root";
+	string out_root_name = "2-21-20_Binomial_Rand0_stderr.root";
 
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};

@@ -10,11 +10,18 @@
 
 #include "AmptConverter.h"
 
+#include "file_io.h"
+
 
 
 // AmptConverter
 
 // Structors
+AmptConverter::AmptConverter(string in_path, string out_path) {
+	this->in_path = in_path;
+	this->out_path = out_path;
+}
+
 AmptConverter::AmptConverter() {
 	// pass
 }
@@ -51,13 +58,14 @@ void AmptConverter::convert_trees() {
 	{
 		ThreadPool pool(threads);
 		for(string path:in_files) {
-			string out_file_path = out_path+get_name_from_path(path);
+			string out_file_path = out_path + get_name_from_path(path);
 			TreeConverter converter(path, out_file_path);
-			TFile *in_file = new TFile(path.data(), "READ");
-			TTree *in_tree = (TTree*)in_file->Get(tree_name.data());
+			converter.convert_tree();
+//			TFile *in_file = new TFile(path.data(), "READ");
+//			TTree *in_tree = (TTree*)in_file->Get(tree_name.data());
 			// What was plan here?
-			in_file->Close();
-			delete in_file;
+//			in_file->Close();
+//			delete in_file;
 		}
 	}
 }
@@ -77,7 +85,7 @@ TreeConverter::TreeConverter(string in_file_path, string out_file_path) {
 	out_file = new TFile(out_file_path.data(), "RECREATE");
 
 	in_tree = (TTree*)in_file->Get(tree_name.data());
-	out_tree = new TTree(reader_pars.get_tree_name());
+	out_tree = new TTree(reader_pars.get_tree_name().data(),reader_pars.get_tree_name().data());
 
 	event_hist = new TH1I();
 	track_hist = new TH1I();

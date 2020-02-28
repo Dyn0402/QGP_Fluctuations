@@ -25,6 +25,7 @@
 
 #include "ThreadPool.h"
 #include "TreeReader.h"
+#include "AmptConverter.h"
 #include "ratio_methods.h"
 #include "file_io.h"
 
@@ -48,7 +49,9 @@ int main(int argc, char** argv) {
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
-	real_event_tree_test();
+//	real_event_tree_test();
+	AmptConverter converter("", "");
+	converter.convert_trees();
 
 	cout << endl << "donzo" << endl;
 	return(0);
