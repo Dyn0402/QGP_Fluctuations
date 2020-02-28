@@ -83,15 +83,15 @@ TreeConverter::TreeConverter(string in_file_path, string out_file_path) {
 	in_tree = (TTree*)in_file->Get(tree_name.data());
 	out_tree = new TTree(reader_pars.get_tree_name().data(),reader_pars.get_tree_name().data());
 
-	event_hist = new TH1I();
-	track_hist = new TH1I();
+	event_hist = new TH1I(reader_pars.get_event_cut_hist_name().data(), reader_pars.get_event_cut_hist_name().data(), 8, -0.5, 7.5);
+	track_hist = new TH1I(reader_pars.get_track_cut_hist_name().data(), reader_pars.get_track_cut_hist_name().data(), 12, -0.5, 11.5);
 }
 
 TreeConverter::~TreeConverter() {
 	in_file->Close();
 	out_file->Close();
-	delete event_hist;
-	delete track_hist;
+//	delete event_hist;  This breaks. Figure out later.
+//	delete track_hist;
 //	delete in_tree;
 //	delete out_tree;
 //	delete in_file;
@@ -123,9 +123,9 @@ void TreeConverter::convert_tree() {
 
 // Set empty dummy event/track cut histograms.
 void TreeConverter::generate_cut_hists() {
-	event_hist->SetName(reader_pars.get_event_cut_hist_name().data());
+//	event_hist->SetName(reader_pars.get_event_cut_hist_name().data());
 	event_hist->Write();
-	track_hist->SetName(reader_pars.get_track_cut_hist_name().data());
+//	track_hist->SetName(reader_pars.get_track_cut_hist_name().data());
 	track_hist->Write();
 }
 
@@ -176,5 +176,5 @@ void TreeConverter::get_other_info(nsm_ampt_leaves leaves, Event &event) {
 
 	event.set_run(event_default.run);
 	event.set_refn(event.get_ref());
-	event.set_btof(event.get_ref());
+	event.set_btof(event.get_ref() * event_default.btof_ref_multi);
 }

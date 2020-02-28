@@ -44,14 +44,16 @@ auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-//	read_class();
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
+	AmptConverter converter39("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_39gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/39GeV/");
+	converter39.convert_trees();
+	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
+	converter11.convert_trees();
+	read_class();
 //	real_event_tree_test();
-	AmptConverter converter("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/ampt/11_Convert/");
-	converter.convert_trees();
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -60,15 +62,15 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	string out_dir = "/home/dylan/Research/Data/";
-	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
-	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
+	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Ampt/"; //"/home/dylan/Research/Data/";
+//	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
+	string mix_out_dir = "/media/dylan/SSD_Storage/Research/Data_Ampt_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
 //	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{3,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"No_BTof_Rej",{0,8}}, {"Pile_Up_0008_",{0,8}}, {"Pile_Up_0005_",{0,8}}, {"Pile_Up_0002_",{0,8}}};
-	map<string, pair<int, int>> set_pairs = {{"Single_Ratio",{0,8}}};
+	map<string, pair<int, int>> set_pairs = {{"Single_Ratio",{0,0}}};
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
@@ -78,7 +80,7 @@ void read_class() {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list = {39, 27, 62, 19, 11, 7};
+				vector<int> energy_list = {11, 39}; //{39, 27, 62, 19, 11, 7};
 				vector<int> divs = {2, 3, 4, 5, 6};
 				for(int energy:energy_list) {
 					TreeReader reader(energy);
@@ -86,7 +88,7 @@ void read_class() {
 					reader.set_cbwc(false);
 					reader.set_cent_binning(9);
 
-					reader.set_in_path("/home/dylan/Research/Trees/");
+					reader.set_in_path("/media/dylan/SSD_Storage/Research/Trees_Ampt/");
 					reader.set_out_path(out_dir+set_dir);
 					reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
 					reader.set_qa_name("QA_");

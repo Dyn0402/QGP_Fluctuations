@@ -42,14 +42,15 @@ struct event_params {
 	double vz = 0.;
 	double event_plane = 0.;
 
-	unsigned run = 11116006;  // Total guess
+	unsigned run = 11152039;  // Pulled from 11GeV, seems to work for 39GeV as well.
+	unsigned btof_ref_multi = 4;  // Multiply ref by this number to get btof in order to pass pile-up cut. Fine tuned for 11GeV and 39GeV
 //	unsigned refn;  Could maybe calculate from other particles but for now set equal to ref.
 //	unsigned btof;  Make equal to ref to pass pile-up cut.
 };
 
 struct track_params {
 	float dca = 0.1;
-	double nsigma = 3.0;
+	double nsigma = 1.0;
 	float beta = -999;
 	short charge = 1;
 };
