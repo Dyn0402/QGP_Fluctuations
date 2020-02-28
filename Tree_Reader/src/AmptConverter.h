@@ -8,6 +8,7 @@
 #ifndef AMPTCONVERTER_H_
 #define AMPTCONVERTER_H_
 
+#include <iostream>
 #include <string>
 
 #include <TFile.h>
@@ -53,6 +54,12 @@ struct track_params {
 	short charge = 1;
 };
 
+struct track_cuts {
+	double p_min = 0.15;
+	double pt_min = 0.3;
+	double pt_max = 2.5;
+};
+
 class AmptConverter {
 public:
 	// Structors
@@ -82,9 +89,7 @@ private:
 	string in_path;
 	string out_path;
 
-
-
-	int threads = 1;
+	int threads = 2;
 
 	// Doers
 
@@ -112,6 +117,7 @@ private:
 
 	track_params track_default;
 	event_params event_default;
+	track_cuts cut;
 
 	// Doers
 	void generate_cut_hists();

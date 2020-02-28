@@ -61,11 +61,7 @@ void AmptConverter::convert_trees() {
 			string out_file_path = out_path + get_name_from_path(path);
 			TreeConverter converter(path, out_file_path);
 			converter.convert_tree();
-//			TFile *in_file = new TFile(path.data(), "READ");
-//			TTree *in_tree = (TTree*)in_file->Get(tree_name.data());
-			// What was plan here?
-//			in_file->Close();
-//			delete in_file;
+//			pool.enqueue(&TreeConverter::convert_tree, converter);
 		}
 	}
 }
@@ -96,23 +92,24 @@ TreeConverter::~TreeConverter() {
 	out_file->Close();
 	delete event_hist;
 	delete track_hist;
-	delete in_tree;
-	delete out_tree;
-	delete in_file;
-	delete out_file;
+//	delete in_tree;
+//	delete out_tree;
+//	delete in_file;
+//	delete out_file;
 }
 
 
 // Doers
 void TreeConverter::convert_tree() {
+	cout << "Converting " << in_file_path << " to " << out_file_path << endl;
 	generate_cut_hists();
 	nsm_ampt_leaves leaves = get_nsm_ampt_leaves();
-	Event *event_pointer = new Event;
-	out_tree->Branch("event", &event_pointer);
+//	Event *event_pointer = new Event;
+	Event event;
+	out_tree->Branch("event", &event);
 
 	int event_index = 0;
 	while(in_tree->GetEvent(event_index)) {
-		Event event = *event_pointer;
 		event.clear();
 		event.set_ref(leaves.mult->GetValue());
 		get_proton_info(leaves, event);
@@ -120,7 +117,7 @@ void TreeConverter::convert_tree() {
 		out_tree->Fill();
 		++event_index;
 	}
-	delete event_pointer;
+	out_file->Write();
 }
 
 
@@ -153,18 +150,21 @@ void TreeConverter::get_proton_info(nsm_ampt_leaves leaves, Event &event) {
 	for(unsigned track_index=0; track_index<event.get_ref(); track_index++) {
 		if(pid_codes[leaves.pid->GetValue(track_index)] == "proton") {
 			TVector3 p(leaves.px->GetValue(track_index), leaves.py->GetValue(track_index), leaves.pz->GetValue(track_index));
-			Track new_proton;
-			new_proton.set_p(p.Mag());
-			new_proton.set_pt(p.Perp());
-			new_proton.set_phi(p.Phi());
-			new_proton.set_eta(p.PseudoRapidity());
-			new_proton.set_dca(track_default.dca);
-			new_proton.set_nsigma(track_default.nsigma);
-			new_proton.set_beta(track_default.beta);
-			new_proton.set_charge(track_default.charge);
-			protons.push_back(new_proton);
+			if(p.Perp() >= cut.p_min && p.Perp() >= cut.pt_min && p.Perp() <= cut.pt_max) {
+				Track new_proton;
+				new_proton.set_p(p.Mag());
+				new_proton.set_pt(p.Perp());
+				new_proton.set_phi(p.Phi());
+				new_proton.set_eta(p.PseudoRapidity());
+				new_proton.set_dca(track_default.dca);
+				new_proton.set_nsigma(track_default.nsigma);
+				new_proton.set_beta(track_default.beta);
+				new_proton.set_charge(track_default.charge);
+				protons.push_back(new_proton);
+			}
 		}
 	}
+	event.set_protons(protons);
 }
 
 

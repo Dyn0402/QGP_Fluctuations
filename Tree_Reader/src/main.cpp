@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
 //	real_event_tree_test();
-	AmptConverter converter("", "");
+	AmptConverter converter("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/ampt/11_Convert/");
 	converter.convert_trees();
 
 	cout << endl << "donzo" << endl;
