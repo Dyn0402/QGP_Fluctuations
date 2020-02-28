@@ -343,11 +343,12 @@ void TreeReader::read_trees() {
 void TreeReader::read_tree(TTree* tree) {
 //	tree_leaves leaves = get_tree_leaves(tree);
 	Event *event_pointer = new Event;
-	TBranch *event_branch = tree->GetBranch("event");
+	TBranch *event_branch = tree->GetBranch("Event");
 	event_branch->SetAddress(&event_pointer);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
+//		cout << "Event " << event_index << endl;
 
 		Event event = *event_pointer;
 

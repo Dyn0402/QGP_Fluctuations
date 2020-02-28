@@ -131,7 +131,7 @@ private:
 	StRefMultCorr *refmultCorrUtil;
 	TRandom3 *trand = new TRandom3(0);
 
-	string tree_name = "nsmTree";
+	string tree_name = "tree";
 	string event_cut_hist_name = "Event Cut Hist";
 	string track_cut_hist_name = "Track Cut Hist";
 	string qa_name = "QA_CBWC_";

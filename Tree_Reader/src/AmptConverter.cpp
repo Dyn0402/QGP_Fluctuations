@@ -106,7 +106,7 @@ void TreeConverter::convert_tree() {
 	nsm_ampt_leaves leaves = get_nsm_ampt_leaves();
 //	Event *event_pointer = new Event;
 	Event event;
-	out_tree->Branch("event", &event);
+	out_tree->Branch("Event", &event);
 
 	int event_index = 0;
 	while(in_tree->GetEvent(event_index)) {
