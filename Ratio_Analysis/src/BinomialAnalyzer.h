@@ -47,14 +47,14 @@ public:
 
 private:
 	// Parameters
-	string in_path = "/home/dylan/Research/Data/";
-	string in_mix_path = "/home/dylan/Research/Data_Mix/";
+	string in_path = "/media/dylan/SSD_Storage/Research/Data_Ampt/";  // "/home/dylan/Research/Data/";
+	string in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Ampt_Mix/";  // "/home/dylan/Research/Data_Mix/";
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "2-21-20_Binomial_Rand0_stderr.root";
+	string out_root_name = "2-28-20_Binomial_Ampt_Test.root";
 
-	vector<int> energy_list = {7,11,19,27,39,62};
+	vector<int> energy_list = {11, 39};  // {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
-	vector<int> centralities = {8,7,6,5,4,3,2,1,0};
+	vector<int> centralities = {8};  // {8,7,6,5,4,3,2,1,0};
 	vector<string> stats = {"mean", "standard_deviation"};//, "skewness", "kurtosis", "non_excess_kurtosis"};
 
 	int stat_threads = 1;
@@ -83,7 +83,7 @@ private:
 	pair<int, int> plot_x_range = {0, 40};
 
 	// Temporary Parameters
-	string set_name = "Rand_Rotate";
+	string set_name = "Single_Ratio";  // "Rand_Rotate";
 	int set_num = 0;
 
 	// Data Containers
