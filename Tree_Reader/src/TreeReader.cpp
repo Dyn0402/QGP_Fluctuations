@@ -472,6 +472,7 @@ void TreeReader::write_info_file() {
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;
 		out << "cent_binning: " << cent_binning << endl;
+		out << "ref_num: " << ref_num << endl;
 
 		out << "min_p: " << to_string(cut.min_p) << endl;
 		out << "max_p: " << to_string(cut.max_p) << endl;
@@ -649,7 +650,7 @@ void TreeReader::define_qa() {
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Vertex Non-Zero");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(8, "Good VPD Vz");
 
-	track_cut_tree_maker = TH1I(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 12, -0.5, 11.5);
+	track_cut_tree_maker = TH1I(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 13, -0.5, 12.5);
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Original");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Charge");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(3, "p_low");

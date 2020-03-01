@@ -65,6 +65,10 @@ void BinomialAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *
 	map<int, map<int, map<int, AzimuthBinData>>> data = get_data(path);
 	map<int, map<int, map<int, AzimuthBinData>>> data_mix = get_data(path_mix);
 
+	TDirectory *slice_dir = out_root->mkdir("Slice Distributions");
+	plot_slices(data, slice_dir->mkdir("raw"));
+	plot_slices(data_mix, slice_dir->mkdir("mix"));
+
 	map<string, map<int, map<int, map<int,map<int, map<string, Measure>>>>>> slice_stats {{"raw", get_slice_stats(data)}, {"mix", get_slice_stats(data_mix)}};
 	plot_all_stats(slice_stats);
 
@@ -113,7 +117,11 @@ map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::g
 			for(auto &div:energy.second) {
 				for(auto &cent:div.second) {
 					for(auto &total_proton:cent.second.get_bin_data()) {
-						pool.enqueue(&BinomialAnalyzer::calc_stat, this, total_proton.second, total_proton.first, energy.first, div.first, cent.first, &stats);
+						int events = 0;
+						for(auto &bin_protons:total_proton.second) { events += bin_protons.second; }
+						if(events > min_events) {
+							pool.enqueue(&BinomialAnalyzer::calc_stat, this, total_proton.second, total_proton.first, energy.first, div.first, cent.first, &stats);
+						}
 					}
 				}
 			}
@@ -177,6 +185,25 @@ void BinomialAnalyzer::draw_proton_bin_plots(map<int, map<int, map<int, AzimuthB
 
 			for(int div:divs) {
 				data[energy][div][cent].canvas_2d_dist("Proton_Bin_Dist " + to_string(energy) + "GeV, " + to_string(cent) + " cent, " + to_string(div) + " div");
+			}
+		}
+	}
+}
+
+
+void BinomialAnalyzer::plot_slices(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir) {
+
+	for(auto &div:divs) {
+		TDirectory* div_dir = dir->mkdir((to_string(div)+" Divisions").data());
+		for(auto &cent:centralities) {
+			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
+			cent_dir->cd();
+			for(auto &energy:energy_list) {
+				TDirectory *energy_dir = cent_dir->mkdir((to_string(energy)+"GeV").data());
+				energy_dir->cd();
+				for(auto total_proton:data[energy][div][cent].get_bin_data()) {
+					slice_dist_plot(total_proton.second, total_proton.first, "Slice Dist " + to_string(total_proton.first) + " protons " + to_string(energy) + "GeV " + to_string(cent) + " cent " + to_string(div) + " divs");
+				}
 			}
 		}
 	}
@@ -347,10 +374,10 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, plot_x_range.second);
 		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, plot_x_range.second);
 		mgs.back()->GetXaxis()->SetLabelSize(0.06);
-//		mgs.back()->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-//		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-		mgs.back()->GetYaxis()->SetLimits(0.8, 1.15);
-		mgs.back()->GetYaxis()->SetRangeUser(0.8, 1.15);
+		mgs.back()->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mgs.back()->GetYaxis()->SetLimits(0.8, 1.15);
+//		mgs.back()->GetYaxis()->SetRangeUser(0.8, 1.15);
 		mgs.back()->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mgs.back()->GetXaxis()->SetTitle("Total Protons"); mgs.back()->GetXaxis()->SetTitleSize(0.06); mgs.back()->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.05); }
@@ -467,6 +494,18 @@ void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int
 	delete one_line;
 	delete slope_mg;
 	delete int_mg;
+}
+
+
+void BinomialAnalyzer::slice_dist_plot(map<int, int> &slice_data, int total_protons, string name) {
+	TCanvas can((name + " canvas").data(), (name + " canvas").data(), canvas_width, canvas_height);
+	TH1I dist((name + " hist").data(), (name + " canvas").data(), total_protons+1, -0.5, total_protons+0.5);
+	for(auto &bin_protons:slice_data) {
+		dist.Fill(bin_protons.first, bin_protons.second);
+	}
+	dist.Draw("HIST");
+	can.Update();
+	can.Write(name.data());
 }
 
 pair<int, int> BinomialAnalyzer::get_canvas_div(int plots) {

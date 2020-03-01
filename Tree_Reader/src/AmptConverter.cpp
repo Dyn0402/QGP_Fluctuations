@@ -84,7 +84,7 @@ TreeConverter::TreeConverter(string in_file_path, string out_file_path) {
 	out_tree = new TTree(reader_pars.get_tree_name().data(),reader_pars.get_tree_name().data());
 
 	event_hist = new TH1I(reader_pars.get_event_cut_hist_name().data(), reader_pars.get_event_cut_hist_name().data(), 8, -0.5, 7.5);
-	track_hist = new TH1I(reader_pars.get_track_cut_hist_name().data(), reader_pars.get_track_cut_hist_name().data(), 12, -0.5, 11.5);
+	track_hist = new TH1I(reader_pars.get_track_cut_hist_name().data(), reader_pars.get_track_cut_hist_name().data(), 13, -0.5, 12.5);
 }
 
 TreeConverter::~TreeConverter() {

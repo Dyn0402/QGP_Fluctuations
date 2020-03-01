@@ -62,9 +62,9 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Ref2/"; //"/home/dylan/Research/Data/";
+	string out_dir = "/home/dylan/Research/Data_Ref3/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3/"; //"/home/dylan/Research/Data/";
 //	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
-	string mix_out_dir = "/media/dylan/SSD_Storage/Research/Data_Ref2_Mix/";
+	string mix_out_dir = "/home/dylan/Research/Data_Ref3_Mix/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3_Mix/";
 	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
 //	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
@@ -87,8 +87,9 @@ void read_class() {
 					reader.set_divs(divs);
 					reader.set_cbwc(false);
 					reader.set_cent_binning(9);
+					reader.set_ref_num(3);
 
-					reader.set_in_path("/media/dylan/SSD_Storage/Research/Trees_Ref2/");
+					reader.set_in_path("/home/dylan/Research/Trees_Ref3/");
 					reader.set_out_path(out_dir+set_dir);
 					reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
 					reader.set_qa_name("QA_");

@@ -47,14 +47,14 @@ public:
 
 private:
 	// Parameters
-	string in_path = "/media/dylan/SSD_Storage/Research/Data_Ampt/";  // "/home/dylan/Research/Data/";
-	string in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Ampt_Mix/";  // "/home/dylan/Research/Data_Mix/";
+	string in_path = "/home/dylan/Research/Data_Ref3/";  // "/home/dylan/Research/Data/";
+	string in_mix_path = "/home/dylan/Research/Data_Ref3_Mix/";  // "/home/dylan/Research/Data_Mix/";
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "2-28-20_Binomial_Ampt_Test.root";
+	string out_root_name = "3-01-20_Binomial_Ref3.root";
 
-	vector<int> energy_list = {11, 39};  // {7,11,19,27,39,62};
+	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
-	vector<int> centralities = {8};  // {8,7,6,5,4,3,2,1,0};
+	vector<int> centralities = {8,7,6,5,4,3,2,1,0};
 	vector<string> stats = {"mean", "standard_deviation"};//, "skewness", "kurtosis", "non_excess_kurtosis"};
 
 	int stat_threads = 1;
@@ -81,6 +81,7 @@ private:
 	map<string, int> raw_mix_marker_size = {{"raw", 1.2}, {"mix", 1.2}};
 
 	pair<int, int> plot_x_range = {0, 40};
+	int min_events = 100;
 
 	// Temporary Parameters
 	string set_name = "Single_Ratio";  // "Rand_Rotate";
@@ -101,9 +102,11 @@ private:
 	// Plotters
 	void draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data);
 
+	void plot_slices(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir);
 	void plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats);
 	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats);
 
+	void slice_dist_plot(map<int, int> &slice_data, int total_protons, string name);
 	void slice_stats_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);
 	map<string, map<int, TF1*>> slice_stats_divided_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);
 	void plot_fit(map<string, map<int, TF1*>> &fits, int cent, int div, string name);
