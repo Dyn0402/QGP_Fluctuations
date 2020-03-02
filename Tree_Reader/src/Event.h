@@ -21,7 +21,7 @@ using namespace std;
 struct tree_leaves {
 	TLeaf *run;
 	TLeaf *ref_mult;
-	TLeaf *ref_multn;
+	TLeaf *ref_mult2;
 	TLeaf *btof;
 	TLeaf *vx;
 	TLeaf *vy;

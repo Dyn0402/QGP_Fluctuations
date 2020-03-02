@@ -114,7 +114,7 @@ void Event::set_protons(vector<Track> protons) {
 void Event::read_tree_event(tree_leaves leaves) {
 	run = leaves.run->GetValue();
 	ref = leaves.ref_mult->GetValue();
-	refn = leaves.ref_multn->GetValue();
+	refn = leaves.ref_mult2->GetValue();
 	btof = leaves.btof->GetValue();
 	vx = leaves.vx->GetValue();
 	vy = leaves.vy->GetValue();
