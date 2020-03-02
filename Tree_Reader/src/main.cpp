@@ -38,6 +38,7 @@ using namespace std;
 void read_class();
 void read_comb_sys();
 void real_event_tree_test();
+void speed_test();
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -52,8 +53,9 @@ int main(int argc, char** argv) {
 //	converter39.convert_trees();
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
-	read_class();
+//	read_class();
 //	real_event_tree_test();
+	speed_test();
 
 	cout << endl << "donzo" << endl;
 	return(0);
