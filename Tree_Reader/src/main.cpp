@@ -85,11 +85,11 @@ void read_class() {
 				vector<int> energy_list = {7, 39, 27, 62, 19, 11};
 				vector<int> divs = {2, 3, 4, 5, 6};
 				for(int energy:energy_list) {
-					TreeReader reader(energy);
+					TreeReader reader(energy, 2);
 					reader.set_divs(divs);
 					reader.set_cbwc(false);
 					reader.set_cent_binning(9);
-					reader.set_ref_num(2);
+//					reader.set_ref_num(2);
 
 					reader.set_in_path("/media/dylan/SSD_Storage/Research/Trees_Ref2/");
 					reader.set_out_path(out_dir+set_dir);

@@ -165,6 +165,7 @@ private:
 	void read_tree(TTree* tree);
 
 	tree_leaves get_tree_leaves(TTree* tree);
+	tree_leaves get_tree_leaves_new(TTree* tree);
 
 	bool check_event_good(Event event);
 	bool check_enough_protons(Event event);

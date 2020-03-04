@@ -318,7 +318,7 @@ void TreeReader::read_trees() {
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
-		add_cut_hists(file);
+//		add_cut_hists(file);
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		read_tree(tree);  // Read tree from file into data
 		file->Close();
@@ -341,16 +341,15 @@ void TreeReader::read_trees() {
 
 // Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
 void TreeReader::read_tree(TTree* tree) {
-//	tree_leaves leaves = get_tree_leaves(tree);
-	Event *event_pointer = new Event;
-	TBranch *event_branch = tree->GetBranch("Event");
-	event_branch->SetAddress(&event_pointer);
+	tree_leaves leaves = get_tree_leaves_new(tree);
+//	Event *event_pointer = new Event;
+//	TBranch *event_branch = tree->GetBranch("Event");
+//	event_branch->SetAddress(&event_pointer);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
-//		cout << "Event " << event_index << endl;
-
-		Event event = *event_pointer;
+//		Event event(event_pointer);
+		Event event(leaves);
 
 //		cout << "Got Event address" << endl;
 
@@ -358,8 +357,8 @@ void TreeReader::read_tree(TTree* tree) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
 				event_index++;
 				if(tree->GetEntry(event_index)) {
-					Event event2 = *event_pointer;
-					event.pile_up(event2);
+//					Event event2 = *event_pointer;
+//					event.pile_up(event2);
 				}
 			}
 		}
@@ -449,7 +448,7 @@ void TreeReader::read_tree(TTree* tree) {
 		}
 		event_index++;
 	}
-	delete event_pointer;
+//	delete event_pointer;
 }
 
 
@@ -516,7 +515,6 @@ tree_leaves TreeReader::get_tree_leaves(TTree* tree) {
 	leaves.vx = tree->GetLeaf("vtx_x");
 	leaves.vy = tree->GetLeaf("vtx_y");
 	leaves.vz = tree->GetLeaf("vtx_z");
-	leaves.run = tree->GetLeaf("run");
 	leaves.event_plane = tree->GetLeaf("event_plane");
 
 	leaves.pt = tree->GetLeaf("Proton.pt");
@@ -527,6 +525,31 @@ tree_leaves TreeReader::get_tree_leaves(TTree* tree) {
 	leaves.dca = tree->GetLeaf("Proton.dca");
 	leaves.nsigma = tree->GetLeaf("Proton.nsigma");
 	leaves.eta = tree->GetLeaf("Proton.eta");
+
+	return(leaves);
+}
+
+
+//Get tree leaves and return them in a tree_leaves struct. From new event trees.
+tree_leaves TreeReader::get_tree_leaves_new(TTree* tree) {
+	tree_leaves leaves;
+	leaves.run = tree->GetLeaf("run");
+	leaves.ref_mult = tree->GetLeaf("ref");
+	leaves.ref_mult2 = tree->GetLeaf("refn");
+	leaves.btof = tree->GetLeaf("btof");
+	leaves.vx = tree->GetLeaf("vx");
+	leaves.vy = tree->GetLeaf("vy");
+	leaves.vz = tree->GetLeaf("vz");
+	leaves.event_plane = tree->GetLeaf("event_plane");
+
+	leaves.pt = tree->GetLeaf("protons.pt");
+	leaves.p = tree->GetLeaf("protons.p");
+	leaves.phi = tree->GetLeaf("protons.phi");
+	leaves.beta = tree->GetLeaf("protons.beta");
+	leaves.charge = tree->GetLeaf("protons.charge");
+	leaves.dca = tree->GetLeaf("protons.dca");
+	leaves.nsigma = tree->GetLeaf("protons.nsigma");
+	leaves.eta = tree->GetLeaf("protons.eta");
 
 	return(leaves);
 }

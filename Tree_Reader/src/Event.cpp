@@ -8,6 +8,8 @@
 
 #include "Event.h"
 
+//ClassImp(Event);
+
 
 // Structors
 
@@ -24,6 +26,10 @@ Event::Event() {
 
 Event::Event(tree_leaves leaves) {
 	read_tree_event(leaves);
+}
+
+Event::Event(Event *event) {
+	read_tree_event(event);
 }
 
 Event::~Event() {}
@@ -134,6 +140,30 @@ void Event::read_tree_event(tree_leaves leaves) {
 		protons.push_back(proton);
 	}
 
+}
+
+void Event::read_tree_event(Event *event) {
+	run = event->get_run();
+	ref = event->get_ref();
+	refn = event->get_refn();
+	btof = event->get_btof();
+	vx = event->get_vx();
+	vy = event->get_vy();
+	vz = event->get_vz();
+	event_plane = event->get_event_plane();
+
+	for(Track &old_proton:event->get_protons()) {
+		Track proton;
+		proton.set_pt(old_proton.get_pt());
+		proton.set_p(old_proton.get_p());
+		proton.set_phi(old_proton.get_phi());
+		proton.set_eta(old_proton.get_eta());
+		proton.set_dca(old_proton.get_dca());
+		proton.set_nsigma(old_proton.get_nsigma());
+		proton.set_beta(old_proton.get_beta());
+		proton.set_charge(old_proton.get_charge());
+		protons.push_back(proton);
+	}
 }
 
 void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned refn, unsigned btof, double event_plane) {
