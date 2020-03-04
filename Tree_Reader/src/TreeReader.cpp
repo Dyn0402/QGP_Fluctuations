@@ -352,6 +352,8 @@ void TreeReader::read_tree(TTree* tree) {
 
 		Event event = *event_pointer;
 
+//		cout << "Got Event address" << endl;
+
 		if(pile_up) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
 				event_index++;
@@ -362,10 +364,13 @@ void TreeReader::read_tree(TTree* tree) {
 			}
 		}
 
+//		cout << "Checked pile-up" << endl;
+
 		// Check if each event is good. Analyze if so, continue if not.
 		if(check_event_good(event)) {
 			vector<double> good_proton_angles = {};
 
+//			cout << "Get protons" << endl;
 			// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
 			for(Track proton:event.get_protons()) {
 				if(check_proton_good(proton)) {
@@ -376,6 +381,7 @@ void TreeReader::read_tree(TTree* tree) {
 				}
 			}
 
+//			cout << "Do refmultCorr Stuff" << endl;
 			// Get centrality bin for event from ref_multn value
 			refmultCorrUtil->init(event.get_run());
 			refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
@@ -384,7 +390,7 @@ void TreeReader::read_tree(TTree* tree) {
 
 			// If there are enough good protons, calculate ratios for each division and save to data.
 			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
-
+//				cout << "Enough protons" << endl;
 				cent16_events.Fill(cent16_corr);
 				cent9_events.Fill(cent9_corr);
 				event_cut_hist.Fill("Enough Good Protons", 1);
@@ -396,6 +402,7 @@ void TreeReader::read_tree(TTree* tree) {
 					cent = cent9_corr;
 				}
 
+//				cout << "Rotate protons" << endl;
 				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
 					good_proton_angles = rotate_angles(good_proton_angles, -event.get_event_plane());
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
@@ -404,6 +411,7 @@ void TreeReader::read_tree(TTree* tree) {
 					event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));
 				}
 
+//				cout << "Mix" << endl;
 				// If mixed/rand flagged append event to mix/rand object.
 				if(mixed) {
 					if(cbwc) {
@@ -415,6 +423,7 @@ void TreeReader::read_tree(TTree* tree) {
 				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_refn()); }
 				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_refn(), trand); }
 
+//				cout << "Get/Store Ratios" << endl;
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
 

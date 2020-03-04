@@ -56,6 +56,7 @@ void speed_test() {
 	cout << "Reading Old Tree" << endl;
 	auto timer1_start = chrono::system_clock::now();
 	int total_events1 = 0;
+	int total_protons1 = 0;
 	for(string path:old_files) {
 		TFile *file1 = new TFile(path.data(), "READ");
 		TTree *tree1 = (TTree*)file1->Get("nsmTree");
@@ -63,6 +64,17 @@ void speed_test() {
 		int event_index1 = 0;
 		while(tree1->GetEvent(event_index1)) {
 			Event event(leaves);
+//			event.get_vx();
+//			event.get_vy();
+//			event.get_vz();
+//			event.get_event_plane();
+//			event.get_ref();
+//			event.get_run();
+//			event.get_refn();
+//			event.get_btof();
+			for(Track proton:event.get_protons()) {
+				total_protons1++;
+			}
 			event_index1++;
 		}
 		total_events1 += event_index1;
@@ -74,6 +86,7 @@ void speed_test() {
 	cout << "Reading New Tree" << endl;
 	auto timer2_start = chrono::system_clock::now();
 	int total_events2 = 0;
+	int total_protons2 = 0;
 	for(string path:new_files) {
 		TFile *file2 = new TFile(path.data(), "READ");
 		TTree *tree2 = (TTree*)file2->Get("tree");
@@ -83,6 +96,17 @@ void speed_test() {
 		int event_index2 = 0;
 		while(tree2->GetEvent(event_index2)) {
 			Event event = *event_pointer;
+//			event.get_vx();
+//			event.get_vy();
+//			event.get_vz();
+//			event.get_event_plane();
+//			event.get_ref();
+//			event.get_run();
+//			event.get_refn();
+//			event.get_btof();
+			for(Track proton:event.get_protons()) {
+				total_protons2++;
+			}
 			event_index2++;
 		}
 		total_events2 += event_index2;
@@ -93,6 +117,7 @@ void speed_test() {
 
 
 	cout << "Old Tree:\t Time: " << time1.count() << "s  | Num events: " << total_events1 << "  |  Rate: " << (double)total_events2 / time1.count() << endl;
+	cout << "Num_potons1: " << total_protons1 << endl;
 	cout << "New Tree:\t Time: " << time2.count() << "s  | Num events: " << total_events2 << "  |  Rate: " << (double)total_events2 / time2.count() << endl;
-
+	cout << "Num_potons2: " << total_protons2 << endl;
 }
