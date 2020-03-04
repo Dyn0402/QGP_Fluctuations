@@ -341,7 +341,7 @@ void TreeReader::read_trees() {
 
 // Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
 void TreeReader::read_tree(TTree* tree) {
-	tree_leaves leaves = get_tree_leaves_new(tree);
+	tree_leaves leaves = get_tree_leaves(tree);
 //	Event *event_pointer = new Event;
 //	TBranch *event_branch = tree->GetBranch("Event");
 //	event_branch->SetAddress(&event_pointer);

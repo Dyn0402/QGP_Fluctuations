@@ -152,16 +152,18 @@ void Event::read_tree_event(Event *event) {
 	vz = event->get_vz();
 	event_plane = event->get_event_plane();
 
-	for(Track &old_proton:event->get_protons()) {
+	vector<Track> old_protons = event->get_protons();
+	unsigned num_protons = old_protons.size();
+	for(unsigned i = 0; i < num_protons; i++) {
 		Track proton;
-		proton.set_pt(old_proton.get_pt());
-		proton.set_p(old_proton.get_p());
-		proton.set_phi(old_proton.get_phi());
-		proton.set_eta(old_proton.get_eta());
-		proton.set_dca(old_proton.get_dca());
-		proton.set_nsigma(old_proton.get_nsigma());
-		proton.set_beta(old_proton.get_beta());
-		proton.set_charge(old_proton.get_charge());
+		proton.set_pt(old_protons[i].get_pt());
+		proton.set_p(old_protons[i].get_p());
+		proton.set_phi(old_protons[i].get_phi());
+		proton.set_eta(old_protons[i].get_eta());
+		proton.set_dca(old_protons[i].get_dca());
+		proton.set_nsigma(old_protons[i].get_nsigma());
+		proton.set_beta(old_protons[i].get_beta());
+		proton.set_charge(old_protons[i].get_charge());
 		protons.push_back(proton);
 	}
 }

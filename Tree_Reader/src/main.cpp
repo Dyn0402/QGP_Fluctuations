@@ -77,12 +77,12 @@ void read_class() {
 
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(6); //thread::hardware_concurrency()
+		ThreadPool pool(1); //thread::hardware_concurrency()
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list = {7, 39, 27, 62, 19, 11};
+				vector<int> energy_list = {11, 7}; //{7, 39, 27, 62, 19, 11};
 				vector<int> divs = {2, 3, 4, 5, 6};
 				for(int energy:energy_list) {
 					TreeReader reader(energy, 2);
@@ -91,7 +91,7 @@ void read_class() {
 					reader.set_cent_binning(9);
 //					reader.set_ref_num(2);
 
-					reader.set_in_path("/media/dylan/SSD_Storage/Research/Trees_Ref2/");
+					reader.set_in_path("/media/dylan/SSD_Storage/Research/Trees_Ref2_Old/");
 					reader.set_out_path(out_dir+set_dir);
 					reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
 					reader.set_qa_name("QA_");
