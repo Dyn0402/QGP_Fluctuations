@@ -45,6 +45,9 @@ namespace plot {
 	extern int canvas_width;
 	extern int canvas_height;
 
+	extern double can_div_x;
+	extern double can_div_y;
+
 	extern int ratio_hist_bins;
 	extern double ratio_hist_low;
 	extern double ratio_hist_high;

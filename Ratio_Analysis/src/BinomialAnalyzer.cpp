@@ -25,7 +25,7 @@ using namespace std;
 // Structors
 
 BinomialAnalyzer::BinomialAnalyzer() {
-	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
+	out_root = NULL;
 }
 
 BinomialAnalyzer::~BinomialAnalyzer() {
@@ -47,10 +47,23 @@ void BinomialAnalyzer::set_out_root_name(string name) {
 	out_root_name = name;
 }
 
+void BinomialAnalyzer::set_in_path(string in_path) {
+	this->in_path = in_path;
+}
+
+void BinomialAnalyzer::set_in_mix_path(string in_mix_path) {
+	this->in_mix_path = in_mix_path;
+}
+
+void BinomialAnalyzer::set_out_path(string out_path) {
+	this->out_path = out_path;
+}
+
 
 // Doers
 
 void BinomialAnalyzer::analyze() {
+	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
 	TDirectory *set_dir = out_root->mkdir((set_name + to_string(set_num)).data());
 	analyze_subset(set_name, set_num, set_dir);
 }

@@ -22,7 +22,7 @@ using namespace std;
 
 // Structors
 AzimuthBinAnalyzer::AzimuthBinAnalyzer() {
-	// Nothing
+	out_root = NULL;
 }
 
 AzimuthBinAnalyzer::~AzimuthBinAnalyzer() {
@@ -35,10 +35,27 @@ AzimuthBinAnalyzer::~AzimuthBinAnalyzer() {
 
 // Setters
 
+void AzimuthBinAnalyzer::set_in_path(string path) {
+	in_path = path;
+}
+
+void AzimuthBinAnalyzer::set_in_mix_path(string path) {
+	in_mix_path = path;
+}
+
+void AzimuthBinAnalyzer::set_out_path(string path) {
+	out_path = path;
+}
+
+void AzimuthBinAnalyzer::set_out_root_name(string name) {
+	out_root_name = name;
+}
+
 
 // Doers
 
 void AzimuthBinAnalyzer::analyze() {
+	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
 	analyze_sets();
 }
 
@@ -673,12 +690,12 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 }
 
 
-map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string path, int min_num_events) {
+map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string in_path, int min_num_events) {
 	map<int, map<int, map<int, AzimuthBinData>>> data;
 
 	for(int energy:energy_list) {
 
-		path += to_string(energy) + "GeV/";
+		string path = in_path + to_string(energy) + "GeV/";
 
 		for(int div:divs) {
 

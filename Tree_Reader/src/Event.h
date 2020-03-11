@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <TLeaf.h>
-#include <TObject.h>
+//#include <TObject.h>
 
 #include "Track.h"
 
@@ -43,7 +43,8 @@ struct tree_leaves {
 };
 
 
-class Event : public TObject {
+//class Event : public TObject {
+class Event {
 public:
 	// Structors
 	Event();

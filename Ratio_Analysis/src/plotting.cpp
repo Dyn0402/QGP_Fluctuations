@@ -370,7 +370,7 @@ void canvas_nprotons(map<int, map<int, map<int, AzimuthBinData>>> data, int cent
 	TCanvas *proton_can = new TCanvas();
 	proton_can->SetTitle(name.data());
 	proton_can->SetName(name.data());
-	proton_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))));
+	proton_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))), plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(pair<int, map<int, map<int, AzimuthBinData>>>  energy:data) {
 		proton_can->cd(can_index);
@@ -386,7 +386,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int d
 	TCanvas *ratio_can = new TCanvas();
 	ratio_can->SetTitle(name.data());
 	ratio_can->SetName(name.data());
-	ratio_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))));
+	ratio_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))), plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
 		ratio_can->cd(can_index);
@@ -414,7 +414,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vecto
 	gStyle->SetTitleOffset(1.2);
 
 	pair<int, int> can_div = {ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5)))};
-	ratio_can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	ratio_can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
 	int can_index = 0;
 
 	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
@@ -590,7 +590,7 @@ void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats,
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name) {
 	int div = 6; //Hardcode, fix.
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
-	can->Divide(2,2);
+	can->Divide(2,2, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(string stat:analysis::stat_names) {
 		can->cd(can_index);
@@ -644,7 +644,7 @@ void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>>
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name) {
 	int div = 6; //Hardcode, fix.
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
-	can->Divide(2,2);
+	can->Divide(2,2, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(string stat:analysis::stat_names) {
 		can->cd(can_index);
@@ -703,7 +703,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
-	can->Divide((int)stat_names.size(), (int)cents.size(), 0.001, 0.001);
+	can->Divide((int)stat_names.size(), (int)cents.size(), plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		for(string stat:stat_names) {
@@ -768,7 +768,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
-	can->Divide((int)stat_names.size(), (int)cents.size(), 0.001, 0.001);
+	can->Divide((int)stat_names.size(), (int)cents.size(), plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		for(string stat:stat_names) {
@@ -839,7 +839,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
-	can->Divide((int)stat_names.size(), (int)cents.size(), 0.001, 0.001);
+	can->Divide((int)stat_names.size(), (int)cents.size(), plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		for(string stat:stat_names) {
@@ -914,7 +914,7 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
-	can->Divide((int)stat_names.size(), (int)cents.size(), 0.001, 0.001);
+	can->Divide((int)stat_names.size(), (int)cents.size(), plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		for(string stat:stat_names) {
@@ -984,7 +984,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
 	pair<int, int> can_div = get_canvas_div(cents.size());
-	can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		can->cd(can_index);
@@ -1035,8 +1035,8 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
-		else { gPad->SetBottomMargin(0.05); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
+		else { gPad->SetBottomMargin(0.07); }
+		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
 		else { gPad->SetTopMargin(0.08); }
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
@@ -1055,7 +1055,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
 	pair<int, int> can_div = get_canvas_div(cents.size());
-	can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		can->cd(can_index);
@@ -1100,8 +1100,8 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
-		else { gPad->SetBottomMargin(0.05); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
+		else { gPad->SetBottomMargin(0.07); }
+		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
 		else { gPad->SetTopMargin(0.08); }
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
@@ -1142,7 +1142,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
 	pair<int, int> can_div = get_canvas_div(cents.size());
-	can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		can->cd(can_index);
@@ -1189,8 +1189,8 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
-		else { gPad->SetBottomMargin(0.05); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
+		else { gPad->SetBottomMargin(0.07); }
+		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
 		else { gPad->SetTopMargin(0.08); }
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
@@ -1228,7 +1228,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
 	pair<int, int> can_div = get_canvas_div(cents.size());
-	can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
 	for(int cent:cents) {
 		can->cd(can_index);
@@ -1269,8 +1269,8 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
-		else { gPad->SetBottomMargin(0.05); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
+		else { gPad->SetBottomMargin(0.07); }
+		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
 		else { gPad->SetTopMargin(0.08); }
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
@@ -1309,7 +1309,7 @@ void type_per_row(map<string, map<int, map<int, map<int, map<string, Measure>>>>
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
 	pair<int, int> can_div = {stat_names.size(), stats.size()};
-	can->Divide(can_div.first, can_div.second, 0.001, 0.001);
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
 	int can_index = 0;
 	for(string type:types) {
 //	for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats){

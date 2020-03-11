@@ -41,6 +41,10 @@ public:
 	// Getters
 
 	// Setters
+	void set_in_path(string path);
+	void set_in_mix_path(string path);
+	void set_out_path(string path);
+	void set_out_root_name(string name);
 
 	// Doers
 	void analyze();
@@ -71,11 +75,12 @@ private:
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
-	map<string, vector<int>> sets = {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
+//	map<string, vector<int>> sets = {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
+	map<string, vector<int>> sets = {{"Single_Ratio", {0,0}}};
 
 
 	// Data Containers
-	TFile *out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
+	TFile *out_root;
 
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> raw_stats_sets;
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> mix_stats_sets;

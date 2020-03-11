@@ -30,15 +30,34 @@
 
 using namespace std;
 
+void azimuth_bin_analyze();
+void binomial_analyze();
+
 
 int main() {
-//	AzimuthBinAnalyzer analyzer;
-//	analyzer.analyze();
-	BinomialAnalyzer analyzer;
-	analyzer.analyze();
+	azimuth_bin_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
 }
 
+
+void azimuth_bin_analyze() {
+	AzimuthBinAnalyzer analyzer;
+	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref2/");
+	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref2_Mix/");
+	analyzer.set_out_path("/home/dylan/Research/Results/");
+	analyzer.set_out_root_name("3-09-20_ref2_good_plots.root");
+	analyzer.analyze();
+}
+
+
+void binomial_analyze() {
+	BinomialAnalyzer analyzer;
+	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref3/");
+	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/");
+	analyzer.set_out_path("/home/dylan/Research/Results/");
+	analyzer.set_out_root_name("1-25-20_pull_test.root");
+	analyzer.analyze();
+}
 

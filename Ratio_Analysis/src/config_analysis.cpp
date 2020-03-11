@@ -41,8 +41,11 @@ namespace plot {
 	string stat_dir_name = "Stats";
 	string canvas_dir_name = "Canvases";
 
-	int canvas_width = 1920;
+	int canvas_width = 2070;
 	int canvas_height = 1080;
+
+	double can_div_x = 0.01;
+	double can_div_y = 0.01;
 
 	int ratio_hist_bins = 23;
 	double ratio_hist_low = -0.05;

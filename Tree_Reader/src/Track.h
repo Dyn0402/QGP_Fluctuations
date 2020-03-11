@@ -11,10 +11,11 @@
 //#ifndef ROOT_Track
 //#define ROOT_Track
 
-#include <TObject.h>
+//#include <TObject.h>
 
 
-class Track : public TObject {
+//class Track : public TObject {
+class Track {
 public:
 	Track();
 	Track(double pt, double p, double phi, double eta, float dca, double nsigma, float beta, short charge);

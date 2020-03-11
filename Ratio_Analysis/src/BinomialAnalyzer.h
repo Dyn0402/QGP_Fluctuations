@@ -40,6 +40,9 @@ public:
 	string get_out_root_name();
 
 	// Setters
+	void set_in_path(string in_path);
+	void set_in_mix_path(string in_mix_path);
+	void set_out_path(string out_path);
 	void set_out_root_name(string name);
 
 	// Doers
@@ -47,10 +50,10 @@ public:
 
 private:
 	// Parameters
-	string in_path = "/home/dylan/Research/Data_Ref3/";  // "/home/dylan/Research/Data/";
-	string in_mix_path = "/home/dylan/Research/Data_Ref3_Mix/";  // "/home/dylan/Research/Data_Mix/";
+	string in_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3/";  // "/home/dylan/Research/Data/";
+	string in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/";  // "/home/dylan/Research/Data_Mix/";
 	string out_path = "/home/dylan/Research/Results/";
-	string out_root_name = "3-01-20_Binomial_Ref3.root";
+	string out_root_name = "3-05-20_Binomial_Ref3_partial.root";
 
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
