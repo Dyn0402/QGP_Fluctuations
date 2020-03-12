@@ -82,6 +82,25 @@ void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int ce
 	}
 }
 
+
+void hist_diff_dist(map<double, int> diffs, int energy, int div, int cent, string mode, int color) {
+	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
+	TH1D *diff_hist = new TH1D(name.data(), name.data(), 23, -11.5, 11.5);
+	diff_hist->SetLineColor(color);
+	for(pair<double, int> bin:diffs) {
+		diff_hist->Fill((double)bin.first, bin.second);
+	}
+
+	if(mode == "write") {
+		diff_hist->Write();
+		delete diff_hist;
+	} else if(mode == "draw") {
+		diff_hist->Draw("HIST");
+	} else if(mode == "draw_same") {
+		diff_hist->Draw("HISTsame");
+	}
+}
+
 void make_diff_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
 	TDirectory *diff_dist_dir = out_root->mkdir("Difference_Plots");
 	create_diff_dist_plots(diff_dist_dir, data);
@@ -363,11 +382,22 @@ void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, Azimuth
 			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
 		}
 	}
+
+	// Difference distribution canvases
+	TDirectory *diff_can_dir = can_dir->mkdir("Diff_Dist_Canvases");
+	diff_can_dir->cd();
+	for(int div:analysis::divs) {
+		TDirectory *div_dir = diff_can_dir->mkdir((to_string(div) + "_Divs").data());
+		div_dir->cd();
+		for(int cent:analysis::centrals) {
+			canvas_diff_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
+		}
+	}
 }
 
 
 void canvas_nprotons(map<int, map<int, map<int, AzimuthBinData>>> data, int cent, string name) {
-	TCanvas *proton_can = new TCanvas();
+	TCanvas *proton_can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	proton_can->SetTitle(name.data());
 	proton_can->SetName(name.data());
 	proton_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))), plot::can_div_x, plot::can_div_y);
@@ -383,7 +413,7 @@ void canvas_nprotons(map<int, map<int, map<int, AzimuthBinData>>> data, int cent
 
 
 void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int div, int cent, string name) {
-	TCanvas *ratio_can = new TCanvas();
+	TCanvas *ratio_can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	ratio_can->SetTitle(name.data());
 	ratio_can->SetName(name.data());
 	ratio_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))), plot::can_div_x, plot::can_div_y);
@@ -399,6 +429,23 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int d
 }
 
 
+void canvas_diff_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int div, int cent, string name) {
+	TCanvas *diff_can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	diff_can->SetTitle(name.data());
+	diff_can->SetName(name.data());
+	diff_can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))), plot::can_div_x, plot::can_div_y);
+	int can_index = 1;
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
+		diff_can->cd(can_index);
+		gPad->SetLogy();
+		hist_diff_dist(energy.second[div][cent].get_diff_hist("no"), energy.first, div, cent, "draw");
+		can_index++;
+	}
+	diff_can->Write(name.data());
+	delete diff_can;
+}
+
+
 void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> divs, vector<int> cents, string name) {
 //	double y_max = numeric_limits<double>::min(); //---
 //	double y_min = numeric_limits<double>::max(); //---
@@ -407,7 +454,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vecto
 	vector<THStack*> stacks;
 	vector<TLegend*> legends;
 
-	TCanvas *ratio_can = new TCanvas();
+	TCanvas *ratio_can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	ratio_can->SetTitle(name.data());
 	ratio_can->SetName(name.data());
 	gStyle->SetTitleFontSize(0.09);
@@ -1023,6 +1070,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				mg->Add(sys_graph, "[]");
 				set_num++;
 				if(can_index == 1) {
+					leg->SetBorderSize(plot::legend_border_width);
 					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 				}
 			}
@@ -1036,8 +1084,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
-		else { gPad->SetTopMargin(0.08); }
+		gPad->SetTopMargin(0.09);
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
@@ -1051,6 +1098,28 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 
 
 void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name) {
+	double y_max = numeric_limits<double>::min(); //---
+	double y_min = numeric_limits<double>::max(); //---
+	for(auto stat:stats) {
+		for(int cent:cents) {
+			for(int div:divs) {
+				vector<double> stat_vals, energy_val, stat_err, energy_err;
+				Measure stat_meas;
+				for(int energy:analysis::energy_list) {
+					energy_val.push_back(plot::energy_match[energy]);
+					energy_err.push_back(0.0);
+					stat_meas = stat.second[energy][div][cent][stat_name];
+					stat_vals.push_back(stat_meas.get_val());
+					stat_err.push_back(stat_meas.get_err());
+					if(stat_meas.get_val() > 0) {
+						if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+						if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+					}
+				}
+			}
+		}
+	}
+
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
@@ -1062,8 +1131,8 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		auto *mg = new TMultiGraph();
 		pair<int, int> range = get_cent9_range(cent);
 		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"%").data());
-		double y_max = numeric_limits<double>::min();
-		double y_min = numeric_limits<double>::max();
+//		double y_max = numeric_limits<double>::min();
+//		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
 		for(int div:divs) {
 			int set_num = 0;
@@ -1088,6 +1157,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				mg->Add(graph, "AP");
 				set_num++;
 				if(can_index == 1) {
+					leg->SetBorderSize(plot::legend_border_width);
 					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 				}
 			}
@@ -1101,8 +1171,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
-		else { gPad->SetTopMargin(0.08); }
+		gPad->SetTopMargin(0.09);
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
@@ -1178,6 +1247,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			sys_graph->SetLineColor(plot::div_marker_colors[div]);
 			mg->Add(sys_graph, "[]");
 			if(can_index == 1) {
+				leg->SetBorderSize(plot::legend_border_width);
 				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 		}
@@ -1190,8 +1260,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
-		else { gPad->SetTopMargin(0.08); }
+		gPad->SetTopMargin(0.09);
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
@@ -1258,6 +1327,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			graph->SetLineColor(plot::div_marker_colors[div]);
 			mg->Add(graph, "AP");
 			if(can_index == 1) {
+				leg->SetBorderSize(plot::legend_border_width);
 				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 		}
@@ -1270,8 +1340,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.08); }
-		else { gPad->SetTopMargin(0.08); }
+		gPad->SetTopMargin(0.09);
 		gPad->SetRightMargin(0.02);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }

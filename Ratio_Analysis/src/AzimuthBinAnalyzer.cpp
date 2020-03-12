@@ -666,6 +666,8 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 		}
 	}
 
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_mix_comp {{"raw", ratio_stats}, {"mixed", ratio_stats_mix}};
+
 	TDirectory *mix_div_dir = set_num_dir->mkdir("Mix_Divded_Data");
 	mix_div_dir->cd();
 
@@ -684,6 +686,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 			name_dir->cd();
 			for(int div:divs) {
 				centralities_stat(stats_mix_divide, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+				centralities_stat(raw_mix_comp, name, all_centralities, {div}, "centralities_comp_"+name+to_string(div));
 			}
 		}
 	}

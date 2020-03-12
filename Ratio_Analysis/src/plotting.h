@@ -25,7 +25,8 @@ using namespace std;
 void make_ratio_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
 void make_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
 void create_ratio_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
-void hist_ratio_dist(map<int, map<int, int>> , int energy, int div, int cent, string mode="write", int color=4);
+void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int cent, string mode="write", int color=4);
+void hist_diff_dist(map<double, int> diffs, int energy, int div, int cent, string mode="write", int color=4);
 
 void make_diff_dist_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
 void make_diff_dist_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
@@ -65,6 +66,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vecto
 void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumulants, int order, int cent, string name);
 void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat, int cent, string name);
 void canvas_diff_dists(TDirectory *can_dir, map<string, map<int, map<int, map<int, AzimuthBinData>>>> data, vector<int> div, vector<int> cent, string name);
+void canvas_diff_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int div, int cent, string name);
 
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name);

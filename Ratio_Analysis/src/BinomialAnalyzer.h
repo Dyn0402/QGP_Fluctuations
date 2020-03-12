@@ -44,6 +44,7 @@ public:
 	void set_in_mix_path(string in_mix_path);
 	void set_out_path(string out_path);
 	void set_out_root_name(string name);
+	void set_energies(vector<int> energies);
 
 	// Doers
 	void analyze();
@@ -62,8 +63,9 @@ private:
 
 	int stat_threads = 1;
 
-	int canvas_width = 1100;
-	int canvas_height = 7000;
+	int canvas_width = 2070;
+	int canvas_height = 1080;
+	double legend_border_width = 0;
 
 	vector<int> div_marker_style = {8, 8, 34, 20, 21, 22, 33};
 	vector<int> div_marker_color = {28, 9, 6, 1, 2, 8, 4};
@@ -84,11 +86,12 @@ private:
 	map<string, int> raw_mix_marker_size = {{"raw", 1.2}, {"mix", 1.2}};
 
 	pair<int, int> plot_x_range = {0, 40};
-	int min_events = 100;
+	int min_events = 250;
 
 	// Temporary Parameters
 	string set_name = "Single_Ratio";  // "Rand_Rotate";
 	int set_num = 0;
+
 
 	// Data Containers
 	TFile *out_root;

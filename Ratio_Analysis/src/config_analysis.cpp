@@ -44,8 +44,10 @@ namespace plot {
 	int canvas_width = 2070;
 	int canvas_height = 1080;
 
-	double can_div_x = 0.01;
-	double can_div_y = 0.01;
+	double can_div_x = 0.001;
+	double can_div_y = 0.001;
+
+	double legend_border_width = 0;
 
 	int ratio_hist_bins = 23;
 	double ratio_hist_low = -0.05;

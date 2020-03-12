@@ -59,6 +59,9 @@ void BinomialAnalyzer::set_out_path(string out_path) {
 	this->out_path = out_path;
 }
 
+void BinomialAnalyzer::set_energies(vector<int> energies) {
+	energy_list = energies;
+}
 
 // Doers
 
@@ -300,6 +303,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
+				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 		}
@@ -311,10 +315,9 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mgs.back()->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mgs.back()->GetXaxis()->SetTitle("Total Protons"); mgs.back()->GetXaxis()->SetTitleSize(0.06); mgs.back()->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
-		else { gPad->SetBottomMargin(0.05); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
-		else { gPad->SetTopMargin(0.08); }
-		gPad->SetRightMargin(0.02);
+		else { gPad->SetBottomMargin(0.07); }
+		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.03);
 		mgs.back()->Draw("AP");
 		binoms.back()->Draw("same");
 		if(can_index == 1) { legends.back()->SetMargin(0.1); legends.back()->Draw(); }
@@ -380,6 +383,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
+				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 		}
@@ -393,10 +397,9 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 //		mgs.back()->GetYaxis()->SetRangeUser(0.8, 1.15);
 		mgs.back()->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mgs.back()->GetXaxis()->SetTitle("Total Protons"); mgs.back()->GetXaxis()->SetTitleSize(0.06); mgs.back()->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
-		else { gPad->SetBottomMargin(0.05); }
-		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
-		else { gPad->SetTopMargin(0.08); }
-		gPad->SetRightMargin(0.02);
+		else { gPad->SetBottomMargin(0.07); }
+		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.03);
 		mgs.back()->Draw("AP");
 		lines.back()->Draw("same");
 		if(can_index == 1) { legends.back()->SetMargin(0.1); legends.back()->Draw(); }
