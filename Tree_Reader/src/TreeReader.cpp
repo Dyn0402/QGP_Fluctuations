@@ -65,7 +65,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 
 	this->energy = energy;
 
-	mix = Mixer(energy);
+	mix = Mixer(energy, single_ratio, rotate_random);
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -92,7 +92,7 @@ TreeReader::TreeReader(int energy) {
 
 	this->energy = energy;
 
-	mix = Mixer(energy);
+	mix = Mixer(energy, single_ratio, rotate_random);
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -119,7 +119,7 @@ TreeReader::TreeReader() {
 
 	this->energy = 7;
 
-	mix = Mixer(energy);
+	mix = Mixer(energy, single_ratio, rotate_random);
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -248,6 +248,7 @@ void TreeReader::set_cbwc(bool cbwc) {
 
 void TreeReader::set_rotate_random(bool rotate_random) {
 	this->rotate_random = rotate_random;
+	mix.set_rand_rotate(rotate_random);
 }
 
 void TreeReader::set_event_plane(bool event_plane) {
@@ -276,6 +277,7 @@ void TreeReader::set_efficiency(bool efficiency) {
 
 void TreeReader::set_single_ratio(bool single_ratio) {
 	this->single_ratio = single_ratio;
+	mix.set_single_ratio(single_ratio);
 }
 
 void TreeReader::set_pile_up_prob(double pile_up_prob) {
@@ -343,13 +345,9 @@ void TreeReader::read_trees() {
 // Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
 void TreeReader::read_tree(TTree* tree) {
 	tree_leaves leaves = get_tree_leaves(tree);
-//	Event *event_pointer = new Event;
-//	TBranch *event_branch = tree->GetBranch("Event");
-//	event_branch->SetAddress(&event_pointer);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
-//		Event event(event_pointer);
 		Event event(leaves);
 
 		if(pile_up) {
@@ -395,6 +393,12 @@ void TreeReader::read_tree(TTree* tree) {
 					cent = cent9_corr;
 				}
 
+				// If mixed/rand flagged append event to mix/rand object.
+				if(mixed) { mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz()); }
+				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_refn()); }
+				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_refn(), trand); }
+
+
 				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
 					good_proton_angles = rotate_angles(good_proton_angles, -event.get_event_plane());
 				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
@@ -403,16 +407,6 @@ void TreeReader::read_tree(TTree* tree) {
 					event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));
 				}
 
-				// If mixed/rand flagged append event to mix/rand object.
-				if(mixed) {
-					if(cbwc) {
-						mix.append_event_CBWC(good_proton_angles, event.get_refn(), event.get_event_plane(), event.get_vz());
-					} else {
-						mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz());
-					}
-				}
-				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_refn()); }
-				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_refn(), trand); }
 
 				for(int div:divs) {
 					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.

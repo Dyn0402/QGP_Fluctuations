@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	int ref = 3;
+	int ref = 2;
 	string in_path = "/media/dylan/SSD_Storage/Research/Trees_Old_Ref" + to_string(ref) + "/";
 	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3/"; //"/home/dylan/Research/Data/";
 //	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
@@ -119,7 +119,6 @@ void read_class() {
 					if(set_pair.first == "No_BTof_Rej") {
 						reader.cut.max_slope = {{7, 999}, {11, 999}, {14, 999}, {19, 999}, {27, 999}, {39, 999}, {62, 999}, {200, 999}};
 						reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
-
 					}
 
 					if(set_pair.first == "Single_Ratio") { reader.set_single_ratio(true); reader.mix.set_single_ratio(true); }
