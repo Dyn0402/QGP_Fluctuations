@@ -1,5 +1,5 @@
 /*
- * Mixer_Roli.h
+ * Mixer.h
  *
  *  Created on: Oct 16, 2019
  *      Author: Dylan Neff
@@ -21,9 +21,12 @@ public:
 	// Structors
 	Mixer();
 	Mixer(int energy);
+	Mixer(int energy, bool single_ratio, bool rand_rotate);
 
 	// Getters
 	bool get_single_ratio();
+	bool get_rand_rotate();
+	bool get_event_plane_rotate();
 	int get_energy();
 	int get_max_events();
 	int get_min_events();
@@ -37,6 +40,8 @@ public:
 
 	// Setters
 	void set_single_ratio(bool single_ratio);
+	void set_rand_rotate(bool rand_rotate);
+	void set_event_plane_rotate(bool event_plane_rotate);
 	void set_energy(int energy);
 	void set_max_events(int max_events);
 	void set_min_events(int min_events);
@@ -49,8 +54,7 @@ public:
 	void set_divs(vector<int>);
 
 	// Doers
-	void append_event_CBWC(vector<double> angles, int ref_mult2, double event_plane, double vz);
-	void append_event(vector<double> angles, int cent, double event_plane, double vz);
+	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);
 	void reset_out_dir();
 	void write_mixed_data();
 
@@ -59,6 +63,8 @@ public:
 private:
 	// Attributes
 	bool single_ratio;
+	bool rand_rotate;
+	bool event_plane_rotate;
 	int energy;
 	int min_events;
 	int max_events;
@@ -74,11 +80,10 @@ private:
 	TRandom3 *trand = new TRandom3(0);
 
 	// Doers
-	void get_mixed_CBWC(int num_protons, int ref_mult2, int ep_bin, int vz_bin);
 	void get_mixed(int cent, int num_protons, int ep_bin, int vz_bin);
 	int get_ep_bin(double event_plane);
 	int get_vz_bin(double vz);
-	pair<int, int> generate_index(vector<pair<int, int>> used_angles, int cent, int ep_bin, int vz_bin);
+	pair<int, int> generate_index(const vector<pair<int, int>>& used_angles, int cent, int ep_bin, int vz_bin);
 };
 
 

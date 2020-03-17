@@ -1,5 +1,5 @@
 /*
- * Mixer_Roli.cpp
+ * Mixer.cpp
  *
  *  Created on: Oct 16, 2019
  *      Author: Dylan Neff
@@ -20,6 +20,8 @@
 
 Mixer::Mixer() {
 	single_ratio = false;
+	rand_rotate = false;
+	event_plane_rotate = false;
 	energy = 0;
 	min_events = 150;
 	max_events = 250;
@@ -34,6 +36,8 @@ Mixer::Mixer() {
 
 Mixer::Mixer(int energy) {
 	single_ratio = false;
+	rand_rotate = false;
+	event_plane_rotate = false;
 	this->energy = energy;
 	min_events = 150;
 	max_events = 250;
@@ -51,11 +55,39 @@ Mixer::Mixer(int energy) {
 	ep_bins = 10;
 }
 
+Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
+	this->single_ratio = single_ratio;
+	this->rand_rotate = rand_rotate;
+	event_plane_rotate = false;
+	this->energy = energy;
+	min_events = 150;
+	max_events = 250;
+	mixes_per_event = 1;
+	if(energy == 7) {
+		vz_range.first = -50;
+		vz_range.second = 50;
+	} else {
+		vz_range.first = -30;
+		vz_range.second = 30;
+	}
+	ep_range.first = 0;
+	ep_range.second = M_PI;
+	vz_bins = 10;
+	ep_bins = 10;
+}
 
 // Getters
 
 bool Mixer::get_single_ratio() {
 	return(single_ratio);
+}
+
+bool Mixer::get_rand_rotate() {
+	return(rand_rotate);
+}
+
+bool Mixer::get_event_plane_rotate() {
+	return(event_plane_rotate);
 }
 
 int Mixer::get_energy() {
@@ -105,6 +137,14 @@ void Mixer::set_single_ratio(bool single_ratio) {
 	this->single_ratio = single_ratio;
 }
 
+void Mixer::set_rand_rotate(bool rand_rotate) {
+	this->rand_rotate = rand_rotate;
+}
+
+void Mixer::set_event_plane_rotate(bool event_plane_rotate) {
+	this->event_plane_rotate = event_plane_rotate;
+}
+
 void Mixer::set_energy(int energy) {
 	this->energy = energy;
 }
@@ -150,52 +190,9 @@ void Mixer::set_divs(vector<int> divs) {
 
 // Doers
 
-// Append all proton angles from an event to the specified refmult2/eventplane/vz pool of events. For CBWC enabled.
-void Mixer::append_event_CBWC(vector<double> angles, int ref_mult2, double event_plane, double vz) {
-	int ep_bin = (int)((10*event_plane)/M_PI);  // Convert event_plane to bin like Roli did.
-	int vz_bin = get_vz_bin(vz);
 
-	if((int)this->angles[ref_mult2][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
-		int index = rand() % max_events;
-		this->angles[ref_mult2][ep_bin][vz_bin][index] = angles;
-	} else {  // Append event if there are not enough.
-		this->angles[ref_mult2][ep_bin][vz_bin].push_back(angles);
-	}
-
-	if((int)this->angles[ref_mult2][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
-		for(int i=0; i<mixes_per_event; i++) {
-			get_mixed((int)angles.size(), ref_mult2, ep_bin, vz_bin);
-		}
-	}
-}
-
-// Sample angles randomly for an event. For CBWC enabled.
-void Mixer::get_mixed_CBWC(int num_protons, int ref_mult2, int ep_bin, int vz_bin) {
-	vector<double> mix_angles;
-	vector<pair<int, int>> used_angles;
-	pair<int, int> index;
-	while((int)mix_angles.size() < num_protons) {
-		index = generate_index(used_angles, ref_mult2, ep_bin, vz_bin);
-		mix_angles.push_back(angles[ref_mult2][ep_bin][vz_bin][index.first][index.second]);
-		used_angles.push_back(index);
-	}
-	for(int div:divs) {
-		vector<int> event_ratios = get_Rs(mix_angles, div);  // Convert proton angles in event to ratio values.
-
-		// Save ratio values to data
-		if(single_ratio) {
-			data[div][ref_mult2][mix_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
-		} else {
-			for(int protons_in_bin:event_ratios) {
-				data[div][ref_mult2][mix_angles.size()][protons_in_bin]++;
-			}
-		}
-	}
-}
-
-
-// Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC disabled.
-void Mixer::append_event(vector<double> angles, int cent, double event_plane, double vz) {
+// Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC pass ref_mult in place of cent (untested).
+void Mixer::append_event(const vector<double>& angles, int cent, double event_plane, double vz) {
 	int ep_bin = get_ep_bin(event_plane);
 	int vz_bin = get_vz_bin(vz);
 
@@ -214,14 +211,17 @@ void Mixer::append_event(vector<double> angles, int cent, double event_plane, do
 }
 
 
-// Sample angles randomly for an event. For CBWC disabled.
+// Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
 	vector<pair<int, int>> used_angles;
 	pair<int, int> index;
+	double rand_angle = trand->Rndm() * 2 * M_PI;
 	while((int)mix_angles.size() < num_protons) {
 		index = generate_index(used_angles, cent, ep_bin, vz_bin);
-		mix_angles.push_back(angles[cent][ep_bin][vz_bin][index.first][index.second]);
+		double new_angle = angles[cent][ep_bin][vz_bin][index.first][index.second];
+		if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
+		mix_angles.push_back(new_angle);
 		used_angles.push_back(index);
 	}
 	for(int div:divs) {
@@ -240,14 +240,14 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 
 
 // Ensure same angle is not used twice for a single mixed event.
-pair<int, int> Mixer::generate_index(vector<pair<int, int>> used_angles, int cent_ref, int ep_bin, int vz_bin) {
+pair<int, int> Mixer::generate_index(const vector<pair<int, int>>& used_angles, int cent_ref, int ep_bin, int vz_bin) {
 	bool unique = false;
 	int event_index, angle_index;
 	while(!unique){
 		event_index = trand->Rndm() * angles[cent_ref][ep_bin][vz_bin].size();
 		angle_index = trand->Rndm() * angles[cent_ref][ep_bin][vz_bin][event_index].size();
 		unique = true;
-		for(pair<int, int> angle:used_angles) {
+		for(const pair<int, int>& angle:used_angles) {
 			if(angle.first == event_index && angle.second == angle_index) { unique = false; }
 		}
 	}
