@@ -67,11 +67,15 @@ int main(int argc, char** argv) {
 
 void read_class() {
 	int ref = 2;
-	string in_path = "/media/dylan/SSD_Storage/Research/Trees_Old_Ref" + to_string(ref) + "/";
-	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3/"; //"/home/dylan/Research/Data/";
-//	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
-	string mix_out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "_Mix/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3_Mix/";
+//	string in_path = "/media/dylan/SSD_Storage/Research/Trees_Old_Ref" + to_string(ref) + "/";
+//	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3/"; //"/home/dylan/Research/Data/";
+////	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
+//	string mix_out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "_Mix/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3_Mix/";
 //	string random_out_dir = "/home/dylan/Research/Data_Random/";
+
+	string in_path = "/media/dylan/SSD_Storage/Research/Trees_Ampt/";
+	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Ampt/";
+	string mix_out_dir = "/media/dylan/SSD_Storage/Research/Data_Ampt_Mix/";
 
 //	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{3,4}}};
@@ -81,12 +85,12 @@ void read_class() {
 
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(thread::hardware_concurrency());
+		ThreadPool pool(1);//thread::hardware_concurrency());
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list = {7, 39, 27, 62, 19, 11};
+				vector<int> energy_list = {39, 11}; //{7, 39, 27, 62, 19, 11};
 				vector<int> divs = {2, 3, 4, 5, 6};
 				for(int energy:energy_list) {
 					TreeReader reader(energy, ref);
@@ -99,11 +103,12 @@ void read_class() {
 					reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
 					reader.set_qa_name("QA_");
 					reader.set_set_name(set_pair.first + to_string(set_num));
+					reader.set_tree_name("nsmTree");
 
 					if(set_pair.first == "EP_Rotate")  { reader.set_event_plane(true); }
 					else { reader.set_event_plane(false); }
 
-					if(set_pair.first == "No_Rotate" || set_pair.first == "EP_Rotate") { reader.set_rotate_random(false); }
+					if(set_pair.first == "No_Rotate" || set_pair.first == "No_Rotate_Single"  || set_pair.first == "EP_Rotate") { reader.set_rotate_random(false); }
 					else{ reader.set_rotate_random(true); }
 
 					if(set_pair.first == "Pile_Up_01_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
@@ -121,7 +126,7 @@ void read_class() {
 						reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
 					}
 
-					if(set_pair.first == "Single_Ratio") { reader.set_single_ratio(true); reader.mix.set_single_ratio(true); }
+					if(set_pair.first == "Single_Ratio" || set_pair.first == "No_Rotate_Single" ) { reader.set_single_ratio(true); reader.mix.set_single_ratio(true); }
 
 					if(set_pair.first == "Efficiency_08_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
 					else if(set_pair.first == "Efficiency_05_") { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
@@ -139,8 +144,7 @@ void read_class() {
 					reader.mix.set_min_events(150);
 					if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
 					else { reader.mix.set_mixes_per_event(10); }
-//					reader.read_trees();
-					pool.enqueue(&TreeReader::read_trees, reader);
+					pool.enqueue(&TreeReader::read_ampt_trees, reader);
 				}
 				this_thread::sleep_for(chrono::seconds(sleep));
 			}

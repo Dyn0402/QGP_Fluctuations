@@ -45,20 +45,22 @@ int main() {
 
 void azimuth_bin_analyze() {
 	AzimuthBinAnalyzer analyzer;
-	analyzer.set_in_path("/home/dylan/Desktop/Collab_Meeting/Data_Old_Ref2/");
-	analyzer.set_in_mix_path("/home/dylan/Desktop/Collab_Meeting/Data_Old_Ref2_Mix/");
+	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref2/");
+	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref2_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("3-11-20_ref2_dist_dists.root");
+	analyzer.set_out_root_name("3-18-20_ref2_no_rotate.root");
+	analyzer.set_sets({{"No_Rotate_Single", {0,0}}});
 	analyzer.analyze();
 }
 
 
 void binomial_analyze() {
 	BinomialAnalyzer analyzer;
-	analyzer.set_in_path("/home/dylan/Desktop/Collab_Meeting/Data_Ampt/");
-	analyzer.set_in_mix_path("/home/dylan/Desktop/Collab_Meeting/Data_Ampt_Mix/");
+	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Ampt/");
+	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Ampt_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("3-10-20_ampt_binom_good_plots.root");
+	analyzer.set_out_root_name("3-18-20_ampt_binom_new_rotate.root");
+	analyzer.set_set_name("Single_Ratio");
 	analyzer.set_energies({11, 39});
 	analyzer.analyze();
 }

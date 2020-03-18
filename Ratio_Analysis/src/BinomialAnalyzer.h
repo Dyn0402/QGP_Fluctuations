@@ -45,6 +45,7 @@ public:
 	void set_out_path(string out_path);
 	void set_out_root_name(string name);
 	void set_energies(vector<int> energies);
+	void set_set_name(string set_name);
 
 	// Doers
 	void analyze();

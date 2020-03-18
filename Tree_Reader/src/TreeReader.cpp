@@ -234,6 +234,10 @@ void TreeReader::set_set_name(string set_name) {
 	this->set_name = set_name;
 }
 
+void TreeReader::set_tree_name(string tree_name) {
+	this->tree_name = tree_name;
+}
+
 void TreeReader::set_energy(int energy) {
 	this->energy = energy;
 }
@@ -342,7 +346,47 @@ void TreeReader::read_trees() {
 }
 
 
-// Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.
+// Read files for single energy and write results to text files.
+void TreeReader::read_ampt_trees() {
+	define_qa();
+
+	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
+	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+
+	unsigned num_files = in_files.size();
+	unsigned file_index = 1;
+
+	for(string path:in_files) {
+
+		// Display progress and time while running.
+		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
+			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+		}
+
+		TFile *file = new TFile(path.data(), "READ");
+//		add_cut_hists(file);
+		TTree *tree = (TTree*)file->Get(tree_name.data());
+		read_ampt_tree(tree);  // Read tree from file into data
+		file->Close();
+		delete file;
+		file_index++;
+	}
+
+	reset_out_dir();
+	write_info_file();
+	write_qa();
+	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+	if(mixed) { mix.write_mixed_data(); }
+	if(mixed_sets) { mix_sets.write_mixed_data(); }
+	if(rand_data) {random.write_random_data(); }
+	cout << endl;
+}
+
+
+// Read individual tree. Read out and then process each event.
 void TreeReader::read_tree(TTree* tree) {
 	tree_leaves leaves = get_tree_leaves(tree);
 
@@ -360,80 +404,110 @@ void TreeReader::read_tree(TTree* tree) {
 			}
 		}
 
-		// Check if each event is good. Analyze if so, continue if not.
-		if(check_event_good(event)) {
-			vector<double> good_proton_angles = {};
-
-			// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
-			for(Track proton:event.get_protons()) {
-				if(check_proton_good(proton)) {
-					if(efficiency) {  // Skip good proton with chance efficiency_prob
-						if(trand->Rndm() < efficiency_prob) { continue; }
-					}
-					good_proton_angles.push_back(proton.get_phi());
-				}
-			}
-
-			// Get centrality bin for event from ref_multn value
-			refmultCorrUtil->init(event.get_run());
-			refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
-			int cent16_corr = refmultCorrUtil->getCentralityBin16();
-			int cent9_corr = refmultCorrUtil->getCentralityBin9();
-
-			// If there are enough good protons, calculate ratios for each division and save to data.
-			if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
-				cent16_events.Fill(cent16_corr);
-				cent9_events.Fill(cent9_corr);
-				event_cut_hist.Fill("Enough Good Protons", 1);
-
-				int cent;
-				if(cent_binning == 16) {
-					cent = cent16_corr;
-				} else {
-					cent = cent9_corr;
-				}
-
-				// If mixed/rand flagged append event to mix/rand object.
-				if(mixed) { mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz()); }
-				if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_refn()); }
-				if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_refn(), trand); }
+		process_event(event);
+		event_index++;
+	}
+}
 
 
-				if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
-					good_proton_angles = rotate_angles(good_proton_angles, -event.get_event_plane());
-				} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
-					double rand_angle = trand->Rndm() * 2 * M_PI;
-					good_proton_angles = rotate_angles(good_proton_angles, rand_angle);
-					event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));
-				}
+void TreeReader::read_ampt_tree(TTree* tree) {
+	Event *event_pointer = new Event;
+	TBranch *event_branch = tree->GetBranch("event");
+	event_branch->SetAddress(&event_pointer);
 
+	int event_index = 0;
+	while(tree->GetEvent(event_index)) {
+		Event event = *event_pointer;
 
-				for(int div:divs) {
-					vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
-
-					// Save ratio values to data
-					if(single_ratio) { // Only save a single ratio per event at random.
-						if(cbwc) {
-							data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
-						} else {
-							data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
-						}
-					} else { // Save all ratios from event.
-						for(int protons_in_bin:event_ratios) {
-							if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-								data[div][event.get_refn()][good_proton_angles.size()][protons_in_bin]++;
-							} else {
-								data[div][cent][good_proton_angles.size()][protons_in_bin]++;
-							}
-						}
-					}
-
+		if(pile_up) {
+			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
+				event_index++;
+				if(tree->GetEntry(event_index)) {
+					Event event2 = *event_pointer;
+					event.pile_up(event2);
 				}
 			}
 		}
+
+		process_event(event);
 		event_index++;
 	}
-//	delete event_pointer;
+}
+
+
+//  For good events/tracks, azimuthally bin protons and save to data
+void TreeReader::process_event(Event& event) {
+	// Check if each event is good. Analyze if so, continue if not.
+	if(check_event_good(event)) {
+		vector<double> good_proton_angles = {};
+
+		// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
+		for(Track proton:event.get_protons()) {
+			if(check_proton_good(proton)) {
+				if(efficiency) {  // Skip good proton with chance efficiency_prob
+					if(trand->Rndm() < efficiency_prob) { continue; }
+				}
+				good_proton_angles.push_back(proton.get_phi());
+			}
+		}
+
+		// Get centrality bin for event from ref_multn value
+		refmultCorrUtil->init(event.get_run());
+		refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+		int cent16_corr = refmultCorrUtil->getCentralityBin16();
+		int cent9_corr = refmultCorrUtil->getCentralityBin9();
+
+		// If there are enough good protons, calculate ratios for each division and save to data.
+		if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
+			cent16_events.Fill(cent16_corr);
+			cent9_events.Fill(cent9_corr);
+			event_cut_hist.Fill("Enough Good Protons", 1);
+
+			int cent;
+			if(cent_binning == 16) {
+				cent = cent16_corr;
+			} else {
+				cent = cent9_corr;
+			}
+
+			// If mixed/rand flagged append event to mix/rand object.
+			if(mixed) { mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz()); }
+			if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_refn()); }
+			if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_refn(), trand); }
+
+
+			if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
+				good_proton_angles = rotate_angles(good_proton_angles, -event.get_event_plane());
+			} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
+				double rand_angle = trand->Rndm() * 2 * M_PI;
+				good_proton_angles = rotate_angles(good_proton_angles, rand_angle);
+				event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));
+			}
+
+
+			for(int div:divs) {
+				vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
+
+				// Save ratio values to data
+				if(single_ratio) { // Only save a single ratio per event at random.
+					if(cbwc) {
+						data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+					} else {
+						data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+					}
+				} else { // Save all ratios from event.
+					for(int protons_in_bin:event_ratios) {
+						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
+							data[div][event.get_refn()][good_proton_angles.size()][protons_in_bin]++;
+						} else {
+							data[div][cent][good_proton_angles.size()][protons_in_bin]++;
+						}
+					}
+				}
+
+			}
+		}
+	}
 }
 
 

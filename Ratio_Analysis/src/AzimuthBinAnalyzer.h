@@ -45,6 +45,7 @@ public:
 	void set_in_mix_path(string path);
 	void set_out_path(string path);
 	void set_out_root_name(string name);
+	void set_sets(map<string, vector<int>> sets);
 
 	// Doers
 	void analyze();

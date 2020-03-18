@@ -63,6 +63,10 @@ void BinomialAnalyzer::set_energies(vector<int> energies) {
 	energy_list = energies;
 }
 
+void BinomialAnalyzer::set_set_name(string set_name) {
+	this->set_name = set_name;
+}
+
 // Doers
 
 void BinomialAnalyzer::analyze() {

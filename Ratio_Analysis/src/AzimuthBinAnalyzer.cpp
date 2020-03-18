@@ -51,6 +51,9 @@ void AzimuthBinAnalyzer::set_out_root_name(string name) {
 	out_root_name = name;
 }
 
+void AzimuthBinAnalyzer::set_sets(map<string, vector<int>> sets) {
+	this->sets = sets;
+}
 
 // Doers
 

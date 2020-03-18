@@ -97,6 +97,7 @@ public:
 	void set_qa_path(string path);
 	void set_qa_name(string name);
 	void set_set_name(string set_name);
+	void set_tree_name(string tree_name);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_cbwc(bool cbwc);
@@ -115,6 +116,7 @@ public:
 
 	// Doers
 	void read_trees();
+	void read_ampt_trees();
 	void write_info_file();
 
 	// Attributes
@@ -163,7 +165,9 @@ private:
 
 	// Doers
 	void read_tree(TTree* tree);
+	void read_ampt_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
+	void process_event(Event& event);
 
 	tree_leaves get_tree_leaves(TTree* tree);
 	tree_leaves get_tree_leaves_new(TTree* tree);
