@@ -75,6 +75,7 @@ public:
 	unsigned get_refn();
 	unsigned get_btof();
 	vector<Track> get_protons();
+	int get_num_protons();
 
 	// Setters
 	void set_vx(double vx);

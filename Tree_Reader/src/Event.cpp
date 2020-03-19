@@ -81,7 +81,11 @@ unsigned Event::get_btof() {
 }
 
 vector<Track> Event::get_protons() {
-	return(protons);
+	return(protons);  // Can I return reference to speed up?
+}
+
+int Event::get_num_protons() {
+	return( (int)protons.size() );
 }
 
 
@@ -122,7 +126,7 @@ void Event::set_btof(unsigned btof) {
 }
 
 void Event::set_protons(vector<Track> protons) {
-	this->protons = protons;
+	this->protons = protons;  // Currently copying vector, can I take reference/move to speed up?
 }
 
 

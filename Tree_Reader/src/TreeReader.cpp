@@ -398,7 +398,7 @@ void TreeReader::sim_events(int num_events, int cent) {
 		Event event(event_defs, energy);
 		vector<double> angles = sim.simulate_event();
 		vector<Track> tracks;
-		for(double angle:angles) {
+		for(double& angle:angles) {
 			Track track(track_defs);
 			track.set_phi(angle);
 			tracks.push_back(track);
@@ -497,7 +497,7 @@ void TreeReader::process_event(Event& event) {
 		vector<double> good_proton_angles = {};
 
 		// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
-		for(Track proton:event.get_protons()) {
+		for(Track& proton:event.get_protons()) {
 			if(check_proton_good(proton)) {
 				if(efficiency) {  // Skip good proton with chance efficiency_prob
 					if(trand->Rndm() < efficiency_prob) { continue; }
@@ -524,7 +524,7 @@ void TreeReader::process_event(Event& event) {
 			} else {
 				cent = cent9_corr;
 			}
-			post_n_protons[cent].Fill((int)event.get_protons().size());
+			post_n_protons[cent].Fill((int)good_proton_angles.size());
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if(mixed) { mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz()); }
@@ -547,9 +547,9 @@ void TreeReader::process_event(Event& event) {
 				// Save ratio values to data
 				if(single_ratio) { // Only save a single ratio per event at random.
 					if(cbwc) {
-						data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+						data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
 					} else {
-						data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]++;
+						data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
 					}
 				} else { // Save all ratios from event.
 					for(int protons_in_bin:event_ratios) {
@@ -797,7 +797,7 @@ void TreeReader::add_cut_hists(TFile *file) {
 
 
 //Returns true if event is good, false if it is bad.
-bool TreeReader::check_event_good(Event event) {
+bool TreeReader::check_event_good(Event& event) {
 	bool good_event = false;
 	fill_pre_event_qa(event);
 	event_cut_hist.Fill("Original", 1);
@@ -829,8 +829,8 @@ bool TreeReader::check_good_run(int run) {
 
 //Checks if there are enough protons in the event.
 //If more protons than minimum, return true, else false.
-bool TreeReader::check_enough_protons(Event event) {
-	if((int)event.get_protons().size() >=  cut.min_multi) { return(true);	}
+bool TreeReader::check_enough_protons(Event& event) {
+	if(event.get_num_protons() >=  cut.min_multi) { return(true);	}
 	else { return(false); }
 }
 
@@ -849,7 +849,7 @@ bool TreeReader::check_slope(int btof, int ref_mult) {
 
 
 // Returns true if proton is good and false if proton is bad.
-bool TreeReader::check_proton_good(Track proton) {
+bool TreeReader::check_proton_good(Track& proton) {
 	bool good_proton = false;
 	track_cut_hist.Fill("Original", 1);
 
@@ -995,7 +995,7 @@ void TreeReader::define_qa() {
 
 
 // Fill histograms for pre-qa for tracks
-void TreeReader::fill_pre_track_qa(Track proton) {
+void TreeReader::fill_pre_track_qa(Track&proton) {
 	pre_phi_hist.Fill(proton.get_phi());
 	pre_p_hist.Fill(proton.get_p());
 	pre_pt_hist.Fill(proton.get_pt());
@@ -1008,7 +1008,7 @@ void TreeReader::fill_pre_track_qa(Track proton) {
 
 
 // Fill histograms for post-qa for tracks
-void TreeReader::fill_post_track_qa(Track proton) {
+void TreeReader::fill_post_track_qa(Track& proton) {
 	post_phi_hist.Fill(proton.get_phi());
 	post_p_hist.Fill(proton.get_p());
 	post_pt_hist.Fill(proton.get_pt());
@@ -1021,7 +1021,7 @@ void TreeReader::fill_post_track_qa(Track proton) {
 
 
 // Fill histograms for pre-qa for event
-void TreeReader::fill_pre_event_qa(Event event) {
+void TreeReader::fill_pre_event_qa(Event& event) {
 	pre_run_hist.Fill(event.get_run());
 	pre_vx_hist.Fill(event.get_vx());
 	pre_vy_hist.Fill(event.get_vy());
@@ -1033,7 +1033,7 @@ void TreeReader::fill_pre_event_qa(Event event) {
 }
 
 // Fill histograms for post-qa for event
-void TreeReader::fill_post_event_qa(Event event) {
+void TreeReader::fill_post_event_qa(Event& event) {
 	post_run_hist.Fill(event.get_run());
 	post_vx_hist.Fill(event.get_vx());
 	post_vy_hist.Fill(event.get_vy());

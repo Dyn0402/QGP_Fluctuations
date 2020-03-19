@@ -80,7 +80,7 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{3,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"No_BTof_Rej",{0,8}}, {"Pile_Up_0008_",{0,8}}, {"Pile_Up_0005_",{0,8}}, {"Pile_Up_0002_",{0,8}}};
-	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s",{0,0}}, {"Sim_05p0s",{0,0}}};
+	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s",{0,0}}, {"Sim_05p002s",{0,0}}, {"Sim_05p002s_No_Rotate",{0,0}}, {"Sim_15p002s",{0,0}}};
 	int sleep = 60;
 
 	ROOT::EnableThreadSafety();
@@ -108,7 +108,7 @@ void read_class() {
 					if(set_pair.first == "EP_Rotate")  { reader.set_event_plane(true); }
 					else { reader.set_event_plane(false); }
 
-					if(set_pair.first == "No_Rotate" || set_pair.first == "No_Rotate_Single"  || set_pair.first == "EP_Rotate") { reader.set_rotate_random(false); }
+					if(set_pair.first == "No_Rotate" || set_pair.first == "No_Rotate_Single"  || set_pair.first == "EP_Rotate" || set_pair.first == "Sim_05p002s_No_Rotate") { reader.set_rotate_random(false); }
 					else{ reader.set_rotate_random(true); }
 
 					if(set_pair.first == "Pile_Up_01_") { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
@@ -136,7 +136,8 @@ void read_class() {
 					else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
 
 					if(set_pair.first == "Sim_0p0s") { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
-					else if(set_pair.first == "Sim_05p0s") { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.0); }
+					else if(set_pair.first == "Sim_05p002s" || set_pair.first == "Sim_05p002s_No_Rotate") { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
+					else if(set_pair.first == "Sim_15p002s") { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
 
 					reader.set_mixed_sets(false);
 					reader.set_rand_data(false);

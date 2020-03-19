@@ -181,18 +181,18 @@ private:
 	tree_leaves get_tree_leaves(TTree* tree);
 	tree_leaves get_tree_leaves_new(TTree* tree);
 
-	bool check_event_good(Event event);
-	bool check_enough_protons(Event event);
+	bool check_event_good(Event& event);
+	bool check_enough_protons(Event& event);
 	bool check_good_run(int run);
 	bool check_slope(int btof, int ref_mult);
-	bool check_proton_good(Track proton);
+	bool check_proton_good(Track& proton);
 
 	void define_qa();
 	void add_cut_hists(TFile* file);
-	void fill_pre_track_qa(Track proton);
-	void fill_post_track_qa(Track proton);
-	void fill_pre_event_qa(Event event);
-	void fill_post_event_qa(Event event);
+	void fill_pre_track_qa(Track& proton);
+	void fill_post_track_qa(Track& proton);
+	void fill_pre_event_qa(Event& event);
+	void fill_post_event_qa(Event& event);
 	void write_qa();
 
 	void reset_out_dir();
