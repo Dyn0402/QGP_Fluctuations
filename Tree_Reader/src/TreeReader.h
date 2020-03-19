@@ -29,6 +29,7 @@
 #include "Mixer.h"
 #include "MixerSets.h"
 #include "Randomizer.h"
+#include "Simulator2.h"
 
 using namespace std;
 
@@ -117,6 +118,7 @@ public:
 	// Doers
 	void read_trees();
 	void read_ampt_trees();
+	void sim_events(int num_events, int cent);
 	void write_info_file();
 
 	// Attributes
@@ -126,6 +128,10 @@ public:
 	MixerSets mix_sets;
 	Mixer mix;
 	Randomizer random;
+
+	Simulator2 sim;
+	event_defaults event_defs;
+	track_defaults track_defs;
 
 private:
 	// Attributes
@@ -143,6 +149,8 @@ private:
 	string in_path = "/home/dylan/Research/Trees/";
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
+
+	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
 
 	vector<int> divs = {2,3,4,5,6};
 	int energy;
@@ -168,6 +176,7 @@ private:
 	void read_ampt_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
 	void process_event(Event& event);
+	TH1D* get_sim_proton_dist(int cent);
 
 	tree_leaves get_tree_leaves(TTree* tree);
 	tree_leaves get_tree_leaves_new(TTree* tree);
@@ -237,6 +246,8 @@ private:
 
 	TH1I pre_m2_hist;
 	TH1I post_m2_hist;
+
+	map<int, TH1D> post_n_protons;
 
 };
 

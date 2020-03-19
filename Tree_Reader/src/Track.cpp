@@ -35,6 +35,17 @@ Track::Track(double pt, double p, double phi, double eta, float dca, double nsig
 	this->charge = charge;
 }
 
+Track::Track(const track_defaults& defaults) {
+	pt = defaults.pt;
+	p = defaults.p;
+	phi = defaults.phi;
+	eta = defaults.eta;
+	dca = defaults.dca;
+	nsigma = defaults.nsigma;
+	beta = defaults.beta;
+	charge = defaults.charge;
+}
+
 Track::~Track() {}
 
 

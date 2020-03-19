@@ -14,11 +14,25 @@
 //#include <TObject.h>
 
 
+struct track_defaults {
+	double pt = 0.7;
+	double p = 0.7;
+	double phi = 0.0;
+	double eta = 0.0;
+
+	float dca = 0.1;
+	double nsigma = 1.0;
+	float beta = -999;
+	short charge = 1;
+};
+
+
 //class Track : public TObject {
 class Track {
 public:
 	Track();
 	Track(double pt, double p, double phi, double eta, float dca, double nsigma, float beta, short charge);
+	Track(const track_defaults& defaults);
 	~Track();
 
 	double get_pt();

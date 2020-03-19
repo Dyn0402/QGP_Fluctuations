@@ -42,12 +42,25 @@ struct tree_leaves {
 	TLeaf *eta;
 };
 
+struct event_defaults {
+	double vx = 0.;
+	double vy = 0.;
+	double vz = 0.;
+	double event_plane = 0.;
+
+	// Values for centrality bin 0-5% in 9 bins
+	map<int, unsigned> run {{7, 11130000}, {11, 11152039}, {19, 12114300}, {27, 12175000}, {39, 11100000}, {62, 11079000}};
+	map<int, unsigned> btof {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};
+	unsigned ref = 350;
+	unsigned refn = 600;
+};
 
 //class Event : public TObject {
 class Event {
 public:
 	// Structors
 	Event();
+	Event(event_defaults& defaults, int energy);
 	Event(tree_leaves leaves);
 	Event(Event *event);
 	~Event();
@@ -80,6 +93,7 @@ public:
 	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned refn, unsigned btof, double event_plane);
 	void clear();
 	void pile_up(Event pile);
+	void set_defaults();
 
 //	ClassDef(Event, 1);
 

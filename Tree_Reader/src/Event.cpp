@@ -24,6 +24,17 @@ Event::Event() {
 	btof = 0;
 }
 
+Event::Event(event_defaults& defaults, int energy) {
+	vx = defaults.vx;
+	vy = defaults.vy;
+	vz = defaults.vz;
+	event_plane = defaults.event_plane;
+	ref = defaults.ref;
+	run = defaults.run[energy];
+	refn = defaults.refn;
+	btof = defaults.btof[energy];
+}
+
 Event::Event(tree_leaves leaves) {
 	read_tree_event(leaves);
 }

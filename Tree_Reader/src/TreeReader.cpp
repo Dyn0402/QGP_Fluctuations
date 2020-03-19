@@ -386,6 +386,41 @@ void TreeReader::read_ampt_trees() {
 }
 
 
+void TreeReader::sim_events(int num_events, int cent) {
+	define_qa();
+
+	sim.set_proton_dist_hist(get_sim_proton_dist(cent));
+	for(int i=0; i<num_events; i++) {
+		if(!(i % (int)(num_events/10.0+0.5))) {
+			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*i/num_events+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+		}
+		Event event(event_defs, energy);
+		vector<double> angles = sim.simulate_event();
+		vector<Track> tracks;
+		for(double angle:angles) {
+			Track track(track_defs);
+			track.set_phi(angle);
+			tracks.push_back(track);
+		}
+		event.set_protons(tracks);
+
+		process_event(event);
+	}
+
+	reset_out_dir();
+	write_info_file();
+	write_qa();
+	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV " << num_events << " simulated events. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+	if(mixed) { mix.write_mixed_data(); }
+	if(mixed_sets) { mix_sets.write_mixed_data(); }
+	if(rand_data) {random.write_random_data(); }
+	cout << endl;
+}
+
+
 // Read individual tree. Read out and then process each event.
 void TreeReader::read_tree(TTree* tree) {
 	tree_leaves leaves = get_tree_leaves(tree);
@@ -435,6 +470,26 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 }
 
 
+// Get proton distribution for simulation from real data QA plots.
+TH1D* TreeReader::get_sim_proton_dist(int cent) {
+	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + qa_name + to_string(energy) + "GeV.root";
+	TFile *file = new TFile(file_path.data(), "READ");
+	string dataset_path = sim_proton_dist_dataset;
+	dataset_path.pop_back();
+	string dataset = get_name_from_path(dataset_path);
+	string hist_name = ("Proton_Dist_"+dataset+"_"+to_string(energy)+"_"+to_string(cent)).data();
+
+	TH1D *hist = (TH1D*)file->Get(hist_name.data());
+	TH1D *proton_dist = (TH1D*)hist->Clone();
+	proton_dist->SetDirectory(0);
+
+	file->Close();
+	delete file;
+
+	return(proton_dist);
+}
+
+
 //  For good events/tracks, azimuthally bin protons and save to data
 void TreeReader::process_event(Event& event) {
 	// Check if each event is good. Analyze if so, continue if not.
@@ -469,6 +524,7 @@ void TreeReader::process_event(Event& event) {
 			} else {
 				cent = cent9_corr;
 			}
+			post_n_protons[cent].Fill((int)event.get_protons().size());
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if(mixed) { mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz()); }
@@ -674,6 +730,9 @@ void TreeReader::write_info_file() {
 		out << "max_pt_for_m: " << to_string(cut.max_pt_for_m) << endl;
 
 		out << "min_multi: " << to_string(cut.min_multi) << endl;
+
+		out << "sim p_group: " << to_string(sim.get_p_group()) << endl;
+		out << "sim spread_sigma: " << to_string(sim.get_spread_sigma()) << endl;
 	}
 }
 
@@ -886,47 +945,51 @@ void TreeReader::define_qa() {
 	track_cut_hist.GetXaxis()->SetBinLabel(8, "Good mass*");
 
 
-	cent16_events = TH1I(("cent16_events"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
-	cent9_events = TH1I(("cent9_events"+set_name+"_"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
+	cent16_events = TH1I(("cent16_events_"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
+	cent9_events = TH1I(("cent9_events_"+set_name+"_"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
 
-	pre_run_hist = TH1I(("pre_run"+set_name+"_"+to_string(energy)).data(), "pre_run", 1000, 1000000, 100000000);
-	pre_vx_hist = TH1I(("pre_vx"+set_name+"_"+to_string(energy)).data(), "pre_vx", 100, -2.5, 2.5);
-	pre_vy_hist = TH1I(("pre_vy"+set_name+"_"+to_string(energy)).data(), "pre_vy", 100, -2.5, 2.5);
-	pre_vz_hist = TH1I(("pre_vz"+set_name+"_"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
-	pre_ref_hist = TH1I(("pre_ref"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
-	pre_refn_hist = TH1I(("pre_reftwo"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
-	pre_btof_hist = TH1I(("pre_btof"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
-	pre_ep_hist = TH1I(("pre_ep"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
+	pre_run_hist = TH1I(("pre_run_"+set_name+"_"+to_string(energy)).data(), "pre_run", 1000, 1000000, 100000000);
+	pre_vx_hist = TH1I(("pre_vx_"+set_name+"_"+to_string(energy)).data(), "pre_vx", 100, -2.5, 2.5);
+	pre_vy_hist = TH1I(("pre_vy_"+set_name+"_"+to_string(energy)).data(), "pre_vy", 100, -2.5, 2.5);
+	pre_vz_hist = TH1I(("pre_vz_"+set_name+"_"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
+	pre_ref_hist = TH1I(("pre_ref_"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
+	pre_refn_hist = TH1I(("pre_reftwo_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
+	pre_btof_hist = TH1I(("pre_btof_"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
+	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
-	post_run_hist = TH1I(("post_run"+set_name+"_"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
-	post_vx_hist = TH1I(("post_vx"+set_name+"_"+to_string(energy)).data(), "post_vx", 100, -2.5, 2.5);
-	post_vy_hist = TH1I(("post_vy"+set_name+"_"+to_string(energy)).data(), "post_vy", 100, -2.5, 2.5);
-	post_vz_hist = TH1I(("post_vz"+set_name+"_"+to_string(energy)).data(), "post_vz", 100, -55, 55);
-	post_ref_hist = TH1I(("post_ref"+set_name+"_"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
-	post_refn_hist = TH1I(("post_reftwo"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
-	post_btof_hist = TH1I(("post_btof"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
-	post_ep_hist = TH1I(("post_ep"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
+	post_run_hist = TH1I(("post_run_"+set_name+"_"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
+	post_vx_hist = TH1I(("post_vx_"+set_name+"_"+to_string(energy)).data(), "post_vx", 100, -2.5, 2.5);
+	post_vy_hist = TH1I(("post_vy_"+set_name+"_"+to_string(energy)).data(), "post_vy", 100, -2.5, 2.5);
+	post_vz_hist = TH1I(("post_vz_"+set_name+"_"+to_string(energy)).data(), "post_vz", 100, -55, 55);
+	post_ref_hist = TH1I(("post_ref_"+set_name+"_"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
+	post_refn_hist = TH1I(("post_reftwo_"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
+	post_btof_hist = TH1I(("post_btof_"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
+	post_ep_hist = TH1I(("post_ep_"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
-	pre_phi_hist = TH1I(("pre_phi"+set_name+"_"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
-	pre_p_hist = TH1I(("pre_p"+set_name+"_"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
-	pre_pt_hist = TH1I(("pre_pt"+set_name+"_"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
-	pre_beta_hist = TH1I(("pre_beta"+set_name+"_"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
-	pre_charge_hist = TH1I(("pre_charge"+set_name+"_"+to_string(energy)).data(), "pre_charge", 100, -2.5, 2.5);
-	pre_eta_hist = TH1I(("pre_eta"+set_name+"_"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
-	pre_nsigma_hist = TH1I(("pre_nsigma"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
-	pre_dca_hist = TH1I(("pre_dca"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
+	pre_phi_hist = TH1I(("pre_phi_"+set_name+"_"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
+	pre_p_hist = TH1I(("pre_p_"+set_name+"_"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
+	pre_pt_hist = TH1I(("pre_pt_"+set_name+"_"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
+	pre_beta_hist = TH1I(("pre_beta_"+set_name+"_"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
+	pre_charge_hist = TH1I(("pre_charge_"+set_name+"_"+to_string(energy)).data(), "pre_charge", 100, -2.5, 2.5);
+	pre_eta_hist = TH1I(("pre_eta_"+set_name+"_"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
+	pre_nsigma_hist = TH1I(("pre_nsigma_"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
+	pre_dca_hist = TH1I(("pre_dca_"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
 
-	post_phi_hist = TH1I(("post_phi"+set_name+"_"+to_string(energy)).data(), "post_phi", 100, 0.0, 7.0);
-	post_p_hist = TH1I(("post_p"+set_name+"_"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
-	post_pt_hist = TH1I(("post_pt"+set_name+"_"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
-	post_beta_hist = TH1I(("post_beta"+set_name+"_"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);
-	post_charge_hist = TH1I(("post_charge"+set_name+"_"+to_string(energy)).data(), "post_charge", 100, -2.5, 2.5);
-	post_eta_hist = TH1I(("post_eta"+set_name+"_"+to_string(energy)).data(), "post_eta", 100, -1.0, 1.0);
-	post_nsigma_hist = TH1I(("post_nsigma"+set_name+"_"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
-	post_dca_hist = TH1I(("post_dca"+set_name+"_"+to_string(energy)).data(), "post_dca", 100, 0.0, 2.5);
+	post_phi_hist = TH1I(("post_phi_"+set_name+"_"+to_string(energy)).data(), "post_phi", 100, 0.0, 7.0);
+	post_p_hist = TH1I(("post_p_"+set_name+"_"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
+	post_pt_hist = TH1I(("post_pt_"+set_name+"_"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
+	post_beta_hist = TH1I(("post_beta_"+set_name+"_"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);
+	post_charge_hist = TH1I(("post_charge_"+set_name+"_"+to_string(energy)).data(), "post_charge", 100, -2.5, 2.5);
+	post_eta_hist = TH1I(("post_eta_"+set_name+"_"+to_string(energy)).data(), "post_eta", 100, -1.0, 1.0);
+	post_nsigma_hist = TH1I(("post_nsigma_"+set_name+"_"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
+	post_dca_hist = TH1I(("post_dca_"+set_name+"_"+to_string(energy)).data(), "post_dca", 100, 0.0, 2.5);
 
-	pre_m2_hist = TH1I(("pre_m2"+set_name+"_"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
-	post_m2_hist = TH1I(("post_m2"+set_name+"_"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
+	pre_m2_hist = TH1I(("pre_m2_"+set_name+"_"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
+	post_m2_hist = TH1I(("post_m2_"+set_name+"_"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
+
+	for(int i=-1; i<cent_binning; i++) {
+		post_n_protons[i] = TH1D(("Proton_Dist_"+set_name+"_"+to_string(energy)+"_"+to_string(i)).data(), "Proton Distribution", 101, -0.5, 100.5);
+	}
 
 }
 
@@ -1039,6 +1102,10 @@ void TreeReader::write_qa() {
 
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
+
+	for(auto hist:post_n_protons) {
+		hist.second.Write();
+	}
 
 
 	// Make bar plots for event/track cut histograms
@@ -1170,6 +1237,6 @@ void TreeReader::reset_out_dir() {
 	}
 
 	string energy_path = out_path+to_string(energy)+"GeV/";
-	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
+	if(!system(("test -d "+energy_path).data())) { int i = system(("rm -r " + energy_path).data()); if(i) {}}
 	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
 }
