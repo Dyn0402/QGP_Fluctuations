@@ -63,18 +63,31 @@ void BinomialAnalyzer::set_energies(vector<int> energies) {
 	energy_list = energies;
 }
 
-void BinomialAnalyzer::set_set_name(string set_name) {
-	this->set_name = set_name;
+void BinomialAnalyzer::set_sets(map<string, vector<int>> set_name) {
+	this->sets = set_name;
 }
 
 // Doers
 
 void BinomialAnalyzer::analyze() {
 	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
-	TDirectory *set_dir = out_root->mkdir((set_name + to_string(set_num)).data());
-	analyze_subset(set_name, set_num, set_dir);
+	analyze_sets();
 }
 
+
+void BinomialAnalyzer::analyze_sets() {
+	for(pair<string, vector<int>> set:sets) {
+		analyze_set(set.first, set.second);
+	}
+}
+
+
+void BinomialAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
+	TDirectory *set_dir = out_root->mkdir((set_name.data()));
+	for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
+		analyze_subset(set_name, set_num, set_dir);
+	}
+}
 
 void BinomialAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *set_dir) {
 	cout << "Starting Set " + set_name + to_string(set_num) << endl << endl;
@@ -85,15 +98,17 @@ void BinomialAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *
 	map<int, map<int, map<int, AzimuthBinData>>> data = get_data(path);
 	map<int, map<int, map<int, AzimuthBinData>>> data_mix = get_data(path_mix);
 
-	TDirectory *slice_dir = out_root->mkdir("Slice Distributions");
+	TDirectory *set_num_dir = set_dir->mkdir((set_name + to_string(set_num)).data());
+
+	TDirectory *slice_dir = set_num_dir->mkdir("Slice Distributions");
 	plot_slices(data, slice_dir->mkdir("raw"));
 	plot_slices(data_mix, slice_dir->mkdir("mix"));
 
 	map<string, map<int, map<int, map<int,map<int, map<string, Measure>>>>>> slice_stats {{"raw", get_slice_stats(data)}, {"mix", get_slice_stats(data_mix)}};
-	plot_all_stats(slice_stats);
+	plot_all_stats(slice_stats, set_num_dir);
 
 	map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> slice_divided_stats {{"raw", divide_binomial(slice_stats["raw"])}, {"mix", divide_binomial(slice_stats["mix"])}};
-	plot_all_divided_stats(slice_divided_stats);
+	plot_all_divided_stats(slice_divided_stats, set_num_dir);
 
 }
 
@@ -193,8 +208,8 @@ void BinomialAnalyzer::calc_stat(map<int, int> &slice_data, int protons, int ene
 
 // Plotters
 
-void BinomialAnalyzer::draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data) {
-	TDirectory *out_dir = out_root->mkdir("Proton_Bin_Plots");
+void BinomialAnalyzer::draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir) {
+	TDirectory *out_dir = dir->mkdir("Proton_Bin_Plots");
 
 	for(int energy:energy_list) {
 		TDirectory *energy_dir = out_dir->mkdir((to_string(energy)+"GeV").data());
@@ -230,8 +245,8 @@ void BinomialAnalyzer::plot_slices(map<int, map<int, map<int, AzimuthBinData>>> 
 }
 
 
-void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats) {
-	TDirectory* stats_dir = out_root->mkdir("Stats_vs_Total_Protons");
+void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
+	TDirectory* stats_dir = dir->mkdir("Stats_vs_Total_Protons");
 	for(auto &div:divs) {
 		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Divisions").data());
 		for(auto &cent:centralities) {
@@ -246,8 +261,8 @@ void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map
 }
 
 
-void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats) {
-	TDirectory* stats_divided_dir = out_root->mkdir("Stats_Divided_vs_Total_Protons");
+void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
+	TDirectory* stats_divided_dir = dir->mkdir("Stats_Divided_vs_Total_Protons");
 	for(auto &div:divs) {
 		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
 		for(auto &cent:centralities) {

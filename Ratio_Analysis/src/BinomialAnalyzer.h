@@ -45,10 +45,12 @@ public:
 	void set_out_path(string out_path);
 	void set_out_root_name(string name);
 	void set_energies(vector<int> energies);
-	void set_set_name(string set_name);
+	void set_sets(map<string, vector<int>> sets);
 
 	// Doers
 	void analyze();
+	void analyze_set(string set_name, vector<int> set_nums);
+	void analyze_subset(string set_name, int set_num, TDirectory *set_dir);
 
 private:
 	// Parameters
@@ -56,6 +58,8 @@ private:
 	string in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/";  // "/home/dylan/Research/Data_Mix/";
 	string out_path = "/home/dylan/Research/Results/";
 	string out_root_name = "3-05-20_Binomial_Ref3_partial.root";
+
+	map<string, vector<int>> sets {{"Single_Ratio", {0,0}}};
 
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
@@ -90,15 +94,15 @@ private:
 	int min_events = 250;
 
 	// Temporary Parameters
-	string set_name = "Single_Ratio";  // "Rand_Rotate";
-	int set_num = 0;
+//	string set_name = "Single_Ratio";  // "Rand_Rotate";
+//	int set_num = 0;
 
 
 	// Data Containers
 	TFile *out_root;
 
 	// Doers
-	void analyze_subset(string set_name, int set_num, TDirectory *set_dir);
+	void analyze_sets();
 	map<int, map<int, map<int, AzimuthBinData>>> get_data(string path, int min_num_events = 1);  // [energy][div][cent]
 
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> get_slice_stats(map<int, map<int, map<int, AzimuthBinData>>> &data);
@@ -107,11 +111,11 @@ private:
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> divide_binomial(map<int, map<int, map<int, map<int, map<string, Measure>>>>> &slice_stats);
 
 	// Plotters
-	void draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data);
+	void draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir);
 
 	void plot_slices(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir);
-	void plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats);
-	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats);
+	void plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir);
+	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir);
 
 	void slice_dist_plot(map<int, int> &slice_data, int total_protons, string name);
 	void slice_stats_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);

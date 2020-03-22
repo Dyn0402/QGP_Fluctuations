@@ -35,8 +35,8 @@ void binomial_analyze();
 
 
 int main() {
-	azimuth_bin_analyze();
-//	binomial_analyze();
+//	azimuth_bin_analyze();
+	binomial_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -45,23 +45,23 @@ int main() {
 
 void azimuth_bin_analyze() {
 	AzimuthBinAnalyzer analyzer;
-	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref2/");
-	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref2_Mix/");
+	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Sim/");
+	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Sim_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("3-18-20_ref2_no_rotate.root");
-	analyzer.set_sets({{"No_Rotate_Single", {0,0}}});
+	analyzer.set_out_root_name("3-19-20_sim.root");
+	analyzer.set_sets({{"Sim_0p0s", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}}, {"Sim_15p002s", {0,0}}});
 	analyzer.analyze();
 }
 
 
 void binomial_analyze() {
 	BinomialAnalyzer analyzer;
-	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Ampt/");
-	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Ampt_Mix/");
+	analyzer.set_in_path("/media/dylan/SSD_Storage/Research/Data_Sim/");
+	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Sim_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("3-18-20_ampt_binom_new_rotate.root");
-	analyzer.set_set_name("Single_Ratio");
-	analyzer.set_energies({11, 39});
+	analyzer.set_out_root_name("3-19-20_sim_binom.root");
+	analyzer.set_sets({{"Sim_0p0s", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}}, {"Sim_15p002s", {0,0}}});
+//	analyzer.set_energies({11, 39});
 	analyzer.analyze();
 }
 
