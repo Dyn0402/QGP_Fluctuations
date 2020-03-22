@@ -24,14 +24,14 @@ Event::Event() {
 	btof = 0;
 }
 
-Event::Event(event_defaults& defaults, int energy) {
+Event::Event(event_defaults& defaults, int energy, int ref_num, int cent) {
 	vx = defaults.vx;
 	vy = defaults.vy;
 	vz = defaults.vz;
 	event_plane = defaults.event_plane;
 	ref = defaults.ref;
 	run = defaults.run[energy];
-	refn = defaults.refn;
+	refn = defaults.refn[ref_num][energy][cent];
 	btof = defaults.btof[energy];
 }
 
