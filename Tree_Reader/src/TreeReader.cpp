@@ -1010,7 +1010,7 @@ void TreeReader::define_qa() {
 	post_btof_hist = TH1I(("post_btof_"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
 	post_ep_hist = TH1I(("post_ep_"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
-	pre_phi_hist = TH1I(("pre_phi_"+set_name+"_"+to_string(energy)).data(), "pre_phi", 1000, 0.0, 2*TMath::Pi());
+	pre_phi_hist = TH1D(("pre_phi_"+set_name+"_"+to_string(energy)).data(), "pre_phi", 1000, 0.0, 2*TMath::Pi());
 	pre_p_hist = TH1I(("pre_p_"+set_name+"_"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
 	pre_pt_hist = TH1I(("pre_pt_"+set_name+"_"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
 	pre_beta_hist = TH1I(("pre_beta_"+set_name+"_"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
@@ -1019,7 +1019,7 @@ void TreeReader::define_qa() {
 	pre_nsigma_hist = TH1I(("pre_nsigma_"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
 	pre_dca_hist = TH1I(("pre_dca_"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
 
-	post_phi_hist = TH1I(("post_phi_"+set_name+"_"+to_string(energy)).data(), "post_phi", 1000, 0.0, 2*TMath::Pi());
+	post_phi_hist = TH1D(("post_phi_"+set_name+"_"+to_string(energy)).data(), "post_phi", 1000, 0.0, 2*TMath::Pi());
 	post_p_hist = TH1I(("post_p_"+set_name+"_"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
 	post_pt_hist = TH1I(("post_pt_"+set_name+"_"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
 	post_beta_hist = TH1I(("post_beta_"+set_name+"_"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);

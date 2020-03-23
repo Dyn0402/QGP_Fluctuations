@@ -231,7 +231,7 @@ private:
 	TH1I post_btof_hist;
 	TH1I post_ep_hist;
 
-	TH1I pre_phi_hist;
+	TH1D pre_phi_hist;
 	TH1I pre_p_hist;
 	TH1I pre_pt_hist;
 	TH1I pre_beta_hist;
@@ -240,7 +240,7 @@ private:
 	TH1I pre_nsigma_hist;
 	TH1I pre_dca_hist;
 
-	TH1I post_phi_hist;
+	TH1D post_phi_hist;
 	TH1I post_p_hist;
 	TH1I post_pt_hist;
 	TH1I post_beta_hist;

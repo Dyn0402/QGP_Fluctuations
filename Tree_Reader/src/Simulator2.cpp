@@ -107,8 +107,16 @@ void Simulator2::set_efficiency_dist_hist(TH1D *hist) {
 	efficiency_dist = hist;
 	efficiency_dist->SetDirectory(0);
 	norm_eff_dist = (TH1D*)efficiency_dist->Clone();
+//	cout << "Scale: " << hom_eff/norm_eff_dist->GetMaximum() << endl;
 	norm_eff_dist->Scale(hom_eff/norm_eff_dist->GetMaximum());
 	norm_eff_dist->SetDirectory(0);
+//	cout << "hist: " << efficiency_dist << " | num_bins: " << efficiency_dist->GetXaxis()->GetNbins() << " | max_bin_val: " << efficiency_dist->GetMaximum() << endl;
+//	for(int bin = 1; bin <= efficiency_dist->GetXaxis()->GetNbins(); bin++) {
+//		cout << "bin: " << bin << " | bin_content: " << efficiency_dist->GetBinContent(bin) << endl;
+//	}
+//	for(int bin = 1; bin <= norm_eff_dist->GetXaxis()->GetNbins(); bin++) {
+//		cout << "bin: " << bin << " | bin_content: " << norm_eff_dist->GetBinContent(bin) << endl;
+//	}
 	simulate_event = bind(&Simulator2::sim_event_eff, this);
 }
 
@@ -315,15 +323,19 @@ vector<double> Simulator2::sim_event_eff() {
 	double group_angle, new_angle;
 	vector<double> proton_angles = {};
 
+//	cout << "here" << endl;
+
 	int n_protons = get_protons();
 
 	if(n_protons > 0) while((int)proton_angles.size() < 1) {
 		new_angle = sim_rand->Rndm() * 2 * M_PI;
+//		cout << "new angle: " << new_angle << "  |  bin_content: " << norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) << endl;
 		if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
 			proton_angles.push_back(new_angle);
 		}
 	}
 	while((int)proton_angles.size() < n_protons) {
+//		cout << "here2" << endl;
 		if(sim_rand->Rndm() < pars.p_group) {
 			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
 			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
@@ -400,9 +412,9 @@ double Simulator2::get_group_angle(double center) {
 
 //	cout << wrap_gaus(0, 0, pars.spread_sigma, 0, 2*TMath::Pi()) << endl;
 
-	if(convo->Integral() <= 0) {
-		cout << "Get random convo   bin: " << convo->FindBin(center) << "  content: " << convo->GetBinContent(convo->FindBin(center)) << "  center: " << center << endl;
-	}
+//	if(convo->Integral() <= 0) {
+//		cout << "Get random convo   bin: " << convo->FindBin(center) << "  content: " << convo->GetBinContent(convo->FindBin(center)) << "  center: " << center << endl;
+//	}
 	double new_angle = convo->GetRandom();
 	delete convo;
 	return(new_angle);
