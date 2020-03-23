@@ -120,6 +120,7 @@ void Simulator2::set_efficiency_dist_hist(string root_path, string hist_name) {
 
 	file->Close();
 	delete file;
+	simulate_event = bind(&Simulator2::sim_event_eff, this);
 }
 
 void Simulator2::set_num_event_mix(int num) {
@@ -325,8 +326,10 @@ vector<double> Simulator2::sim_event_eff() {
 	while((int)proton_angles.size() < n_protons) {
 		if(sim_rand->Rndm() < pars.p_group) {
 			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
-			while(group_angle >= 2*M_PI) { group_angle -= 2*M_PI; }  // Force to range [0, 2*pi)
-			while(group_angle < 0) { group_angle += 2*M_PI; }
+			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			if(group_angle < 0) { group_angle += 2*M_PI; }
+//			while(group_angle >= 2*M_PI) { group_angle -= 2*M_PI; }  // Force to range [0, 2*pi)
+//			while(group_angle < 0) { group_angle += 2*M_PI; }
 			if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(group_angle)) >= sim_rand->Rndm()) {
 					proton_angles.push_back(group_angle);
 			}
