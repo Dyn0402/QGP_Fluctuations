@@ -90,7 +90,7 @@ void read_class() {
 
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(1);//thread::hardware_concurrency());
+		ThreadPool pool(thread::hardware_concurrency());
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
