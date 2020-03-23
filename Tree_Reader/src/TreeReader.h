@@ -99,6 +99,7 @@ public:
 	void set_qa_name(string name);
 	void set_set_name(string set_name);
 	void set_tree_name(string tree_name);
+	void set_sim_proton_dist_dataset(string path);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_cbwc(bool cbwc);
@@ -110,6 +111,7 @@ public:
 	void set_pile_up(bool pile_up);
 	void set_efficiency(bool efficiency);
 	void set_single_ratio(bool single_ratio);
+	void set_sim_eff(bool sim_eff);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
@@ -118,7 +120,7 @@ public:
 	// Doers
 	void read_trees();
 	void read_ampt_trees();
-	void sim_events(int num_events, int cent);
+	void sim_events(map<int, int> cent_num_events);
 	void write_info_file();
 
 	// Attributes
@@ -164,6 +166,7 @@ private:
 	bool pile_up;
 	bool efficiency;
 	bool single_ratio;
+	bool sim_eff;
 
 	double pile_up_prob;
 	double efficiency_prob;
@@ -176,7 +179,9 @@ private:
 	void read_ampt_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
 	void process_event(Event& event);
+
 	TH1D* get_sim_proton_dist(int cent);
+	TH1D* get_sim_efficiency_dist();
 
 	tree_leaves get_tree_leaves(TTree* tree);
 	tree_leaves get_tree_leaves_new(TTree* tree);

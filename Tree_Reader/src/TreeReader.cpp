@@ -53,6 +53,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	sim_eff = false;
 
 	pile_up_prob = 0;
 	efficiency_prob = 0;
@@ -66,6 +67,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	this->energy = energy;
 
 	mix = Mixer(energy, single_ratio, rotate_random);
+	sim = Simulator2();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -81,6 +83,7 @@ TreeReader::TreeReader(int energy) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	sim_eff = false;
 
 	pile_up_prob = 0;
 	efficiency_prob = 0;
@@ -93,6 +96,7 @@ TreeReader::TreeReader(int energy) {
 	this->energy = energy;
 
 	mix = Mixer(energy, single_ratio, rotate_random);
+	sim = Simulator2();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -108,6 +112,7 @@ TreeReader::TreeReader() {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	sim_eff = false;
 
 	pile_up_prob = 0;
 	efficiency_prob = 0;
@@ -120,6 +125,7 @@ TreeReader::TreeReader() {
 	this->energy = 7;
 
 	mix = Mixer(energy, single_ratio, rotate_random);
+	sim = Simulator2();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -238,6 +244,10 @@ void TreeReader::set_tree_name(string tree_name) {
 	this->tree_name = tree_name;
 }
 
+void TreeReader::set_sim_proton_dist_dataset(string path) {
+	sim_proton_dist_dataset = path;
+}
+
 void TreeReader::set_energy(int energy) {
 	this->energy = energy;
 }
@@ -282,6 +292,10 @@ void TreeReader::set_efficiency(bool efficiency) {
 void TreeReader::set_single_ratio(bool single_ratio) {
 	this->single_ratio = single_ratio;
 	mix.set_single_ratio(single_ratio);
+}
+
+void TreeReader::set_sim_eff(bool sim_eff) {
+	this->sim_eff = sim_eff;
 }
 
 void TreeReader::set_pile_up_prob(double pile_up_prob) {
@@ -386,33 +400,43 @@ void TreeReader::read_ampt_trees() {
 }
 
 
-void TreeReader::sim_events(int num_events, int cent) {
+void TreeReader::sim_events(map<int, int> cent_num_events) {
 	define_qa();
 
-	sim.set_proton_dist_hist(get_sim_proton_dist(cent));
-	for(int i=0; i<num_events; i++) {
-		if(!(i % (int)(num_events/10.0+0.5))) {
-			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*i/num_events+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
-		}
-		Event event(event_defs, energy);
-		vector<double> angles = sim.simulate_event();
-		vector<Track> tracks;
-		for(double& angle:angles) {
-			Track track(track_defs);
-			track.set_phi(angle);
-			tracks.push_back(track);
-		}
-		event.set_protons(tracks);
+	if(sim_eff && sim.get_efficiency_dist() == NULL)  {
+		sim.set_efficiency_dist_hist(get_sim_efficiency_dist());
+	}
 
-		process_event(event);
+	int total_events = 0;
+	for(auto cent:cent_num_events) {
+		total_events += cent.second;
+		sim.set_proton_dist_hist(get_sim_proton_dist(cent.first));
+		for(int i=0; i<cent.second; i++) {
+			if(!(i % (int)(cent.second/10.0+0.5))) {
+				chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+				auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+				vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+				cout << " " << set_name << " " << energy << "GeV Centrality " << cent.first << " " << (int)(100.0*i/cent.second+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+			}
+			Event event(event_defs, energy, ref_num, cent.first);
+			vector<double> angles = sim.simulate_event();
+			vector<Track> tracks;
+			for(double& angle:angles) {
+				Track track(track_defs);
+				track.set_phi(angle);
+				tracks.push_back(track);
+			}
+			event.set_protons(tracks);
+
+			process_event(event);
+		}
 	}
 
 	reset_out_dir();
 	write_info_file();
 	write_qa();
 	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV " << num_events << " simulated events. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV " << total_events << " simulated events. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
@@ -487,6 +511,26 @@ TH1D* TreeReader::get_sim_proton_dist(int cent) {
 	delete file;
 
 	return(proton_dist);
+}
+
+
+// Get efficiency distribution for simulation from real data QA plots.
+TH1D* TreeReader::get_sim_efficiency_dist() {
+	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + qa_name + to_string(energy) + "GeV.root";
+	TFile *file = new TFile(file_path.data(), "READ");
+	string dataset_path = sim_proton_dist_dataset;
+	dataset_path.pop_back();
+	string dataset = get_name_from_path(dataset_path);
+	string hist_name = ("post_phi_"+dataset+"_"+to_string(energy)).data();
+
+	TH1D *hist = (TH1D*)file->Get(hist_name.data());
+	TH1D *efficiency_dist = (TH1D*)hist->Clone();
+	efficiency_dist->SetDirectory(0);
+
+	file->Close();
+	delete file;
+
+	return(efficiency_dist);
 }
 
 
@@ -966,7 +1010,7 @@ void TreeReader::define_qa() {
 	post_btof_hist = TH1I(("post_btof_"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
 	post_ep_hist = TH1I(("post_ep_"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
-	pre_phi_hist = TH1I(("pre_phi_"+set_name+"_"+to_string(energy)).data(), "pre_phi", 100, 0.0, 7.0);
+	pre_phi_hist = TH1I(("pre_phi_"+set_name+"_"+to_string(energy)).data(), "pre_phi", 1000, 0.0, 2*TMath::Pi());
 	pre_p_hist = TH1I(("pre_p_"+set_name+"_"+to_string(energy)).data(), "pre_p", 100, 0.0, 3.5);
 	pre_pt_hist = TH1I(("pre_pt_"+set_name+"_"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
 	pre_beta_hist = TH1I(("pre_beta_"+set_name+"_"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
@@ -975,7 +1019,7 @@ void TreeReader::define_qa() {
 	pre_nsigma_hist = TH1I(("pre_nsigma_"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
 	pre_dca_hist = TH1I(("pre_dca_"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
 
-	post_phi_hist = TH1I(("post_phi_"+set_name+"_"+to_string(energy)).data(), "post_phi", 100, 0.0, 7.0);
+	post_phi_hist = TH1I(("post_phi_"+set_name+"_"+to_string(energy)).data(), "post_phi", 1000, 0.0, 2*TMath::Pi());
 	post_p_hist = TH1I(("post_p_"+set_name+"_"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
 	post_pt_hist = TH1I(("post_pt_"+set_name+"_"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
 	post_beta_hist = TH1I(("post_beta_"+set_name+"_"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);

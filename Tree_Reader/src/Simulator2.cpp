@@ -23,9 +23,14 @@ using namespace std;
 
 Simulator2::Simulator2() {
 	sim_rand = new TRandom3(0);
-	proton_dist_hist = new TH1D();
+	proton_dist_hist = NULL;
 	two_p_corr = new TH1D();
+	two_p_corr->SetDirectory(0);
+	efficiency_dist = NULL;
+	norm_eff_dist = NULL;
+	simulate_event = bind(&Simulator2::sim_event, this);
 }
+
 
 Simulator2::~Simulator2() {
 //	delete sim_rand;
@@ -56,6 +61,10 @@ int Simulator2::get_num_event_mix() {
 
 TH1D* Simulator2::get_two_p_corr() {
 	return(two_p_corr);
+}
+
+TH1D* Simulator2::get_efficiency_dist() {
+	return(efficiency_dist);
 }
 
 
@@ -90,13 +99,36 @@ void Simulator2::set_particle_mean(double mean) {
 
 void Simulator2::set_proton_dist_hist(TH1D *hist) {
 	proton_dist_hist = hist;
+	proton_dist_hist->SetDirectory(0);
 	pars.proton_dist = "hist";
+}
+
+void Simulator2::set_efficiency_dist_hist(TH1D *hist) {
+	efficiency_dist = hist;
+	efficiency_dist->SetDirectory(0);
+	norm_eff_dist = (TH1D*)efficiency_dist->Clone();
+	norm_eff_dist->Scale(hom_eff/norm_eff_dist->GetMaximum());
+	norm_eff_dist->SetDirectory(0);
+	simulate_event = bind(&Simulator2::sim_event_eff, this);
+}
+
+void Simulator2::set_efficiency_dist_hist(string root_path, string hist_name) {
+	TFile *file = new TFile(root_path.data(), "READ");
+	TH1D *hist = (TH1D*)file->Get(hist_name.data());
+	efficiency_dist = (TH1D*)hist->Clone();
+	efficiency_dist->SetDirectory(0);
+
+	file->Close();
+	delete file;
 }
 
 void Simulator2::set_num_event_mix(int num) {
 	pars.num_event_mix = num;
 }
 
+void Simulator2::set_hom_eff(double eff) {
+	hom_eff = eff;
+}
 
 // Doers
 map<int, map<int, int>> Simulator2::run_simulation() {
@@ -255,7 +287,7 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p(string two_p_name) 
 
 
 // Simulate single event and return simulated proton angles
-vector<double> Simulator2::simulate_event() {
+vector<double> Simulator2::sim_event() {
 	double group_angle;
 	vector<double> proton_angles = {};
 
@@ -277,6 +309,66 @@ vector<double> Simulator2::simulate_event() {
 }
 
 
+// Simulate single event and return simulated proton angles. Include efficiency into simulation.
+vector<double> Simulator2::sim_event_eff() {
+	double group_angle, new_angle;
+	vector<double> proton_angles = {};
+
+	int n_protons = get_protons();
+
+	if(n_protons > 0) while((int)proton_angles.size() < 1) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+			proton_angles.push_back(new_angle);
+		}
+	}
+	while((int)proton_angles.size() < n_protons) {
+		if(sim_rand->Rndm() < pars.p_group) {
+			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
+			while(group_angle >= 2*M_PI) { group_angle -= 2*M_PI; }  // Force to range [0, 2*pi)
+			while(group_angle < 0) { group_angle += 2*M_PI; }
+			if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(group_angle)) >= sim_rand->Rndm()) {
+					proton_angles.push_back(group_angle);
+			}
+		} else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+			if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+				proton_angles.push_back(new_angle);
+			}
+		}
+
+	}
+
+	return(proton_angles);
+}
+
+
+
+// Simulate single event and return simulated proton angles. Include efficiency into simulation.
+vector<double> Simulator2::sim_event_eff2() {
+	double group_angle;
+	vector<double> proton_angles = {};
+
+	int n_protons = get_protons();
+
+	if(n_protons > 0) { proton_angles.push_back(efficiency_dist->GetRandom()); }
+	for(int j=1; j< n_protons; j++) {
+		if(sim_rand->Rndm() < pars.p_group) {
+			group_angle = get_group_angle(proton_angles.back());
+			while(group_angle >= 2*M_PI) { group_angle -= 2*M_PI; }  // Force to range [0, 2*pi)
+			while(group_angle < 0) { group_angle += 2*M_PI; }
+			proton_angles.push_back(group_angle);
+		} else {
+			proton_angles.push_back(efficiency_dist->GetRandom());
+		}
+
+	}
+
+	return(proton_angles);
+}
+
+
+
 int Simulator2::get_protons() {
 	int n = 0;
 	if(pars.proton_dist == "poisson") {
@@ -286,6 +378,55 @@ int Simulator2::get_protons() {
 	}
 
 	return (n);
+}
+
+
+double Simulator2::get_group_angle(double center) {
+	TH1D *convo = (TH1D*)efficiency_dist->Clone();
+
+	for(int bin=1; bin<=convo->GetXaxis()->GetNbins(); bin++) {
+		double new_bin_content = convo->GetBinContent(bin) * wrap_gaus(convo->GetBinCenter(bin), center, pars.spread_sigma, 0, 2*TMath::Pi());
+
+//		cout << "bin: " << bin << " center: " << center << " old contents: " << convo->GetBinContent(bin) << " new contents: " << new_bin_content << endl;
+//		double new_bin_content = convo->GetBinContent(bin) * TMath::Gaus(convo->GetBinCenter(bin), center, pars.spread_sigma);
+//		if(fabs(convo->GetBinCenter(bin) - center) < 1.0) { cout << new_bin_content << endl; }
+		convo->SetBinContent(bin, new_bin_content);
+	}
+
+//	this_thread::sleep_for(chrono::seconds(30));
+
+//	cout << wrap_gaus(0, 0, pars.spread_sigma, 0, 2*TMath::Pi()) << endl;
+
+	if(convo->Integral() <= 0) {
+		cout << "Get random convo   bin: " << convo->FindBin(center) << "  content: " << convo->GetBinContent(convo->FindBin(center)) << "  center: " << center << endl;
+	}
+	double new_angle = convo->GetRandom();
+	delete convo;
+	return(new_angle);
+
+}
+
+
+// Wrap gaussian with mean mu and width sigma at point x around a range from lower_bound to upper_bound.
+double Simulator2::wrap_gaus(double x, double mu, double sigma, double lower_bound, double upper_bound) {
+	double range = upper_bound - lower_bound;
+	double sum = 0;
+	double gaus_val = TMath::Gaus(x, mu, sigma);
+	double xi = x;
+	while(gaus_val > 0) {  // Negative side loop
+		sum += gaus_val;
+		xi -= range;
+		gaus_val = TMath::Gaus(xi, mu, sigma);
+	}
+	xi = x + range;
+	gaus_val = TMath::Gaus(xi, mu, sigma);
+	while(gaus_val > 0) {  // Positive side loop
+		sum += gaus_val;
+		xi += range;
+		gaus_val = TMath::Gaus(xi, mu, sigma);
+	}
+
+	return(sum);
 }
 
 
