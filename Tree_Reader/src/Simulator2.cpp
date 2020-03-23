@@ -114,7 +114,7 @@ void Simulator2::set_efficiency_dist_hist(TH1D *hist) {
 //	for(int bin = 1; bin <= efficiency_dist->GetXaxis()->GetNbins(); bin++) {
 //		cout << "bin: " << bin << " | bin_content: " << efficiency_dist->GetBinContent(bin) << endl;
 //	}
-//	for(int bin = 1; bin <= norm_eff_dist->GetXaxis()->GetNbins(); bin++) {
+////	for(int bin = 1; bin <= norm_eff_dist->GetXaxis()->GetNbins(); bin++) {
 //		cout << "bin: " << bin << " | bin_content: " << norm_eff_dist->GetBinContent(bin) << endl;
 //	}
 	simulate_event = bind(&Simulator2::sim_event_eff, this);
@@ -125,6 +125,9 @@ void Simulator2::set_efficiency_dist_hist(string root_path, string hist_name) {
 	TH1D *hist = (TH1D*)file->Get(hist_name.data());
 	efficiency_dist = (TH1D*)hist->Clone();
 	efficiency_dist->SetDirectory(0);
+	norm_eff_dist = (TH1D*)efficiency_dist->Clone();
+	norm_eff_dist->Scale(hom_eff/norm_eff_dist->GetMaximum());
+	norm_eff_dist->SetDirectory(0);
 
 	file->Close();
 	delete file;

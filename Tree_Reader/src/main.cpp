@@ -94,7 +94,7 @@ void read_class() {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list = {62}; //{7, 11, 39, 27, 62, 19};
+				vector<int> energy_list = {7, 11, 39, 27, 62, 19};
 				vector<int> divs = {2, 3, 4, 5, 6};
 				for(int energy:energy_list) {
 					TreeReader reader(energy, ref);
