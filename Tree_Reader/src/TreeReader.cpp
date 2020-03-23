@@ -248,6 +248,12 @@ void TreeReader::set_sim_proton_dist_dataset(string path) {
 	sim_proton_dist_dataset = path;
 }
 
+void TreeReader::set_sim_eff_dist_path(string root_path, string hist_name) {
+	if((int)sim_eff_dist_path.size() > 0) { sim_eff_dist_path.clear(); }
+	sim_eff_dist_path.push_back(root_path);
+	sim_eff_dist_path.push_back(hist_name);
+}
+
 void TreeReader::set_energy(int energy) {
 	this->energy = energy;
 }
@@ -403,8 +409,12 @@ void TreeReader::read_ampt_trees() {
 void TreeReader::sim_events(map<int, int> cent_num_events) {
 	define_qa();
 
-	if(sim_eff && sim.get_efficiency_dist() == NULL)  {
-		sim.set_efficiency_dist_hist(get_sim_efficiency_dist());
+	if(sim_eff) {
+		if((int)sim_eff_dist_path.size() == 0)  {
+			sim.set_efficiency_dist_hist(get_sim_efficiency_dist());
+		} else {
+			sim.set_efficiency_dist_hist(sim_eff_dist_path[0], sim_eff_dist_path[1]);
+		}
 	}
 
 	int total_events = 0;

@@ -100,6 +100,7 @@ public:
 	void set_set_name(string set_name);
 	void set_tree_name(string tree_name);
 	void set_sim_proton_dist_dataset(string path);
+	void set_sim_eff_dist_path(string root_path, string hist_name);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_cbwc(bool cbwc);
@@ -153,6 +154,7 @@ private:
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
 
 	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
+	vector<string> sim_eff_dist_path {};
 
 	vector<int> divs = {2,3,4,5,6};
 	int energy;

@@ -66,6 +66,7 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
+	string base_path = "/home/dylan/Research/";
 	int ref = 2;
 //	string in_path = "/media/dylan/SSD_Storage/Research/Trees_Old_Ref" + to_string(ref) + "/";
 //	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3/"; //"/home/dylan/Research/Data/";
@@ -73,9 +74,9 @@ void read_class() {
 //	string mix_out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "_Mix/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3_Mix/";
 //	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-	string in_path = "/home/dylan/Research/Trees_Old_Ref2/";
-	string out_dir = "/home/dylan/Research/Data_Sim/";
-	string mix_out_dir = "/home/dylan/Research/Data_Sim_Mix/";
+	string in_path = base_path + "Trees_Old_Ref2/";
+	string out_dir = base_path + "Data_Sim/";
+	string mix_out_dir = base_path + "Data_Sim_Mix/";
 
 //	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{3,4}}};
@@ -85,11 +86,11 @@ void read_class() {
 
 	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
 //	map<int, int> sim_cent_events = {{0, 1000}, {1, 1000}, {2, 1000}, {3, 1000}, {4, 1000}, {5, 1000}, {6, 1000}, {7, 1000}, {8, 10000}};
-	int sleep = 30;
+	int sleep = 15;
 
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(thread::hardware_concurrency());
+		ThreadPool pool(1);//thread::hardware_concurrency());
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
@@ -150,10 +151,10 @@ void read_class() {
 						reader.set_sim_eff(false);
 					}
 					if(in_string(set_pair.first, {"Sim", "Eff", "Hole3-4"}, true)) {
-						reader.sim.set_efficiency_dist_hist("/home/dylan/Research/Sim_Efficiency_Hists.root", "Hole_3to4");
+						reader.set_sim_eff_dist_path(base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
 					}
 					reader.sim.set_hom_eff(1.0);
-					reader.set_sim_proton_dist_dataset("/home/dylan/Research/Data_Old_Ref2/Single_Ratio0/");
+					reader.set_sim_proton_dist_dataset(base_path + "Data_Old_Ref2/Single_Ratio0/");
 
 					reader.set_mixed_sets(false);
 					reader.set_rand_data(false);
