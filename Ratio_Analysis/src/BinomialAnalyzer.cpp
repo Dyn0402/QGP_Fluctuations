@@ -279,6 +279,7 @@ void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<
 void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name) {
 	double y_max = numeric_limits<double>::min();
 	double y_min = numeric_limits<double>::max();
+	int x_max = 0;
 	for(int energy:energies) {
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, proton_val, stat_err, proton_err;
@@ -293,6 +294,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 				stat_err.push_back(stat_meas.get_err());
 				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
 				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+				if(proton_data.first > x_max) { x_max = proton_data; }
 			}
 		}
 	}
@@ -319,8 +321,8 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
-		if(stat_name == "mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, plot_x_range.second)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "standard_deviation") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, plot_x_range.second)); binoms.back()->SetParameter(0, 1.0/div); }
+		if(stat_name == "mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
+		else if(stat_name == "standard_deviation") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
 		else { binoms.push_back(new TF1()); }
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, proton_val, stat_err, proton_err;
@@ -350,8 +352,8 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			}
 		}
 //		double y_range = y_max - y_min;
-		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, plot_x_range.second);
-		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, plot_x_range.second);
+		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, x_max);
+		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, x_max);
 		mgs.back()->GetXaxis()->SetLabelSize(0.06);
 		mgs.back()->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
@@ -381,6 +383,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_divided_stats, string stat_name, vector<int> &energies, int cent, int div, string name) {
 	double y_max = numeric_limits<double>::min();
 	double y_min = numeric_limits<double>::max();
+	int x_max = 0;
 	for(int energy:energies) {
 		for(auto &data_set:slice_divided_stats) {
 			vector<double> stat_vals, proton_val, stat_err, proton_err;
@@ -395,6 +398,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 				stat_err.push_back(stat_meas.get_err());
 				if(stat_meas.get_val() > y_max) { y_max = stat_meas.get_val(); }
 				if(stat_meas.get_val() < y_min) { y_min = stat_meas.get_val(); }
+				if(proton_data.first > x_max) { x_max = proton_data; }
 			}
 		}
 	}
@@ -423,7 +427,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
-		lines.push_back(new TLine(plot_x_range.first, 1, plot_x_range.second, 1));
+		lines.push_back(new TLine(plot_x_range.first, 1, x_max, 1));
 		lines.back()->SetLineColor(kBlack);
 		for(auto &data_set:slice_divided_stats) {
 			vector<double> stat_vals, proton_val, stat_err, proton_err;
@@ -457,8 +461,8 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			}
 		}
 //		double y_range = y_max - y_min;
-		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, plot_x_range.second);
-		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, plot_x_range.second);
+		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, x_max);
+		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, x_max);
 		mgs.back()->GetXaxis()->SetLabelSize(0.06);
 		mgs.back()->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
