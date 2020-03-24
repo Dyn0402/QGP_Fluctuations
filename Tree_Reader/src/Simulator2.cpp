@@ -23,12 +23,16 @@ using namespace std;
 
 Simulator2::Simulator2() {
 	sim_rand = new TRandom3(0);
-	proton_dist_hist = NULL;
+	proton_dist_hist = new TH1D();
+	proton_dist_hist->SetDirectory(0);
 	two_p_corr = new TH1D();
 	two_p_corr->SetDirectory(0);
-	efficiency_dist = NULL;
-	norm_eff_dist = NULL;
-	simulate_event = bind(&Simulator2::sim_event, this);
+	efficiency_dist = new TH1D();
+	efficiency_dist->SetDirectory(0);
+	norm_eff_dist = new TH1D();
+	norm_eff_dist->SetDirectory(0);
+//	simulate_event = bind(&Simulator2::sim_event, this);
+//	simulation_pars pars;
 }
 
 
@@ -107,16 +111,8 @@ void Simulator2::set_efficiency_dist_hist(TH1D *hist) {
 	efficiency_dist = hist;
 	efficiency_dist->SetDirectory(0);
 	norm_eff_dist = (TH1D*)efficiency_dist->Clone();
-//	cout << "Scale: " << hom_eff/norm_eff_dist->GetMaximum() << endl;
 	norm_eff_dist->Scale(hom_eff/norm_eff_dist->GetMaximum());
 	norm_eff_dist->SetDirectory(0);
-//	cout << "hist: " << efficiency_dist << " | num_bins: " << efficiency_dist->GetXaxis()->GetNbins() << " | max_bin_val: " << efficiency_dist->GetMaximum() << endl;
-//	for(int bin = 1; bin <= efficiency_dist->GetXaxis()->GetNbins(); bin++) {
-//		cout << "bin: " << bin << " | bin_content: " << efficiency_dist->GetBinContent(bin) << endl;
-//	}
-////	for(int bin = 1; bin <= norm_eff_dist->GetXaxis()->GetNbins(); bin++) {
-//		cout << "bin: " << bin << " | bin_content: " << norm_eff_dist->GetBinContent(bin) << endl;
-//	}
 	simulate_event = bind(&Simulator2::sim_event_eff, this);
 }
 
@@ -132,6 +128,10 @@ void Simulator2::set_efficiency_dist_hist(string root_path, string hist_name) {
 	file->Close();
 	delete file;
 	simulate_event = bind(&Simulator2::sim_event_eff, this);
+}
+
+void Simulator2::set_no_eff() {
+	simulate_event = bind(&Simulator2::sim_event, this);
 }
 
 void Simulator2::set_num_event_mix(int num) {
@@ -309,8 +309,8 @@ vector<double> Simulator2::sim_event() {
 	for(int j=1; j< n_protons; j++) {
 		if(sim_rand->Rndm() < pars.p_group) {
 			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
-			while(group_angle >= 2*M_PI) { group_angle -= 2*M_PI; }  // Force to range [0, 2*pi)
-			while(group_angle < 0) { group_angle += 2*M_PI; }
+			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			if(group_angle < 0) { group_angle += 2*M_PI; }
 			proton_angles.push_back(group_angle);
 		} else {
 			proton_angles.push_back(sim_rand->Rndm() * 2 * M_PI);
@@ -326,25 +326,19 @@ vector<double> Simulator2::sim_event_eff() {
 	double group_angle, new_angle;
 	vector<double> proton_angles = {};
 
-//	cout << "here" << endl;
-
 	int n_protons = get_protons();
 
 	if(n_protons > 0) while((int)proton_angles.size() < 1) {
 		new_angle = sim_rand->Rndm() * 2 * M_PI;
-//		cout << "new angle: " << new_angle << "  |  bin_content: " << norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) << endl;
 		if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
 			proton_angles.push_back(new_angle);
 		}
 	}
 	while((int)proton_angles.size() < n_protons) {
-//		cout << "here2" << endl;
 		if(sim_rand->Rndm() < pars.p_group) {
 			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
 			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
 			if(group_angle < 0) { group_angle += 2*M_PI; }
-//			while(group_angle >= 2*M_PI) { group_angle -= 2*M_PI; }  // Force to range [0, 2*pi)
-//			while(group_angle < 0) { group_angle += 2*M_PI; }
 			if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(group_angle)) >= sim_rand->Rndm()) {
 					proton_angles.push_back(group_angle);
 			}

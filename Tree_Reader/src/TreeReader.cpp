@@ -415,7 +415,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 		} else {
 			sim.set_efficiency_dist_hist(sim_eff_dist_path[0], sim_eff_dist_path[1]);
 		}
-	}
+	} else { sim.set_no_eff(); }
 
 	int total_events = 0;
 	for(auto cent:cent_num_events) {

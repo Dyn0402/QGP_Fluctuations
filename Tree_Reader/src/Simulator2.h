@@ -79,6 +79,7 @@ public:
 	void set_proton_dist_hist(TH1D *hist);
 	void set_efficiency_dist_hist(TH1D *hist);
 	void set_efficiency_dist_hist(string root_path, string hist_name);
+	void set_no_eff();
 	void set_num_event_mix(int num);
 	void set_hom_eff(double eff);
 
