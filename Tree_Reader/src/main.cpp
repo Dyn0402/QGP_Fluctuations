@@ -66,24 +66,24 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	string base_path = "/home/dylan/Research/";
-	int ref = 2;
-//	string in_path = "/media/dylan/SSD_Storage/Research/Trees_Old_Ref" + to_string(ref) + "/";
-//	string out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3/"; //"/home/dylan/Research/Data/";
+	string base_path = "/media/dylan/SSD_Storage/Research/";
+	int ref = 3;
+	string in_path = base_path + "Trees_Old_Ref" + to_string(ref) + "/";
+	string out_dir = base_path + "Data_Old_Ref" + to_string(ref) + "/";
 //	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
-//	string mix_out_dir = "/media/dylan/SSD_Storage/Research/Data_Old_Ref" + to_string(ref) + "_Mix/";  // "/media/dylan/SSD_Storage/Research/Data_Ref3_Mix/";
+	string mix_out_dir = base_path + "Data_Old_Ref" + to_string(ref) + "_Mix/";
 //	string random_out_dir = "/home/dylan/Research/Data_Random/";
 
-	string in_path = base_path + "Trees_Old_Ref2/";
-	string out_dir = base_path + "Data_Sim/";
-	string mix_out_dir = base_path + "Data_Sim_Mix/";
+//	string in_path = base_path + "Trees_Old_Ref2/";
+//	string out_dir = base_path + "Data_Sim/";
+//	string mix_out_dir = base_path + "Data_Sim_Mix/";
 
 //	map<string, pair<int, int>> set_pairs = {{"No_Rotate",{0,4}}, {"Rand_Rotate",{0,4}}, {"EP_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{0,4}}, {"Efficiency_08_",{0,4}}, {"Efficiency_05_",{0,4}}, {"Efficiency_025_",{0,4}}, {"Efficiency_01_",{0,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Rand_Rotate",{0,4}}, {"Pile_Up_01_",{0,4}}, {"Pile_Up_008_",{0,4}}, {"Pile_Up_005_",{0,4}}, {"Pile_Up_002_",{0,4}}, {"Pile_Up_001_",{3,4}}};
 //	map<string, pair<int, int>> set_pairs = {{"No_BTof_Rej",{0,8}}, {"Pile_Up_0008_",{0,8}}, {"Pile_Up_0005_",{0,8}}, {"Pile_Up_0002_",{0,8}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s_Eff",{0,0}}, {"Sim_05p002s_Eff",{0,0}}, {"Sim_05p002s_No_Rotate_Eff",{0,0}}};//, {"Sim_15p002s_Eff",{0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"Single_Ratio", {0,0}}};
-	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s_No_Rotate", {0,0}}};
+	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta1", {0,0}}};
 
 	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
 //	map<int, int> sim_cent_events = {{0, 1000}, {1, 1000}, {2, 1000}, {3, 1000}, {4, 1000}, {5, 1000}, {6, 1000}, {7, 1000}, {8, 10000}};
@@ -134,6 +134,8 @@ void read_class() {
 
 //					if(set_pair.first == "Single_Ratio" || set_pair.first == "No_Rotate_Single" ) { reader.set_single_ratio(true); reader.mix.set_single_ratio(true); }
 					reader.set_single_ratio(true); reader.mix.set_single_ratio(true);
+
+					if(in_string(set_pair.first, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
 
 					if(in_string(set_pair.first,  "Efficiency_08_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
 					else if(in_string(set_pair.first,  "Efficiency_05_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
