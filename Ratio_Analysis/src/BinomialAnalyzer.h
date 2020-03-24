@@ -19,6 +19,8 @@
 #include <TDirectory.h>
 #include <TH1.h>
 #include <TCanvas.h>
+#include <TLegend.h>
+#include <TLegendEntry.h>
 
 #include "ratio_methods.h"
 #include "file_io.h"
@@ -71,6 +73,7 @@ private:
 	int canvas_width = 2070;
 	int canvas_height = 1080;
 	double legend_border_width = 0;
+	double legend_text_size = 0.2;
 
 	vector<int> div_marker_style = {8, 8, 34, 20, 21, 22, 33};
 	vector<int> div_marker_color = {28, 9, 6, 1, 2, 8, 4};
