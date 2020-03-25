@@ -93,7 +93,7 @@ private:
 	map<string, int> raw_mix_marker_color = {{"raw", kBlue}, {"mix", kGreen+3}};
 	map<string, int> raw_mix_marker_size = {{"raw", 1.2}, {"mix", 1.2}};
 
-	pair<int, int> plot_x_range = {0, 40};
+	pair<int, int> plot_x_range = {0, 40};  // Max val is obselete
 	int min_events = 250;
 
 	// Temporary Parameters
@@ -120,7 +120,7 @@ private:
 	void plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir);
 	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir);
 
-	void slice_dist_plot(map<int, int> &slice_data, int total_protons, string name);
+	void slice_dist_plot(map<int, int> &slice_data, int total_protons, int div, string name);
 	void slice_stats_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);
 	map<string, map<int, TF1*>> slice_stats_divided_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);
 	void plot_fit(map<string, map<int, TF1*>> &fits, int cent, int div, string name);

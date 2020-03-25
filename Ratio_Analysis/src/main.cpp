@@ -35,7 +35,7 @@ void binomial_analyze();
 
 
 int main() {
-	azimuth_bin_analyze();
+//	azimuth_bin_analyze();
 	binomial_analyze();
 
 	cout << "donzo" << endl;
@@ -50,7 +50,7 @@ void azimuth_bin_analyze() {
 	analyzer.set_out_path("/home/dylan/Research/Results/");
 	analyzer.set_out_root_name("3-24-20_ref3.root");
 //	analyzer.set_sets({{"Sim_0p0s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}}, {"Sim_15p002s", {0,0}}, {"Sim_0p0s_Eff", {0,0}}, {"Sim_0p0s_No_Rotate_Eff", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_No_Rotate_Eff", {0,0}},{"Sim_0p0s_Eff_Hole3-4", {0,0}}, {"Sim_0p0s_No_Rotate_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_No_Rotate_Eff_Hole3-4", {0,0}}});
-	analyzer.set_sets({{"eta05", {0,0}}, {"eta1", {0,0}}});
+	analyzer.set_sets({{"eta05", {0,0}}, {"eta1", {0,0}},{"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}});
 	analyzer.analyze();
 }
 
@@ -61,7 +61,7 @@ void binomial_analyze() {
 	analyzer.set_in_mix_path("/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
 	analyzer.set_out_root_name("3-24-20_ref3_binom.root");
-	analyzer.set_sets({{"eta05", {0,0}}, {"eta1", {0,0}}});
+	analyzer.set_sets({{"eta05", {0,0}}, {"eta1", {0,0}}, {"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}});
 //	analyzer.set_sets({{"Sim_0p0s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}}, {"Sim_15p002s", {0,0}}, {"Sim_0p0s_Eff", {0,0}}, {"Sim_0p0s_No_Rotate_Eff", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_No_Rotate_Eff", {0,0}},{"Sim_0p0s_Eff_Hole3-4", {0,0}}, {"Sim_0p0s_No_Rotate_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_No_Rotate_Eff_Hole3-4", {0,0}}});
 //	analyzer.set_energies({11, 39});
 	analyzer.analyze();

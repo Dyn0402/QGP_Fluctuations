@@ -53,9 +53,9 @@ namespace plot {
 	double ratio_hist_low = -0.05;
 	double ratio_hist_high = 1.1;
 
-	int protons_hist_bins = 51;
+	int protons_hist_bins = 61;
 	double protons_hist_low = -0.5;
-	double protons_hist_high = 50.5;
+	double protons_hist_high = 60.5;
 
 //	vector<int> div_marker_styles = {8, 8, 28, 24, 25, 26, 27};
 	vector<int> div_marker_styles = {8, 8, 34, 20, 21, 22, 33};
