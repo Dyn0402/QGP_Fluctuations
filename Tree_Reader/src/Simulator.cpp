@@ -1,5 +1,5 @@
 /*
- * Simulator2.cpp
+ * Simulator.cpp
  *
  *  Created on: Jul 24, 2019
  *      Author: dylan
@@ -15,13 +15,13 @@
 #include <TCanvas.h>
 #include <TH1.h>
 
-#include "Simulator2.h"
 #include "ratio_methods.h"
+#include "Simulator.h"
 
 using namespace std;
 
 
-Simulator2::Simulator2() {
+Simulator::Simulator() {
 	sim_rand = new TRandom3(0);
 	proton_dist_hist = new TH1D();
 	proton_dist_hist->SetDirectory(0);
@@ -31,92 +31,96 @@ Simulator2::Simulator2() {
 	efficiency_dist->SetDirectory(0);
 	norm_eff_dist = new TH1D();
 	norm_eff_dist->SetDirectory(0);
-//	simulate_event = bind(&Simulator2::sim_event, this);
-//	simulation_pars pars;
+//	trand = 0;
+	simulate_event = bind(&Simulator::sim_event, this);
 }
 
 
-Simulator2::~Simulator2() {
+Simulator::~Simulator() {
 //	delete sim_rand;
 //	delete proton_dist_hist;
 //	delete two_p_corr; For some reason breaks, figure out later. Because it's owned by current TFile from calling class?
 }
 
 // Getters
-int Simulator2::get_n_events() {
+int Simulator::get_n_events() {
 	return(pars.n_events);
 }
 
-int Simulator2::get_divisions() {
+int Simulator::get_divisions() {
 	return(pars.divisions);
 }
 
-double Simulator2::get_p_group() {
+double Simulator::get_p_group() {
 	return(pars.p_group);
 }
 
-double Simulator2::get_spread_sigma() {
+double Simulator::get_spread_sigma() {
 	return(pars.spread_sigma);
 }
 
-int Simulator2::get_num_event_mix() {
+int Simulator::get_num_event_mix() {
 	return(pars.num_event_mix);
 }
 
-TH1D* Simulator2::get_two_p_corr() {
+string Simulator::get_proton_dist_type() {
+	return(pars.proton_dist);
+}
+
+TH1D* Simulator::get_two_p_corr() {
 	return(two_p_corr);
 }
 
-TH1D* Simulator2::get_efficiency_dist() {
+TH1D* Simulator::get_efficiency_dist() {
 	return(efficiency_dist);
 }
 
 
 // Setters
-void Simulator2::set_n_events(int n) {
+void Simulator::set_n_events(int n) {
 	pars.n_events = n;
 }
 
-void Simulator2::set_divisions(int divs) {
+void Simulator::set_divisions(int divs) {
 	pars.divisions = divs;
 }
 
-void Simulator2::set_p_group(double p_group) {
+void Simulator::set_p_group(double p_group) {
 	pars.p_group = p_group;
 }
 
-void Simulator2::set_spread_sigma(double sig) {
+void Simulator::set_spread_sigma(double sig) {
 	pars.spread_sigma = sig;
 }
 
-void Simulator2::set_min_protons(int protons) {
+void Simulator::set_min_protons(int protons) {
 	pars.min_protons = protons;
 }
 
-void Simulator2::set_proton_dist(string dist) {
+void Simulator::set_proton_dist(string dist) {
 	pars.proton_dist = dist;
 }
 
-void Simulator2::set_particle_mean(double mean) {
+void Simulator::set_particle_mean(double mean) {
 	pars.particle_mean = mean;
 }
 
-void Simulator2::set_proton_dist_hist(TH1D *hist) {
+void Simulator::set_proton_dist_hist(TH1D *hist) {
 	proton_dist_hist = hist;
 	proton_dist_hist->SetDirectory(0);
 	pars.proton_dist = "hist";
 }
 
-void Simulator2::set_efficiency_dist_hist(TH1D *hist) {
+void Simulator::set_efficiency_dist_hist(TH1D *hist) {
 	efficiency_dist = hist;
 	efficiency_dist->SetDirectory(0);
 	norm_eff_dist = (TH1D*)efficiency_dist->Clone();
 	norm_eff_dist->Scale(hom_eff/norm_eff_dist->GetMaximum());
 	norm_eff_dist->SetDirectory(0);
-	simulate_event = bind(&Simulator2::sim_event_eff, this);
+	simulate_event = bind(&Simulator::sim_event_eff, this);
 }
 
-void Simulator2::set_efficiency_dist_hist(string root_path, string hist_name) {
+void Simulator::set_efficiency_dist_hist(string root_path, string hist_name) {
 	TFile *file = new TFile(root_path.data(), "READ");
 	TH1D *hist = (TH1D*)file->Get(hist_name.data());
 	efficiency_dist = (TH1D*)hist->Clone();
@@ -127,23 +131,23 @@ void Simulator2::set_efficiency_dist_hist(string root_path, string hist_name) {
 
 	file->Close();
 	delete file;
-	simulate_event = bind(&Simulator2::sim_event_eff, this);
+	simulate_event = bind(&Simulator::sim_event_eff, this);
 }
 
-void Simulator2::set_no_eff() {
-	simulate_event = bind(&Simulator2::sim_event, this);
+void Simulator::set_no_eff() {
+	simulate_event = bind(&Simulator::sim_event, this);
 }
 
-void Simulator2::set_num_event_mix(int num) {
+void Simulator::set_num_event_mix(int num) {
 	pars.num_event_mix = num;
 }
 
-void Simulator2::set_hom_eff(double eff) {
+void Simulator::set_hom_eff(double eff) {
 	hom_eff = eff;
 }
 
 // Doers
-map<int, map<int, int>> Simulator2::run_simulation() {
+map<int, map<int, int>> Simulator::run_simulation() {
 	vector<double> proton_angles;
 	map<int, map<int, int>> ratio_data;
 	for(int i = 0; i < pars.n_events; i++) {
@@ -159,7 +163,7 @@ map<int, map<int, int>> Simulator2::run_simulation() {
 }
 
 
-vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
+vector<map<int, map<int, int>>> Simulator::run_simulation_mixed() {
 	vector<double> proton_angles;
 	map<int, map<int, int>> ratio_data;
 	map<int, vector<double>> mixed_angles;
@@ -221,7 +225,7 @@ vector<map<int, map<int, int>>> Simulator2::run_simulation_mixed() {
 }
 
 
-vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p(string two_p_name) {
+vector<map<int, map<int, int>>> Simulator::run_sim_mixed_2p(string two_p_name) {
 	two_p_corr = new TH1D(two_p_name.data(), two_p_name.data(), two_p_bins, -two_p_shift, 2*M_PI - two_p_shift);
 	vector<double> proton_angles;
 	map<int, map<int, int>> ratio_data;
@@ -299,7 +303,7 @@ vector<map<int, map<int, int>>> Simulator2::run_sim_mixed_2p(string two_p_name) 
 
 
 // Simulate single event and return simulated proton angles
-vector<double> Simulator2::sim_event() {
+vector<double> Simulator::sim_event() {
 	double group_angle;
 	vector<double> proton_angles = {};
 
@@ -322,7 +326,7 @@ vector<double> Simulator2::sim_event() {
 
 
 // Simulate single event and return simulated proton angles. Include efficiency into simulation.
-vector<double> Simulator2::sim_event_eff() {
+vector<double> Simulator::sim_event_eff() {
 	double group_angle, new_angle;
 	vector<double> proton_angles = {};
 
@@ -357,7 +361,7 @@ vector<double> Simulator2::sim_event_eff() {
 
 
 // Simulate single event and return simulated proton angles. Include efficiency into simulation.
-vector<double> Simulator2::sim_event_eff2() {
+vector<double> Simulator::sim_event_eff2() {
 	double group_angle;
 	vector<double> proton_angles = {};
 
@@ -381,7 +385,7 @@ vector<double> Simulator2::sim_event_eff2() {
 
 
 
-int Simulator2::get_protons() {
+int Simulator::get_protons() {
 	int n = 0;
 	if(pars.proton_dist == "poisson") {
 		n = sim_rand->Poisson(pars.particle_mean);
@@ -393,7 +397,7 @@ int Simulator2::get_protons() {
 }
 
 
-double Simulator2::get_group_angle(double center) {
+double Simulator::get_group_angle(double center) {
 	TH1D *convo = (TH1D*)efficiency_dist->Clone();
 
 	for(int bin=1; bin<=convo->GetXaxis()->GetNbins(); bin++) {
@@ -420,7 +424,7 @@ double Simulator2::get_group_angle(double center) {
 
 
 // Wrap gaussian with mean mu and width sigma at point x around a range from lower_bound to upper_bound.
-double Simulator2::wrap_gaus(double x, double mu, double sigma, double lower_bound, double upper_bound) {
+double Simulator::wrap_gaus(double x, double mu, double sigma, double lower_bound, double upper_bound) {
 	double range = upper_bound - lower_bound;
 	double sum = 0;
 	double gaus_val = TMath::Gaus(x, mu, sigma);
@@ -442,6 +446,6 @@ double Simulator2::wrap_gaus(double x, double mu, double sigma, double lower_bou
 }
 
 
-void Simulator2::write_two_p_corr() {
+void Simulator::write_two_p_corr() {
 	two_p_corr->Write();
 }

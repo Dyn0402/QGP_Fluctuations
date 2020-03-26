@@ -29,7 +29,7 @@
 #include "Mixer.h"
 #include "MixerSets.h"
 #include "Randomizer.h"
-#include "Simulator2.h"
+#include "Simulator.h"
 
 using namespace std;
 
@@ -132,7 +132,7 @@ public:
 	Mixer mix;
 	Randomizer random;
 
-	Simulator2 sim;
+	Simulator sim;
 	event_defaults event_defs;
 	track_defaults track_defs;
 

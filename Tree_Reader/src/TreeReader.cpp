@@ -66,7 +66,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	this->energy = energy;
 
 	mix = Mixer(energy, single_ratio, rotate_random);
-	sim = Simulator2();
+//	sim = Simulator();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -95,7 +95,7 @@ TreeReader::TreeReader(int energy) {
 	this->energy = energy;
 
 	mix = Mixer(energy, single_ratio, rotate_random);
-	sim = Simulator2();
+//	sim = Simulator();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -124,7 +124,7 @@ TreeReader::TreeReader() {
 	this->energy = 7;
 
 	mix = Mixer(energy, single_ratio, rotate_random);
-	sim = Simulator2();
+//	sim = Simulator();
 
 	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
@@ -338,7 +338,9 @@ void TreeReader::read_trees() {
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
@@ -354,7 +356,9 @@ void TreeReader::read_trees() {
 	write_info_file();
 	write_qa();
 	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
@@ -378,7 +382,9 @@ void TreeReader::read_ampt_trees() {
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
@@ -394,7 +400,9 @@ void TreeReader::read_ampt_trees() {
 	write_info_file();
 	write_qa();
 	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
@@ -427,6 +435,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 			}
 			Event event(event_defs, energy, ref_num, cent.first);
 			vector<double> angles = sim.simulate_event();
+			sim.set_no_eff();
 			vector<Track> tracks;
 			for(double& angle:angles) {
 				Track track(track_defs);
@@ -443,7 +452,9 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 	write_info_file();
 	write_qa();
 	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV " << total_events << " simulated events. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s" << endl;
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV " << total_events << " simulated events. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
