@@ -113,6 +113,7 @@ public:
 	void set_efficiency(bool efficiency);
 	void set_single_ratio(bool single_ratio);
 	void set_sim_eff(bool sim_eff);
+	void set_sim_flow(bool sim_flow);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
@@ -169,6 +170,7 @@ private:
 	bool efficiency;
 	bool single_ratio;
 	bool sim_eff;
+	bool sim_flow;
 
 	double pile_up_prob;
 	double efficiency_prob;

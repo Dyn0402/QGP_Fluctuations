@@ -53,7 +53,9 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+
 	sim_eff = false;
+	sim_flow = false;
 
 	pile_up_prob = 0;
 	efficiency_prob = 0;
@@ -82,7 +84,9 @@ TreeReader::TreeReader(int energy) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+
 	sim_eff = false;
+	sim_flow = false;
 
 	pile_up_prob = 0;
 	efficiency_prob = 0;
@@ -111,7 +115,9 @@ TreeReader::TreeReader() {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+
 	sim_eff = false;
+	sim_flow = false;
 
 	pile_up_prob = 0;
 	efficiency_prob = 0;
@@ -303,6 +309,10 @@ void TreeReader::set_sim_eff(bool sim_eff) {
 	this->sim_eff = sim_eff;
 }
 
+void TreeReader::set_sim_flow(bool sim_flow) {
+	this->sim_flow = sim_flow;
+}
+
 void TreeReader::set_pile_up_prob(double pile_up_prob) {
 	this->pile_up_prob = pile_up_prob;
 }
@@ -420,7 +430,14 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 		} else {
 			sim.set_efficiency_dist_hist(sim_eff_dist_path[0], sim_eff_dist_path[1]);
 		}
-	} else { sim.set_no_eff(); }
+	}
+
+	if(sim_eff) {
+		if(sim_flow) { sim.set_eff_flow(); }
+		else { sim.set_eff(); }
+	} else if(sim_flow) { sim.set_flow(); }
+
+	sim.track_defs = track_defs;
 
 	int total_events = 0;
 	for(auto cent:cent_num_events) {
@@ -434,15 +451,18 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 				cout << " " << set_name << " " << energy << "GeV Centrality " << cent.first << " " << (int)(100.0*i/cent.second+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 			}
 			Event event(event_defs, energy, ref_num, cent.first);
-			vector<double> angles = sim.simulate_event();
-			sim.set_no_eff();
-			vector<Track> tracks;
-			for(double& angle:angles) {
-				Track track(track_defs);
-				track.set_phi(angle);
-				tracks.push_back(track);
-			}
-			event.set_protons(tracks);
+			sim.simulate_event2(event);
+//			vector<double> angles = sim.simulate_event();
+//			pair<vector<double>, double> sim_result = sim.sim_event_flow();
+//			event.set_event_plane(sim_result.second);
+//			vector<Track> tracks;
+//			for(double& angle:sim_result.first) {
+//			for(double& angle:angles) {
+//				Track track(track_defs);
+//				track.set_phi(angle);
+//				tracks.push_back(track);
+//			}
+//			event.set_protons(tracks);
 
 			process_event(event);
 		}

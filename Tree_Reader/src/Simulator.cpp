@@ -31,8 +31,11 @@ Simulator::Simulator() {
 	efficiency_dist->SetDirectory(0);
 	norm_eff_dist = new TH1D();
 	norm_eff_dist->SetDirectory(0);
+	ep_dist = new TH1D();
+	ep_dist->SetDirectory(0);
 //	trand = 0;
 	simulate_event = bind(&Simulator::sim_event, this);
+	simulate_event2 = bind(&Simulator::sim_event_flow, this, placeholders::_1);
 }
 
 
@@ -115,9 +118,9 @@ void Simulator::set_efficiency_dist_hist(TH1D *hist) {
 	efficiency_dist = hist;
 	efficiency_dist->SetDirectory(0);
 	norm_eff_dist = (TH1D*)efficiency_dist->Clone();
-	norm_eff_dist->Scale(hom_eff/norm_eff_dist->GetMaximum());
+	norm_eff_dist->Scale(pars.hom_eff/norm_eff_dist->GetMaximum());
 	norm_eff_dist->SetDirectory(0);
-	simulate_event = bind(&Simulator::sim_event_eff, this);
+//	simulate_event = bind(&Simulator::sim_event_eff, this);
 }
 
 void Simulator::set_efficiency_dist_hist(string root_path, string hist_name) {
@@ -126,16 +129,26 @@ void Simulator::set_efficiency_dist_hist(string root_path, string hist_name) {
 	efficiency_dist = (TH1D*)hist->Clone();
 	efficiency_dist->SetDirectory(0);
 	norm_eff_dist = (TH1D*)efficiency_dist->Clone();
-	norm_eff_dist->Scale(hom_eff/norm_eff_dist->GetMaximum());
+	norm_eff_dist->Scale(pars.hom_eff/norm_eff_dist->GetMaximum());
 	norm_eff_dist->SetDirectory(0);
 
 	file->Close();
 	delete file;
-	simulate_event = bind(&Simulator::sim_event_eff, this);
+//	simulate_event = bind(&Simulator::sim_event_eff, this);
 }
 
-void Simulator::set_no_eff() {
-	simulate_event = bind(&Simulator::sim_event, this);
+void Simulator::set_eff() {
+//	simulate_event = bind(&Simulator::sim_event_eff, this);
+//	simulate_event2 = bind(&Simulator::sim_event_eff, this);
+	cout << "Simulator set_eff not set." << endl;
+}
+
+void Simulator::set_flow() {
+	simulate_event2 = bind(&Simulator::sim_event_flow, this, placeholders::_1);
+}
+
+void Simulator::set_eff_flow() {
+	simulate_event2 = bind(&Simulator::sim_event_eff_flow, this, placeholders::_1);
 }
 
 void Simulator::set_num_event_mix(int num) {
@@ -143,8 +156,28 @@ void Simulator::set_num_event_mix(int num) {
 }
 
 void Simulator::set_hom_eff(double eff) {
-	hom_eff = eff;
+	pars.hom_eff = eff;
 }
+
+void Simulator::set_v2(double v2) {
+	pars.v2 = v2;
+}
+
+void Simulator::set_ep_res(double res) {
+	pars.ep_res = res;
+}
+
+void Simulator::set_flow(double v2, double res, double chi_acc) {
+	pars.v2 = v2;
+	pars.ep_res = res;
+	ep_dist = new TH1D("ep_dist", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -M_PI, M_PI);
+	ep_dist->SetDirectory(0);
+	for(int bin = 0; bin <= ep_dist->GetXaxis()->GetNbins(); bin++) {
+		ep_dist->SetBinContent(bin, event_plane(res, ep_dist->GetBinCenter(bin), chi_acc));
+	}
+//	simulate_event = bind(&Simulator::sim_event_flow, this);
+}
+
 
 // Doers
 map<int, map<int, int>> Simulator::run_simulation() {
@@ -359,6 +392,210 @@ vector<double> Simulator::sim_event_eff() {
 }
 
 
+// Simulate single event and return simulated proton angles. Include elliptic flow into simulation.
+//pair<vector<double>, double> Simulator::sim_event_flow() {
+//	double group_angle, new_angle;
+//	vector<double> proton_angles = {};
+//
+//	int n_protons = get_protons();
+//
+//	double reaction_plane = 2*M_PI*sim_rand->Rndm();
+//	double deviation = ep_dist->GetRandom();
+//	double event_plane = reaction_plane + deviation;
+//	event_plane = fmod(event_plane, 2*M_PI);  // Force to range [0, 2*pi)
+//	if(event_plane < 0) { event_plane += 2*M_PI; }
+//
+//	if(n_protons > 0) while((int)proton_angles.size() < 1) {
+//		new_angle = sim_rand->Rndm() * 2 * M_PI;
+//		if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+//			if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+//				proton_angles.push_back(new_angle);
+//			}
+//		}
+//	}
+//
+//	while((int)proton_angles.size() < n_protons) {
+//		if(sim_rand->Rndm() < pars.p_group) {
+//			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
+//			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
+//			if(group_angle < 0) { group_angle += 2*M_PI; }
+//			if(1.0 + 2 * pars.v2 * cos(2*(group_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+//				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(group_angle)) >= sim_rand->Rndm()) {
+//					proton_angles.push_back(group_angle);
+//				}
+//			}
+//		} else {
+//			new_angle = sim_rand->Rndm() * 2 * M_PI;
+//			if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+//				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+//					proton_angles.push_back(new_angle);
+//				}
+//			}
+//		}
+//	}
+//
+//	pair<vector<double>, double> result = {proton_angles, event_plane};
+//
+//	return(result);
+//}
+
+
+// Simulate single event and return simulated proton angles. Include elliptic flow into simulation.
+void Simulator::sim_event_eff_flow(Event &event) {
+	double group_angle, new_angle;
+	vector<double> proton_angles = {};
+
+	int n_protons = get_protons();
+
+	double reaction_plane = 2*M_PI*sim_rand->Rndm();
+	double deviation = ep_dist->GetRandom();
+	double event_plane = reaction_plane + deviation;
+	event_plane = fmod(event_plane, 2*M_PI);  // Force to range [0, 2*pi)
+	if(event_plane < 0) { event_plane += 2*M_PI; }
+	event.set_event_plane(event_plane);
+
+	if(n_protons > 0) while((int)proton_angles.size() < 1) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+			if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+				proton_angles.push_back(new_angle);
+			}
+		}
+	}
+
+	while((int)proton_angles.size() < n_protons) {
+		if(sim_rand->Rndm() < pars.p_group) {
+			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
+			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			if(group_angle < 0) { group_angle += 2*M_PI; }
+			if(1.0 + 2 * pars.v2 * cos(2*(group_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(group_angle)) >= sim_rand->Rndm()) {
+					proton_angles.push_back(group_angle);
+				}
+			}
+		} else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+			if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+					proton_angles.push_back(new_angle);
+				}
+			}
+		}
+	}
+
+	vector<Track> tracks;
+	for(double& angle:proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_protons(tracks);
+}
+
+
+
+// Simulate single event and return simulated proton angles. Include elliptic flow into simulation.
+void Simulator::sim_event_flow(Event &event) {
+	double group_angle, new_angle;
+	vector<double> proton_angles = {};
+
+	int n_protons = get_protons();
+
+	double reaction_plane = 2*M_PI*sim_rand->Rndm();
+	double deviation = ep_dist->GetRandom();
+	double event_plane = reaction_plane + deviation;
+	event_plane = fmod(event_plane, 2*M_PI);  // Force to range [0, 2*pi)
+	if(event_plane < 0) { event_plane += 2*M_PI; }
+	event.set_event_plane(event_plane);
+
+	if(n_protons > 0) while((int)proton_angles.size() < 1) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+			proton_angles.push_back(new_angle);
+		}
+	}
+
+	while((int)proton_angles.size() < n_protons) {
+		if(sim_rand->Rndm() < pars.p_group) {
+			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
+			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			if(group_angle < 0) { group_angle += 2*M_PI; }
+			if(1.0 + 2 * pars.v2 * cos(2*(group_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+				proton_angles.push_back(group_angle);
+			}
+		} else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+			if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+				proton_angles.push_back(new_angle);
+			}
+		}
+	}
+
+	vector<Track> tracks;
+	for(double& angle:proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_protons(tracks);
+
+}
+
+
+
+// Simulate single event and return simulated proton angles. Include elliptic flow into simulation.
+void Simulator::sim_event_eff_new(Event &event) {
+	double group_angle, new_angle;
+	vector<double> proton_angles = {};
+
+	int n_protons = get_protons();
+
+//	double reaction_plane = 2*M_PI*sim_rand->Rndm();
+//	double deviation = ep_dist->GetRandom();
+//	double event_plane = reaction_plane + deviation;
+//	event_plane = fmod(event_plane, 2*M_PI);  // Force to range [0, 2*pi)
+//	if(event_plane < 0) { event_plane += 2*M_PI; }
+
+	if(n_protons > 0) while((int)proton_angles.size() < 1) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+//		if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+			if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+				proton_angles.push_back(new_angle);
+			}
+//		}
+	}
+
+	while((int)proton_angles.size() < n_protons) {
+		if(sim_rand->Rndm() < pars.p_group) {
+			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
+			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			if(group_angle < 0) { group_angle += 2*M_PI; }
+//			if(1.0 + 2 * pars.v2 * cos(2*(group_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(group_angle)) >= sim_rand->Rndm()) {
+					proton_angles.push_back(group_angle);
+				}
+//			}
+		} else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+//			if(1.0 + 2 * pars.v2 * cos(2*(new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+					proton_angles.push_back(new_angle);
+				}
+//			}
+		}
+	}
+
+	vector<Track> tracks;
+	for(double& angle:proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_protons(tracks);
+
+}
+
+
 
 // Simulate single event and return simulated proton angles. Include efficiency into simulation.
 vector<double> Simulator::sim_event_eff2() {
@@ -444,6 +681,72 @@ double Simulator::wrap_gaus(double x, double mu, double sigma, double lower_boun
 
 	return(sum);
 }
+
+
+double Simulator::event_plane_gang(double res, double psi) {
+	double chi_f = chi_gang(res);
+	double st = exp(-chi_f*chi_f/2.);
+	double nd = pow(M_PI/2.,0.5)*chi_f*cos(psi);
+	double rd = exp(-chi_f*chi_f*sin(psi)*sin(psi)/2.);
+	double th = 1 + TMath::Erf(chi_f*cos(psi)/sqrt(2.));
+	double eventplane = (st + nd*rd*th)/(2.*M_PI);
+	return eventplane;
+}
+
+
+double Simulator::event_plane(double res, double psi, double acc) {
+	double chi_f = chi(res, acc);
+	double st = exp(-chi_f*chi_f/2.);
+	double nd = pow(M_PI/2.,0.5)*chi_f*cos(psi);
+	double rd = exp(-chi_f*chi_f*sin(psi)*sin(psi)/2.);
+	double th = 1 + TMath::Erf(chi_f*cos(psi)/sqrt(2.));
+	double eventplane = (st + nd*rd*th)/(2.*M_PI);
+	return eventplane;
+}
+
+
+double Simulator::chi_gang(double res) {
+  double chi   = 2.0;
+  double delta = 1.0;
+
+  for (int i = 0; i < 15; i++) {
+      while(res_event_plane(chi) < res) {chi += delta;}
+      delta = delta / 2.;
+      while(res_event_plane(chi) > res) {chi -= delta;}
+      delta = delta / 2.;
+  }
+
+  return chi;
+}
+
+
+double Simulator::chi(double res, double acc) {
+  double chi   = 2.0;
+  double delta = 1.0;
+  double diff = -numeric_limits<double>::max();
+
+  while (fabs(diff) > acc) {
+      while(res_event_plane(chi) < res) {chi += delta;}
+      delta = delta / 2.;
+      while(res_event_plane(chi) > res) {chi -= delta;}
+      delta = delta / 2.;
+      diff = res_event_plane(chi) - res;
+  }
+
+  return chi;
+}
+
+
+double Simulator::res_event_plane(double chi) {
+  double con = 0.626657;
+  double arg = chi * chi / 4.;
+
+  double res = con * chi * exp(-arg) * (TMath::BesselI0(arg) +
+                                          TMath::BesselI1(arg));
+
+  return res;
+}
+
 
 
 void Simulator::write_two_p_corr() {

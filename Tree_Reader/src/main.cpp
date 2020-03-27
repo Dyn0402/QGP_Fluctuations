@@ -40,7 +40,7 @@ void read_class_old();
 void read_comb_sys();
 //void real_event_tree_test();
 //void speed_test();
-//void sim_debug();
+void res_calc_test();
 void speed_test_class();
 
 void run_set(int energy, int set_num, string set_name);
@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
 	read_class();
+//	res_calc_test();
 //	real_event_tree_test();
 //	speed_test();
 //	speed_test_class();
@@ -72,22 +73,24 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	map<string, pair<int, int>> set_pairs = {{"Sim_Test", {0,0}}};
+	map<string, pair<int, int>> set_pairs = {{"Sim_Flow", {0,0}}, {"Sim_Flow_No_Rotate", {0,0}}, {"Sim_Eff_Hole3-4_Flow", {0,0}}, {"Sim_Eff_Hole3-4_Flow_No_Rotate", {0,0}}};
 
-	int sleep = 15;
+	int set_sleep = 15;
+	int energy_sleep = 1;
 
 	ROOT::EnableThreadSafety();
 	{
-		ThreadPool pool(1);//thread::hardware_concurrency());
+		ThreadPool pool(thread::hardware_concurrency());
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list = {7};//, 11, 39, 27, 62, 19};
+				vector<int> energy_list = {7, 11, 39, 27, 62, 19};
 				for(int energy:energy_list) {
 					pool.enqueue(run_set, energy, set_num, set_pair.first);
+					this_thread::sleep_for(chrono::seconds(energy_sleep));
 				}
-				this_thread::sleep_for(chrono::seconds(sleep));
+				this_thread::sleep_for(chrono::seconds(set_sleep));
 			}
 		}
 	}
@@ -98,13 +101,13 @@ void run_set(int energy, int set_num, string set_name) {
 	string base_path = "/media/dylan/SSD_Storage/Research/";
 	int ref = 3;
 
-	string in_path = base_path + "Trees_Old_Ref2/";
+	string in_path = base_path + "Trees_Old_Ref3/";
 	string out_dir = base_path + "Data_Sim/";
 	string mix_out_dir = base_path + "Data_Sim_Mix/";
 
 	vector<int> divs = {2, 3, 4, 5, 6};
-//	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
-	map<int, int> sim_cent_events = {{0, 1000}, {1, 1000}, {2, 1000}, {3, 1000}, {4, 1000}, {5, 1000}, {6, 1000}, {7, 1000}, {8, 10000}};
+	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
+//	map<int, int> sim_cent_events = {{0, 1000}, {1, 1000}, {2, 1000}, {3, 1000}, {4, 1000}, {5, 1000}, {6, 1000}, {7, 1000}, {8, 10000}};
 
 	string set_dir = set_name + to_string(set_num) + "/";
 
@@ -126,14 +129,14 @@ void run_set(int energy, int set_num, string set_name) {
 	if(in_string(set_name, {"No_Rotate", "EP_Rotate"}, false)) { reader.set_rotate_random(false); }
 	else{ reader.set_rotate_random(true); }
 
-	if(in_string(set_name,  "Pile_Up_01_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
-	else if(in_string(set_name,  "Pile_Up_008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
-	else if(in_string(set_name,  "Pile_Up_005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
-	else if(in_string(set_name,  "Pile_Up_002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
-	else if(in_string(set_name,  "Pile_Up_001_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
-	else if(in_string(set_name,  "Pile_Up_0008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0008); }
-	else if(in_string(set_name,  "Pile_Up_0005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0005); }
-	else if(in_string(set_name,  "Pile_Up_0002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0002); }
+	if(in_string(set_name, "Pile_Up_01_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
+	else if(in_string(set_name, "Pile_Up_008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
+	else if(in_string(set_name, "Pile_Up_005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
+	else if(in_string(set_name, "Pile_Up_002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
+	else if(in_string(set_name, "Pile_Up_001_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
+	else if(in_string(set_name, "Pile_Up_0008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0008); }
+	else if(in_string(set_name, "Pile_Up_0005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0005); }
+	else if(in_string(set_name, "Pile_Up_0002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0002); }
 	else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
 
 	if(in_string(set_name,  "No_BTof_Rej")) {
@@ -165,8 +168,16 @@ void run_set(int energy, int set_num, string set_name) {
 	if(in_string(set_name, {"Sim", "Eff", "Hole3-4"}, true)) {
 		reader.set_sim_eff_dist_path(base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
 	}
-	reader.sim.set_hom_eff(1.0);
-	reader.set_sim_proton_dist_dataset(base_path + "Data_Old_Ref3/eta050/");
+	if(in_string(set_name, "Sim")) {
+		reader.sim.set_hom_eff(1.0);
+		reader.set_sim_proton_dist_dataset(base_path + "Data_Old_Ref3/eta050/");
+	}
+	if(in_string(set_name, {"Sim", "Flow"}, true)) {
+		reader.set_sim_flow(true);
+		reader.sim.set_flow(0.05, 0.5, 0.0001);
+	} else {
+		reader.set_sim_flow(false);
+	}
 
 	reader.set_mixed_sets(false);
 	reader.set_rand_data(false);
@@ -317,6 +328,54 @@ void read_class_old() {
 			}
 		}
 	}
+}
+
+
+
+void res_calc_test() {
+
+	TFile file("/home/dylan/Research/Results/event_plane_dist_ex.root", "RECREATE");
+	Simulator sim;
+	double res = 0.5;
+	double acc = 0.0001;
+
+//	double max_psi = 0.0;
+//	double val = numeric_limits<double>::max();
+//	while(val > 0) {
+//		sim.event_plane(res, max_psi);
+//		cout << "psi : " << max_psi << "  |  val: " << val << endl;
+//		max_psi += 0.1;
+//	}
+
+	TCanvas can("ep_dist_ex_can", "Event Plane Pdf");
+	TH1D dist("ep_dist_ex", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
+	TH1D dist_gang("ep_dist_ex_gang", ("Event Plane Gang Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
+	dist.SetLineColor(kRed);
+
+	for(int bin = 0; bin <= dist.GetXaxis()->GetNbins(); bin++) {
+		dist.SetBinContent(bin, sim.event_plane(res, dist.GetBinCenter(bin), acc));
+		dist_gang.SetBinContent(bin, sim.event_plane_gang(res, dist.GetBinCenter(bin)));
+	}
+
+	cout << "Gang's Distribution integral: " << dist.Integral("width") << endl;
+	cout << "Modified Distribution integral: " << dist_gang.Integral("width") << endl;
+
+	dist.Draw("HIST");
+	dist_gang.Draw("HISTSAMES");
+
+	dist.Write();
+	dist_gang.Write();
+	can.Write();
+
+	file.Close();
+
+//	cout << "Gang's Function chi: " << sim.chi(res) << endl;
+//	cout << "Modified Function chi: " << sim.chi2(res, acc) << endl;
+//
+//	cout << endl;
+//
+//	cout << "Gang's Function event plane: " << sim.event_plane(res, max_psi) << endl;
+//	cout << "Modified Function event plane: " << sim.event_plane2(res, max_psi, acc) << endl;
 }
 
 
