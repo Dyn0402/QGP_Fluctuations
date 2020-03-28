@@ -22,6 +22,9 @@
 #include <TDirectory.h>
 #include <TROOT.h>
 #include <TCanvas.h>
+#include <TStyle.h>
+#include <TLine.h>
+#include <TLegend.h>
 
 #include "ThreadPool.h"
 #include "TreeReader.h"
@@ -339,38 +342,50 @@ void read_class_old() {
 
 void res_calc_test() {
 
-	TFile file("/home/dylan/Research/Results/event_plane_dist_ex.root", "UPDATE");
+	TFile file("/home/dylan/Research/Results/event_plane_dist_ex.root", "RECREATE");
 	Simulator sim;
-	double res = 0.8;
+	vector<double> res_vec {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 0.98, 0.99, 0.999};
 	double acc = 0.0001;
+	gStyle->SetOptStat(0);
+	gStyle->SetPadTopMargin(0.13);
 
-//	double max_psi = 0.0;
-//	double val = numeric_limits<double>::max();
-//	while(val > 0) {
-//		sim.event_plane(res, max_psi);
-//		cout << "psi : " << max_psi << "  |  val: " << val << endl;
-//		max_psi += 0.1;
-//	}
+	for(auto res:res_vec) {
 
-	TCanvas can(("ep_dist_ex_can_res"+to_string(res)).data(), ("Event Plane Pdf res="+to_string(res)).data());
-	TH1D dist(("ep_dist_ex_res"+to_string(res)).data(), ("Event Plane Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
-	TH1D dist_gang(("ep_dist_ex_gang_res"+to_string(res)).data(), ("Event Plane Gang Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
-	dist.SetLineColor(kRed);
+		TCanvas can(("ep_dist_ex_can_res"+to_string(res)).data(), ("Event Plane Pdf res = "+to_string(res)).data());
+		TH1D dist(("ep_dist_ex_res"+to_string(res)).data(), ("#splitline{Event Plane Pdf}{resolution="+to_string(res)+"}").data(), 1001, -M_PI, M_PI);
+		TH1D dist_gang(("ep_dist_ex_gang_res"+to_string(res)).data(), ("#splitline{Event Plane Pdf}{resolution="+to_string(res)+"}").data(), 1001, -M_PI, M_PI);
+		dist.SetLineColor(kRed);
+		dist.GetXaxis()->SetTitle("Azimuthal Angle (radians)");
+		dist.GetYaxis()->SetTitle("Event Plane Probability");
+//		gStyle->SetPadTopMargin(0.1);
 
-	for(int bin = 0; bin <= dist.GetXaxis()->GetNbins(); bin++) {
-		dist.SetBinContent(bin, sim.event_plane(res, dist.GetBinCenter(bin), acc));
-		dist_gang.SetBinContent(bin, sim.event_plane_gang(res, dist.GetBinCenter(bin)));
+		for(int bin = 0; bin <= dist.GetXaxis()->GetNbins(); bin++) {
+			dist.SetBinContent(bin, sim.event_plane(res, dist.GetBinCenter(bin), acc));
+			dist_gang.SetBinContent(bin, sim.event_plane_gang(res, dist.GetBinCenter(bin)));
+		}
+
+		TLine react_plane(0, 0, 0, dist_gang.GetMaximum());
+		react_plane.SetLineColor(kRed);
+
+		dist.GetYaxis()->SetRange(0, 1.05*dist_gang.GetMaximum());
+		dist.GetYaxis()->SetRangeUser(0, 1.05*dist_gang.GetMaximum());
+
+		cout << "Gang's Distribution integral: " << dist.Integral("width") << endl;
+		cout << "Modified Distribution integral: " << dist_gang.Integral("width") << endl;
+
+		dist.Draw("HIST");
+		dist_gang.Draw("HISTSAMES");
+		react_plane.Draw("SAME");
+
+		TLegend leg;
+		leg.AddEntry(&react_plane, "Reaction Plane", "l");
+		leg.SetBorderSize(0);
+		leg.Draw();
+
+		dist.Write();
+		dist_gang.Write();
+		can.Write();
 	}
-
-	cout << "Gang's Distribution integral: " << dist.Integral("width") << endl;
-	cout << "Modified Distribution integral: " << dist_gang.Integral("width") << endl;
-
-	dist.Draw("HIST");
-	dist_gang.Draw("HISTSAMES");
-
-	dist.Write();
-	dist_gang.Write();
-	can.Write();
 
 	file.Close();
 
