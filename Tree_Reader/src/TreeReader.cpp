@@ -871,8 +871,8 @@ tree_leaves TreeReader::get_tree_leaves_new(TTree* tree) {
 
 // Add file's event/track cut hists to corresponding collected histogram for energy.
 void TreeReader::add_cut_hists(TFile *file) {
-	TH1I *event_hist = (TH1I*)file->Get(event_cut_hist_name.data());
-	TH1I *track_hist = (TH1I*)file->Get(track_cut_hist_name.data());
+	TH1D *event_hist = (TH1D*)file->Get(event_cut_hist_name.data());
+	TH1D *track_hist = (TH1D*)file->Get(track_cut_hist_name.data());
 	event_cut_tree_maker.Add(event_hist);
 	track_cut_tree_maker.Add(track_hist);
 }
@@ -986,7 +986,7 @@ void TreeReader::define_qa() {
 	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
 
-	event_cut_tree_maker = TH1I(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 8, -0.5, 7.5);
+	event_cut_tree_maker = TH1D(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 8, -0.5, 7.5);
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Original");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Is muEvent");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Good Trigger");
@@ -996,7 +996,7 @@ void TreeReader::define_qa() {
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Vertex Non-Zero");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(8, "Good VPD Vz");
 
-	track_cut_tree_maker = TH1I(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 13, -0.5, 12.5);
+	track_cut_tree_maker = TH1D(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 13, -0.5, 12.5);
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Original");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Charge");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(3, "p_low");
@@ -1010,13 +1010,13 @@ void TreeReader::define_qa() {
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(11, "dca");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(12, "pt_low");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(13, "pt_high");
-	event_cut_hist = TH1I(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
+	event_cut_hist = TH1D(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
 	event_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
 	event_cut_hist.GetXaxis()->SetBinLabel(2, "Good Run");
 	event_cut_hist.GetXaxis()->SetBinLabel(3, "Enough Protons");
 	event_cut_hist.GetXaxis()->SetBinLabel(4, "Pile Up Rejected");
 	event_cut_hist.GetXaxis()->SetBinLabel(5, "Enough Good Protons");
-	track_cut_hist = TH1I(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
+	track_cut_hist = TH1D(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
 	track_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
 	track_cut_hist.GetXaxis()->SetBinLabel(2, "Good p");
 	track_cut_hist.GetXaxis()->SetBinLabel(3, "Good pt");

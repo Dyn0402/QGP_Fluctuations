@@ -447,11 +447,11 @@ void Simulator::sim_event_eff_flow(Event &event) {
 
 	int n_protons = get_protons();
 
-	double reaction_plane = 2*M_PI*sim_rand->Rndm();
+	double reaction_plane = M_PI*sim_rand->Rndm();
 	double deviation = ep_dist->GetRandom();
 	double event_plane = reaction_plane + deviation;
-	event_plane = fmod(event_plane, 2*M_PI);  // Force to range [0, 2*pi)
-	if(event_plane < 0) { event_plane += 2*M_PI; }
+	event_plane = fmod(event_plane, M_PI);  // Force to range [0, pi)
+	if(event_plane < 0) { event_plane += M_PI; }
 	event.set_event_plane(event_plane);
 
 	if(n_protons > 0) while((int)proton_angles.size() < 1) {
@@ -501,12 +501,12 @@ void Simulator::sim_event_flow(Event &event) {
 
 	int n_protons = get_protons();
 
-	double reaction_plane = 2*M_PI*sim_rand->Rndm();
+	double reaction_plane = M_PI*sim_rand->Rndm();
 	double deviation = ep_dist->GetRandom();
 	double event_plane = reaction_plane + deviation;
-	event_plane = fmod(event_plane, 2*M_PI);  // Force to range [0, 2*pi)
-	if(event_plane < 0) { event_plane += 2*M_PI; }
-	event.set_event_plane(event_plane);
+	event_plane = fmod(event_plane, M_PI);  // Force to range [0, pi)
+	if(event_plane < 0) { event_plane += M_PI; }
+	event.set_event_plane(event_plane);   //  --------------------------------------------------------------------------------------------Need to change back to event plane when done with test.
 
 	if(n_protons > 0) while((int)proton_angles.size() < 1) {
 		new_angle = sim_rand->Rndm() * 2 * M_PI;

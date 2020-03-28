@@ -210,10 +210,10 @@ private:
 	TH2I cent_hist;
 	TH2I btof_ref_hist;
 
-	TH1I event_cut_tree_maker;
-	TH1I track_cut_tree_maker;
-	TH1I event_cut_hist;
-	TH1I track_cut_hist;
+	TH1D event_cut_tree_maker;
+	TH1D track_cut_tree_maker;
+	TH1D event_cut_hist;
+	TH1D track_cut_hist;
 	TH1I cent16_events;
 	TH1I cent9_events;
 

@@ -73,7 +73,9 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-	map<string, pair<int, int>> set_pairs = {{"Sim_Flow", {0,0}}, {"Sim_Flow_No_Rotate", {0,0}}, {"Sim_Eff_Hole3-4_Flow", {0,0}}, {"Sim_Eff_Hole3-4_Flow_No_Rotate", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"Sim_Flow", {0,0}}, {"Sim_Flow_No_Rotate", {0,0}}, {"Sim_Eff_Hole3-4_Flow", {0,0}}, {"Sim_Eff_Hole3-4_Flow_No_Rotate", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"Sim_Flow_08res_05v2", {0,0}}, {"Sim_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_Flow_05res_05v2", {0,0}}, {"Sim_Flow_05res_05v2_No_Rotate", {0,0}}};
+	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta05_No_Rotate", {0,0}}};
 
 	int set_sleep = 15;
 	int energy_sleep = 1;
@@ -99,11 +101,11 @@ void read_class() {
 
 void run_set(int energy, int set_num, string set_name) {
 	string base_path = "/media/dylan/SSD_Storage/Research/";
-	int ref = 3;
+	int ref = 2;
 
-	string in_path = base_path + "Trees_Old_Ref3/";
-	string out_dir = base_path + "Data_Sim/";
-	string mix_out_dir = base_path + "Data_Sim_Mix/";
+	string in_path = base_path + "Trees_Old_Ref2/";
+	string out_dir = base_path + "Data_Old_Ref2/";
+	string mix_out_dir = base_path + "Data_Old_Ref2_Mix/";
 
 	vector<int> divs = {2, 3, 4, 5, 6};
 	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
@@ -148,6 +150,7 @@ void run_set(int energy, int set_num, string set_name) {
 	reader.set_single_ratio(true); reader.mix.set_single_ratio(true);
 
 	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
+	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }
 
 	if(in_string(set_name,  "Efficiency_08_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
 	else if(in_string(set_name,  "Efficiency_05_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
@@ -174,7 +177,9 @@ void run_set(int energy, int set_num, string set_name) {
 	}
 	if(in_string(set_name, {"Sim", "Flow"}, true)) {
 		reader.set_sim_flow(true);
-		reader.sim.set_flow(0.05, 0.5, 0.0001);
+		if(in_string(set_name, {"08res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
+		else if(in_string(set_name, {"05res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
+		else if(in_string(set_name, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
 	} else {
 		reader.set_sim_flow(false);
 	}
@@ -334,9 +339,9 @@ void read_class_old() {
 
 void res_calc_test() {
 
-	TFile file("/home/dylan/Research/Results/event_plane_dist_ex.root", "RECREATE");
+	TFile file("/home/dylan/Research/Results/event_plane_dist_ex.root", "UPDATE");
 	Simulator sim;
-	double res = 0.5;
+	double res = 0.8;
 	double acc = 0.0001;
 
 //	double max_psi = 0.0;
@@ -347,9 +352,9 @@ void res_calc_test() {
 //		max_psi += 0.1;
 //	}
 
-	TCanvas can("ep_dist_ex_can", "Event Plane Pdf");
-	TH1D dist("ep_dist_ex", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
-	TH1D dist_gang("ep_dist_ex_gang", ("Event Plane Gang Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
+	TCanvas can(("ep_dist_ex_can_res"+to_string(res)).data(), ("Event Plane Pdf res="+to_string(res)).data());
+	TH1D dist(("ep_dist_ex_res"+to_string(res)).data(), ("Event Plane Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
+	TH1D dist_gang(("ep_dist_ex_gang_res"+to_string(res)).data(), ("Event Plane Gang Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
 	dist.SetLineColor(kRed);
 
 	for(int bin = 0; bin <= dist.GetXaxis()->GetNbins(); bin++) {
