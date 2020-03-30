@@ -6,20 +6,20 @@
  */
 
 
-//#include <iostream>
-//#include <string>
-//
-//#include <TH1.h>
-//#include <TRandom3.h>
-//#include <TMath.h>
-//#include <TCanvas.h>
-//
-//using namespace std;
+#include <iostream>
+#include <string>
+
+#include <TH1.h>
+#include <TRandom3.h>
+#include <TMath.h>
+#include <TCanvas.h>
+
+using namespace std;
 
 
-//static Double_t EventPlane(double res, double psi);
-//static Double_t chi(double res);
-//static Double_t resEventPlane(double chi);
+static Double_t EventPlane(double res, double psi);
+static Double_t chi(double res);
+static Double_t resEventPlane(double chi);
 
 
 
@@ -30,7 +30,7 @@ void res_calc_test() {
 	double flow_res = 0.0;
 	int flow_res_n = 0;
 
-	TH1D *ep_dist = new TH1D("ep_dist", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -PI, PI);
+	TH1D *ep_dist = new TH1D("ep_dist", "Event Plane Pdf", 1001, -TMath::Pi, TMath::Pi);
 	for(int bin = 0; bin <= ep_dist->GetXaxis()->GetNbins(); bin++) {
 		ep_dist->SetBinContent(bin, EventPlane(res, ep_dist->GetBinCenter(bin)));
 	}
@@ -38,7 +38,7 @@ void res_calc_test() {
 	TRandom3 sim_rand(0);
 
 	for(int i=0; i<events; i++) {
-		double reaction_plane = M_PI*sim_rand.Rndm();
+		double reaction_plane = TMath::Pi*sim_rand.Rndm();
 		double deviation = ep_dist->GetRandom();
 		double event_plane = reaction_plane + deviation;
 		flow_res += cos(2*(event_plane - reaction_plane));
@@ -53,10 +53,10 @@ void res_calc_test() {
 static Double_t EventPlane(double res, double psi) {
 	double chi_f = chi(res);
 	double st = exp(-chi_f*chi_f/2.);
-	double nd = sqrt(PI/2.)*chi_f*cos(psi);
+	double nd = sqrt(TMath::Pi/2.)*chi_f*cos(psi);
 	double rd = exp(-chi_f*chi_f*sin(psi)*sin(psi)/2.);
 	double th = 1 + TMath::Erf(chi_f*cos(psi)/sqrt(2.));
-	double eventplane = (st + nd*rd*th)/(2.*PI);
+	double eventplane = (st + nd*rd*th)/(2.*TMath::Pi);
 	return eventplane;
 }
 ////-----------------------------------------------------------------------
