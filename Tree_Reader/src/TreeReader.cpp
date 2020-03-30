@@ -451,18 +451,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 				cout << " " << set_name << " " << energy << "GeV Centrality " << cent.first << " " << (int)(100.0*i/cent.second+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 			}
 			Event event(event_defs, energy, ref_num, cent.first);
-			sim.simulate_event2(event);
-//			vector<double> angles = sim.simulate_event();
-//			pair<vector<double>, double> sim_result = sim.sim_event_flow();
-//			event.set_event_plane(sim_result.second);
-//			vector<Track> tracks;
-//			for(double& angle:sim_result.first) {
-//			for(double& angle:angles) {
-//				Track track(track_defs);
-//				track.set_phi(angle);
-//				tracks.push_back(track);
-//			}
-//			event.set_protons(tracks);
+			sim.simulate_event(event);
 
 			process_event(event);
 		}
