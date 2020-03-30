@@ -12,6 +12,7 @@
 #include <TH1.h>
 #include <TRandom3.h>
 #include <TMath.h>
+#include <TCanvas.h>
 
 using namespace std;
 
@@ -84,3 +85,53 @@ static Double_t resEventPlane(double chi) {
 
   return res;
 }
+
+
+
+//void res_calc_test() {
+//	int events = 1000000;
+//	double res = 0.8;
+//
+//	double flow_res = 0.0;
+//	int flow_res_n = 0;
+//
+//	TH1D *ep_dist = new TH1D("ep_dist", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -M_PI, M_PI);
+//	for(int bin = 0; bin <= ep_dist->GetXaxis()->GetNbins(); bin++) {
+//		ep_dist->SetBinContent(bin, EventPlane(res, ep_dist->GetBinCenter(bin)));
+//	}
+//	TH1D *result_dist = new TH1D("result_dist", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -M_PI, M_PI);
+//	result_dist->SetLineColor(kRed);
+//
+//	TH1D *ep = new TH1D("ep", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
+//	TH1D *rp = new TH1D("rp", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -2*M_PI, 2*M_PI);
+//	ep->SetLineColor(kRed);
+//
+//	TRandom3 sim_rand(0);
+//
+//	for(int i=0; i<events; i++) {
+//		double reaction_plane = 2*M_PI*sim_rand.Rndm() - M_PI;
+//		double deviation = ep_dist->GetRandom();
+//		double event_plane = reaction_plane + deviation;
+////		event_plane = fmod(event_plane, M_PI);  // Force to range [0, pi)
+////		if(event_plane < 0) { event_plane += M_PI; }
+//		while(event_plane >= M_PI) { event_plane -= 2*M_PI; }
+//		while(event_plane < -M_PI) { event_plane += 2*M_PI; }
+//		ep->Fill(event_plane);
+//		rp->Fill(reaction_plane);
+//		result_dist->Fill(event_plane - reaction_plane);
+//		flow_res += cos(2*(event_plane - reaction_plane));
+//		flow_res_n++;
+//	}
+//
+//	if(flow_res_n > 0) { cout << "Target res: " << res << " Actual res: " << flow_res / flow_res_n << endl; }
+//
+//	result_dist->Scale(1.0/result_dist->Integral("width"));
+//
+//	TCanvas *can1 = new TCanvas();
+//	rp->Draw();
+//	ep->Draw("SAME");
+//	TCanvas *can2 = new TCanvas();
+//	ep_dist->Draw();
+//	result_dist->Draw("SAMES");
+//
+//}
