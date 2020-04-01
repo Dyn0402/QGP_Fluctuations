@@ -46,6 +46,9 @@ public:
 	void set_out_path(string path);
 	void set_out_root_name(string name);
 	void set_sets(map<string, vector<int>> sets);
+	void set_energies(vector<int> energies);
+	void set_all_centralities(vector<int> centralities);
+	void set_can_wh(int can_width, int can_height);
 
 	// Doers
 	void analyze();
@@ -86,14 +89,17 @@ private:
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> raw_stats_sets;
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> mix_stats_sets;
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> divide_stats_sets;
+	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> pull_stats_sets;
 
 	map<string, map<int, map<int, map<int, map<string, double>>>>> raw_stats_sd;
 	map<string, map<int, map<int, map<int, map<string, double>>>>> mix_stats_sd;
 	map<string, map<int, map<int, map<int, map<string, double>>>>> divide_stats_sd;
+	map<string, map<int, map<int, map<int, map<string, double>>>>> pull_stats_sd;
 
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> mix_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_median;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_stats_median;
 
 
 	// Doers

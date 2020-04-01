@@ -30,9 +30,9 @@ void res_calc_test() {
 	double flow_res = 0.0;
 	int flow_res_n = 0;
 
-	TH1D *ep_dist = new TH1D("ep_dist", "Event Plane Pdf", 1001, -TMath::Pi(), TMath::Pi());
+	TH1D *ep_dist = new TH1D("ep_dist", "Event Plane Pdf", 1001, -TMath::Pi()/2, TMath::Pi()/2);
 	for(int bin = 0; bin <= ep_dist->GetXaxis()->GetNbins(); bin++) {
-		ep_dist->SetBinContent(bin, EventPlane(res, ep_dist->GetBinCenter(bin)));
+		ep_dist->SetBinContent(bin, EventPlane(res, 2*ep_dist->GetBinCenter(bin)));
 	}
 
 	TRandom3 sim_rand(0);

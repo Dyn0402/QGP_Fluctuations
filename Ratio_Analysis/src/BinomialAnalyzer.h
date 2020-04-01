@@ -48,6 +48,8 @@ public:
 	void set_out_root_name(string name);
 	void set_energies(vector<int> energies);
 	void set_sets(map<string, vector<int>> sets);
+	void set_centralities(vector<int> centralities);
+	void set_can_wh(int can_width, int can_height);
 
 	// Doers
 	void analyze();
@@ -74,6 +76,7 @@ private:
 	int canvas_height = 1080;
 	double legend_border_width = 0;
 	double legend_text_size = 0.2;
+	double left_margin = 0.15;
 
 	vector<int> div_marker_style = {8, 8, 34, 20, 21, 22, 33};
 	vector<int> div_marker_color = {28, 9, 6, 1, 2, 8, 4};

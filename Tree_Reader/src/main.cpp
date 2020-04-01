@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
 	read_class();
-//	res_calc();
+//	res_plot();
 //	real_event_tree_test();
 //	speed_test();
 //	speed_test_class();
@@ -80,9 +80,14 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"Sim_Flow", {0,0}}, {"Sim_Flow_No_Rotate", {0,0}}, {"Sim_Eff_Hole3-4_Flow", {0,0}}, {"Sim_Eff_Hole3-4_Flow_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_Flow_08res_05v2", {0,0}}, {"Sim_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_Flow_05res_05v2", {0,0}}, {"Sim_Flow_05res_05v2_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs {{"Sim_Flow_05v2_08res_Test", {0,0}}, {"Sim_Flow_05v2_05res_Test", {0,0}}};
-	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s", {0,0}}, {"Sim_05p00s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}},
-				{"Sim_0p0s_Eff_Hole4-3", {0,0}}, {"Sim_05p00s_Eff_Hole4-3", {0,0}}, {"Sim_0p0s_Eff_Hole4-3_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_Hole4-3_No_Rotate", {0,0}},
-				{"Sim_0p0s_Eff", {0,0}}, {"Sim_05p00s_Eff", {0,0}}, {"Sim_0p0s_Eff_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_No_Rotate", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {//{"Sim_0p0s", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}},
+//				{"Sim_0p0s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_0p0s_Eff_Hole3-4_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_Hole3-4_No_Rotate", {0,0}},
+//				{"Sim_0p0s_Eff", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_0p0s_Eff_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_No_Rotate", {0,0}},
+//				{"Sim_0p0s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_0p0s_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_08res_05v2_No_Rotate", {0,0}},
+//				{"Sim_0p0s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_0p0s_Flow_05res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_05res_05v2_No_Rotate", {0,0}},
+//				{"Sim_0p0s_Flow_099res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}, {"Sim_0p0s_Flow_099res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_099res_05v2_No_Rotate", {0,0}}
+//				};
+	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
 
 	int set_sleep = 15;
 	int energy_sleep = 1;
@@ -107,16 +112,18 @@ void read_class() {
 
 
 void run_set(int energy, int set_num, string set_name) {
-	string base_path = "/media/dylan/SSD_Storage/Research/";
-	int ref = 2;
+	string base_path = "/home/dylan/Research/";
+	string in_base_path = "/media/dylan/SSD_Storage/Research/";//base_path;
+	string out_base_path = base_path;
+	int ref = 3;
 
-	string in_path = base_path + "Trees_Old_Ref3/";
-	string out_dir = base_path + "Data_Sim/";
-	string mix_out_dir = base_path + "Data_Sim_Mix/";
+	string in_path = in_base_path + "Trees_Old_Ref3/";
+	string out_dir = out_base_path + "Data_Sim/";
+	string mix_out_dir = out_base_path + "Data_Sim_Mix/";
 
 	vector<int> divs {2, 3, 4, 5, 6};
-//	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
-	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 1000}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000}};
+	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
+//	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 1000}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000}};
 
 	string set_dir = set_name + to_string(set_num) + "/";
 
@@ -176,16 +183,17 @@ void run_set(int energy, int set_num, string set_name) {
 		reader.set_sim_eff(false);
 	}
 	if(in_string(set_name, {"Sim", "Eff", "Hole3-4"}, true)) {
-		reader.set_sim_eff_dist_path(base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
+		reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
 	}
 	if(in_string(set_name, "Sim")) {
 		reader.sim.set_hom_eff(1.0);
-		reader.set_sim_proton_dist_dataset(base_path + "Data_Old_Ref3/eta050/");
+		reader.set_sim_proton_dist_dataset(in_base_path + "Data_Old_Ref3/eta050/");
 	}
 	if(in_string(set_name, {"Sim", "Flow"}, true)) {
 		reader.set_sim_flow(true);
 		if(in_string(set_name, {"08res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
 		else if(in_string(set_name, {"05res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
+		else if(in_string(set_name, {"099res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
 		else if(in_string(set_name, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
 	} else {
 		reader.set_sim_flow(false);
@@ -240,7 +248,7 @@ void res_calc() {
 void res_calc_debug() {
 	int events = 1000;
 	double res = 0.8;
-	double acc = 0.0001;
+//	double acc = 0.0001;
 
 	double flow_res = 0.0;
 	int flow_res_n = 0;
@@ -282,16 +290,16 @@ void res_plot() {
 	for(auto res:res_vec) {
 
 		TCanvas can(("ep_dist_ex_can_res"+to_string(res)).data(), ("Event Plane Pdf res = "+to_string(res)).data());
-		TH1D dist(("ep_dist_ex_res"+to_string(res)).data(), ("#splitline{Event Plane Pdf}{resolution="+to_string(res)+"}").data(), 1001, -M_PI, M_PI);
-		TH1D dist_gang(("ep_dist_ex_gang_res"+to_string(res)).data(), ("#splitline{Event Plane Pdf}{resolution="+to_string(res)+"}").data(), 1001, -M_PI, M_PI);
+		TH1D dist(("ep_dist_ex_res"+to_string(res)).data(), ("#splitline{Event Plane Pdf}{resolution="+to_string(res)+"}").data(), 1001, -M_PI/2, M_PI/2);
+		TH1D dist_gang(("ep_dist_ex_gang_res"+to_string(res)).data(), ("#splitline{Event Plane Pdf}{resolution="+to_string(res)+"}").data(), 1001, -M_PI/2, M_PI/2);
 		dist.SetLineColor(kRed);
 		dist.GetXaxis()->SetTitle("Azimuthal Angle (radians)");
 		dist.GetYaxis()->SetTitle("Event Plane Probability");
 //		gStyle->SetPadTopMargin(0.1);
 
 		for(int bin = 0; bin <= dist.GetXaxis()->GetNbins(); bin++) {
-			dist.SetBinContent(bin, sim.event_plane(res, dist.GetBinCenter(bin), acc));
-			dist_gang.SetBinContent(bin, sim.event_plane_gang(res, dist.GetBinCenter(bin)));
+			dist.SetBinContent(bin, sim.event_plane(res, 2*dist.GetBinCenter(bin), acc));
+			dist_gang.SetBinContent(bin, sim.event_plane_gang(res, 2*dist.GetBinCenter(bin)));
 		}
 
 		TLine react_plane(0, 0, 0, dist_gang.GetMaximum());

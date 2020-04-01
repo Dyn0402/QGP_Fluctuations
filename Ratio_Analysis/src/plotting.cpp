@@ -1028,8 +1028,8 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 
 void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name) {
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
-	gStyle->SetTitleFontSize(0.09);
-	gStyle->SetTitleOffset(1.2);
+//	gStyle->SetTitleFontSize(0.09);
+//	gStyle->SetTitleOffset(1.2);
 	pair<int, int> can_div = get_canvas_div(cents.size());
 	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
@@ -1037,7 +1037,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		can->cd(can_index);
 		auto *mg = new TMultiGraph();
 		pair<int, int> range = get_cent9_range(cent);
-		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"%").data());
+		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"% Centrality").data());
 		double y_max = numeric_limits<double>::min();
 		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
@@ -1071,6 +1071,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				set_num++;
 				if(can_index == 1) {
 					leg->SetBorderSize(plot::legend_border_width);
+					leg->SetFillStyle(0);
 					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 				}
 			}
@@ -1078,14 +1079,15 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		double y_range = y_max - y_min;
 		mg->GetXaxis()->SetLimits(0, 80);
 		mg->GetXaxis()->SetRangeUser(0, 80);
-		mg->GetXaxis()->SetLabelSize(0.06);
+//		mg->GetXaxis()->SetLabelSize(0.06);
 		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-		mg->GetYaxis()->SetLabelSize(0.06);
-		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+//		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)");}// mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
-		gPad->SetTopMargin(0.09);
-		gPad->SetRightMargin(0.02);
+//		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
@@ -1158,6 +1160,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				set_num++;
 				if(can_index == 1) {
 					leg->SetBorderSize(plot::legend_border_width);
+					leg->SetFillStyle(0);
 					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 				}
 			}
@@ -1165,14 +1168,15 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		double y_range = y_max - y_min;
 		mg->GetXaxis()->SetLimits(0, 80);
 		mg->GetXaxis()->SetRangeUser(0, 80);
-		mg->GetXaxis()->SetLabelSize(0.06);
+//		mg->GetXaxis()->SetLabelSize(0.06);
 		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-		mg->GetYaxis()->SetLabelSize(0.06);
+//		mg->GetYaxis()->SetLabelSize(0.06);
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
-		gPad->SetTopMargin(0.09);
-		gPad->SetRightMargin(0.02);
+		gPad->SetTopMargin(0.06);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
@@ -1248,6 +1252,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			mg->Add(sys_graph, "[]");
 			if(can_index == 1) {
 				leg->SetBorderSize(plot::legend_border_width);
+				leg->SetFillStyle(0);
 				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 		}
@@ -1261,7 +1266,8 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
 		gPad->SetTopMargin(0.09);
-		gPad->SetRightMargin(0.02);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
@@ -1328,20 +1334,22 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			mg->Add(graph, "AP");
 			if(can_index == 1) {
 				leg->SetBorderSize(plot::legend_border_width);
+				leg->SetFillStyle(0);
 				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 		}
 		double y_range = y_max - y_min;
 		mg->GetXaxis()->SetLimits(0, 80);
 		mg->GetXaxis()->SetRangeUser(0, 80);
-		mg->GetXaxis()->SetLabelSize(0.06);
+//		mg->GetXaxis()->SetLabelSize(0.06);
 		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-		mg->GetYaxis()->SetLabelSize(0.06);
-		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+//		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
 		gPad->SetTopMargin(0.09);
-		gPad->SetRightMargin(0.02);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
@@ -1469,7 +1477,7 @@ void make_comp_stat_plot_hack(map<int, map<string, Measure>> dylan, map<int, map
 		double y_max = numeric_limits<double>::min();
 		double y_min = numeric_limits<double>::max();
 		for(unsigned i = 0; i < cent_vec.size(); i++) {
-			cout << cent_vec[i] << "\t" << stat1_val[i] << " ± " << stat1_err[i] << "\t" << stat2_val[i]  << " ± " << stat2_err[i] << endl;
+//			cout << cent_vec[i] << "\t" << stat1_val[i] << " ± " << stat1_err[i] << "\t" << stat2_val[i]  << " ± " << stat2_err[i] << endl;
 			if(stat1_val[i] + stat1_err[i] > y_max) { y_max = stat1_val[i] + stat1_err[i]; }
 			if(stat2_val[i] + stat2_err[i] > y_max) { y_max = stat2_val[i] + stat2_err[i]; }
 			if(stat1_val[i] - stat1_err[i] < y_min) { y_min = stat1_val[i] - stat1_err[i]; }
