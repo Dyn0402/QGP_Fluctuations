@@ -32,8 +32,10 @@
 #include "ratio_methods.h"
 #include "file_io.h"
 
-#include "../StRoot/StRefMultCorr/CentralityMaker.h"
-#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
+//#include "../StRoot/StRefMultCorr/CentralityMaker.h"
+//#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
+#include "../StRefMultCorr2/CentralityMaker.h"
+#include "../StRefMultCorr2/StRefMultCorr.h"
 
 using namespace std;
 
@@ -46,6 +48,7 @@ void res_plot();
 void res_calc();
 void res_calc_debug();
 void speed_test_class();
+void ref_mult_test();
 
 void run_set(int energy, int set_num, string set_name);
 
@@ -62,7 +65,8 @@ int main(int argc, char** argv) {
 //	converter39.convert_trees();
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
-	read_class();
+//	read_class();
+	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
 //	speed_test();
@@ -87,7 +91,8 @@ void read_class() {
 //				{"Sim_0p0s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_0p0s_Flow_05res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_05res_05v2_No_Rotate", {0,0}},
 //				{"Sim_0p0s_Flow_099res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}, {"Sim_0p0s_Flow_099res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_099res_05v2_No_Rotate", {0,0}}
 //				};
-	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
+	map<string, pair<int, int>> set_pairs = {{"ref3_62Debug2", {0,0}}};
 
 	int set_sleep = 15;
 	int energy_sleep = 1;
@@ -99,7 +104,7 @@ void read_class() {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list {7, 11, 39, 27, 62, 19};
+				vector<int> energy_list {62, 7};//{7, 11, 39, 27, 62, 19};
 				for(int energy:energy_list) {
 					pool.enqueue(run_set, energy, set_num, set_pair.first);
 					this_thread::sleep_for(chrono::seconds(energy_sleep));
@@ -118,10 +123,10 @@ void run_set(int energy, int set_num, string set_name) {
 	int ref = 3;
 
 	string in_path = in_base_path + "Trees_Old_Ref3/";
-	string out_dir = out_base_path + "Data_Sim/";
-	string mix_out_dir = out_base_path + "Data_Sim_Mix/";
+	string out_dir = out_base_path + "Data_Old_Ref3/";
+	string mix_out_dir = out_base_path + "Data_Old_Ref3_Mix/";
 
-	vector<int> divs {2, 3, 4, 5, 6};
+	vector<int> divs {3};//{2, 3, 4, 5, 6};
 	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
 //	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 1000}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000}};
 
@@ -485,4 +490,14 @@ void read_comb_sys() {
 			}
 		}
 	}
+}
+
+
+void ref_mult_test() {
+	StRefMultCorr *refmultCorrUtil;
+	refmultCorrUtil = new StRefMultCorr("refmult3");
+	refmultCorrUtil->init(11079000);
+	refmultCorrUtil->print();
+//	refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+//	int cent_check = refmultCorrUtil->getCentralityBin9();
 }

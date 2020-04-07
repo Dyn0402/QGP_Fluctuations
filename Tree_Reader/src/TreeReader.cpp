@@ -25,12 +25,14 @@
 #include <TRandom3.h>
 #include <TCanvas.h>
 
-#include "../StRoot/StRefMultCorr/CentralityMaker.h"
-#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
-
+//#include "../StRoot/StRefMultCorr/CentralityMaker.h"
+//#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
 #include "TreeReader.h"
 #include "file_io.h"
 #include "ratio_methods.h"
+
+#include "../StRefMultCorr/CentralityMaker.h"
+#include "../StRefMultCorr/StRefMultCorr.h"
 #include "Event.h"
 #include "Track.h"
 
@@ -563,6 +565,11 @@ TH1D* TreeReader::get_sim_efficiency_dist() {
 
 //  For good events/tracks, azimuthally bin protons and save to data
 void TreeReader::process_event(Event& event) {
+	refmultCorrUtil->init(event.get_run());
+	refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+	int cent_check = refmultCorrUtil->getCentralityBin9();
+	if(cent_check != 0 || (int)event.get_protons().size() <= 3) { return; }
+
 	// Check if each event is good. Analyze if so, continue if not.
 	if(check_event_good(event)) {
 		vector<double> good_proton_angles = {};
@@ -1024,7 +1031,7 @@ void TreeReader::define_qa() {
 	pre_vy_hist = TH1I(("pre_vy_"+set_name+"_"+to_string(energy)).data(), "pre_vy", 100, -2.5, 2.5);
 	pre_vz_hist = TH1I(("pre_vz_"+set_name+"_"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
 	pre_ref_hist = TH1I(("pre_ref_"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
-	pre_refn_hist = TH1I(("pre_reftwo_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
+	pre_refn_hist = TH1I(("pre_refn_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
 	pre_btof_hist = TH1I(("pre_btof_"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
 	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
@@ -1033,7 +1040,7 @@ void TreeReader::define_qa() {
 	post_vy_hist = TH1I(("post_vy_"+set_name+"_"+to_string(energy)).data(), "post_vy", 100, -2.5, 2.5);
 	post_vz_hist = TH1I(("post_vz_"+set_name+"_"+to_string(energy)).data(), "post_vz", 100, -55, 55);
 	post_ref_hist = TH1I(("post_ref_"+set_name+"_"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
-	post_refn_hist = TH1I(("post_reftwo_"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
+	post_refn_hist = TH1I(("post_refn_"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
 	post_btof_hist = TH1I(("post_btof_"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
 	post_ep_hist = TH1I(("post_ep_"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
@@ -1211,86 +1218,103 @@ void TreeReader::write_qa() {
 
 	// Make before/after canvases for each variable
 	TCanvas run_can("run_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_run_hist.Draw();
 	post_run_hist.SetLineColor(kRed);
 	post_run_hist.Draw("sames");
 	run_can.Write();
 	TCanvas vx_can("vx_can");
+	pre_vx_hist.GetYaxis()->SetRangeUser(0, pre_vx_hist.GetMaximum()*1.05);
 	pre_vx_hist.Draw();
 	post_vx_hist.SetLineColor(kRed);
 	post_vx_hist.Draw("sames");
 	vx_can.Write();
 	TCanvas vy_can("vy_can");
+	pre_vy_hist.GetYaxis()->SetRangeUser(0, pre_vy_hist.GetMaximum()*1.05);
 	pre_vy_hist.Draw();
 	post_vy_hist.SetLineColor(kRed);
 	post_vy_hist.Draw("sames");
 	vy_can.Write();
 	TCanvas vz_can("vz_can");
+	pre_vz_hist.GetYaxis()->SetRangeUser(0, pre_vz_hist.GetMaximum()*1.05);
 	pre_vz_hist.Draw();
 	post_vz_hist.SetLineColor(kRed);
 	post_vz_hist.Draw("sames");
 	vz_can.Write();
 	TCanvas ref_can("ref_can");
+	pre_ref_hist.GetYaxis()->SetRangeUser(0, pre_ref_hist.GetMaximum()*1.05);
 	pre_ref_hist.Draw();
 	post_ref_hist.SetLineColor(kRed);
 	post_ref_hist.Draw("sames");
 	ref_can.Write();
 	TCanvas refn_can("refn_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_refn_hist.Draw();
 	post_refn_hist.SetLineColor(kRed);
 	post_refn_hist.Draw("sames");
 	refn_can.Write();
 	TCanvas btof_can("btof_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_btof_hist.Draw();
 	post_btof_hist.SetLineColor(kRed);
 	post_btof_hist.Draw("sames");
 	btof_can.Write();
 	TCanvas ep_can("ep_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_ep_hist.Draw();
 	post_ep_hist.SetLineColor(kRed);
 	post_ep_hist.Draw("sames");
 	ep_can.Write();
 	TCanvas phi_can("phi_can");
+	pre_phi_hist.GetYaxis()->SetRangeUser(0, pre_phi_hist.GetMaximum()*1.05);
 	pre_phi_hist.Draw();
 	post_phi_hist.SetLineColor(kRed);
 	post_phi_hist.Draw("sames");
 	phi_can.Write();
 	TCanvas p_can("p_can");
+	pre_p_hist.GetYaxis()->SetRangeUser(0, pre_p_hist.GetMaximum()*1.05);
 	pre_p_hist.Draw();
 	post_p_hist.SetLineColor(kRed);
 	post_p_hist.Draw("sames");
 	p_can.Write();
 	TCanvas pt_can("pt_can");
+	pre_pt_hist.GetYaxis()->SetRangeUser(0, pre_pt_hist.GetMaximum()*1.05);
 	pre_pt_hist.Draw();
 	post_pt_hist.SetLineColor(kRed);
 	post_pt_hist.Draw("sames");
 	pt_can.Write();
 	TCanvas beta_can("beta_can");
+	pre_beta_hist.GetYaxis()->SetRangeUser(0, pre_beta_hist.GetMaximum()*1.05);
 	pre_beta_hist.Draw();
 	post_beta_hist.SetLineColor(kRed);
 	post_beta_hist.Draw("sames");
 	beta_can.Write();
 	TCanvas charge_can("charge_can");
+	pre_charge_hist.GetYaxis()->SetRangeUser(0, pre_charge_hist.GetMaximum()*1.05);
 	pre_charge_hist.Draw();
 	post_charge_hist.SetLineColor(kRed);
 	post_charge_hist.Draw("sames");
 	charge_can.Write();
 	TCanvas eta_can("eta_can");
+	pre_eta_hist.GetYaxis()->SetRangeUser(0, pre_eta_hist.GetMaximum()*1.05);
 	pre_eta_hist.Draw();
 	post_eta_hist.SetLineColor(kRed);
 	post_eta_hist.Draw("sames");
 	eta_can.Write();
 	TCanvas nsigma_can("nsigma_can");
+	pre_nsigma_hist.GetYaxis()->SetRangeUser(0, pre_nsigma_hist.GetMaximum()*1.05);
 	pre_nsigma_hist.Draw();
 	post_nsigma_hist.SetLineColor(kRed);
 	post_nsigma_hist.Draw("sames");
 	nsigma_can.Write();
 	TCanvas dca_can("dca_can");
+	pre_dca_hist.GetYaxis()->SetRangeUser(0, pre_dca_hist.GetMaximum()*1.05);
 	pre_dca_hist.Draw();
 	post_dca_hist.SetLineColor(kRed);
 	post_dca_hist.Draw("sames");
 	dca_can.Write();
 	TCanvas m2_can("m2_can");
+	pre_m2_hist.GetYaxis()->SetRangeUser(0, pre_m2_hist.GetMaximum()*1.05);
 	pre_m2_hist.Draw();
 	post_m2_hist.SetLineColor(kRed);
 	post_m2_hist.Draw("sames");

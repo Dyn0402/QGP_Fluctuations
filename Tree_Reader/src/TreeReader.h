@@ -18,8 +18,10 @@
 #include <TH2.h>
 #include <TRandom3.h>
 
-#include "../StRoot/StRefMultCorr/CentralityMaker.h"
-#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
+//#include "../StRoot/StRefMultCorr/CentralityMaker.h"
+//#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
+#include "../StRefMultCorr2/CentralityMaker.h"
+#include "../StRefMultCorr2/StRefMultCorr.h"
 
 #include "ratio_methods.h"
 
