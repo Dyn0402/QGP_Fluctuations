@@ -91,7 +91,7 @@
 	mVz = -9999. ;
 	mRefMult_corr = -1.0 ;
 
-	cout << mSubName.Data() <<"  "<< mLibName.Data() << endl;
+//	cout << mSubName.Data() <<"  "<< mLibName.Data() << endl;
 
 	// Clear all data members
 	clear() ;
@@ -1045,7 +1045,7 @@ void StRefMultCorr::readHeaderFile()
 
 	}
 
-	cout <<"StRefMultCorr::readHeaderFile  [" << mName <<"] Correction parameters and centrality definitions have been successfully read."<< endl;
+//	cout <<"StRefMultCorr::readHeaderFile  [" << mName <<"] Correction parameters and centrality definitions have been successfully read."<< endl;
 
 }
 
@@ -1057,42 +1057,42 @@ void StRefMultCorr::readBadRunsFromHeaderFile()
 		mBadRun.push_back(badrun_refmult_2010[i]);
 	}
 	
-	cout<<"read in nBadRun_refmult_2010: "<<nBadRun_refmult_2010<<endl;
+//	cout<<"read in nBadRun_refmult_2010: "<<nBadRun_refmult_2010<<endl;
 
 	for(Int_t i=0; i<nBadRun_refmult_2011; i++)
 	{
 		mBadRun.push_back(badrun_refmult_2011[i]);
 	}
 	
-	cout<<"read in nBadRun_refmult_2011: "<<nBadRun_refmult_2011<<endl;
+//	cout<<"read in nBadRun_refmult_2011: "<<nBadRun_refmult_2011<<endl;
 
 	for(Int_t i=0; i<nBadRun_grefmult_2014; i++)
 	{
 		mBadRun.push_back(badrun_grefmult_2014[i]);
 	}
 	
-	cout<<"read in nBadRun_grefmult_2014: "<<nBadRun_grefmult_2014<<endl;
+//	cout<<"read in nBadRun_grefmult_2014: "<<nBadRun_grefmult_2014<<endl;
 
 	for(Int_t i=0; i<nBadRun_grefmult_2016; i++)
 	{
 		mBadRun.push_back(badrun_grefmult_2016[i]);
 	}
 	
-	cout<<"read in nBadRun_grefmult_2016: "<<nBadRun_grefmult_2016<<endl;
+//	cout<<"read in nBadRun_grefmult_2016: "<<nBadRun_grefmult_2016<<endl;
 	
 	for(Int_t i=0; i<nBadRun_refmult_2017; i++)
 	{
 		mBadRun.push_back(badrun_refmult_2017[i]);
 	}
 	
-	cout<<"read in nBadRun_refmult_2017: "<<nBadRun_refmult_2017<<endl;
+//	cout<<"read in nBadRun_refmult_2017: "<<nBadRun_refmult_2017<<endl;
 	
 	for(Int_t i=0; i<nBadRun_refmult_2018; i++)
 	{
 		mBadRun.push_back(badrun_refmult_2018[i]);
 	}
 	
-	cout<<"read in nBadRun_refmult_2018: "<<nBadRun_refmult_2018<<endl;
+//	cout<<"read in nBadRun_refmult_2018: "<<nBadRun_refmult_2018<<endl;
 	
 	//// notification only one
 	if ( mName.CompareTo("grefmult", TString::kIgnoreCase) == 0 )
