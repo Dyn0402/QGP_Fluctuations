@@ -93,6 +93,15 @@ void BinomialAnalyzer::analyze_sets() {
 
 
 void BinomialAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
+//	ROOT::EnableThreadSafety();
+//	{
+//		ThreadPool pool(1);//thread::hardware_concurrency());
+//		TDirectory *set_dir = out_root->mkdir((set_name.data()));
+//		for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
+//			pool.enqueue(&BinomialAnalyzer::analyze_subset, this, set_num, set_dir);
+////			analyze_subset(set_name, set_num, set_dir);
+//		}
+//	}
 	TDirectory *set_dir = out_root->mkdir((set_name.data()));
 	for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
 		analyze_subset(set_name, set_num, set_dir);

@@ -49,6 +49,7 @@ public:
 	void set_energies(vector<int> energies);
 	void set_all_centralities(vector<int> centralities);
 	void set_can_wh(int can_width, int can_height);
+	void set_set_combos(map<string, vector<string>> set_combos);
 
 	// Doers
 	void analyze();
@@ -81,6 +82,7 @@ private:
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
 	map<string, vector<int>> sets = {{"Single_Ratio", {0,0}}};
+	map<string, vector<string>> set_combos;
 
 
 	// Data Containers

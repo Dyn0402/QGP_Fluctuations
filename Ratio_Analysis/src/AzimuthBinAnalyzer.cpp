@@ -68,6 +68,10 @@ void AzimuthBinAnalyzer::set_can_wh(int can_width, int can_height) {
 	plot::canvas_height = can_height;
 }
 
+void AzimuthBinAnalyzer::set_set_combos(map<string, vector<string>> set_combos) {
+	this->set_combos = set_combos;
+}
+
 // Doers
 
 void AzimuthBinAnalyzer::analyze() {
@@ -78,6 +82,15 @@ void AzimuthBinAnalyzer::analyze() {
 
 
 void AzimuthBinAnalyzer::analyze_sets() {
+//	ROOT::EnableThreadSafety();
+//	{
+//		ThreadPool pool(thread::hardware_concurrency());
+//		for(pair<string, vector<int>> set:sets) {
+//			pool.enqueue(&AzimuthBinAnalyzer::analyze_set, this, set.first, set.second);
+//			analyze_set(set.first, set.second);
+//		}
+//	}
+
 	for(pair<string, vector<int>> set:sets) {
 		analyze_set(set.first, set.second);
 	}
@@ -101,7 +114,26 @@ void AzimuthBinAnalyzer::combine_sets() {
 
 	TDirectory *sets_dir = out_root->mkdir("Sets_Comp");
 
-	map<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pairs = {
+	map<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pairs;
+	map<string, map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>>> set_pairs_sd;
+
+	for(pair<string, vector<string>> combo:set_combos) {
+		for(string set:combo.second) {
+			set_pairs[combo.first]["raw"][set] = raw_stats_median[set];
+			set_pairs[combo.first]["mix"][set] = mix_stats_median[set];
+			set_pairs[combo.first]["divide"][set] = divide_stats_median[set];
+			set_pairs[combo.first]["pull"][set] = pull_stats_median[set];
+
+			set_pairs_sd[combo.first]["raw"][set] = raw_stats_sd[set];
+			set_pairs_sd[combo.first]["mix"][set] = mix_stats_sd[set];
+			set_pairs_sd[combo.first]["divide"][set] = divide_stats_sd[set];
+			set_pairs_sd[combo.first]["pull"][set] = pull_stats_sd[set];
+		}
+		set_pairs["All"] = {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}};
+		set_pairs_sd["All"] = {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}};
+	}
+
+//	map<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pairs2 = {
 //			{"Rand_Pile_Large", {
 //					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_median["Pile_Up_008_"]}}},
 //					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_median["Pile_Up_008_"]}}},
@@ -122,58 +154,58 @@ void AzimuthBinAnalyzer::combine_sets() {
 //					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Efficiency 1%", mix_stats_median["Efficiency_01_"]}, {"Efficiency 8%", mix_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", mix_stats_median["Efficiency_025_"]}, {"Efficiency 5%", mix_stats_median["Efficiency_05_"]}}},
 //					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Efficiency 1%", divide_stats_median["Efficiency_01_"]}, {"Efficiency 8%", divide_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", divide_stats_median["Efficiency_025_"]}, {"Efficiency 5%", divide_stats_median["Efficiency_05_"]}}}}
 //			},
-			{"Basic_Effect_With_BES1", {
-					{"raw", {{"Sim_0p0s", raw_stats_median["Sim_0p0s"]}, {"Sim_05p002s", raw_stats_median["Sim_05p002s"]}, {"eta05", raw_stats_median["eta05"]}}},
-					{"mix", {{"Sim_0p0s", mix_stats_median["Sim_0p0s"]}, {"Sim_05p002s", mix_stats_median["Sim_05p002s"]}, {"eta05", mix_stats_median["eta05"]}}},
-					{"divide", {{"Sim_0p0s", divide_stats_median["Sim_0p0s"]}, {"Sim_05p002s", divide_stats_median["Sim_05p002s"]}, {"eta05", divide_stats_median["eta05"]}}},
-					{"pull", {{"Sim_0p0s", pull_stats_median["Sim_0p0s"]}, {"Sim_05p002s", pull_stats_median["Sim_05p002s"]}, {"eta05", pull_stats_median["eta05"]}}}}
-			},
-			{"Basic_Effect", {
-					{"raw", {{"Sim_0p0s", raw_stats_median["Sim_0p0s"]}, {"Sim_05p002s", raw_stats_median["Sim_05p002s"]}}},
-					{"mix", {{"Sim_0p0s", mix_stats_median["Sim_0p0s"]}, {"Sim_05p002s", mix_stats_median["Sim_05p002s"]}}},
-					{"divide", {{"Sim_0p0s", divide_stats_median["Sim_0p0s"]}, {"Sim_05p002s", divide_stats_median["Sim_05p002s"]}}},
-					{"pull", {{"Sim_0p0s", pull_stats_median["Sim_0p0s"]}, {"Sim_05p002s", pull_stats_median["Sim_05p002s"]}}}}
-			},
-			{"Hole_Efficiency", {
-					{"raw", {{"Sim_0p0s_Eff_Hole3-4", raw_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", raw_stats_median["Sim_05p002s_Eff_Hole3-4"]}}},
-					{"mix", {{"Sim_0p0s_Eff_Hole3-4", mix_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", mix_stats_median["Sim_05p002s_Eff_Hole3-4"]}}},
-					{"divide", {{"Sim_0p0s_Eff_Hole3-4", divide_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", divide_stats_median["Sim_05p002s_Eff_Hole3-4"]}}},
-					{"pull", {{"Sim_0p0s_Eff_Hole3-4", pull_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", pull_stats_median["Sim_05p002s_Eff_Hole3-4"]}}}}
-			},
-			{"Hole_Efficiency_BES1", {
-					{"raw", {{"Sim_0p0s_Eff_Hole3-4", raw_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", raw_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", raw_stats_median["eta05"]}}},
-					{"mix", {{"Sim_0p0s_Eff_Hole3-4", mix_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", mix_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", mix_stats_median["eta05"]}}},
-					{"divide", {{"Sim_0p0s_Eff_Hole3-4", divide_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", divide_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", divide_stats_median["eta05"]}}},
-					{"pull", {{"Sim_0p0s_Eff_Hole3-4", pull_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", pull_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", pull_stats_median["eta05"]}}}}
-			},
-			{"BES1_Efficiency_BES1", {
-					{"raw", {{"Sim_0p0s_Eff", raw_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", raw_stats_median["Sim_05p002s_Eff"]}, {"eta05", raw_stats_median["eta05"]}}},
-					{"mix", {{"Sim_0p0s_Eff", mix_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", mix_stats_median["Sim_05p002s_Eff"]}, {"eta05", mix_stats_median["eta05"]}}},
-					{"divide", {{"Sim_0p0s_Eff", divide_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", divide_stats_median["Sim_05p002s_Eff"]}, {"eta05", divide_stats_median["eta05"]}}},
-					{"pull", {{"Sim_0p0s_Eff", pull_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", pull_stats_median["Sim_05p002s_Eff"]}, {"eta05", pull_stats_median["eta05"]}}}}
-			},
-			{"BES1_Efficiency", {
-					{"raw", {{"Sim_0p0s_Eff", raw_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", raw_stats_median["Sim_05p002s_Eff"]}}},
-					{"mix", {{"Sim_0p0s_Eff", mix_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", mix_stats_median["Sim_05p002s_Eff"]}}},
-					{"divide", {{"Sim_0p0s_Eff", divide_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", divide_stats_median["Sim_05p002s_Eff"]}}},
-					{"pull", {{"Sim_0p0s_Eff", pull_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", pull_stats_median["Sim_05p002s_Eff"]}}}}
-			},
-			{"Flow_Res", {
-					{"raw", {{"Sim_0p0s_Flow_05res_05v2", raw_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", raw_stats_median["Sim_0p0s_Flow_099res_05v2"]}}},
-					{"mix", {{"Sim_0p0s_Flow_05res_05v2", mix_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", mix_stats_median["Sim_0p0s_Flow_099res_05v2"]}}},
-					{"divide", {{"Sim_0p0s_Flow_05res_05v2", divide_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", divide_stats_median["Sim_0p0s_Flow_099res_05v2"]}}},
-					{"pull", {{"Sim_0p0s_Flow_05res_05v2", pull_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", pull_stats_median["Sim_0p0s_Flow_099res_05v2"]}}}}
-			},
-			{"Flow_Res_BES1", {
-					{"raw", {{"Sim_0p0s_Flow_05res_05v2", raw_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", raw_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", raw_stats_median["eta05"]}}},
-					{"mix", {{"Sim_0p0s_Flow_05res_05v2", mix_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", mix_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", mix_stats_median["eta05"]}}},
-					{"divide", {{"Sim_0p0s_Flow_05res_05v2", divide_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", divide_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", divide_stats_median["eta05"]}}},
-					{"pull", {{"Sim_0p0s_Flow_05res_05v2", pull_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", pull_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", pull_stats_median["eta05"]}}}}
-			},
-			{"All", {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}}}
-	};
+//			{"Basic_Effect_With_BES1", {
+//					{"raw", {{"Sim_0p0s", raw_stats_median["Sim_0p0s"]}, {"Sim_05p002s", raw_stats_median["Sim_05p002s"]}, {"eta05", raw_stats_median["eta05"]}}},
+//					{"mix", {{"Sim_0p0s", mix_stats_median["Sim_0p0s"]}, {"Sim_05p002s", mix_stats_median["Sim_05p002s"]}, {"eta05", mix_stats_median["eta05"]}}},
+//					{"divide", {{"Sim_0p0s", divide_stats_median["Sim_0p0s"]}, {"Sim_05p002s", divide_stats_median["Sim_05p002s"]}, {"eta05", divide_stats_median["eta05"]}}},
+//					{"pull", {{"Sim_0p0s", pull_stats_median["Sim_0p0s"]}, {"Sim_05p002s", pull_stats_median["Sim_05p002s"]}, {"eta05", pull_stats_median["eta05"]}}}}
+//			},
+//			{"Basic_Effect", {
+//					{"raw", {{"Sim_0p0s", raw_stats_median["Sim_0p0s"]}, {"Sim_05p002s", raw_stats_median["Sim_05p002s"]}}},
+//					{"mix", {{"Sim_0p0s", mix_stats_median["Sim_0p0s"]}, {"Sim_05p002s", mix_stats_median["Sim_05p002s"]}}},
+//					{"divide", {{"Sim_0p0s", divide_stats_median["Sim_0p0s"]}, {"Sim_05p002s", divide_stats_median["Sim_05p002s"]}}},
+//					{"pull", {{"Sim_0p0s", pull_stats_median["Sim_0p0s"]}, {"Sim_05p002s", pull_stats_median["Sim_05p002s"]}}}}
+//			},
+//			{"Hole_Efficiency", {
+//					{"raw", {{"Sim_0p0s_Eff_Hole3-4", raw_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", raw_stats_median["Sim_05p002s_Eff_Hole3-4"]}}},
+//					{"mix", {{"Sim_0p0s_Eff_Hole3-4", mix_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", mix_stats_median["Sim_05p002s_Eff_Hole3-4"]}}},
+//					{"divide", {{"Sim_0p0s_Eff_Hole3-4", divide_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", divide_stats_median["Sim_05p002s_Eff_Hole3-4"]}}},
+//					{"pull", {{"Sim_0p0s_Eff_Hole3-4", pull_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", pull_stats_median["Sim_05p002s_Eff_Hole3-4"]}}}}
+//			},
+//			{"Hole_Efficiency_BES1", {
+//					{"raw", {{"Sim_0p0s_Eff_Hole3-4", raw_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", raw_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", raw_stats_median["eta05"]}}},
+//					{"mix", {{"Sim_0p0s_Eff_Hole3-4", mix_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", mix_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", mix_stats_median["eta05"]}}},
+//					{"divide", {{"Sim_0p0s_Eff_Hole3-4", divide_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", divide_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", divide_stats_median["eta05"]}}},
+//					{"pull", {{"Sim_0p0s_Eff_Hole3-4", pull_stats_median["Sim_0p0s_Eff_Hole3-4"]}, {"Sim_05p002s_Eff_Hole3-4", pull_stats_median["Sim_05p002s_Eff_Hole3-4"]}, {"eta05", pull_stats_median["eta05"]}}}}
+//			},
+//			{"BES1_Efficiency_BES1", {
+//					{"raw", {{"Sim_0p0s_Eff", raw_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", raw_stats_median["Sim_05p002s_Eff"]}, {"eta05", raw_stats_median["eta05"]}}},
+//					{"mix", {{"Sim_0p0s_Eff", mix_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", mix_stats_median["Sim_05p002s_Eff"]}, {"eta05", mix_stats_median["eta05"]}}},
+//					{"divide", {{"Sim_0p0s_Eff", divide_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", divide_stats_median["Sim_05p002s_Eff"]}, {"eta05", divide_stats_median["eta05"]}}},
+//					{"pull", {{"Sim_0p0s_Eff", pull_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", pull_stats_median["Sim_05p002s_Eff"]}, {"eta05", pull_stats_median["eta05"]}}}}
+//			},
+//			{"BES1_Efficiency", {
+//					{"raw", {{"Sim_0p0s_Eff", raw_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", raw_stats_median["Sim_05p002s_Eff"]}}},
+//					{"mix", {{"Sim_0p0s_Eff", mix_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", mix_stats_median["Sim_05p002s_Eff"]}}},
+//					{"divide", {{"Sim_0p0s_Eff", divide_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", divide_stats_median["Sim_05p002s_Eff"]}}},
+//					{"pull", {{"Sim_0p0s_Eff", pull_stats_median["Sim_0p0s_Eff"]}, {"Sim_05p002s_Eff", pull_stats_median["Sim_05p002s_Eff"]}}}}
+//			},
+//			{"Flow_Res", {
+//					{"raw", {{"Sim_0p0s_Flow_05res_05v2", raw_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", raw_stats_median["Sim_0p0s_Flow_099res_05v2"]}}},
+//					{"mix", {{"Sim_0p0s_Flow_05res_05v2", mix_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", mix_stats_median["Sim_0p0s_Flow_099res_05v2"]}}},
+//					{"divide", {{"Sim_0p0s_Flow_05res_05v2", divide_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", divide_stats_median["Sim_0p0s_Flow_099res_05v2"]}}},
+//					{"pull", {{"Sim_0p0s_Flow_05res_05v2", pull_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", pull_stats_median["Sim_0p0s_Flow_099res_05v2"]}}}}
+//			},
+//			{"Flow_Res_BES1", {
+//					{"raw", {{"Sim_0p0s_Flow_05res_05v2", raw_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", raw_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", raw_stats_median["eta05"]}}},
+//					{"mix", {{"Sim_0p0s_Flow_05res_05v2", mix_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", mix_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", mix_stats_median["eta05"]}}},
+//					{"divide", {{"Sim_0p0s_Flow_05res_05v2", divide_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", divide_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", divide_stats_median["eta05"]}}},
+//					{"pull", {{"Sim_0p0s_Flow_05res_05v2", pull_stats_median["Sim_0p0s_Flow_05res_05v2"]}, {"Sim_0p0s_Flow_099res_05v2", pull_stats_median["Sim_0p0s_Flow_099res_05v2"]}, {"eta05", pull_stats_median["eta05"]}}}}
+//			},
+//			{"All", {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}}}
+//	};
 
-	map<string, map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>>> set_pairs_sd = {
+//	map<string, map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>>> set_pairs_sd = {
 //			{"Rand_Pile_Large", {
 //					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_sd["Pile_Up_008_"]}}},
 //					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_sd["Pile_Up_008_"]}}},
@@ -201,8 +233,8 @@ void AzimuthBinAnalyzer::combine_sets() {
 //					{"pull", {{"Rand_Rotate", pull_stats_sd["Rand_Rotate"]}, {"No_Rotate", pull_stats_sd["No_Rotate"]}, {"EP_Rotate", pull_stats_sd["EP_Rotate"]}}}}
 //			},
 //			{"All", {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}}},
-			{"All", {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}}}
-	};
+//			{"All", {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}}}
+//	};
 
 	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> set_type;
 	map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>> set_type_sd;
@@ -244,6 +276,8 @@ void AzimuthBinAnalyzer::combine_sets() {
 					centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
 					centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
 				}
+				centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, "centralities_raw_"+name);
+				centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, divs, "centralities_pull_"+name);
 			}
 		}
 
@@ -266,6 +300,7 @@ void AzimuthBinAnalyzer::combine_sets() {
 				for(int div:divs) {
 					centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
+				centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, "centralities_mix_"+name);
 			}
 		}
 
@@ -289,6 +324,7 @@ void AzimuthBinAnalyzer::combine_sets() {
 				for(int div:divs) {
 					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				}
+				centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "centralities_divide_"+name);
 			}
 		}
 	}
@@ -474,6 +510,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 			for(int div:divs) {
 				centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, {div}, "centralities_raw_mix_comp_"+name+to_string(div));
 			}
+			centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, divs, "centralities_raw_mix_comp_"+name);
 		}
 	}
 
@@ -502,6 +539,8 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 					centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
 					centralities_stat(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
 				}
+				centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, divs, "centralities_raw_"+name);
+				centralities_stat(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, divs, "centralities_pull_"+name);
 			}
 		}
 
@@ -522,7 +561,10 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					centralities_stat(raw_stats_all, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+					centralities_stat(pull_stats_all, name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
 				}
+				centralities_stat(raw_stats_all, name, all_centralities, divs, "centralities_raw_"+name);
+				centralities_stat(pull_stats_all, name, all_centralities, divs, "centralities_pull_"+name);
 			}
 		}
 	}
@@ -550,6 +592,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(mix_stats_median[set_name], mix_stats_sd[set_name], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
+				centralities_stat(mix_stats_median[set_name], mix_stats_sd[set_name], name, all_centralities, divs, "centralities_mix_"+name);
 			}
 		}
 
@@ -571,6 +614,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(mix_stats_all, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
+				centralities_stat(mix_stats_all, name, all_centralities, divs, "centralities_mix_"+name);
 			}
 		}
 	}
@@ -598,6 +642,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				}
+				centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, "centralities_divide_"+name);
 			}
 		}
 
@@ -619,6 +664,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(divide_stats_all, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				}
+				centralities_stat(divide_stats_all, name, all_centralities, divs, "centralities_divide_"+name);
 			}
 		}
 	}
@@ -707,6 +753,9 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 				centralities_stat(diff_stats, name, all_centralities, {div}, "centralities_raw_diff_"+name+to_string(div));
 				centralities_stat(pull_stats, name, all_centralities, {div}, "centralities_raw_pull_"+name+to_string(div));
 			}
+			centralities_stat(ratio_stats, name, all_centralities, divs, "centralities_raw_ratio_"+name);
+			centralities_stat(diff_stats, name, all_centralities, divs, "centralities_raw_diff_"+name);
+			centralities_stat(pull_stats, name, all_centralities, divs, "centralities_raw_pull_"+name);
 		}
 	}
 
@@ -743,6 +792,8 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 				centralities_stat(ratio_stats_mix, name, all_centralities, {div}, "centralities_mix_ratio_"+name+to_string(div));
 				centralities_stat(diff_stats_mix, name, all_centralities, {div}, "centralities_mix_diff_"+name+to_string(div));
 			}
+			centralities_stat(ratio_stats_mix, name, all_centralities, divs, "centralities_mix_ratio_"+name);
+			centralities_stat(diff_stats_mix, name, all_centralities, divs, "centralities_mix_diff_"+name);
 		}
 	}
 
@@ -768,6 +819,8 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 				centralities_stat(stats_mix_divide, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				centralities_stat(raw_mix_comp, name, all_centralities, {div}, "centralities_comp_"+name+to_string(div));
 			}
+			centralities_stat(stats_mix_divide, name, all_centralities, divs, "centralities_divide_"+name);
+			centralities_stat(raw_mix_comp, name, all_centralities, divs, "centralities_comp_"+name);
 		}
 	}
 }
@@ -806,17 +859,18 @@ map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string
 //Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
 map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders) {
 	map<int, map<int, map<int, map<string, Measure>>>> stats;
-	ROOT::EnableThreadSafety();
-	{
-		ThreadPool pool(1);//thread::hardware_concurrency());
-		for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
-			for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
-				for(pair<int, AzimuthBinData> cent:div.second) {
-					pool.enqueue(&AzimuthBinAnalyzer::calc_stat, this, &(data[energy.first][div.first][cent.first]), type, energy.first, div.first, cent.first, orders, &stats);
-				}
+//	ROOT::EnableThreadSafety();
+//	{
+//	ThreadPool pool(1);//thread::hardware_concurrency());
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
+		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
+			for(pair<int, AzimuthBinData> cent:div.second) {
+				calc_stat(&(data[energy.first][div.first][cent.first]), type, energy.first, div.first, cent.first, orders, &stats);
+//				pool.enqueue(&AzimuthBinAnalyzer::calc_stat, this, &(data[energy.first][div.first][cent.first]), type, energy.first, div.first, cent.first, orders, &stats);
 			}
 		}
 	}
+//	}
 
 	return(stats);
 }
