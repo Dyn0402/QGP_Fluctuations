@@ -8,30 +8,29 @@
 #ifndef TREELEAVES_H_
 #define TREELEAVES_H_
 
+#include <string>
 
 #include "TTree.h"
 #include "TLeaf.h"
 
+using namespace std;
+
 struct tree_leaves {
 	TLeaf *run;
 	TLeaf *ref_mult;
-	TLeaf *ref_mult2;
-	TLeaf *ref_mult3;
+	TLeaf *ref_multn;
 	TLeaf *btof;
 	TLeaf *vx;
 	TLeaf *vy;
 	TLeaf *vz;
-	TLeaf *event_plane_ref2;
-	TLeaf *event_plane_ref3;
+	TLeaf *event_plane;
 
 	TLeaf *phi;
 	TLeaf *pt;
-	TLeaf *p;
 	TLeaf *beta;
 	TLeaf *charge;
 	TLeaf *dca;
-	TLeaf *nsigmapr;
-	TLeaf *nsigmapi;
+	TLeaf *nsigma;
 	TLeaf *eta;
 };
 
@@ -40,10 +39,8 @@ struct ampt_tree_leaves {
 	TLeaf *event;
 	TLeaf *pmult;
 	TLeaf *imp;
-	TLeaf *ref2;
-	TLeaf *ref3;
-	TLeaf *event_plane_ref2;
-	TLeaf *event_plane_ref3;
+	TLeaf *refn;
+	TLeaf *event_plane;
 	TLeaf *pid;
 	TLeaf *px;
 	TLeaf *py;
@@ -51,9 +48,8 @@ struct ampt_tree_leaves {
 };
 
 
-tree_leaves get_tree_leaves(TTree* tree);
-tree_leaves get_tree_leaves_new(TTree* tree);
-ampt_tree_leaves get_ampt_tree_leaves(TTree* tree);
+tree_leaves get_tree_leaves(TTree* tree, string particle = "Proton", int ref = 3);
+ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref = 3);
 
 
 

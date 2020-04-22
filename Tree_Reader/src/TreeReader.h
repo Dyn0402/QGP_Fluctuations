@@ -18,16 +18,16 @@
 #include <TH2.h>
 #include <TRandom3.h>
 
-//#include "../StRoot/StRefMultCorr/CentralityMaker.h"
-//#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
-#include "../StRefMultCorr2/CentralityMaker.h"
-#include "../StRefMultCorr2/StRefMultCorr.h"
+#include "../StRefMultCorr/CentralityMaker.h"
+#include "../StRefMultCorr/StRefMultCorr.h"
 
 #include "ratio_methods.h"
 
 #include "Event.h"
 #include "Track.h"
 
+#include "TreeLeaves.h"
+#include "AmptCentralityMaker.h"
 #include "Mixer.h"
 #include "MixerSets.h"
 #include "Randomizer.h"
@@ -120,10 +120,12 @@ public:
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
 	void set_ref_num(int ref_num);
+	void set_particle(string particle);
 
 	// Doers
 	void read_trees();
 	void read_ampt_trees();
+	void read_nsm_ampt_trees();
 	void sim_events(map<int, int> cent_num_events);
 	void write_info_file();
 
@@ -136,6 +138,7 @@ public:
 	Randomizer random;
 
 	Simulator sim;
+	AmptCentralityMaker ampt_cent;
 	event_defaults event_defs;
 	track_defaults track_defs;
 
@@ -162,6 +165,8 @@ private:
 	vector<int> divs = {2,3,4,5,6};
 	int energy;
 
+	string particle = "Proton";
+
 	bool cbwc; // MixerSets/randomizers aren't prepared for this to be false.
 	bool rotate_random;
 	bool event_plane;
@@ -183,16 +188,14 @@ private:
 	// Doers
 	void read_tree(TTree* tree);
 	void read_ampt_tree(TTree* tree);
+	void read_nsm_ampt_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
 	void process_event(Event& event);
 
 	TH1D* get_sim_proton_dist(int cent);
 	TH1D* get_sim_efficiency_dist();
 
-	tree_leaves get_tree_leaves(TTree* tree);
-	tree_leaves get_tree_leaves_new(TTree* tree);
-
-	bool check_event_good(Event& event);
+	bool check_event(Event& event);
 	bool check_enough_protons(Event& event);
 	bool check_good_run(int run);
 	bool check_slope(int btof, int ref_mult);

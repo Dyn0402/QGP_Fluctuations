@@ -28,14 +28,14 @@
 
 #include "ThreadPool.h"
 #include "TreeReader.h"
+#include "AmptCentralityMaker.h"
 #include "AmptConverter.h"
+#include "TreeLeaves.h"
 #include "ratio_methods.h"
 #include "file_io.h"
 
-//#include "../StRoot/StRefMultCorr/CentralityMaker.h"
-//#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
-#include "../StRefMultCorr2/CentralityMaker.h"
-#include "../StRefMultCorr2/StRefMultCorr.h"
+#include "../StRefMultCorr/CentralityMaker.h"
+#include "../StRefMultCorr/StRefMultCorr.h"
 
 using namespace std;
 
@@ -49,6 +49,8 @@ void res_calc();
 void res_calc_debug();
 void speed_test_class();
 void ref_mult_test();
+void ampt_cent_test();
+void ampt_cent_b_corr();
 
 void run_set(int energy, int set_num, string set_name);
 
@@ -65,8 +67,10 @@ int main(int argc, char** argv) {
 //	converter39.convert_trees();
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
-//	read_class();
-	ref_mult_test();
+	read_class();
+//	ampt_cent_b_corr();
+//	ampt_cent_test();
+//	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
 //	speed_test();
@@ -84,15 +88,24 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"Sim_Flow", {0,0}}, {"Sim_Flow_No_Rotate", {0,0}}, {"Sim_Eff_Hole3-4_Flow", {0,0}}, {"Sim_Eff_Hole3-4_Flow_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_Flow_08res_05v2", {0,0}}, {"Sim_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_Flow_05res_05v2", {0,0}}, {"Sim_Flow_05res_05v2_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs {{"Sim_Flow_05v2_08res_Test", {0,0}}, {"Sim_Flow_05v2_05res_Test", {0,0}}};
-//	map<string, pair<int, int>> set_pairs = {//{"Sim_0p0s", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}},
+//	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}},
 //				{"Sim_0p0s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_0p0s_Eff_Hole3-4_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_Hole3-4_No_Rotate", {0,0}},
 //				{"Sim_0p0s_Eff", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_0p0s_Eff_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_No_Rotate", {0,0}},
 //				{"Sim_0p0s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_0p0s_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_08res_05v2_No_Rotate", {0,0}},
 //				{"Sim_0p0s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_0p0s_Flow_05res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_05res_05v2_No_Rotate", {0,0}},
 //				{"Sim_0p0s_Flow_099res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}, {"Sim_0p0s_Flow_099res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_099res_05v2_No_Rotate", {0,0}}
 //				};
+//map<string, pair<int, int>> set_pairs = {{"Sim_05p05s", {0,0}}, {"Sim_05p05s_No_Rotate", {0,0}},
+//				{"Sim_05p05s_Eff_Hole3-4", {0,0}}, {"Sim_05p05s_Eff_Hole3-4_No_Rotate", {0,0}},
+//				{"Sim_05p05s_Eff", {0,0}}, {"Sim_05p05s_Eff_No_Rotate", {0,0}},
+//				{"Sim_05p05s_Flow_08res_05v2", {0,0}}, {"Sim_05p05s_Flow_08res_05v2_No_Rotate", {0,0}},
+//				{"Sim_05p05s_Flow_05res_05v2", {0,0}}, {"Sim_05p05s_Flow_05res_05v2_No_Rotate", {0,0}},
+//				{"Sim_05p05s_Flow_099res_05v2", {0,0}}, {"Sim_05p05s_Flow_099res_05v2_No_Rotate", {0,0}}
+//				};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
-	map<string, pair<int, int>> set_pairs = {{"ref3_62Debug2", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta1", {0,0}}, {"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
+	map<string, pair<int, int>> set_pairs = {{"Ampt_a", {0,0}}};
 
 	int set_sleep = 15;
 	int energy_sleep = 1;
@@ -104,7 +117,7 @@ void read_class() {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list {62, 7};//{7, 11, 39, 27, 62, 19};
+				vector<int> energy_list {7, 11, 39, 27, 62, 19};
 				for(int energy:energy_list) {
 					pool.enqueue(run_set, energy, set_num, set_pair.first);
 					this_thread::sleep_for(chrono::seconds(energy_sleep));
@@ -122,11 +135,11 @@ void run_set(int energy, int set_num, string set_name) {
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "Trees_Old_Ref3/";
-	string out_dir = out_base_path + "Data_Old_Ref3/";
-	string mix_out_dir = out_base_path + "Data_Old_Ref3_Mix/";
+	string in_path = in_base_path + "Trees_Ampt/";
+	string out_dir = out_base_path + "Data_Ampt/";
+	string mix_out_dir = out_base_path + "Data_Ampt_Mix/";
 
-	vector<int> divs {3};//{2, 3, 4, 5, 6};
+	vector<int> divs {2, 3, 4, 5, 6};
 	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
 //	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 1000}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000}};
 
@@ -143,6 +156,7 @@ void run_set(int energy, int set_num, string set_name) {
 	reader.set_qa_name("QA_");
 	reader.set_set_name(set_name + to_string(set_num));
 	reader.set_tree_name("nsmTree");
+	if(in_string(set_name, "Ampt")) { reader.set_tree_name("tree"); }
 
 	if(in_string(set_name, "EP_Rotate"))  { reader.set_event_plane(true); }
 	else { reader.set_event_plane(false); }
@@ -179,6 +193,7 @@ void run_set(int energy, int set_num, string set_name) {
 
 	if(in_string(set_name, {"Sim", "0p0s"}, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
 	else if(in_string(set_name, {"Sim", "05p002s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
+	else if(in_string(set_name, {"Sim", "05p05s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
 	else if(in_string(set_name, {"Sim", "15p002s"}, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
 	else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
 
@@ -204,6 +219,12 @@ void run_set(int energy, int set_num, string set_name) {
 		reader.set_sim_flow(false);
 	}
 
+	if(in_string(set_name, "Ampt")) {
+//		reader.ampt_cent = AmptCentralityMaker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref" + to_string(ref));
+//		map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
+//		reader.ampt_cent.set_max_b(opt_bmax[energy]);
+	}
+
 	reader.set_mixed_sets(false);
 	reader.set_rand_data(false);
 
@@ -214,12 +235,64 @@ void run_set(int energy, int set_num, string set_name) {
 	reader.mix.set_min_events(150);
 	if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
 	else { reader.mix.set_mixes_per_event(10); }
-	if(in_string(set_name, "Sim")) { reader.mix.set_mixes_per_event(10); }
+	if(in_string(set_name, "Sim") || in_string(set_name, "Ampt")) { reader.mix.set_mixes_per_event(10); }
 
 	if(in_string(set_name, "Sim")) {
 		reader.sim_events(sim_cent_events);
-	} else {
+	} else if(in_string(set_name, "Ampt")) {
+		reader.read_ampt_trees();
+	} else{
 		reader.read_trees();
+	}
+}
+
+
+void ampt_cent_test() {
+	int energy = 7;
+	AmptCentralityMaker cent_maker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref3");
+	map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
+	cent_maker.set_max_b(opt_bmax[energy]);
+	cout << cent_maker.get_cent_bin9(200) << endl;
+	vector<int> cent_ref3_9bin_edges;
+	for(auto edge:cent_maker.get_ref_bin20_edges()) { cout << edge << ", "; }
+	cout << endl;
+	for(auto edge:cent_maker.get_ref_bin16_edges()) { cout << edge << ", "; }
+}
+
+
+void ampt_cent_b_corr() {
+	vector<int> energies {7, 11, 19, 27, 39, 62};
+	int cent = 8;
+	for(int energy:energies) {
+		string in_path = "/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/";
+		AmptCentralityMaker cent_maker(in_path, "ref3");
+		map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
+		cent_maker.set_max_b(opt_bmax[energy]);
+
+		string ampt_path = "/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + ".root";
+
+		TFile *ampt_file = new TFile(ampt_path.data(), "READ");
+		TTree *ampt_tree = (TTree*)ampt_file->Get("tree");
+		TH1D *ref3_dist = new TH1D(("ref3_dist_"+to_string(energy)+"_"+to_string(cent)).data(), "Ref3 Distribution", 801, -0.5, 800.5);
+		ref3_dist->SetLineColor(kBlue);
+		TH1D *b_dist = new TH1D(("b_dist_"+to_string(energy)+"_"+to_string(cent)).data(), "Impact Parameter Distribution", 201, -0.05, 20.05);
+		b_dist->SetLineColor(kRed);
+		TLeaf *ref3_leaf = ampt_tree->GetLeaf("refmult3");
+		TLeaf *b_leaf = ampt_tree->GetLeaf("imp");
+		int event_index = 0;
+		while(ampt_tree->GetEntry(event_index)) {
+			if(cent_maker.get_cent_bin9(ref3_leaf->GetValue()) == cent) {
+				ref3_dist->Fill(ref3_leaf->GetValue());
+				b_dist->Fill(b_leaf->GetValue());
+			}
+			event_index++;
+		}
+
+		TFile *out = new TFile("/home/dylan/Research/Results/ampt_cent_b_corr.root", "UPDATE");
+		ref3_dist->Write();
+		b_dist->Write();
+		ampt_file->Close();
+		out->Close();
 	}
 }
 

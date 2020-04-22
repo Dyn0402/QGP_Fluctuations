@@ -15,32 +15,14 @@
 #include <vector>
 
 #include <TLeaf.h>
+#include <TVector3.h>
 //#include <TObject.h>
 
+#include "TreeLeaves.h"
 #include "Track.h"
 
 using namespace std;
 
-
-struct tree_leaves {
-	TLeaf *run;
-	TLeaf *ref_mult;
-	TLeaf *ref_mult2;
-	TLeaf *btof;
-	TLeaf *vx;
-	TLeaf *vy;
-	TLeaf *vz;
-	TLeaf *event_plane;
-
-	TLeaf *phi;
-	TLeaf *pt;
-	TLeaf *p;
-	TLeaf *beta;
-	TLeaf *charge;
-	TLeaf *dca;
-	TLeaf *nsigma;
-	TLeaf *eta;
-};
 
 struct event_defaults {
 	double vx = 0.;
@@ -76,6 +58,7 @@ public:
 	Event();
 	Event(event_defaults& defaults, int energy, int ref_num, int cent);
 	Event(tree_leaves leaves);
+	Event(ampt_tree_leaves leaves, event_defaults& def, int energy, int ref_num, int cent);
 	Event(Event *event);
 	~Event();
 
@@ -104,6 +87,7 @@ public:
 
 	// Doers
 	void read_tree_event(tree_leaves leaves);
+	void read_tree_event(ampt_tree_leaves leaves, event_defaults& def, int energy, int ref_num, int cent);
 	void read_tree_event(Event *event);
 	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned refn, unsigned btof, double event_plane);
 	void clear();
