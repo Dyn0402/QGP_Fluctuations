@@ -46,6 +46,10 @@ public:
 	void set_out_path(string path);
 	void set_out_root_name(string name);
 	void set_sets(map<string, vector<int>> sets);
+	void set_energies(vector<int> energies);
+	void set_all_centralities(vector<int> centralities);
+	void set_can_wh(int can_width, int can_height);
+	void set_set_combos(map<string, vector<string>> set_combos);
 
 	// Doers
 	void analyze();
@@ -78,6 +82,7 @@ private:
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
 //	map<string, vector<int>> sets = {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
 	map<string, vector<int>> sets = {{"Single_Ratio", {0,0}}};
+	map<string, vector<string>> set_combos;
 
 
 	// Data Containers
@@ -86,14 +91,17 @@ private:
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> raw_stats_sets;
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> mix_stats_sets;
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> divide_stats_sets;
+	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> pull_stats_sets;
 
 	map<string, map<int, map<int, map<int, map<string, double>>>>> raw_stats_sd;
 	map<string, map<int, map<int, map<int, map<string, double>>>>> mix_stats_sd;
 	map<string, map<int, map<int, map<int, map<string, double>>>>> divide_stats_sd;
+	map<string, map<int, map<int, map<int, map<string, double>>>>> pull_stats_sd;
 
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> mix_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_median;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_stats_median;
 
 
 	// Doers

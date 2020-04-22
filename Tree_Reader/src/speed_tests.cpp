@@ -15,34 +15,9 @@
 #include "file_io.h"
 #include "Event.h"
 #include "Track.h"
+#include "TreeLeaves.h"
 
 using namespace std;
-
-
-//Get tree leaves and return them in a tree_leaves struct.
-tree_leaves get_tree_leaves(TTree* tree) {
-	tree_leaves leaves;
-	leaves.run = tree->GetLeaf("run");
-	leaves.ref_mult = tree->GetLeaf("Nprim");
-	leaves.ref_mult2 = tree->GetLeaf("ref2");
-	leaves.btof = tree->GetLeaf("btof");
-	leaves.vx = tree->GetLeaf("vtx_x");
-	leaves.vy = tree->GetLeaf("vtx_y");
-	leaves.vz = tree->GetLeaf("vtx_z");
-	leaves.run = tree->GetLeaf("run");
-	leaves.event_plane = tree->GetLeaf("event_plane");
-
-	leaves.pt = tree->GetLeaf("Proton.pt");
-	leaves.p = tree->GetLeaf("Proton.p");
-	leaves.phi = tree->GetLeaf("Proton.phi");
-	leaves.beta = tree->GetLeaf("Proton.beta");
-	leaves.charge = tree->GetLeaf("Proton.charge");
-	leaves.dca = tree->GetLeaf("Proton.dca");
-	leaves.nsigma = tree->GetLeaf("Proton.nsigma");
-	leaves.eta = tree->GetLeaf("Proton.eta");
-
-	return(leaves);
-}
 
 
 void speed_test() {

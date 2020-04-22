@@ -55,15 +55,42 @@ void AzimuthBinAnalyzer::set_sets(map<string, vector<int>> sets) {
 	this->sets = sets;
 }
 
+void AzimuthBinAnalyzer::set_energies(vector<int> energies) {
+	energy_list = energies;
+}
+
+void AzimuthBinAnalyzer::set_all_centralities(vector<int> centralities) {
+	all_centralities = centralities;
+}
+
+void AzimuthBinAnalyzer::set_can_wh(int can_width, int can_height) {
+	plot::canvas_width = can_width;
+	plot::canvas_height = can_height;
+}
+
+void AzimuthBinAnalyzer::set_set_combos(map<string, vector<string>> set_combos) {
+	this->set_combos = set_combos;
+}
+
 // Doers
 
 void AzimuthBinAnalyzer::analyze() {
+	analysis::energy_list = energy_list;
 	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
 	analyze_sets();
 }
 
 
 void AzimuthBinAnalyzer::analyze_sets() {
+//	ROOT::EnableThreadSafety();
+//	{
+//		ThreadPool pool(thread::hardware_concurrency());
+//		for(pair<string, vector<int>> set:sets) {
+//			pool.enqueue(&AzimuthBinAnalyzer::analyze_set, this, set.first, set.second);
+//			analyze_set(set.first, set.second);
+//		}
+//	}
+
 	for(pair<string, vector<int>> set:sets) {
 		analyze_set(set.first, set.second);
 	}
@@ -87,63 +114,24 @@ void AzimuthBinAnalyzer::combine_sets() {
 
 	TDirectory *sets_dir = out_root->mkdir("Sets_Comp");
 
-	map<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pairs = {
-//			{"Rand_Pile_Large", {
-//					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_median["Pile_Up_008_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_median["Pile_Up_008_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_median["Pile_Up_001_"]}, {"Pile_Up 1%", divide_stats_median["Pile_Up_01_"]}, {"Pile_Up 0.2%", divide_stats_median["Pile_Up_002_"]}, {"Pile_Up 0.5%", divide_stats_median["Pile_Up_005_"]}, {"Pile_Up 0.8%", divide_stats_median["Pile_Up_008_"]}}}}
-//			},
-//			{"Rand_Pile_Small", {
-//					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}, {"Pile_Up 0.08%", raw_stats_median["Pile_Up_0008_"]}, {"Pile_Up 0.05%", raw_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.02%", raw_stats_median["Pile_Up_0002_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}, {"Pile_Up 0.08%", mix_stats_median["Pile_Up_0008_"]}, {"Pile_Up 0.05%", mix_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.02%", mix_stats_median["Pile_Up_0002_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_median["Pile_Up_001_"]}, {"Pile_Up 0.08%", divide_stats_median["Pile_Up_0008_"]}, {"Pile_Up 0.05%", divide_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.02%", divide_stats_median["Pile_Up_0002_"]}}}}
-//			},
-//			{"Rand_Pile_RejCut", {
-//					{"raw" , {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"No BTof_Ref Cut", raw_stats_median["No_BTof_Rej"]}, {"Pile_Up 0.02%", raw_stats_median["Pile_Up_0002_"]}, {"Pile_Up 0.05%", raw_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.1%", raw_stats_median["Pile_Up_001_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"No BTof_Ref Cut", mix_stats_median["No_BTof_Rej"]}, {"Pile_Up 0.02%", mix_stats_median["Pile_Up_0002_"]}, {"Pile_Up 0.05%", mix_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.1%", mix_stats_median["Pile_Up_001_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"No BTof_Ref Cut", divide_stats_median["No_BTof_Rej"]}, {"Pile_Up 0.02%", divide_stats_median["Pile_Up_0002_"]}, {"Pile_Up 0.05%", divide_stats_median["Pile_Up_0005_"]}, {"Pile_Up 0.1%", divide_stats_median["Pile_Up_001_"]}}}}
-//			},
-//			{"Rand_Efficiency", {
-//					{"raw", {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"Efficiency 1%", raw_stats_median["Efficiency_01_"]}, {"Efficiency 8%", raw_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", raw_stats_median["Efficiency_025_"]}, {"Efficiency 5%", raw_stats_median["Efficiency_05_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"Efficiency 1%", mix_stats_median["Efficiency_01_"]}, {"Efficiency 8%", mix_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", mix_stats_median["Efficiency_025_"]}, {"Efficiency 5%", mix_stats_median["Efficiency_05_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"Efficiency 1%", divide_stats_median["Efficiency_01_"]}, {"Efficiency 8%", divide_stats_median["Efficiency_08_"]}, {"Efficiency 2.5%", divide_stats_median["Efficiency_025_"]}, {"Efficiency 5%", divide_stats_median["Efficiency_05_"]}}}}
-//			},
-//			{"Rotates", {
-//					{"raw", {{"Rand_Rotate", raw_stats_median["Rand_Rotate"]}, {"No_Rotate", raw_stats_median["No_Rotate"]}, {"EP_Rotate", raw_stats_median["EP_Rotate"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_median["Rand_Rotate"]}, {"No_Rotate", mix_stats_median["No_Rotate"]}, {"EP_Rotate", mix_stats_median["EP_Rotate"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_median["Rand_Rotate"]}, {"No_Rotate", divide_stats_median["No_Rotate"]}, {"EP_Rotate", divide_stats_median["EP_Rotate"]}}}}
-//			},
-			{"All", {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}}}
-	};
+	map<string, map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>>> set_pairs;
+	map<string, map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>>> set_pairs_sd;
 
-	map<string, map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>>> set_pairs_sd = {
-//			{"Rand_Pile_Large", {
-//					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", raw_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", raw_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", raw_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", raw_stats_sd["Pile_Up_008_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", mix_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", mix_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", mix_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", mix_stats_sd["Pile_Up_008_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_sd["Pile_Up_001_"]}, {"Pile_Up 1%", divide_stats_sd["Pile_Up_01_"]}, {"Pile_Up 0.2%", divide_stats_sd["Pile_Up_002_"]}, {"Pile_Up 0.5%", divide_stats_sd["Pile_Up_005_"]}, {"Pile_Up 0.8%", divide_stats_sd["Pile_Up_008_"]}}}}
-//			},
-//			{"Rand_Pile_Small", {
-//					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}, {"Pile_Up 0.08%", raw_stats_sd["Pile_Up_0008_"]}, {"Pile_Up 0.05%", raw_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.02%", raw_stats_sd["Pile_Up_0002_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}, {"Pile_Up 0.08%", mix_stats_sd["Pile_Up_0008_"]}, {"Pile_Up 0.05%", mix_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.02%", mix_stats_sd["Pile_Up_0002_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"Pile_Up 0.1%", divide_stats_sd["Pile_Up_001_"]}, {"Pile_Up 0.08%", divide_stats_sd["Pile_Up_0008_"]}, {"Pile_Up 0.05%", divide_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.02%", divide_stats_sd["Pile_Up_0002_"]}}}}
-//			},
-//			{"Rand_Pile_RejCut", {
-//					{"raw" , {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"No BTof_Ref Cut", raw_stats_sd["No_BTof_Rej"]}, {"Pile_Up 0.02%", raw_stats_sd["Pile_Up_0002_"]}, {"Pile_Up 0.05%", raw_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.1%", raw_stats_sd["Pile_Up_001_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"No BTof_Ref Cut", mix_stats_sd["No_BTof_Rej"]}, {"Pile_Up 0.02%", mix_stats_sd["Pile_Up_0002_"]}, {"Pile_Up 0.05%", mix_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.1%", mix_stats_sd["Pile_Up_001_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"No BTof_Ref Cut", divide_stats_sd["No_BTof_Rej"]}, {"Pile_Up 0.02%", divide_stats_sd["Pile_Up_0002_"]}, {"Pile_Up 0.05%", divide_stats_sd["Pile_Up_0005_"]}, {"Pile_Up 0.1%", divide_stats_sd["Pile_Up_001_"]}}}}
-//			},
-//			{"Rand_Efficiency", {
-//					{"raw", {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"Efficiency 1%", raw_stats_sd["Efficiency_01_"]}, {"Efficiency 8%", raw_stats_sd["Efficiency_08_"]}, {"Efficiency 2.5%", raw_stats_sd["Efficiency_025_"]}, {"Efficiency 5%", raw_stats_sd["Efficiency_05_"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"Efficiency 1%", mix_stats_sd["Efficiency_01_"]}, {"Efficiency 8%", mix_stats_sd["Efficiency_08_"]}, {"Efficiency 2.5%", mix_stats_sd["Efficiency_025_"]}, {"Efficiency 5%", mix_stats_sd["Efficiency_05_"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"Efficiency 1%", divide_stats_sd["Efficiency_01_"]}, {"Efficiency 8%", divide_stats_sd["Efficiency_08_"]}, {"Efficiency 2.5%", divide_stats_sd["Efficiency_025_"]}, {"Efficiency 5%", divide_stats_sd["Efficiency_05_"]}}}}
-//			},
-//			{"Rotates", {
-//					{"raw", {{"Rand_Rotate", raw_stats_sd["Rand_Rotate"]}, {"No_Rotate", raw_stats_sd["No_Rotate"]}, {"EP_Rotate", raw_stats_sd["EP_Rotate"]}}},
-//					{"mix", {{"Rand_Rotate", mix_stats_sd["Rand_Rotate"]}, {"No_Rotate", mix_stats_sd["No_Rotate"]}, {"EP_Rotate", mix_stats_sd["EP_Rotate"]}}},
-//					{"divide", {{"Rand_Rotate", divide_stats_sd["Rand_Rotate"]}, {"No_Rotate", divide_stats_sd["No_Rotate"]}, {"EP_Rotate", divide_stats_sd["EP_Rotate"]}}}}
-//			},
-			{"All", {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}}}
-	};
+	for(pair<string, vector<string>> combo:set_combos) {
+		for(string set:combo.second) {
+			set_pairs[combo.first]["raw"][set] = raw_stats_median[set];
+			set_pairs[combo.first]["mix"][set] = mix_stats_median[set];
+			set_pairs[combo.first]["divide"][set] = divide_stats_median[set];
+			set_pairs[combo.first]["pull"][set] = pull_stats_median[set];
+
+			set_pairs_sd[combo.first]["raw"][set] = raw_stats_sd[set];
+			set_pairs_sd[combo.first]["mix"][set] = mix_stats_sd[set];
+			set_pairs_sd[combo.first]["divide"][set] = divide_stats_sd[set];
+			set_pairs_sd[combo.first]["pull"][set] = pull_stats_sd[set];
+		}
+		set_pairs["All"] = {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}};
+		set_pairs_sd["All"] = {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}};
+	}
 
 	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> set_type;
 	map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>> set_type_sd;
@@ -174,6 +162,7 @@ void AzimuthBinAnalyzer::combine_sets() {
 				name_dir->cd();
 				for(int div:divs) {
 					roli_thesis_stats(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+					roli_thesis_stats(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name.second, centralities, {div}, "roli_thesis_pull_"+name.first+to_string(div));
 				}
 			}
 			TDirectory *centralities_dir = data_dir->mkdir("centralities");
@@ -182,7 +171,10 @@ void AzimuthBinAnalyzer::combine_sets() {
 				name_dir->cd();
 				for(int div:divs) {
 					centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+					centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
 				}
+				centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, "centralities_raw_"+name);
+				centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, divs, "centralities_pull_"+name);
 			}
 		}
 
@@ -205,6 +197,7 @@ void AzimuthBinAnalyzer::combine_sets() {
 				for(int div:divs) {
 					centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
+				centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, "centralities_mix_"+name);
 			}
 		}
 
@@ -228,6 +221,7 @@ void AzimuthBinAnalyzer::combine_sets() {
 				for(int div:divs) {
 					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				}
+				centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "centralities_divide_"+name);
 			}
 		}
 	}
@@ -361,6 +355,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_stats_all;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> mix_stats_all;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_all;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_stats_all;
 
 	// Calculate standard deviations for systematics
 	for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets[set_name]) {
@@ -370,15 +365,18 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 					raw_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					mix_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					divide_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					pull_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
 					raw_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					mix_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					pull_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
 					for(int i=0; i<(int)raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].size(); i++) {
 						raw_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 						mix_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 						divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
+						pull_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 					}
 				}
 			}
@@ -409,6 +407,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 			for(int div:divs) {
 				centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, {div}, "centralities_raw_mix_comp_"+name+to_string(div));
 			}
+			centralities_stat(raw_mixed, raw_mixed_sd, name, all_centralities, divs, "centralities_raw_mix_comp_"+name);
 		}
 	}
 
@@ -426,6 +425,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					roli_thesis_stats(raw_stats_median[set_name], raw_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_raw_"+name.first+to_string(div));
+					roli_thesis_stats(pull_stats_median[set_name], pull_stats_sd[set_name], name.second, centralities, {div}, "roli_thesis_pull_"+name.first+to_string(div));
 				}
 			}
 			TDirectory *centralities_dir = median_dir->mkdir("centralities");
@@ -434,7 +434,10 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+					centralities_stat(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
 				}
+				centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, divs, "centralities_raw_"+name);
+				centralities_stat(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, divs, "centralities_pull_"+name);
 			}
 		}
 
@@ -455,7 +458,10 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					centralities_stat(raw_stats_all, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+					centralities_stat(pull_stats_all, name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
 				}
+				centralities_stat(raw_stats_all, name, all_centralities, divs, "centralities_raw_"+name);
+				centralities_stat(pull_stats_all, name, all_centralities, divs, "centralities_pull_"+name);
 			}
 		}
 	}
@@ -483,6 +489,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(mix_stats_median[set_name], mix_stats_sd[set_name], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
+				centralities_stat(mix_stats_median[set_name], mix_stats_sd[set_name], name, all_centralities, divs, "centralities_mix_"+name);
 			}
 		}
 
@@ -504,6 +511,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(mix_stats_all, name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
 				}
+				centralities_stat(mix_stats_all, name, all_centralities, divs, "centralities_mix_"+name);
 			}
 		}
 	}
@@ -531,6 +539,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				}
+				centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, "centralities_divide_"+name);
 			}
 		}
 
@@ -552,6 +561,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(divide_stats_all, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				}
+				centralities_stat(divide_stats_all, name, all_centralities, divs, "centralities_divide_"+name);
 			}
 		}
 	}
@@ -579,7 +589,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:ratio_stats) {
 		for(pair<int, map<int, map<string, Measure>>> div:energy.second) {
 			for(pair<int, map<string, Measure>> cent:div.second) {
-				cout << "Energy: " + to_string(energy.first) + "GeV " + "Cent: " + to_string(cent.first) + " Div: " + to_string(div.first) + " Mix_Diff_Sd: " + to_string(diff_stats_mix[energy.first][div.first][cent.first]["standard_deviation"].get_val()) << endl;
+//				cout << "Energy: " + to_string(energy.first) + "GeV " + "Cent: " + to_string(cent.first) + " Div: " + to_string(div.first) + " Mix_Diff_Sd: " + to_string(diff_stats_mix[energy.first][div.first][cent.first]["standard_deviation"].get_val()) << endl;
 				data[energy.first][div.first][cent.first].set_diff_divisor(diff_stats_mix[energy.first][div.first][cent.first]["standard_deviation"].get_val());
 				for(pair<string, Measure> stat:cent.second) {
 					stats_mix_divide[energy.first][div.first][cent.first][stat.first] = stat.second / ratio_stats_mix[energy.first][div.first][cent.first][stat.first];
@@ -593,6 +603,16 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	}
 
 	auto pull_stats = calculate_stats(data, "diff", orders);
+
+	for(pair<int, map<int, map<int, map<string, Measure>>>> energy:pull_stats) {
+		for(pair<int, map<int, map<string, Measure>>> div:energy.second) {
+			for(pair<int, map<string, Measure>> cent:div.second) {
+				for(pair<string, Measure> stat:cent.second) {
+					pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second);
+				}
+			}
+		}
+	}
 
 	TDirectory *set_num_dir = set_dir->mkdir((set_name + to_string(set_num)).data());
 
@@ -630,6 +650,9 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 				centralities_stat(diff_stats, name, all_centralities, {div}, "centralities_raw_diff_"+name+to_string(div));
 				centralities_stat(pull_stats, name, all_centralities, {div}, "centralities_raw_pull_"+name+to_string(div));
 			}
+			centralities_stat(ratio_stats, name, all_centralities, divs, "centralities_raw_ratio_"+name);
+			centralities_stat(diff_stats, name, all_centralities, divs, "centralities_raw_diff_"+name);
+			centralities_stat(pull_stats, name, all_centralities, divs, "centralities_raw_pull_"+name);
 		}
 	}
 
@@ -666,6 +689,8 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 				centralities_stat(ratio_stats_mix, name, all_centralities, {div}, "centralities_mix_ratio_"+name+to_string(div));
 				centralities_stat(diff_stats_mix, name, all_centralities, {div}, "centralities_mix_diff_"+name+to_string(div));
 			}
+			centralities_stat(ratio_stats_mix, name, all_centralities, divs, "centralities_mix_ratio_"+name);
+			centralities_stat(diff_stats_mix, name, all_centralities, divs, "centralities_mix_diff_"+name);
 		}
 	}
 
@@ -691,6 +716,8 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 				centralities_stat(stats_mix_divide, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 				centralities_stat(raw_mix_comp, name, all_centralities, {div}, "centralities_comp_"+name+to_string(div));
 			}
+			centralities_stat(stats_mix_divide, name, all_centralities, divs, "centralities_divide_"+name);
+			centralities_stat(raw_mix_comp, name, all_centralities, divs, "centralities_comp_"+name);
 		}
 	}
 }
@@ -729,17 +756,18 @@ map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string
 //Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
 map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders) {
 	map<int, map<int, map<int, map<string, Measure>>>> stats;
-	ROOT::EnableThreadSafety();
-	{
-		ThreadPool pool(1);//thread::hardware_concurrency());
-		for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
-			for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
-				for(pair<int, AzimuthBinData> cent:div.second) {
-					pool.enqueue(&AzimuthBinAnalyzer::calc_stat, this, &(data[energy.first][div.first][cent.first]), type, energy.first, div.first, cent.first, orders, &stats);
-				}
+//	ROOT::EnableThreadSafety();
+//	{
+//	ThreadPool pool(1);//thread::hardware_concurrency());
+	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
+		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
+			for(pair<int, AzimuthBinData> cent:div.second) {
+				calc_stat(&(data[energy.first][div.first][cent.first]), type, energy.first, div.first, cent.first, orders, &stats);
+//				pool.enqueue(&AzimuthBinAnalyzer::calc_stat, this, &(data[energy.first][div.first][cent.first]), type, energy.first, div.first, cent.first, orders, &stats);
 			}
 		}
 	}
+//	}
 
 	return(stats);
 }

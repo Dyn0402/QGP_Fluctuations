@@ -31,7 +31,7 @@ Simulator::Simulator() {
 	norm_eff_dist->SetDirectory(0);
 	ep_dist = new TH1D();
 	ep_dist->SetDirectory(0);
-	simulate_event = bind(&Simulator::sim_event_flow, this, placeholders::_1);
+	simulate_event = bind(&Simulator::sim_event, this, placeholders::_1);
 }
 
 
@@ -136,13 +136,13 @@ void Simulator::set_ep_res(double res) {
 	pars.ep_res = res;
 }
 
-void Simulator::set_flow(double v2, double res, double chi_acc) {
+void Simulator::set_flow(double v2, double res, double chi_acc, int event_plane_n) {
 	pars.v2 = v2;
 	pars.ep_res = res;
-	ep_dist = new TH1D("ep_dist", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -M_PI, M_PI);
+	ep_dist = new TH1D("ep_dist", ("Event Plane Pdf res="+to_string(res)).data(), 1001, -M_PI/event_plane_n, M_PI/event_plane_n);
 	ep_dist->SetDirectory(0);
 	for(int bin = 0; bin <= ep_dist->GetXaxis()->GetNbins(); bin++) {
-		ep_dist->SetBinContent(bin, event_plane(res, ep_dist->GetBinCenter(bin), chi_acc));
+		ep_dist->SetBinContent(bin, event_plane(res, event_plane_n*ep_dist->GetBinCenter(bin), chi_acc));
 	}
 
 }

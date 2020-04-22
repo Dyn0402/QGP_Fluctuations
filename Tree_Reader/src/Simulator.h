@@ -87,7 +87,7 @@ public:
 	void set_hom_eff(double eff);
 	void set_v2(double v2);
 	void set_ep_res(double res);
-	void set_flow(double v2, double res, double chi_acc = 0.0001);
+	void set_flow(double v2, double res, double chi_acc = 0.0001, int event_plane_n = 2);
 
 	// Attributes
 	track_defaults track_defs;

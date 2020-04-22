@@ -12,7 +12,7 @@
 using namespace std;
 
 void Plot_BES1_Inefficiencies() {
-	string root_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
+	string root_path = "/home/dylan/Research/Data_Old_Ref3/eta050/";
 	vector<int> energies = {7, 11, 19, 27, 39, 62};
 	vector<TFile*> files;
 	vector<TH1D*> hists;
@@ -26,7 +26,7 @@ void Plot_BES1_Inefficiencies() {
 		can->cd(can_index);
 		files.push_back(new TFile((root_path + to_string(energy) + "GeV/QA_" + to_string(energy) + "GeV.root").data(), "READ"));
 
-		hists.push_back((TH1D*)files.back()->Get(("post_phi_Single_Ratio0_" + to_string(energy)).data()));
+		hists.push_back((TH1D*)files.back()->Get(("post_phi_eta050_" + to_string(energy)).data()));
 		hists.back()->Scale(1.0/hists.back()->GetMaximum());
 //		hists.back()->SetTitleSize(0.09);
 		hists.back()->SetNameTitle((to_string(energy) + "GeV Efficiency").data(), (to_string(energy) + "GeV").data());

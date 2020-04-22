@@ -24,13 +24,14 @@
 #include <TH2.h>
 #include <TRandom3.h>
 #include <TCanvas.h>
-
-#include "../StRoot/StRefMultCorr/CentralityMaker.h"
-#include "../StRoot/StRefMultCorr/StRefMultCorr.h"
+#include <TVector3.h>
 
 #include "TreeReader.h"
 #include "file_io.h"
 #include "ratio_methods.h"
+
+#include "../StRefMultCorr/CentralityMaker.h"
+#include "../StRefMultCorr/StRefMultCorr.h"
 #include "Event.h"
 #include "Track.h"
 
@@ -331,6 +332,10 @@ void TreeReader::set_ref_num(int ref_num) {
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 }
 
+void TreeReader::set_particle(string particle) {
+	this->particle = particle;
+}
+
 // Doers
 
 // Read files for single energy and write results to text files.
@@ -381,6 +386,63 @@ void TreeReader::read_trees() {
 void TreeReader::read_ampt_trees() {
 	define_qa();
 
+//	AmptCentralityMaker cent_maker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref3");
+//	map<int, float> opt_bmax1 {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
+//	cent_maker.set_max_b(opt_bmax1[energy]);
+//	cout << cent_maker.get_cent_bin9(200) << endl;
+
+	ampt_cent = AmptCentralityMaker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref" + to_string(ref_num));
+	map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
+	ampt_cent.set_max_b(opt_bmax[energy]);
+	ampt_cent.set_mult_quantity("ref3");
+
+	cout << energy << "GeV: ";
+	for(auto edge:ampt_cent.get_ref_bin9_edges()) { cout << edge << ","; }
+
+	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
+	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+	cout << endl;
+
+	unsigned num_files = in_files.size();
+	unsigned file_index = 1;
+
+	for(string path:in_files) {
+		// Display progress and time while running.
+		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
+			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+		}
+
+		TFile *file = new TFile(path.data(), "READ");
+//		add_cut_hists(file);
+		TTree *tree = (TTree*)file->Get(tree_name.data());
+		read_ampt_tree(tree);  // Read tree from file into data
+		file->Close();
+		delete file;
+		file_index++;
+	}
+
+	reset_out_dir();
+	write_info_file();
+	write_qa();
+	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+	if(mixed) { mix.write_mixed_data(); }
+	if(mixed_sets) { mix_sets.write_mixed_data(); }
+	if(rand_data) {random.write_random_data(); }
+	cout << endl;
+}
+
+
+// Read files for single energy and write results to text files.
+void TreeReader::read_nsm_ampt_trees() {
+	define_qa();
+
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
 
@@ -400,7 +462,7 @@ void TreeReader::read_ampt_trees() {
 		TFile *file = new TFile(path.data(), "READ");
 //		add_cut_hists(file);
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-		read_ampt_tree(tree);  // Read tree from file into data
+		read_nsm_ampt_tree(tree);  // Read tree from file into data
 		file->Close();
 		delete file;
 		file_index++;
@@ -474,7 +536,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 
 // Read individual tree. Read out and then process each event.
 void TreeReader::read_tree(TTree* tree) {
-	tree_leaves leaves = get_tree_leaves(tree);
+	tree_leaves leaves = get_tree_leaves(tree, particle, ref_num);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
@@ -497,6 +559,63 @@ void TreeReader::read_tree(TTree* tree) {
 
 
 void TreeReader::read_ampt_tree(TTree* tree) {
+	ampt_tree_leaves leaves = get_ampt_tree_leaves(tree, ref_num);
+
+	int cent_9bin, proton_mult;
+	int event_index = 0;
+	while(tree->GetEvent(event_index)) {  // ref3 hard coded in. fix
+		cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
+//		if(leaves.ref3->GetValue() >= 228) { cout << energy << "  " << cent_9bin << "  " << leaves.ref3->GetValue() << endl; }
+		Event event(ampt_tree_leaves, event_defs, energy, ref_num, cent_9bin);
+		event.set_event_plane(leaves.event_plane_ref3->GetValue());
+		proton_mult = leaves.pmult->GetValue();
+
+		vector<Track> protons;
+		for(int i=0; i<proton_mult; i++) {
+			TVector3 p(leaves.px->GetValue(i), leaves.py->GetValue(i), leaves.pz->GetValue(i));
+			Track proton(track_defs);
+			proton.set_p(p.Mag());
+			proton.set_pt(p.Perp());
+			proton.set_phi(p.Phi() + M_PI);
+			proton.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
+			protons.push_back(proton);
+		}
+		event.set_protons(protons);
+
+		if(pile_up) {
+			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
+				event_index++;
+				if(tree->GetEntry(event_index)) {
+					cent_9bin = ampt_cent.get_cent_bin9(leaves.ref3->GetValue());
+					Event event2(event_defs, energy, ref_num, cent_9bin);
+					event2.set_event_plane(leaves.event_plane_ref3->GetValue());
+					proton_mult = leaves.pmult->GetValue();
+
+					protons.clear();
+					for(int i=0; i<proton_mult; i++) {
+						TVector3 p(leaves.px->GetValue(i), leaves.py->GetValue(i), leaves.pz->GetValue(i));
+						Track proton(track_defs);
+						proton.set_p(p.Mag());
+						proton.set_pt(p.Perp());
+						proton.set_phi(p.Phi() + M_PI);
+						proton.set_eta(p.PseudoRapidity());
+						proton.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
+						protons.push_back(proton);
+					}
+					event2.set_protons(protons);
+
+					event.pile_up(event2);
+				}
+			}
+		}
+
+		process_event(event);
+		event_index++;
+	}
+}
+
+
+void TreeReader::read_nsm_ampt_tree(TTree* tree) {
 	Event *event_pointer = new Event;
 	TBranch *event_branch = tree->GetBranch("event");
 	event_branch->SetAddress(&event_pointer);
@@ -519,7 +638,6 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 		event_index++;
 	}
 }
-
 
 // Get proton distribution for simulation from real data QA plots.
 TH1D* TreeReader::get_sim_proton_dist(int cent) {
@@ -563,8 +681,13 @@ TH1D* TreeReader::get_sim_efficiency_dist() {
 
 //  For good events/tracks, azimuthally bin protons and save to data
 void TreeReader::process_event(Event& event) {
+//	refmultCorrUtil->init(event.get_run());
+//	refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+//	int cent_check = refmultCorrUtil->getCentralityBin9();
+//	if(cent_check != 0 || (int)event.get_protons().size() <= 3) { return; }
+
 	// Check if each event is good. Analyze if so, continue if not.
-	if(check_event_good(event)) {
+	if(check_event(event)) {
 		vector<double> good_proton_angles = {};
 
 		// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
@@ -631,7 +754,6 @@ void TreeReader::process_event(Event& event) {
 						}
 					}
 				}
-
 			}
 		}
 	}
@@ -808,56 +930,6 @@ void TreeReader::write_info_file() {
 }
 
 
-//Get tree leaves and return them in a tree_leaves struct.
-tree_leaves TreeReader::get_tree_leaves(TTree* tree) {
-	tree_leaves leaves;
-	leaves.run = tree->GetLeaf("run");
-	leaves.ref_mult = tree->GetLeaf("Nprim");
-	leaves.ref_mult2 = tree->GetLeaf("ref2");
-	leaves.btof = tree->GetLeaf("btof");
-	leaves.vx = tree->GetLeaf("vtx_x");
-	leaves.vy = tree->GetLeaf("vtx_y");
-	leaves.vz = tree->GetLeaf("vtx_z");
-	leaves.event_plane = tree->GetLeaf("event_plane");
-
-	leaves.pt = tree->GetLeaf("Proton.pt");
-	leaves.p = tree->GetLeaf("Proton.p");
-	leaves.phi = tree->GetLeaf("Proton.phi");
-	leaves.beta = tree->GetLeaf("Proton.beta");
-	leaves.charge = tree->GetLeaf("Proton.charge");
-	leaves.dca = tree->GetLeaf("Proton.dca");
-	leaves.nsigma = tree->GetLeaf("Proton.nsigma");
-	leaves.eta = tree->GetLeaf("Proton.eta");
-
-	return(leaves);
-}
-
-
-//Get tree leaves and return them in a tree_leaves struct. From new event trees.
-tree_leaves TreeReader::get_tree_leaves_new(TTree* tree) {
-	tree_leaves leaves;
-	leaves.run = tree->GetLeaf("run");
-	leaves.ref_mult = tree->GetLeaf("ref");
-	leaves.ref_mult2 = tree->GetLeaf("refn");
-	leaves.btof = tree->GetLeaf("btof");
-	leaves.vx = tree->GetLeaf("vx");
-	leaves.vy = tree->GetLeaf("vy");
-	leaves.vz = tree->GetLeaf("vz");
-	leaves.event_plane = tree->GetLeaf("event_plane");
-
-	leaves.pt = tree->GetLeaf("protons.pt");
-	leaves.p = tree->GetLeaf("protons.p");
-	leaves.phi = tree->GetLeaf("protons.phi");
-	leaves.beta = tree->GetLeaf("protons.beta");
-	leaves.charge = tree->GetLeaf("protons.charge");
-	leaves.dca = tree->GetLeaf("protons.dca");
-	leaves.nsigma = tree->GetLeaf("protons.nsigma");
-	leaves.eta = tree->GetLeaf("protons.eta");
-
-	return(leaves);
-}
-
-
 // Add file's event/track cut hists to corresponding collected histogram for energy.
 void TreeReader::add_cut_hists(TFile *file) {
 	TH1D *event_hist = (TH1D*)file->Get(event_cut_hist_name.data());
@@ -868,7 +940,7 @@ void TreeReader::add_cut_hists(TFile *file) {
 
 
 //Returns true if event is good, false if it is bad.
-bool TreeReader::check_event_good(Event& event) {
+bool TreeReader::check_event(Event& event) {
 	bool good_event = false;
 	fill_pre_event_qa(event);
 	event_cut_hist.Fill("Original", 1);
@@ -1024,7 +1096,7 @@ void TreeReader::define_qa() {
 	pre_vy_hist = TH1I(("pre_vy_"+set_name+"_"+to_string(energy)).data(), "pre_vy", 100, -2.5, 2.5);
 	pre_vz_hist = TH1I(("pre_vz_"+set_name+"_"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
 	pre_ref_hist = TH1I(("pre_ref_"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
-	pre_refn_hist = TH1I(("pre_reftwo_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
+	pre_refn_hist = TH1I(("pre_refn_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
 	pre_btof_hist = TH1I(("pre_btof_"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
 	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
@@ -1033,7 +1105,7 @@ void TreeReader::define_qa() {
 	post_vy_hist = TH1I(("post_vy_"+set_name+"_"+to_string(energy)).data(), "post_vy", 100, -2.5, 2.5);
 	post_vz_hist = TH1I(("post_vz_"+set_name+"_"+to_string(energy)).data(), "post_vz", 100, -55, 55);
 	post_ref_hist = TH1I(("post_ref_"+set_name+"_"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
-	post_refn_hist = TH1I(("post_reftwo_"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
+	post_refn_hist = TH1I(("post_refn_"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
 	post_btof_hist = TH1I(("post_btof_"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
 	post_ep_hist = TH1I(("post_ep_"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
@@ -1211,86 +1283,103 @@ void TreeReader::write_qa() {
 
 	// Make before/after canvases for each variable
 	TCanvas run_can("run_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_run_hist.Draw();
 	post_run_hist.SetLineColor(kRed);
 	post_run_hist.Draw("sames");
 	run_can.Write();
 	TCanvas vx_can("vx_can");
+	pre_vx_hist.GetYaxis()->SetRangeUser(0, pre_vx_hist.GetMaximum()*1.05);
 	pre_vx_hist.Draw();
 	post_vx_hist.SetLineColor(kRed);
 	post_vx_hist.Draw("sames");
 	vx_can.Write();
 	TCanvas vy_can("vy_can");
+	pre_vy_hist.GetYaxis()->SetRangeUser(0, pre_vy_hist.GetMaximum()*1.05);
 	pre_vy_hist.Draw();
 	post_vy_hist.SetLineColor(kRed);
 	post_vy_hist.Draw("sames");
 	vy_can.Write();
 	TCanvas vz_can("vz_can");
+	pre_vz_hist.GetYaxis()->SetRangeUser(0, pre_vz_hist.GetMaximum()*1.05);
 	pre_vz_hist.Draw();
 	post_vz_hist.SetLineColor(kRed);
 	post_vz_hist.Draw("sames");
 	vz_can.Write();
 	TCanvas ref_can("ref_can");
+	pre_ref_hist.GetYaxis()->SetRangeUser(0, pre_ref_hist.GetMaximum()*1.05);
 	pre_ref_hist.Draw();
 	post_ref_hist.SetLineColor(kRed);
 	post_ref_hist.Draw("sames");
 	ref_can.Write();
 	TCanvas refn_can("refn_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_refn_hist.Draw();
 	post_refn_hist.SetLineColor(kRed);
 	post_refn_hist.Draw("sames");
 	refn_can.Write();
 	TCanvas btof_can("btof_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_btof_hist.Draw();
 	post_btof_hist.SetLineColor(kRed);
 	post_btof_hist.Draw("sames");
 	btof_can.Write();
 	TCanvas ep_can("ep_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
 	pre_ep_hist.Draw();
 	post_ep_hist.SetLineColor(kRed);
 	post_ep_hist.Draw("sames");
 	ep_can.Write();
 	TCanvas phi_can("phi_can");
+	pre_phi_hist.GetYaxis()->SetRangeUser(0, pre_phi_hist.GetMaximum()*1.05);
 	pre_phi_hist.Draw();
 	post_phi_hist.SetLineColor(kRed);
 	post_phi_hist.Draw("sames");
 	phi_can.Write();
 	TCanvas p_can("p_can");
+	pre_p_hist.GetYaxis()->SetRangeUser(0, pre_p_hist.GetMaximum()*1.05);
 	pre_p_hist.Draw();
 	post_p_hist.SetLineColor(kRed);
 	post_p_hist.Draw("sames");
 	p_can.Write();
 	TCanvas pt_can("pt_can");
+	pre_pt_hist.GetYaxis()->SetRangeUser(0, pre_pt_hist.GetMaximum()*1.05);
 	pre_pt_hist.Draw();
 	post_pt_hist.SetLineColor(kRed);
 	post_pt_hist.Draw("sames");
 	pt_can.Write();
 	TCanvas beta_can("beta_can");
+	pre_beta_hist.GetYaxis()->SetRangeUser(0, pre_beta_hist.GetMaximum()*1.05);
 	pre_beta_hist.Draw();
 	post_beta_hist.SetLineColor(kRed);
 	post_beta_hist.Draw("sames");
 	beta_can.Write();
 	TCanvas charge_can("charge_can");
+	pre_charge_hist.GetYaxis()->SetRangeUser(0, pre_charge_hist.GetMaximum()*1.05);
 	pre_charge_hist.Draw();
 	post_charge_hist.SetLineColor(kRed);
 	post_charge_hist.Draw("sames");
 	charge_can.Write();
 	TCanvas eta_can("eta_can");
+	pre_eta_hist.GetYaxis()->SetRangeUser(0, pre_eta_hist.GetMaximum()*1.05);
 	pre_eta_hist.Draw();
 	post_eta_hist.SetLineColor(kRed);
 	post_eta_hist.Draw("sames");
 	eta_can.Write();
 	TCanvas nsigma_can("nsigma_can");
+	pre_nsigma_hist.GetYaxis()->SetRangeUser(0, pre_nsigma_hist.GetMaximum()*1.05);
 	pre_nsigma_hist.Draw();
 	post_nsigma_hist.SetLineColor(kRed);
 	post_nsigma_hist.Draw("sames");
 	nsigma_can.Write();
 	TCanvas dca_can("dca_can");
+	pre_dca_hist.GetYaxis()->SetRangeUser(0, pre_dca_hist.GetMaximum()*1.05);
 	pre_dca_hist.Draw();
 	post_dca_hist.SetLineColor(kRed);
 	post_dca_hist.Draw("sames");
 	dca_can.Write();
 	TCanvas m2_can("m2_can");
+	pre_m2_hist.GetYaxis()->SetRangeUser(0, pre_m2_hist.GetMaximum()*1.05);
 	pre_m2_hist.Draw();
 	post_m2_hist.SetLineColor(kRed);
 	post_m2_hist.Draw("sames");

@@ -16,6 +16,7 @@
 #include <TMultiGraph.h>
 #include <TLegend.h>
 #include <TLine.h>
+#include <TPad.h>
 
 #include "BinomialAnalyzer.h"
 
@@ -67,6 +68,15 @@ void BinomialAnalyzer::set_sets(map<string, vector<int>> set_name) {
 	this->sets = set_name;
 }
 
+void BinomialAnalyzer::set_centralities(vector<int> centralities) {
+	this->centralities = centralities;
+}
+
+void BinomialAnalyzer::set_can_wh(int can_width, int can_height) {
+	canvas_width = can_width;
+	canvas_height = can_height;
+}
+
 // Doers
 
 void BinomialAnalyzer::analyze() {
@@ -83,6 +93,15 @@ void BinomialAnalyzer::analyze_sets() {
 
 
 void BinomialAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
+//	ROOT::EnableThreadSafety();
+//	{
+//		ThreadPool pool(1);//thread::hardware_concurrency());
+//		TDirectory *set_dir = out_root->mkdir((set_name.data()));
+//		for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
+//			pool.enqueue(&BinomialAnalyzer::analyze_subset, this, set_num, set_dir);
+////			analyze_subset(set_name, set_num, set_dir);
+//		}
+//	}
 	TDirectory *set_dir = out_root->mkdir((set_name.data()));
 	for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
 		analyze_subset(set_name, set_num, set_dir);
@@ -253,7 +272,7 @@ void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(auto &stat:stats) {
-				cout << "all " << div << " div " << cent << " cent " << stat << endl;
+//				cout << "all " << div << " div " << cent << " cent " << stat << endl;
 				slice_stats_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
 			}
 		}
@@ -347,6 +366,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
+				legends.back()->SetFillStyle(0);
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 
 			}
@@ -406,6 +426,8 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 
 
 	TCanvas can(name.data(), name.data(), canvas_width, canvas_height);
+	gPad->SetFillColor(0);
+	gPad->SetBorderMode(0);
 	gStyle->SetTitleFontSize(0.09);
 	gStyle->SetTitleOffset(1.2);
 	gStyle->SetLegendTextSize(legend_text_size);
@@ -457,10 +479,22 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
+				legends.back()->SetFillStyle(0);
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 		}
 //		double y_range = y_max - y_min;
+		int x_pos = (can_index - 1) % can_div.first;
+		int y_pos = (can_index - 1) / can_div.first;
+		double left_margin = 0.18;
+		double x_len = 0.99 - left_margin/can_div.first;
+		double x_low = left_margin/can_div.first + x_pos*(x_len / can_div.first);
+		double x_up = x_low + x_len / can_div.first;
+		if(x_pos == 0) { x_low = 0; }
+		double y_low = (can_div.second - y_pos -1) * (1.0 / can_div.second);
+		double y_up = y_low + 1.0 / can_div.second;
+		gPad->SetPad(x_low, y_low, x_up, y_up);
+
 		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, x_max + 2);
 		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, x_max + 2);
 		mgs.back()->GetXaxis()->SetLabelSize(0.06);
@@ -472,11 +506,13 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 		if(can_index > can_div.first*(can_div.second-1)) { mgs.back()->GetXaxis()->SetTitle("Total Protons"); mgs.back()->GetXaxis()->SetTitleSize(0.06); mgs.back()->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
 		else { gPad->SetBottomMargin(0.07); }
 		if(can_index % can_div.first == 1) {
-			if(stat_name == "mean") { mgs.back()->GetYaxis()->SetTitle("Mean_{data} / Mean_{binomial}"); }
-			else if(stat_name == "standard_deviation") { mgs.back()->GetYaxis()->SetTitle("#sigma_{data} / #sigma_{binomial}"); }
-			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(1.25); gPad->SetLeftMargin(0.15); }
-		gPad->SetTopMargin(0.09);
-		gPad->SetRightMargin(0.03);
+			if(stat_name == "mean") { mgs.back()->GetYaxis()->SetTitle("Mean_{data} / Mean_{binomial}                     "); }
+			else if(stat_name == "standard_deviation") { mgs.back()->GetYaxis()->SetTitle("#sigma_{data} / #sigma_{binomial}                     "); }
+			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(1.5); gPad->SetLeftMargin(left_margin); }
+		else { gPad->SetLeftMargin(0.001); }
+		if(can_index % can_div.first == 0) { gPad->SetRightMargin(0.005); }
+		else { gPad->SetRightMargin(0.0001); }
+		gPad->SetTopMargin(0.02);
 		mgs.back()->Draw("AP");
 		lines.back()->Draw("same");
 		if(can_index == 1) { legends.back()->SetMargin(0.1); legends.back()->Draw(); }
