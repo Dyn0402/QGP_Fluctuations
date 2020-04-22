@@ -107,16 +107,16 @@ void read_class() {
 
 
 void run_set(int energy, int set_num, string set_name) {
-	string base_path = "/media/dylan/SSD_Storage/Research/";
-	int ref = 2;
+	string base_path = "/home/dylan/Research/";
+	int ref = 3;
 
 	string in_path = base_path + "Trees_Old_Ref3/";
 	string out_dir = base_path + "Data_Sim/";
 	string mix_out_dir = base_path + "Data_Sim_Mix/";
 
 	vector<int> divs {2, 3, 4, 5, 6};
-//	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
-	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 1000}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000}};
+	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
+//	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 1000}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000}};
 
 	string set_dir = set_name + to_string(set_num) + "/";
 
