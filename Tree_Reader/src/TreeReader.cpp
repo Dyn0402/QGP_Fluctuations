@@ -563,11 +563,10 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 
 	int cent_9bin, proton_mult;
 	int event_index = 0;
-	while(tree->GetEvent(event_index)) {  // ref3 hard coded in. fix
+	while(tree->GetEvent(event_index)) {
 		cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
-//		if(leaves.ref3->GetValue() >= 228) { cout << energy << "  " << cent_9bin << "  " << leaves.ref3->GetValue() << endl; }
-		Event event(ampt_tree_leaves, event_defs, energy, ref_num, cent_9bin);
-		event.set_event_plane(leaves.event_plane_ref3->GetValue());
+		Event event(event_defs, energy, ref_num, cent_9bin);
+		event.set_event_plane(leaves.event_plane->GetValue());
 		proton_mult = leaves.pmult->GetValue();
 
 		vector<Track> protons;
@@ -586,9 +585,9 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
 				event_index++;
 				if(tree->GetEntry(event_index)) {
-					cent_9bin = ampt_cent.get_cent_bin9(leaves.ref3->GetValue());
+					cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
 					Event event2(event_defs, energy, ref_num, cent_9bin);
-					event2.set_event_plane(leaves.event_plane_ref3->GetValue());
+					event2.set_event_plane(leaves.event_plane->GetValue());
 					proton_mult = leaves.pmult->GetValue();
 
 					protons.clear();

@@ -112,12 +112,15 @@ void AmptCentralityMaker::set_mult_quantity(string quantity) {
 	if(quantity == "ref2") {
 		append_dist_val = bind(&AmptCentralityMaker::get_ref2, this);
 		sort_and_bin = bind(&AmptCentralityMaker::sort_bin_ref, this);
+		set_ref_num(2);
 	} else if(quantity == "ref3") {
 		append_dist_val = bind(&AmptCentralityMaker::get_ref3, this);
 		sort_and_bin = bind(&AmptCentralityMaker::sort_bin_ref, this);
+		set_ref_num(3);
 	} else if(quantity == "b") {
 		append_dist_val = bind(&AmptCentralityMaker::get_b, this);
 		sort_and_bin = bind(&AmptCentralityMaker::sort_bin_b, this);
+		set_ref_num(3);
 	} else {
 		cout << "Invalid multiplicty quantity to define centrality. Options are: ref2, ref3, b" << endl;
 		return;
@@ -129,6 +132,9 @@ void AmptCentralityMaker::set_max_b(float b) {
 	max_b = b;
 }
 
+void AmptCentralityMaker::set_ref_num(int ref) {
+	ref_num = ref;
+}
 
 // Doers
 
@@ -146,7 +152,7 @@ void AmptCentralityMaker::get_distribution() {
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 //		cout << path << "  " << tree << endl;
-		leaves = get_ampt_tree_leaves(tree);
+		leaves = get_ampt_tree_leaves(tree, ref_num);
 
 		int event_index = 0;
 		while(tree->GetEvent(event_index)) {
@@ -161,18 +167,14 @@ void AmptCentralityMaker::get_distribution() {
 
 void AmptCentralityMaker::get_ref2() {
 	if(leaves.imp->GetValue() <= max_b) {
-		ref_dist.push_back(leaves.ref2->GetValue());
+		ref_dist.push_back(leaves.refn->GetValue());
 	}
 }
 
 void AmptCentralityMaker::get_ref3() {
-//	cout << "here" << endl;
 	if(leaves.imp->GetValue() <= max_b) {
-//		cout << "here2" << endl;
-		ref_dist.push_back(leaves.ref3->GetValue());
-//		cout << "here3" << endl;
+		ref_dist.push_back(leaves.refn->GetValue());
 	}
-//	cout << "here4" << endl;
 }
 
 void AmptCentralityMaker::get_b() {

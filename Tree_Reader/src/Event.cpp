@@ -39,10 +39,6 @@ Event::Event(tree_leaves leaves) {
 	read_tree_event(leaves);
 }
 
-Event::Event(ampt_tree_leaves leaves, event_defaults& def) {
-	read_tree_event(leaves, def);
-}
-
 Event::Event(Event *event) {
 	read_tree_event(event);
 }
@@ -167,37 +163,6 @@ void Event::read_tree_event(tree_leaves leaves) {
 
 }
 
-
-void Event::read_tree_event(ampt_tree_leaves leaves, event_defaults& def, int energy, int ref_num, int cent) {
-	run = def.run[energy];
-	ref = def.ref;
-	refn = def.refn[ref_num][energy][cent];
-	btof = def.btof[energy];
-	vx = def.vx;
-	vy = def.vy;
-	vz = def.vz;
-	event_plane = leaves.event_plane->GetValue();
-
-	for(int proton_index = 0; proton_index<leaves.phi->GetLen(); proton_index++) {
-		Track proton;
-
-		proton.set_pt(leaves.pt->GetValue(proton_index));
-		proton.set_phi(leaves.phi->GetValue(proton_index));
-		proton.set_eta(leaves.eta->GetValue(proton_index));
-
-		TVector3 vec(1,1,1);
-		vec.SetPtEtaPhi(proton.get_pt(), proton.get_eta(), proton.get_phi());
-		proton.set_p(vec.Mag());
-
-		proton.set_dca(leaves.dca->GetValue(proton_index));
-		proton.set_nsigma(leaves.nsigma->GetValue(proton_index));
-		proton.set_beta(leaves.beta->GetValue(proton_index));
-		proton.set_charge(leaves.charge->GetValue(proton_index));
-
-		protons.push_back(proton);
-	}
-
-}
 
 void Event::read_tree_event(Event *event) {
 	run = event->get_run();

@@ -46,6 +46,7 @@ public:
 	void set_in_path(string path);
 	void set_mult_quantity(string quantity);
 	void set_max_b(float b);
+	void set_ref_num(int ref);
 
 	// Doers
 
@@ -53,6 +54,7 @@ private:
 	// Attributes
 	int bins = 20;
 	float max_b = 20.0;
+	int ref_num = 3;
 
 	vector<int> ref_bin_edges;
 	vector<float> b_bin_edges;
