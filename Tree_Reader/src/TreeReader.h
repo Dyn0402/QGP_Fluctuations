@@ -114,6 +114,7 @@ public:
 	void set_pile_up(bool pile_up);
 	void set_efficiency(bool efficiency);
 	void set_single_ratio(bool single_ratio);
+	void set_check_charge(bool check);
 	void set_sim_eff(bool sim_eff);
 	void set_sim_flow(bool sim_flow);
 	void set_pile_up_prob(double pile_up_prob);
@@ -178,6 +179,7 @@ private:
 	bool single_ratio;
 	bool sim_eff;
 	bool sim_flow;
+	bool check_charge;
 
 	double pile_up_prob;
 	double efficiency_prob;
@@ -191,6 +193,7 @@ private:
 	void read_nsm_ampt_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
 	void process_event(Event& event);
+	void set_branches(TTree* tree);
 
 	TH1D* get_sim_proton_dist(int cent);
 	TH1D* get_sim_efficiency_dist();

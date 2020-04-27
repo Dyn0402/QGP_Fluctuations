@@ -105,7 +105,7 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta1", {0,0}}, {"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
-	map<string, pair<int, int>> set_pairs = {{"Ampt_a", {0,0}}};
+	map<string, pair<int, int>> set_pairs = {{"p+", {0,4}}, {"p-", {0,4}}, {"ptotal", {0,4}}};
 
 	int set_sleep = 15;
 	int energy_sleep = 1;
@@ -135,9 +135,9 @@ void run_set(int energy, int set_num, string set_name) {
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "Trees_Ampt/";
-	string out_dir = out_base_path + "Data_Ampt/";
-	string mix_out_dir = out_base_path + "Data_Ampt_Mix/";
+	string in_path = in_base_path + "Trees/";
+	string out_dir = out_base_path + "Data/";
+	string mix_out_dir = out_base_path + "Data_Mix/";
 
 	vector<int> divs {2, 3, 4, 5, 6};
 	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
@@ -155,7 +155,7 @@ void run_set(int energy, int set_num, string set_name) {
 	reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
 	reader.set_qa_name("QA_");
 	reader.set_set_name(set_name + to_string(set_num));
-	reader.set_tree_name("nsmTree");
+	reader.set_tree_name("tree");
 	if(in_string(set_name, "Ampt")) { reader.set_tree_name("tree"); }
 
 	if(in_string(set_name, "EP_Rotate"))  { reader.set_event_plane(true); }
@@ -224,6 +224,9 @@ void run_set(int energy, int set_num, string set_name) {
 //		map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
 //		reader.ampt_cent.set_max_b(opt_bmax[energy]);
 	}
+
+	if(in_string(set_name, "p-")) { reader.cut.charge = -1; }
+	if(in_string(set_name, "ptotal")) { reader.set_check_charge(false); }
 
 	reader.set_mixed_sets(false);
 	reader.set_rand_data(false);

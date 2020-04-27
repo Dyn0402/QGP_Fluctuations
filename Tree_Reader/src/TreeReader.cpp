@@ -54,6 +54,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	check_charge = true;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -85,6 +86,7 @@ TreeReader::TreeReader(int energy) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	check_charge = true;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -116,6 +118,7 @@ TreeReader::TreeReader() {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	check_charge = true;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -304,6 +307,10 @@ void TreeReader::set_efficiency(bool efficiency) {
 void TreeReader::set_single_ratio(bool single_ratio) {
 	this->single_ratio = single_ratio;
 	mix.set_single_ratio(single_ratio);
+}
+
+void TreeReader::set_check_charge(bool check) {
+	this->check_charge = check;
 }
 
 void TreeReader::set_sim_eff(bool sim_eff) {
@@ -537,6 +544,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 // Read individual tree. Read out and then process each event.
 void TreeReader::read_tree(TTree* tree) {
 	tree_leaves leaves = get_tree_leaves(tree, particle, ref_num);
+	set_branches(tree);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
@@ -555,6 +563,18 @@ void TreeReader::read_tree(TTree* tree) {
 		process_event(event);
 		event_index++;
 	}
+}
+
+
+void TreeReader::set_branches(TTree* tree) {
+	tree->SetBranchStatus("*", 0);
+	tree->SetBranchStatus("run", 1);
+	tree->SetBranchStatus("Nprim", 1);
+	tree->SetBranchStatus(("ref"+to_string(ref_num)).data(), 1);
+	tree->SetBranchStatus("btof", 1);
+	tree->SetBranchStatus("vtx_z", 1);
+	tree->SetBranchStatus(("event_plane_ref"+to_string(ref_num)).data(), 1);
+	tree->SetBranchStatus((particle+"*").data(), 1);
 }
 
 
@@ -1005,7 +1025,7 @@ bool TreeReader::check_proton_good(Track& proton) {
 	if(!(pt >= cut.min_pt && pt <= cut.max_pt)) { return(good_proton); }
 	track_cut_hist.Fill("Good pt", 1);
 
-	if(!(proton.get_charge() == cut.charge)) { return(good_proton); }
+	if(check_charge && !(proton.get_charge() == cut.charge)) { return(good_proton); }
 	track_cut_hist.Fill("Good charge", 1);
 
 	double eta = proton.get_eta();
@@ -1063,13 +1083,13 @@ void TreeReader::define_qa() {
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(4, "ratio_low");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(5, "ratio_high");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(6, "eta");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Charge_Plus");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(8, "nHitsFit");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(9, "nHitsDedx");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(10, "nsigmaproton");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(11, "dca");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(12, "pt_low");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(13, "pt_high");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(7, "nHitsFit");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(8, "nHitsDedx");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(9, "dca");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(10, "pt_low");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(11, "pt_high");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(12, "nsigma");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(13, "m");
 	event_cut_hist = TH1D(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
 	event_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
 	event_cut_hist.GetXaxis()->SetBinLabel(2, "Good Run");
