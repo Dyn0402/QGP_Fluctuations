@@ -37,8 +37,8 @@ void binomial_analyze();
 int main() {
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 	azimuth_bin_analyze();
-	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
-	binomial_analyze();
+//	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
+//	binomial_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -47,10 +47,10 @@ int main() {
 
 void azimuth_bin_analyze() {
 	AzimuthBinAnalyzer analyzer;
-	analyzer.set_in_path("/home/dylan/Research/Data_Ampt/");
-	analyzer.set_in_mix_path("/home/dylan/Research/Data_Ampt_Mix/");
+	analyzer.set_in_path("/home/dylan/Research/Data/");
+	analyzer.set_in_mix_path("/home/dylan/Research/Data_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("4-16-20_ampt_cent8_05s.root");
+	analyzer.set_out_root_name("4-24-20_p+-total_cent8.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 	analyzer.set_all_centralities({8});
 	analyzer.set_can_wh(936, 780);
@@ -81,8 +81,8 @@ void azimuth_bin_analyze() {
 //		{"Flow_Res_BES1", {"Sim_0p0s_Flow_05res_05v2", "Sim_0p0s_Flow_099res_05v2", "eta05"}},
 //	});
 //	analyzer.set_sets({{"Sim_0p0s", {0,0}}, {"Sim_05p002s", {0,0}}});
-	analyzer.set_sets({{"eta05", {0,4}}, {"Ampt_test", {0,0}}});
-	analyzer.set_set_combos({{"Ampt_Test_BES1", {"Ampt_test", "eta05"}}});
+	analyzer.set_sets({{"p+", {0,4}}, {"p-", {0,4}}, {"ptotal", {0,4}}});
+	analyzer.set_set_combos({{"Proton_AntiProton_TotalProton", {"p+", "p-", "ptotal"}}});
 	analyzer.analyze();
 }
 
@@ -92,10 +92,10 @@ void binomial_analyze() {
 	analyzer.set_in_path("/home/dylan/Research/Data_Ampt/");
 	analyzer.set_in_mix_path("/home/dylan/Research/Data_Ampt_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("4-16-20_ampt_binom_cent8_05s.root");
+	analyzer.set_out_root_name("4-24-20_p+-total_binom_cent8.root");
 	analyzer.set_centralities({8});
 	analyzer.set_can_wh(950, 828);
-	analyzer.set_sets({{"eta05", {0,4}}, {"Ampt_test", {0,0}}});
+	analyzer.set_sets({{"p+", {0,4}}, {"p-", {0,4}}, {"ptotal", {0,4}}});
 //	analyzer.set_sets({{"Sim_0p0s", {0,0}}});
 //	analyzer.set_sets({{"Sim_0p0s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}},
 //				{"Sim_0p0s_Eff_Hole3-4", {0,0}}, {"Sim_0p0s_Eff_Hole3-4_No_Rotate", {0,0}},

@@ -1047,7 +1047,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 				Measure stat_meas;
 				for(int energy:analysis::energy_list) {
-					energy_val.push_back(plot::energy_match[energy] + set_num*0.4);  // Offset sets on x (Energy) axis.
+					energy_val.push_back(plot::energy_match[energy] + set_num*1.0);  // Offset sets on x (Energy) axis.
 					energy_err.push_back(0.0);
 					stat_meas = data_set.second[energy][div][cent][stat_name];
 					stat_vals.push_back(stat_meas.get_val());
@@ -1061,12 +1061,12 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
 				graph->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
 				mg->Add(graph, "APZ");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
-				sys_graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+				sys_graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
 				mg->Add(sys_graph, "[]");
 				set_num++;
 				if(can_index == 1) {
