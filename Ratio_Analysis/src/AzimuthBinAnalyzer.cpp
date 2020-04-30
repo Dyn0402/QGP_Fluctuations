@@ -72,6 +72,10 @@ void AzimuthBinAnalyzer::set_set_combos(map<string, vector<string>> set_combos) 
 	this->set_combos = set_combos;
 }
 
+void AzimuthBinAnalyzer::set_plot_dists(bool plot) {
+	this->plot_dists = plot;
+}
+
 // Doers
 
 void AzimuthBinAnalyzer::analyze() {

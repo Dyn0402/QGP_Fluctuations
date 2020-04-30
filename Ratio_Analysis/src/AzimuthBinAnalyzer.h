@@ -50,6 +50,7 @@ public:
 	void set_all_centralities(vector<int> centralities);
 	void set_can_wh(int can_width, int can_height);
 	void set_set_combos(map<string, vector<string>> set_combos);
+	void set_plot_dists(bool plot);
 
 	// Doers
 	void analyze();
