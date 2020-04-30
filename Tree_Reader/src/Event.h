@@ -71,8 +71,8 @@ public:
 	unsigned get_run();
 	unsigned get_refn();
 	unsigned get_btof();
-	vector<Track> get_protons();
-	int get_num_protons();
+	vector<Track> get_particles();
+	int get_num_particles();
 
 	// Setters
 	void set_vx(double vx);
@@ -83,7 +83,7 @@ public:
 	void set_run(unsigned run);
 	void set_refn(unsigned refn);
 	void set_btof(unsigned btof);
-	void set_protons(vector<Track> protons);
+	void set_particles(vector<Track> particles);
 
 	// Doers
 	void read_tree_event(tree_leaves leaves);
@@ -97,7 +97,7 @@ public:
 //	ClassDef(Event, 1);
 
 private:
-	vector<Track> protons;
+	vector<Track> particles;
 
 	double vx;
 	double vy;

@@ -84,12 +84,12 @@ unsigned Event::get_btof() {
 	return(btof);
 }
 
-vector<Track> Event::get_protons() {
-	return(protons);  // Can I return reference to speed up?
+vector<Track> Event::get_particles() {
+	return(particles);  // Can I return reference to speed up?
 }
 
-int Event::get_num_protons() {
-	return( (int)protons.size() );
+int Event::get_num_particles() {
+	return( (int)particles.size() );
 }
 
 
@@ -129,8 +129,8 @@ void Event::set_btof(unsigned btof) {
 	this->btof = btof;
 }
 
-void Event::set_protons(vector<Track> protons) {
-	this->protons = protons;  // Currently copying vector, can I take reference/move to speed up?
+void Event::set_particles(vector<Track> particles) {
+	this->particles = particles;  // Currently copying vector, can I take reference/move to speed up?
 }
 
 
@@ -146,23 +146,23 @@ void Event::read_tree_event(tree_leaves leaves) {
 	vz = leaves.vz->GetValue();
 	event_plane = leaves.event_plane->GetValue();
 
-	for(int proton_index = 0; proton_index<leaves.phi->GetLen(); proton_index++) {
-		Track proton;
+	for(int particle_index = 0; particle_index<leaves.phi->GetLen(); particle_index++) {
+		Track particle;
 
-		proton.set_pt(leaves.pt->GetValue(proton_index));
-		proton.set_phi(leaves.phi->GetValue(proton_index));
-		proton.set_eta(leaves.eta->GetValue(proton_index));
+		particle.set_pt(leaves.pt->GetValue(particle_index));
+		particle.set_phi(leaves.phi->GetValue(particle_index));
+		particle.set_eta(leaves.eta->GetValue(particle_index));
 
 		TVector3 vec(1,1,1);
-		vec.SetPtEtaPhi(proton.get_pt(), proton.get_eta(), proton.get_phi());
-		proton.set_p(vec.Mag());
+		vec.SetPtEtaPhi(particle.get_pt(), particle.get_eta(), particle.get_phi());
+		particle.set_p(vec.Mag());
 
-		proton.set_dca(leaves.dca->GetValue(proton_index));
-		proton.set_nsigma(leaves.nsigma->GetValue(proton_index));
-		proton.set_beta(leaves.beta->GetValue(proton_index));
-		proton.set_charge(leaves.charge->GetValue(proton_index));
+		particle.set_dca(leaves.dca->GetValue(particle_index));
+		particle.set_nsigma(leaves.nsigma->GetValue(particle_index));
+		particle.set_beta(leaves.beta->GetValue(particle_index));
+		particle.set_charge(leaves.charge->GetValue(particle_index));
 
-		protons.push_back(proton);
+		particles.push_back(particle);
 	}
 
 }
@@ -195,19 +195,19 @@ void Event::read_tree_event(Event *event) {
 	vz = event->get_vz();
 	event_plane = event->get_event_plane();
 
-	vector<Track> old_protons = event->get_protons();
-	unsigned num_protons = old_protons.size();
-	for(unsigned i = 0; i < num_protons; i++) {
-		Track proton;
-		proton.set_pt(old_protons[i].get_pt());
-		proton.set_p(old_protons[i].get_p());
-		proton.set_phi(old_protons[i].get_phi());
-		proton.set_eta(old_protons[i].get_eta());
-		proton.set_dca(old_protons[i].get_dca());
-		proton.set_nsigma(old_protons[i].get_nsigma());
-		proton.set_beta(old_protons[i].get_beta());
-		proton.set_charge(old_protons[i].get_charge());
-		protons.push_back(proton);
+	vector<Track> old_particles = event->get_particles();
+	unsigned num_particles = old_particles.size();
+	for(unsigned i = 0; i < num_particles; i++) {
+		Track particle;
+		particle.set_pt(old_particles[i].get_pt());
+		particle.set_p(old_particles[i].get_p());
+		particle.set_phi(old_particles[i].get_phi());
+		particle.set_eta(old_particles[i].get_eta());
+		particle.set_dca(old_particles[i].get_dca());
+		particle.set_nsigma(old_particles[i].get_nsigma());
+		particle.set_beta(old_particles[i].get_beta());
+		particle.set_charge(old_particles[i].get_charge());
+		particles.push_back(particle);
 	}
 }
 
@@ -232,7 +232,7 @@ void Event::clear() {
 	btof = 0;
 	event_plane = 0;
 
-	protons.clear();
+	particles.clear();
 }
 
 // Pile up input pile event onto this event.
@@ -240,6 +240,6 @@ void Event::pile_up(Event pile) {
 	ref += pile.get_ref();
 	refn += pile.get_refn();
 	btof += pile.get_btof();
-	vector<Track> pile_protons = pile.get_protons();
-	protons.insert(protons.end(), pile_protons.begin(), pile_protons.end());
+	vector<Track> pile_particless = pile.get_particles();
+	particles.insert(particles.end(), pile_particless.begin(), pile_particless.end());
 }
