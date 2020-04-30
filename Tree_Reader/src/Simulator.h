@@ -36,6 +36,7 @@ struct simulation_pars {
 
 		string proton_dist = "poisson";
 		double particle_mean = 20.0;
+		int particle_max = 20;
 
 		double hom_eff = 1.0;
 
@@ -78,6 +79,8 @@ public:
 	void set_min_protons(int protons);
 	void set_proton_dist(string dist);
 	void set_particle_mean(double mean);
+	void set_particle_max(int max);
+	void set_flat_dist(int max = 0);
 	void set_proton_dist_hist(TH1D *hist);
 	void set_efficiency_dist_hist(TH1D *hist);
 	void set_efficiency_dist_hist(string root_path, string hist_name);

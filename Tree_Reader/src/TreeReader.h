@@ -17,6 +17,7 @@
 #include <TLeaf.h>
 #include <TH2.h>
 #include <TRandom3.h>
+#include <TChain.h>
 
 #include "../StRefMultCorr/CentralityMaker.h"
 #include "../StRefMultCorr/StRefMultCorr.h"
@@ -122,9 +123,11 @@ public:
 	void set_cent_binning(int cent_binning);
 	void set_ref_num(int ref_num);
 	void set_particle(string particle);
+	void set_particle_dist_hist_max(int max);
 
 	// Doers
 	void read_trees();
+	void read_trees_chain();
 	void read_ampt_trees();
 	void read_nsm_ampt_trees();
 	void sim_events(map<int, int> cent_num_events);
@@ -187,6 +190,8 @@ private:
 	int cent_binning;
 	int ref_num;
 
+	int particle_dist_hist_max = 100;
+
 	// Doers
 	void read_tree(TTree* tree);
 	void read_ampt_tree(TTree* tree);
@@ -194,6 +199,7 @@ private:
 	void read_tree_debug(TTree* tree);
 	void process_event(Event& event);
 	void set_branches(TTree* tree);
+	void set_branches(TChain* chain);
 
 	TH1D* get_sim_proton_dist(int cent);
 	TH1D* get_sim_efficiency_dist();
@@ -264,7 +270,7 @@ private:
 	TH1I pre_m2_hist;
 	TH1I post_m2_hist;
 
-	map<int, TH1D> post_n_protons;
+	map<int, TH1D> post_n_particles;
 
 };
 

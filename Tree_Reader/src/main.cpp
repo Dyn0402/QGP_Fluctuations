@@ -105,7 +105,9 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta1", {0,0}}, {"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
-	map<string, pair<int, int>> set_pairs = {{"p+", {0,4}}, {"p-", {0,4}}, {"ptotal", {0,4}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_p+", {0,4}}, {"Ampt_p-", {0,4}}, {"Ampt_ptotal", {0,4}}, {"Ampt_ptotal_Efficiency8", {0,2}}, {"Ampt_ptotal_Efficiency5", {0,2}}, {"Ampt_ptotal_Efficiency3", {0,2}}, {"Ampt_ptotal_Efficiency1", {0,2}}};
+	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s_Flat1000_", {0,0}}, {"Sim_05p002s_Flat1000_", {0,0}}, {"Sim_05p05s_Flat1000_", {0,0}}, {"Sim_01p002s_Flat1000_", {0,0}}, {"Sim_01p05s_Flat1000_", {0,0}}, {"Sim_002p002s_Flat1000_", {0,0}}, {"Sim_002p05s_Flat1000_", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"Sim_05p05s_Flat1000", {0,2}}};
 
 	int set_sleep = 15;
 	int energy_sleep = 1;
@@ -117,7 +119,7 @@ void read_class() {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list {7, 11, 39, 27, 62, 19};
+				vector<int> energy_list {7}; //{7, 11, 39, 27, 62, 19};
 				for(int energy:energy_list) {
 					pool.enqueue(run_set, energy, set_num, set_pair.first);
 					this_thread::sleep_for(chrono::seconds(energy_sleep));
@@ -135,13 +137,13 @@ void run_set(int energy, int set_num, string set_name) {
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "Trees/";
-	string out_dir = out_base_path + "Data/";
-	string mix_out_dir = out_base_path + "Data_Mix/";
+	string in_path = in_base_path + "Trees_Ampt/";
+	string out_dir = out_base_path + "Data_Sim/";
+	string mix_out_dir = out_base_path + "Data_Sim_Mix/";
 
 	vector<int> divs {2, 3, 4, 5, 6};
-	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
-//	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 1000}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000}};
+//	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
+	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 600000000}};
 
 	string set_dir = set_name + to_string(set_num) + "/";
 
@@ -156,7 +158,6 @@ void run_set(int energy, int set_num, string set_name) {
 	reader.set_qa_name("QA_");
 	reader.set_set_name(set_name + to_string(set_num));
 	reader.set_tree_name("tree");
-	if(in_string(set_name, "Ampt")) { reader.set_tree_name("tree"); }
 
 	if(in_string(set_name, "EP_Rotate"))  { reader.set_event_plane(true); }
 	else { reader.set_event_plane(false); }
@@ -185,15 +186,27 @@ void run_set(int energy, int set_num, string set_name) {
 	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
 	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }
 
-	if(in_string(set_name,  "Efficiency_08_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
-	else if(in_string(set_name,  "Efficiency_05_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
-	else if(in_string(set_name,  "Efficiency_025_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
-	else if(in_string(set_name,  "Efficiency_01_")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
+	if(in_string(set_name,  "Efficiency8")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.8); }
+	else if(in_string(set_name,  "Efficiency7")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.7); }
+	else if(in_string(set_name,  "Efficiency6")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.6); }
+	else if(in_string(set_name,  "Efficiency5")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.5); }
+	else if(in_string(set_name,  "Efficiency4")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.4); }
+	else if(in_string(set_name,  "Efficiency3")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.3); }
+	else if(in_string(set_name,  "Efficiency2")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.2); }
+	else if(in_string(set_name,  "Efficiency1")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.1); }
+	else if(in_string(set_name,  "Efficiency08")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
+	else if(in_string(set_name,  "Efficiency05")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
+	else if(in_string(set_name,  "Efficiency025")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
+	else if(in_string(set_name,  "Efficiency01")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
 	else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
 
 	if(in_string(set_name, {"Sim", "0p0s"}, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
 	else if(in_string(set_name, {"Sim", "05p002s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
 	else if(in_string(set_name, {"Sim", "05p05s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
+	else if(in_string(set_name, {"Sim", "01p002s"}, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.002); }
+	else if(in_string(set_name, {"Sim", "01p05s"}, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.5); }
+	else if(in_string(set_name, {"Sim", "002p002s"}, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.002); }
+	else if(in_string(set_name, {"Sim", "002p05s"}, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.5); }
 	else if(in_string(set_name, {"Sim", "15p002s"}, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
 	else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
 
@@ -218,6 +231,9 @@ void run_set(int energy, int set_num, string set_name) {
 	} else {
 		reader.set_sim_flow(false);
 	}
+	if(in_string(set_name, {"Sim", "Flat1000"}, true)) { reader.sim.set_flat_dist(1000); reader.set_particle_dist_hist_max(1000); }
+	else if(in_string(set_name, {"Sim", "Flat500"}, true)) { reader.sim.set_flat_dist(500); reader.set_particle_dist_hist_max(500); }
+	else if(in_string(set_name, {"Sim", "Flat100"}, true)) { reader.sim.set_flat_dist(100); reader.set_particle_dist_hist_max(100); }
 
 	if(in_string(set_name, "Ampt")) {
 //		reader.ampt_cent = AmptCentralityMaker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref" + to_string(ref));
@@ -227,6 +243,14 @@ void run_set(int energy, int set_num, string set_name) {
 
 	if(in_string(set_name, "p-")) { reader.cut.charge = -1; }
 	if(in_string(set_name, "ptotal")) { reader.set_check_charge(false); }
+
+	if(in_string(set_name, "pion")) {
+		reader.cut.min_m2 = -0.15;
+		reader.cut.max_m2 = 0.15;
+		reader.set_particle("Pion");
+	}
+	if(in_string(set_name, "pion-")) { reader.cut.charge = -1; }
+	if(in_string(set_name, "piontotal")) { reader.set_check_charge(false); }
 
 	reader.set_mixed_sets(false);
 	reader.set_rand_data(false);

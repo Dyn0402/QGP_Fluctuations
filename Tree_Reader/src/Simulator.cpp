@@ -85,6 +85,17 @@ void Simulator::set_particle_mean(double mean) {
 	pars.particle_mean = mean;
 }
 
+void Simulator::set_particle_max(int max) {
+	pars.particle_max = max;
+}
+
+void Simulator::set_flat_dist(int max) {
+	pars.proton_dist = "flat";
+	if(max > 2) {
+		pars.particle_max = max;
+	}
+}
+
 void Simulator::set_proton_dist_hist(TH1D *hist) {
 	proton_dist_hist = hist;
 	proton_dist_hist->SetDirectory(0);
@@ -387,10 +398,12 @@ void Simulator::sim_event_eff_new(Event &event) {
 
 int Simulator::get_protons() {
 	int n = 0;
-	if(pars.proton_dist == "poisson") {
-		n = sim_rand->Poisson(pars.particle_mean);
-	} else if(pars.proton_dist == "hist") {
+	if(pars.proton_dist == "hist") {
 		n = proton_dist_hist->GetRandom();
+	}else if(pars.proton_dist == "poisson") {
+		n = sim_rand->Poisson(pars.particle_mean);
+	} else if(pars.proton_dist == "flat") {
+		n = (int)(sim_rand->Rndm() * pars.particle_max + 0.5);
 	}
 
 	return (n);

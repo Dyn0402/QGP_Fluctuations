@@ -343,6 +343,10 @@ void TreeReader::set_particle(string particle) {
 	this->particle = particle;
 }
 
+void TreeReader::set_particle_dist_hist_max(int max) {
+	particle_dist_hist_max = max;
+}
+
 // Doers
 
 // Read files for single energy and write results to text files.
@@ -390,6 +394,68 @@ void TreeReader::read_trees() {
 
 
 // Read files for single energy and write results to text files.
+void TreeReader::read_trees_chain() {
+	define_qa();
+
+	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
+	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+	TChain *chain = new TChain(tree_name.data());
+
+	for(string path:in_files) {
+		TFile *file = new TFile(path.data(), "READ");
+		add_cut_hists(file);
+		file->Close();
+		delete file;
+		chain->AddFile(path.data());
+	}
+
+	set_branches(chain);
+
+	int num_events = chain->GetEntries();
+	for(int event_index = 0; event_index < num_events; event_index++) {
+
+		tree_leaves leaves = get_tree_leaves(chain, particle, ref_num);
+
+		// Display progress and time while running.
+		if(!(event_index % (unsigned)(num_events/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
+			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*event_index/num_events+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+		}
+
+		chain->GetEntry(event_index);
+		Event event(leaves);
+
+		if(pile_up) {
+			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
+				event_index++;
+				if(chain->GetEntry(event_index)) {
+					Event event2(leaves);
+					event.pile_up(event2);
+				}
+			}
+		}
+
+		process_event(event);
+	}
+
+	reset_out_dir();
+	write_info_file();
+	write_qa();
+	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+	if(mixed) { mix.write_mixed_data(); }
+	if(mixed_sets) { mix_sets.write_mixed_data(); }
+	if(rand_data) {random.write_random_data(); }
+	cout << endl;
+}
+
+
+// Read files for single energy and write results to text files.
 void TreeReader::read_ampt_trees() {
 	define_qa();
 
@@ -403,8 +469,9 @@ void TreeReader::read_ampt_trees() {
 	ampt_cent.set_max_b(opt_bmax[energy]);
 	ampt_cent.set_mult_quantity("ref3");
 
-	cout << energy << "GeV: ";
-	for(auto edge:ampt_cent.get_ref_bin9_edges()) { cout << edge << ","; }
+//	cout << energy << "GeV: ";
+//	for(auto edge:ampt_cent.get_ref_bin9_edges()) { cout << edge << ","; }
+//	cout << endl;
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
@@ -511,7 +578,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 	int total_events = 0;
 	for(auto cent:cent_num_events) {
 		total_events += cent.second;
-		sim.set_proton_dist_hist(get_sim_proton_dist(cent.first));
+		if(sim.get_proton_dist_type() == "hist") { sim.set_proton_dist_hist(get_sim_proton_dist(cent.first)); }
 		for(int i=0; i<cent.second; i++) {
 			if(!(i % (int)(cent.second/10.0+0.5))) {
 				chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
@@ -575,6 +642,17 @@ void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus("vtx_z", 1);
 	tree->SetBranchStatus(("event_plane_ref"+to_string(ref_num)).data(), 1);
 	tree->SetBranchStatus((particle+"*").data(), 1);
+}
+
+void TreeReader::set_branches(TChain* chain) {
+	chain->SetBranchStatus("*", 0);
+	chain->SetBranchStatus("run", 1);
+	chain->SetBranchStatus("Nprim", 1);
+	chain->SetBranchStatus(("ref"+to_string(ref_num)).data(), 1);
+	chain->SetBranchStatus("btof", 1);
+	chain->SetBranchStatus("vtx_z", 1);
+	chain->SetBranchStatus(("event_plane_ref"+to_string(ref_num)).data(), 1);
+	chain->SetBranchStatus((particle+"*").data(), 1);
 }
 
 
@@ -700,10 +778,6 @@ TH1D* TreeReader::get_sim_efficiency_dist() {
 
 //  For good events/tracks, azimuthally bin protons and save to data
 void TreeReader::process_event(Event& event) {
-//	refmultCorrUtil->init(event.get_run());
-//	refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
-//	int cent_check = refmultCorrUtil->getCentralityBin9();
-//	if(cent_check != 0 || (int)event.get_protons().size() <= 3) { return; }
 
 	// Check if each event is good. Analyze if so, continue if not.
 	if(check_event(event)) {
@@ -737,7 +811,7 @@ void TreeReader::process_event(Event& event) {
 			} else {
 				cent = cent9_corr;
 			}
-			post_n_protons[cent].Fill((int)good_proton_angles.size());
+			post_n_particles[cent].Fill((int)good_proton_angles.size());
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if(mixed) { mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz()); }
@@ -1150,7 +1224,7 @@ void TreeReader::define_qa() {
 	post_m2_hist = TH1I(("post_m2_"+set_name+"_"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
 
 	for(int i=-1; i<cent_binning; i++) {
-		post_n_protons[i] = TH1D(("Proton_Dist_"+set_name+"_"+to_string(energy)+"_"+to_string(i)).data(), "Proton Distribution", 101, -0.5, 100.5);
+		post_n_particles[i] = TH1D(("Particle_Dist_"+set_name+"_"+to_string(energy)+"_"+to_string(i)).data(), "Particle Distribution", particle_dist_hist_max+1, -0.5, particle_dist_hist_max+0.5);
 	}
 
 }
@@ -1265,7 +1339,7 @@ void TreeReader::write_qa() {
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
 
-	for(auto hist:post_n_protons) {
+	for(auto hist:post_n_particles) {
 		hist.second.Write();
 	}
 
