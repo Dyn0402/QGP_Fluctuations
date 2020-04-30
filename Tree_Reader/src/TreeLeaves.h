@@ -12,6 +12,7 @@
 
 #include "TTree.h"
 #include "TLeaf.h"
+#include "TChain.h"
 
 using namespace std;
 
@@ -48,7 +49,28 @@ struct ampt_tree_leaves {
 };
 
 
+struct tree_branches {
+	int run;
+	int ref_mult;
+	int ref_multn;
+	int btof;
+	float vx;
+	float vy;
+	float vz;
+	float event_plane;
+
+	float phi;
+	float pt;
+	float beta;
+	int charge;
+	float dca;
+	float nsigma;
+	float eta;
+};
+
+
 tree_leaves get_tree_leaves(TTree* tree, string particle = "Proton", int ref = 3);
+tree_branches get_chain_branches(TChain* chain, string particle = "Proton", int ref = 3);
 ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref = 3);
 
 

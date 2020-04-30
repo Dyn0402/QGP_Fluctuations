@@ -11,7 +11,7 @@
 //#ifndef ROOT_Event
 //#define ROOT_Event
 
-
+#include <iostream>
 #include <vector>
 
 #include <TLeaf.h>
@@ -58,6 +58,7 @@ public:
 	Event();
 	Event(event_defaults& defaults, int energy, int ref_num, int cent);
 	Event(tree_leaves leaves);
+	Event(tree_branches branches);
 	Event(Event *event);
 	~Event();
 
@@ -86,6 +87,7 @@ public:
 
 	// Doers
 	void read_tree_event(tree_leaves leaves);
+	void read_tree_event(tree_branches branches);
 	void read_tree_event(Event *event);
 	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned refn, unsigned btof, double event_plane);
 	void clear();

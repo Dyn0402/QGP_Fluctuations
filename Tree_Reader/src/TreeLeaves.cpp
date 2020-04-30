@@ -32,6 +32,29 @@ tree_leaves get_tree_leaves(TTree* tree, string particle, int ref) {
 	return(leaves);
 }
 
+//Get tree leaves and return them in a tree_leaves struct.
+tree_branches get_chain_branches(TChain *chain, string particle, int ref) {
+	tree_branches branches;
+	chain->SetBranchAddress("run", &branches.run);
+	chain->SetBranchAddress("Nprim", &branches.ref_mult);
+	chain->SetBranchAddress(("ref"+to_string(ref)).data(), &branches.ref_multn);
+	chain->SetBranchAddress("btof", &branches.btof);
+	chain->SetBranchAddress("vtx_x", &branches.vx);
+	chain->SetBranchAddress("vtx_y", &branches.vy);
+	chain->SetBranchAddress("vtx_z", &branches.vz);
+	chain->SetBranchAddress(("event_plane_ref"+to_string(ref)).data(), &branches.event_plane);
+
+	chain->SetBranchAddress((particle+".pt").data(), &branches.pt);
+	chain->SetBranchAddress((particle+".phi").data(), &branches.phi);
+	chain->SetBranchAddress((particle+".beta").data(), &branches.beta);
+	chain->SetBranchAddress((particle+".charge").data(), &branches.charge);
+	chain->SetBranchAddress((particle+".dca").data(), &branches.dca);
+	chain->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma);
+	chain->SetBranchAddress((particle+".eta").data(), &branches.eta);
+
+	return(branches);
+}
+
 
 //Get ampt tree leaves and return them in a tree_leaves struct.
 ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref) {

@@ -39,6 +39,10 @@ Event::Event(tree_leaves leaves) {
 	read_tree_event(leaves);
 }
 
+Event::Event(tree_branches branches) {
+	read_tree_event(branches);
+}
+
 Event::Event(Event *event) {
 	read_tree_event(event);
 }
@@ -160,6 +164,23 @@ void Event::read_tree_event(tree_leaves leaves) {
 
 		protons.push_back(proton);
 	}
+
+}
+
+void Event::read_tree_event(tree_branches branches) {
+	cout << "Read tree_event" << endl;
+	run = branches.run;
+	cout << "Read run for event" << endl;
+	ref = branches.ref_mult;
+	refn = branches.ref_multn;
+	btof = branches.btof;
+	vx = branches.vx;
+	vy = branches.vy;
+	vz = branches.vz;
+	event_plane = branches.event_plane;
+	cout << "read event values" << endl;
+
+	// Don't know how to read in tracks from branches
 
 }
 
