@@ -126,8 +126,12 @@ void BinomialAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *
 	map<string, map<int, map<int, map<int,map<int, map<string, Measure>>>>>> slice_stats {{"raw", get_slice_stats(data)}, {"mix", get_slice_stats(data_mix)}};
 	plot_all_stats(slice_stats, set_num_dir);
 
+	map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> slice_stat_ratios {{"raw", get_stat_ratios(slice_stats["raw"])}, {"mix", get_stat_ratios(slice_stats["mix"])}};
+	plot_all_stat_ratios(slice_stat_ratios, set_num_dir);
+
 	map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> slice_divided_stats {{"raw", divide_binomial(slice_stats["raw"])}, {"mix", divide_binomial(slice_stats["mix"])}};
-	plot_all_divided_stats(slice_divided_stats, set_num_dir);
+	map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> slice_divided_stat_ratios {{"raw", divide_binomial(slice_stat_ratios["raw"])}, {"mix", divide_binomial(slice_stat_ratios["mix"])}};
+	plot_all_divided_stats(slice_divided_stats, slice_divided_stat_ratios, set_num_dir);
 
 }
 
@@ -200,6 +204,10 @@ map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::d
 							result[energy.first][div.first][cent.first][total_proton.first][stat.first] = stat.second / (n*p);
 						} else if(stat.first == "standard_deviation") {
 							result[energy.first][div.first][cent.first][total_proton.first][stat.first] = stat.second / pow(n*p*q,0.5);
+						} else if(stat.first == "variance/mean") {
+							result[energy.first][div.first][cent.first][total_proton.first][stat.first] = stat.second / q;
+						} else if(stat.first == "sd/mean") {
+							result[energy.first][div.first][cent.first][total_proton.first][stat.first] = stat.second / pow(q/(n*p),0.5);
 						} else { // Placeholder for higher orders
 							result[energy.first][div.first][cent.first][total_proton.first][stat.first] = stat.second * 0.0;
 						}
@@ -211,6 +219,27 @@ map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::d
 	return(result);
 }
 
+
+// Divide each statistic by the corresponding statistic for binomial distribution.
+map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::get_stat_ratios(map<int, map<int, map<int, map<int, map<string, Measure>>>>> &slice_stats) {
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> result;
+	for(auto &energy:slice_stats) {
+		for(auto &div:energy.second) {
+//			double p = 1.0 / div.first;
+//			double q = 1.0 - p;
+			for(auto &cent:div.second) {
+				for(auto &total_proton:cent.second) {
+//					int n = total_proton.first;
+					Measure sd = total_proton.second["standard_deviation"];
+					Measure mean = total_proton.second["mean"];
+					result[energy.first][div.first][cent.first][total_proton.first]["variance/mean"] = sd*sd / mean;
+					result[energy.first][div.first][cent.first][total_proton.first]["sd/mean"] = sd / mean;
+				}
+			}
+		}
+	}
+	return(result);
+}
 
 // Calculate statistics for total_proton slice histogram data.
 void BinomialAnalyzer::calc_stat(map<int, int> &slice_data, int protons, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats) {
@@ -280,7 +309,22 @@ void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map
 }
 
 
-void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
+void BinomialAnalyzer::plot_all_stat_ratios(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
+	TDirectory* stats_dir = dir->mkdir("Stat_Ratios_vs_Total_Protons");
+	for(auto &div:divs) {
+		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Divisions").data());
+		for(auto &cent:centralities) {
+			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
+			cent_dir->cd();
+			for(string &stat:stat_ratios) {
+				slice_stat_ratios_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+			}
+		}
+	}
+}
+
+
+void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stat_ratios, TDirectory *dir) {
 	TDirectory* stats_divided_dir = dir->mkdir("Stats_Divided_vs_Total_Protons");
 	for(auto &div:divs) {
 		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
@@ -289,6 +333,10 @@ void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<
 			cent_dir->cd();
 			for(auto &stat:stats) {
 				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+			}
+			for(auto &stat:stat_ratios) {
+				auto fits = slice_stats_divided_plot(slice_stat_ratios, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
 				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
 			}
 		}
@@ -400,6 +448,110 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 }
 
 
+void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name) {
+	double y_max = numeric_limits<double>::min();
+	double y_min = numeric_limits<double>::max();
+	int x_max = 0;
+	for(int energy:energies) {
+		for(auto &data_set:slice_stats) {
+			vector<double> stat_vals, proton_val, stat_err, proton_err;
+			Measure stat_meas;
+
+			for(auto &proton_data:data_set.second[energy][div][cent]) {
+				stat_meas = proton_data.second[stat_name];
+				if(stat_meas.get_err() == 0 || isnan(stat_meas.get_err())) { continue; }
+				proton_val.push_back(proton_data.first);
+				proton_err.push_back(0.0);
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+				if(proton_data.first > x_max) { x_max = proton_data.first; }
+			}
+		}
+	}
+	double y_range = y_max - y_min;
+
+
+	TCanvas can(name.data(), name.data(), canvas_width, canvas_height);
+	gStyle->SetTitleFontSize(0.09);
+	gStyle->SetTitleOffset(1.2);
+	gStyle->SetLegendTextSize(legend_text_size);
+	pair<int, int> can_div = get_canvas_div(energies.size());
+	can.Divide(can_div.first, can_div.second, 0.001, 0.001);
+	int can_index = 1;
+
+	vector<TMultiGraph*> mgs;
+	vector<TGraphErrors*> graphs;
+	vector<TLegend*> legends;
+	vector<TF1*> binoms;
+
+	for(int energy:energies) {
+		can.cd(can_index);
+		mgs.push_back(new TMultiGraph());
+		mgs.back()->SetNameTitle((to_string(energy) + "GeV").data(), (to_string(energy) + "GeV").data());
+//		double y_max = numeric_limits<double>::min();
+//		double y_min = numeric_limits<double>::max();
+		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
+		if(stat_name == "variance/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1-[0]", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, 1.0/div); }
+		else if(stat_name == "sd/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt((1-[0])/([0]*x))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
+		else { binoms.push_back(new TF1()); }
+		for(auto &data_set:slice_stats) {
+			vector<double> stat_vals, proton_val, stat_err, proton_err;
+			Measure stat_meas;
+
+			for(auto &proton_data:data_set.second[energy][div][cent]) {
+				stat_meas = proton_data.second[stat_name];
+				if(stat_meas.get_err() == 0 || isnan(stat_meas.get_err())) { continue; }
+				proton_val.push_back(proton_data.first);
+				proton_err.push_back(0.0);
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+//				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+//				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+			}
+			graphs.push_back(new TGraphErrors((int)proton_val.size(), proton_val.data(), stat_vals.data(), proton_err.data(), stat_err.data()));
+			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+			graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
+			graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetMarkerSize(raw_mix_marker_size[data_set.first]);
+			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			mgs.back()->Add(graphs.back(), "APZ");
+			if(can_index == 1) {
+				legends.back()->SetBorderSize(legend_border_width);
+				legends.back()->SetFillStyle(0);
+				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+
+			}
+		}
+//		double y_range = y_max - y_min;
+		mgs.back()->GetXaxis()->SetLimits(plot_x_range.first, x_max + 2);
+		mgs.back()->GetXaxis()->SetRangeUser(plot_x_range.first, x_max + 2);
+		mgs.back()->GetXaxis()->SetLabelSize(0.06);
+		mgs.back()->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mgs.back()->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mgs.back()->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mgs.back()->GetXaxis()->SetTitle("Total Protons"); mgs.back()->GetXaxis()->SetTitleSize(0.06); mgs.back()->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+		else { gPad->SetBottomMargin(0.07); }
+		if(can_index % can_div.first == 1) {
+			if(stat_name == "variance/mean") { mgs.back()->GetYaxis()->SetTitle("Vaiance Divided By Mean"); }
+			else if(stat_name == "sd/mean") { mgs.back()->GetYaxis()->SetTitle("Standard Deviation Divided By Mean"); }
+			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.12); }
+		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.03);
+		mgs.back()->Draw("AP");
+		binoms.back()->Draw("same");
+		if(can_index == 1) { legends.back()->SetMargin(0.1); legends.back()->Draw(); }
+		can_index++;
+	}
+	can.Update();
+	can.Write(name.data());
+
+	for(auto leg:legends) { delete leg; }
+	for(auto graph:graphs) { delete graph; }
+	for(auto mg:mgs) { delete mg; }
+}
+
 map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_divided_stats, string stat_name, vector<int> &energies, int cent, int div, string name) {
 	double y_max = numeric_limits<double>::min();
 	double y_min = numeric_limits<double>::max();
@@ -508,6 +660,8 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 		if(can_index % can_div.first == 1) {
 			if(stat_name == "mean") { mgs.back()->GetYaxis()->SetTitle("Mean_{data} / Mean_{binomial}                     "); }
 			else if(stat_name == "standard_deviation") { mgs.back()->GetYaxis()->SetTitle("#sigma_{data} / #sigma_{binomial}                     "); }
+			else if(stat_name == "variance/mean") { mgs.back()->GetYaxis()->SetTitle("#sigma^2_{data}/#mu{data} / #sigma^2_{binomial}/mu{binomial}    "); }
+			else if(stat_name == "sd/mean") { mgs.back()->GetYaxis()->SetTitle("#sigma_{data}/#mu{data} / #sigma_{binomial}/mu{binomial}    "); }
 			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(1.5); gPad->SetLeftMargin(left_margin); }
 		else { gPad->SetLeftMargin(0.001); }
 		if(can_index % can_div.first == 0) { gPad->SetRightMargin(0.005); }

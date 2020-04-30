@@ -68,7 +68,8 @@ private:
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
 	vector<int> centralities = {8,7,6,5,4,3,2,1,0};
-	vector<string> stats = {"mean", "standard_deviation"};//, "skewness", "kurtosis", "non_excess_kurtosis"};
+	vector<string> stats {"mean", "standard_deviation"};//, "skewness", "kurtosis", "non_excess_kurtosis"};
+	vector<string> stat_ratios {"variance/mean", "sd/mean"};
 
 	int stat_threads = 1;
 
@@ -115,16 +116,19 @@ private:
 	void calc_stat(map<int, int> &slice_data, int protons, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats);
 
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> divide_binomial(map<int, map<int, map<int, map<int, map<string, Measure>>>>> &slice_stats);
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> get_stat_ratios(map<int, map<int, map<int, map<int, map<string, Measure>>>>> &slice_stats);
 
 	// Plotters
 	void draw_proton_bin_plots(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir);
 
 	void plot_slices(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir);
 	void plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir);
-	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir);
+	void plot_all_stat_ratios(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stat_ratios, TDirectory *dir);
+	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stat_ratios, TDirectory *dir);
 
 	void slice_dist_plot(map<int, int> &slice_data, int total_protons, int div, string name);
 	void slice_stats_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);
+	void slice_stat_ratios_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stat_ratios, string stat_name, vector<int> &energies, int cent, int div, string name);
 	map<string, map<int, TF1*>> slice_stats_divided_plot(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);
 	void plot_fit(map<string, map<int, TF1*>> &fits, int cent, int div, string name);
 	pair<int, int> get_canvas_div(int plots);
