@@ -196,7 +196,9 @@ void create_proton_dist_plots(TDirectory *nproton_dist_dir, map<int, map<int, ma
 
 void hist_proton_dist(map<int, int> nprotons, int energy, int cent, string mode) {
 	string name = to_string(energy) + "GeV protons Centrality " + to_string(cent);
-	TH1D *protons_hist = new TH1D(name.data(), name.data(), plot::protons_hist_bins, plot::protons_hist_low, plot::protons_hist_high);
+	int min_num = (*min_element(nprotons.begin(), nprotons.end())).first;
+	int max_num = (*max_element(nprotons.begin(), nprotons.end())).first;
+	TH1D *protons_hist = new TH1D(name.data(), name.data(), max_num - min_num + 5, min_num - 2.5, max_num + 2.5);
 	for(pair<int, int> protons:nprotons) {
 		protons_hist->Fill(protons.first, protons.second);
 	}
