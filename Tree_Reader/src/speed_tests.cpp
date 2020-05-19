@@ -81,7 +81,7 @@ void speed_test() {
 //			event.get_run();
 //			event.get_refn();
 //			event.get_btof();
-			for(Track proton:event.get_protons()) {
+			for(Track proton:event.get_particles()) {
 				total_protons1++;
 			}
 			event_index1++;

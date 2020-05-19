@@ -124,6 +124,7 @@ public:
 	void set_ref_num(int ref_num);
 	void set_particle(string particle);
 	void set_particle_dist_hist_max(int max);
+	void set_ampt_particle_pid(vector<int> pid);
 
 	// Doers
 	void read_trees();
@@ -170,6 +171,7 @@ private:
 	int energy;
 
 	string particle = "Proton";
+	vector<int> ampt_particle_pid {2212};
 
 	bool cbwc; // MixerSets/randomizers aren't prepared for this to be false.
 	bool rotate_random;

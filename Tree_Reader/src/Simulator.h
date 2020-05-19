@@ -56,6 +56,7 @@ public:
 	double wrap_gaus(double x, double mu, double sigma, double lower_bound, double upper_bound);
 
 	void sim_event(Event &event);
+	void sim_event_pairs(Event &event);
 	void sim_event_eff(Event &event);
 	void sim_event_eff_flow(Event &event);
 	void sim_event_flow(Event &event);

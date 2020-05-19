@@ -347,6 +347,10 @@ void TreeReader::set_particle_dist_hist_max(int max) {
 	particle_dist_hist_max = max;
 }
 
+void TreeReader::set_ampt_particle_pid(vector<int> pid) {
+	ampt_particle_pid = pid;
+}
+
 // Doers
 
 // Read files for single energy and write results to text files.
@@ -459,22 +463,13 @@ void TreeReader::read_trees_chain() {
 void TreeReader::read_ampt_trees() {
 	define_qa();
 
-//	AmptCentralityMaker cent_maker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref3");
-//	map<int, float> opt_bmax1 {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
-//	cent_maker.set_max_b(opt_bmax1[energy]);
-//	cout << cent_maker.get_cent_bin9(200) << endl;
-
 	ampt_cent = AmptCentralityMaker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref" + to_string(ref_num));
 	map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
 	ampt_cent.set_max_b(opt_bmax[energy]);
 	ampt_cent.set_mult_quantity("ref3");
 
-//	cout << energy << "GeV: ";
-//	for(auto edge:ampt_cent.get_ref_bin9_edges()) { cout << edge << ","; }
-//	cout << endl;
-
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
-	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV_All/", "root", "path");
 	cout << endl;
 
 	unsigned num_files = in_files.size();
@@ -659,25 +654,26 @@ void TreeReader::set_branches(TChain* chain) {
 void TreeReader::read_ampt_tree(TTree* tree) {
 	ampt_tree_leaves leaves = get_ampt_tree_leaves(tree, ref_num);
 
-	int cent_9bin, proton_mult;
+	int cent_9bin, particle_mult;
 	int event_index = 0;
 	while(tree->GetEvent(event_index)) {
 		cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
 		Event event(event_defs, energy, ref_num, cent_9bin);
 		event.set_event_plane(leaves.event_plane->GetValue());
-		proton_mult = leaves.pmult->GetValue();
+		particle_mult = leaves.pmult->GetValue();
 
-		vector<Track> protons;
-		for(int i=0; i<proton_mult; i++) {
+		vector<Track> particles;
+		for(int i=0; i<particle_mult; i++) {
+			if(!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), leaves.pid->GetValue(i))) { continue; }
 			TVector3 p(leaves.px->GetValue(i), leaves.py->GetValue(i), leaves.pz->GetValue(i));
-			Track proton(track_defs);
-			proton.set_p(p.Mag());
-			proton.set_pt(p.Perp());
-			proton.set_phi(p.Phi() + M_PI);
-			proton.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
-			protons.push_back(proton);
+			Track particle(track_defs);
+			particle.set_p(p.Mag());
+			particle.set_pt(p.Perp());
+			particle.set_phi(p.Phi() + M_PI);
+			particle.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
+			particles.push_back(particle);
 		}
-		event.set_protons(protons);
+		event.set_particles(particles);
 
 		if(pile_up) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
@@ -686,20 +682,20 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 					cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
 					Event event2(event_defs, energy, ref_num, cent_9bin);
 					event2.set_event_plane(leaves.event_plane->GetValue());
-					proton_mult = leaves.pmult->GetValue();
+					particle_mult = leaves.pmult->GetValue();
 
-					protons.clear();
-					for(int i=0; i<proton_mult; i++) {
+					particles.clear();
+					for(int i=0; i<particle_mult; i++) {
 						TVector3 p(leaves.px->GetValue(i), leaves.py->GetValue(i), leaves.pz->GetValue(i));
-						Track proton(track_defs);
-						proton.set_p(p.Mag());
-						proton.set_pt(p.Perp());
-						proton.set_phi(p.Phi() + M_PI);
-						proton.set_eta(p.PseudoRapidity());
-						proton.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
-						protons.push_back(proton);
+						Track particle(track_defs);
+						particle.set_p(p.Mag());
+						particle.set_pt(p.Perp());
+						particle.set_phi(p.Phi() + M_PI);
+						particle.set_eta(p.PseudoRapidity());
+						particle.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
+						particles.push_back(particle);
 					}
-					event2.set_protons(protons);
+					event2.set_particles(particles);
 
 					event.pile_up(event2);
 				}
@@ -784,7 +780,7 @@ void TreeReader::process_event(Event& event) {
 		vector<double> good_proton_angles = {};
 
 		// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
-		for(Track& proton:event.get_protons()) {
+		for(Track& proton:event.get_particles()) {
 			if(check_proton_good(proton)) {
 				if(efficiency) {  // Skip good proton with chance efficiency_prob
 					if(trand->Rndm() < efficiency_prob) { continue; }
@@ -1066,7 +1062,7 @@ bool TreeReader::check_good_run(int run) {
 //Checks if there are enough protons in the event.
 //If more protons than minimum, return true, else false.
 bool TreeReader::check_enough_protons(Event& event) {
-	if(event.get_num_protons() >=  cut.min_multi) { return(true);	}
+	if(event.get_num_particles() >=  cut.min_multi) { return(true);	}
 	else { return(false); }
 }
 

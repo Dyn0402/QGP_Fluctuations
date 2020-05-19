@@ -191,9 +191,51 @@ void Simulator::sim_event(Event &event) {
 		track.set_phi(angle);
 		tracks.push_back(track);
 	}
-	event.set_protons(tracks);
+	event.set_particles(tracks);
 }
 
+
+// Simulate single event with particles produced in back to back pairs and return simulated proton angles.
+void Simulator::sim_event_pairs(Event &event) {
+	double group_angle, new_angle, pair_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	if(n_protons > 0) while((int)proton_angles.size() < 1) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		proton_angles.push_back(new_angle);
+		pair_angle = new_angle + M_PI;
+		pair_angle = fmod(pair_angle, 2*M_PI);  // Force to range [0, 2*pi)
+		proton_angles.push_back(pair_angle);
+	}
+
+	while((int)proton_angles.size() < n_protons) {
+		if(sim_rand->Rndm() < pars.p_group) {
+			group_angle = sim_rand->Gaus(proton_angles.back(), pars.spread_sigma);
+			group_angle = fmod(group_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			if(group_angle < 0) { group_angle += 2*M_PI; }
+			proton_angles.push_back(group_angle);
+			pair_angle = group_angle + M_PI;
+			pair_angle = fmod(pair_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			proton_angles.push_back(pair_angle);
+		} else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+			proton_angles.push_back(new_angle);
+			pair_angle = new_angle + M_PI;
+			pair_angle = fmod(pair_angle, 2*M_PI);  // Force to range [0, 2*pi)
+			proton_angles.push_back(pair_angle);
+		}
+	}
+
+	vector<Track> tracks;
+	for(double& angle:proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
 
 
 // Simulate single event and return simulated proton angles. Include efficiency into simulation.
@@ -232,7 +274,7 @@ void Simulator::sim_event_eff(Event &event) {
 		track.set_phi(angle);
 		tracks.push_back(track);
 	}
-	event.set_protons(tracks);
+	event.set_particles(tracks);
 }
 
 
@@ -287,7 +329,7 @@ void Simulator::sim_event_eff_flow(Event &event) {
 		track.set_phi(angle);
 		tracks.push_back(track);
 	}
-	event.set_protons(tracks);
+	event.set_particles(tracks);
 }
 
 
@@ -337,7 +379,7 @@ void Simulator::sim_event_flow(Event &event) {
 		track.set_phi(angle);
 		tracks.push_back(track);
 	}
-	event.set_protons(tracks);
+	event.set_particles(tracks);
 
 }
 
@@ -391,7 +433,7 @@ void Simulator::sim_event_eff_new(Event &event) {
 		track.set_phi(angle);
 		tracks.push_back(track);
 	}
-	event.set_protons(tracks);
+	event.set_particles(tracks);
 
 }
 

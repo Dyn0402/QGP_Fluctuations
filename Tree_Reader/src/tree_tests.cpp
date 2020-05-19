@@ -194,7 +194,7 @@ void real_event_tree_test() {
 			cout << endl << "Event 101: " << endl;
 			for(auto t:tracks) { cout << t.get_pt() << endl; }
 		}
-		event.set_protons(tracks);
+		event.set_particles(tracks);
 		tree->Fill();
 	}
 
@@ -230,7 +230,7 @@ void real_event_tree_test() {
 	rtree->GetEvent(100);
 	Event local_event = *revent;
 	cout << endl << "Event 100" << endl;
-	vector<Track> protons = local_event.get_protons();
+	vector<Track> protons = local_event.get_particles();
 	cout << "vx: " << local_event.get_vx() << endl;
 	local_event.set_vx(1 + local_event.get_vx());
 	cout << "Num Protons: " << protons.size() << endl;
@@ -243,7 +243,7 @@ void real_event_tree_test() {
 
 	rtree->GetEvent(100);
 	cout << endl << "Event 100" << endl;
-	protons = revent->get_protons();
+	protons = revent->get_particles();
 	cout << "vx: " << revent->get_vx() << endl;
 	cout << "Num Protons: " << protons.size() << endl;
 	for(unsigned i=0; i<protons.size(); i++) {

@@ -105,11 +105,12 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta1", {0,0}}, {"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_p+", {0,4}}, {"Ampt_p-", {0,4}}, {"Ampt_ptotal", {0,4}}, {"Ampt_ptotal_Efficiency8", {0,2}}, {"Ampt_ptotal_Efficiency5", {0,2}}, {"Ampt_ptotal_Efficiency3", {0,2}}, {"Ampt_ptotal_Efficiency1", {0,2}}};
-	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s_Flat1000_", {0,0}}, {"Sim_05p002s_Flat1000_", {0,0}}, {"Sim_05p05s_Flat1000_", {0,0}}, {"Sim_01p002s_Flat1000_", {0,0}}, {"Sim_01p05s_Flat1000_", {0,0}}, {"Sim_002p002s_Flat1000_", {0,0}}, {"Sim_002p05s_Flat1000_", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
+	map<string, pair<int, int>> set_pairs = {{"Ampt_mesontotal_Efficiency8", {0, 2}}, {"Ampt_mesontotal_Efficiency5", {0, 2}}, {"Ampt_mesontotal_Efficiency3", {0, 2}}, {"Ampt_mesontotal_Efficiency1", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"Sim_01p002s_Flat100_", {0,0}}, {"Sim_01p05s_Flat100_", {0,0}}, {"Sim_002p002s_Flat100_", {0,0}}, {"Sim_002p05s_Flat100_", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p05s_Flat1000", {0,2}}};
 
-	int set_sleep = 15;
+	int set_sleep = 100;
 	int energy_sleep = 1;
 
 	ROOT::EnableThreadSafety();
@@ -119,7 +120,7 @@ void read_class() {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list {7}; //{7, 11, 39, 27, 62, 19};
+				vector<int> energy_list {7, 11, 39, 27, 62, 19};
 				for(int energy:energy_list) {
 					pool.enqueue(run_set, energy, set_num, set_pair.first);
 					this_thread::sleep_for(chrono::seconds(energy_sleep));
@@ -138,12 +139,12 @@ void run_set(int energy, int set_num, string set_name) {
 	int ref = 3;
 
 	string in_path = in_base_path + "Trees_Ampt/";
-	string out_dir = out_base_path + "Data_Sim/";
-	string mix_out_dir = out_base_path + "Data_Sim_Mix/";
+	string out_dir = out_base_path + "Data_Ampt/";
+	string mix_out_dir = out_base_path + "Data_Ampt_Mix/";
 
 	vector<int> divs {2, 3, 4, 5, 6};
 //	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
-	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 600000000}};
+	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 20000000}};
 
 	string set_dir = set_name + to_string(set_num) + "/";
 
@@ -241,16 +242,35 @@ void run_set(int energy, int set_num, string set_name) {
 //		reader.ampt_cent.set_max_b(opt_bmax[energy]);
 	}
 
-	if(in_string(set_name, "p-")) { reader.cut.charge = -1; }
+	if(in_string(set_name, "p+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({2212}); }
+	if(in_string(set_name, "p-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-2212}); }
 	if(in_string(set_name, "ptotal")) { reader.set_check_charge(false); }
 
-	if(in_string(set_name, "pion")) {
+	if(!in_string(set_name, "Ampt") && in_string(set_name, "pion")) {
 		reader.cut.min_m2 = -0.15;
 		reader.cut.max_m2 = 0.15;
 		reader.set_particle("Pion");
 	}
-	if(in_string(set_name, "pion-")) { reader.cut.charge = -1; }
-	if(in_string(set_name, "piontotal")) { reader.set_check_charge(false); }
+	if(in_string(set_name, "pion+")) { reader.cut.charge = 1; reader.set_ampt_particle_pid({211}); }
+	if(in_string(set_name, "pion-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-211}); }
+	if(in_string(set_name, "pion0")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({111}); }
+	if(in_string(set_name, "piontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, -211}); }
+	if(in_string(set_name, "pionall")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, 111, -211}); }
+
+	if(in_string(set_name, "e+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({-11}); }
+	else if(in_string(set_name, "e-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({11}); }
+	else if(in_string(set_name, "etotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({11, -11}); }
+
+	if(in_string(set_name, "neutron")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2112}); }
+	if(in_string(set_name, "neutronbar")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({-2112}); }
+	if(in_string(set_name, "neutrontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2112, -2112}); }
+
+	if(in_string(set_name, "gamma")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({22}); }
+
+	if(in_string(set_name, "baryontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 2112, -2212, -2112}); }
+	if(in_string(set_name, "mesontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, 111, -211}); }
+	if(in_string(set_name, "hadrontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 2112, 211, 111, -211, -2212, -2112}); }
+	if(in_string(set_name, "hadronobs")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 211, -211, -2212}); }
 
 	reader.set_mixed_sets(false);
 	reader.set_rand_data(false);

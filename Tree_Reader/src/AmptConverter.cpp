@@ -164,7 +164,7 @@ void TreeConverter::get_proton_info(nsm_ampt_leaves leaves, Event &event) {
 			}
 		}
 	}
-	event.set_protons(protons);
+	event.set_particles(protons);
 }
 
 
