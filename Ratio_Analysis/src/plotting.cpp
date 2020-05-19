@@ -25,6 +25,7 @@
 
 #include "ratio_methods.h"
 #include "plotting.h"
+#include "file_io.h"
 
 #include <AzimuthBinData.h>
 
@@ -352,35 +353,35 @@ TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double
 
 
 
-void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
+void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> cents, vector<int> divs) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
-	create_canvas_plots(can_dir, data);
+	create_canvas_plots(can_dir, data, cents, divs);
 }
 
-void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data) {
+void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> cents, vector<int> divs) {
 	TDirectory *can_dir = out_root->mkdir(plot::canvas_dir_name.data());
-	create_canvas_plots(can_dir, data);
+	create_canvas_plots(can_dir, data, cents, divs);
 	can_dir->cd();
 }
 
 
-void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, AzimuthBinData>>> data) {
+void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> cents, vector<int> divs) {
 	can_dir->cd();
 
 	// Proton distribution canvases
 	TDirectory *nproton_can_dir = can_dir->mkdir(plot::nproton_dist_dir_name.data());
 	nproton_can_dir->cd();
-	for(int cent:analysis::centrals) {
+	for(int cent:cents) {
 		canvas_nprotons(data, cent, "Centrality " + to_string(cent));
 	}
 
 	// Ratios distribution canvases
 	TDirectory *ratios_can_dir = can_dir->mkdir(plot::ratio_dist_dir_name.data());
 	ratios_can_dir->cd();
-	for(int div:analysis::divs) {
+	for(int div:divs) {
 		TDirectory *div_dir = ratios_can_dir->mkdir((to_string(div) + "_Divs").data());
 		div_dir->cd();
-		for(int cent:analysis::centrals) {
+		for(int cent:cents) {
 			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
 		}
 	}
@@ -388,10 +389,10 @@ void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, Azimuth
 	// Difference distribution canvases
 	TDirectory *diff_can_dir = can_dir->mkdir("Diff_Dist_Canvases");
 	diff_can_dir->cd();
-	for(int div:analysis::divs) {
+	for(int div:divs) {
 		TDirectory *div_dir = diff_can_dir->mkdir((to_string(div) + "_Divs").data());
 		div_dir->cd();
-		for(int cent:analysis::centrals) {
+		for(int cent:cents) {
 			canvas_diff_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
 		}
 	}
@@ -1052,6 +1053,10 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 					energy_val.push_back(plot::energy_match[energy] + set_num*0.15);  // Offset sets on x (Energy) axis.
 					energy_err.push_back(0.0);
 					stat_meas = data_set.second[energy][div][cent][stat_name];
+					if(in_string(name, {"pull", "divide"}, false) && stat_name == "standard_deviation") {
+						Measure dmean_meas = data_set.second[energy][div][cent]["particle_dist_mean"];
+						stat_meas = (stat_meas - 1) / dmean_meas * 50 + 1;
+					}
 					stat_vals.push_back(stat_meas.get_val());
 					stat_err.push_back(stat_meas.get_err());
 					stat_sys.push_back(sys[data_set.first][energy][div][cent][stat_name]);
@@ -1098,7 +1103,6 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 	can->Write(name.data());
 	delete can;
 }
-
 
 
 void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name) {
@@ -1361,6 +1365,448 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 	can->Write(name.data());
 	delete can;
 }
+
+
+void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name) {
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	map<int, vector<TF1*>> lines;
+//	gStyle->SetTitleFontSize(0.09);
+//	gStyle->SetTitleOffset(1.2);
+	pair<int, int> can_div = get_canvas_div(cents.size());
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
+	int can_index = 1;
+	for(int cent:cents) {
+		can->cd(can_index);
+		auto *mg = new TMultiGraph();
+		pair<int, int> range = get_cent9_range(cent);
+		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"% Centrality " + stat_name).data());
+		double y_max = numeric_limits<double>::min();
+		double y_min = numeric_limits<double>::max();
+		double x_max = numeric_limits<double>::min();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+		for(int div:divs) {
+			int set_num = 0;
+			for(int energy:analysis::energy_list) {
+				vector<double> stat_vals, dmean_val, stat_err, dmean_err, stat_sys, total_err;
+				Measure stat_meas, dmean_meas;
+				for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
+					dmean_meas = data_set.second[energy][div][cent]["particle_dist_mean"];
+					dmean_val.push_back(dmean_meas.get_val());  // Offset sets on x (Energy) axis.
+					dmean_err.push_back(dmean_meas.get_err());
+					stat_meas = data_set.second[energy][div][cent][stat_name];
+					stat_vals.push_back(stat_meas.get_val());
+					stat_err.push_back(stat_meas.get_err());
+					stat_sys.push_back(sys[data_set.first][energy][div][cent][stat_name]);
+					total_err.push_back(pow(pow(sys[data_set.first][energy][div][cent][stat_name], 2) + pow(stat_meas.get_err(), 2), 0.5));
+					if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+					if(stat_meas.get_val() + stat_sys.back() > y_max) { y_max = stat_meas.get_val() + stat_sys.back(); }
+					if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
+					if(dmean_meas.get_val() + dmean_meas.get_err() > x_max) { x_max = dmean_meas.get_val() + dmean_meas.get_err(); }
+				}
+				TGraphErrors *graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_err);
+				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " divisions").data());
+				graph->SetMarkerStyle(plot::div_marker_styles[div]);
+				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				TGraphErrors *graph_fit = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, total_err);
+				lines[can_index].push_back(new TF1((to_string(energy) + "GeV_" + to_string(div) + "_div_fit").data(), "[0]+[1]*x", 0, *max_element(dmean_val.begin(), dmean_val.end()) * 1.05));
+				lines[can_index].back()->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph_fit->Fit(lines[can_index].back(), "Q");
+				mg->Add(graph, "APZ");
+				TGraphErrors *sys_graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_sys);
+				sys_graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				mg->Add(sys_graph, "[]");
+				set_num++;
+				if(can_index == 1) {
+					leg->SetBorderSize(plot::legend_border_width);
+					leg->SetFillStyle(0);
+					string b = to_string(lines[can_index].back()->GetParameter(0));
+					string m = to_string(lines[can_index].back()->GetParameter(1));
+					string b_err = to_string(lines[can_index].back()->GetParError(0));
+					string m_err = to_string(lines[can_index].back()->GetParError(1));
+					string fit_lab = "y= " + m + "+-" + m_err + "x + " + b + "+-" + b_err; //±
+					leg->AddEntry(graph, (to_string(energy) + "GeV " + to_string(div) + " divs " + fit_lab).data(), "p");
+				}
+			}
+		}
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(0, x_max*1.05);
+		mg->GetXaxis()->SetRangeUser(0, x_max*1.05);
+//		mg->GetXaxis()->SetLabelSize(0.06);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Average Number of Particles per Event");}// mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+		else { gPad->SetBottomMargin(0.07); }
+//		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
+		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+		if(in_string(name, {"pull", "divide"}, false)) { for(auto line:lines[can_index]) { line->Draw("Same"); } }
+		can_index++;
+	}
+	can->Update();
+	can->Write(name.data());
+	delete can;
+	for(auto can_lines:lines) { for(auto line:can_lines.second) { delete line; } }
+}
+
+
+void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name) {
+	double y_max = numeric_limits<double>::min(); //---
+	double y_min = numeric_limits<double>::max(); //---
+	for(auto stat:stats) {
+		for(int cent:cents) {
+			for(int div:divs) {
+				vector<double> stat_vals, energy_val, stat_err, energy_err;
+				Measure stat_meas;
+				for(int energy:analysis::energy_list) {
+					energy_val.push_back(plot::energy_match[energy]);
+					energy_err.push_back(0.0);
+					stat_meas = stat.second[energy][div][cent][stat_name];
+					stat_vals.push_back(stat_meas.get_val());
+					stat_err.push_back(stat_meas.get_err());
+					if(stat_meas.get_val() > 0) {
+						if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+						if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+					}
+				}
+			}
+		}
+	}
+
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	gStyle->SetTitleFontSize(0.09);
+	gStyle->SetTitleOffset(1.2);
+	pair<int, int> can_div = get_canvas_div(cents.size());
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
+	int can_index = 1;
+	for(int cent:cents) {
+		can->cd(can_index);
+		auto *mg = new TMultiGraph();
+		pair<int, int> range = get_cent9_range(cent);
+		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"%").data());
+//		double y_max = numeric_limits<double>::min();
+//		double y_min = numeric_limits<double>::max();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+		for(int div:divs) {
+			int set_num = 0;
+			for(int energy:analysis::energy_list) {
+				vector<double> stat_vals, dmean_val, stat_err, dmean_err;
+				Measure stat_meas, dmean_meas;
+				for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
+					dmean_meas = data_set.second[energy][div][cent]["particle_dist_mean"];
+					dmean_val.push_back(dmean_meas.get_val());  // Offset sets on x (Energy) axis.
+					dmean_err.push_back(dmean_meas.get_err());
+					stat_meas = data_set.second[energy][div][cent][stat_name];
+					stat_vals.push_back(stat_meas.get_val());
+					stat_err.push_back(stat_meas.get_err());
+					if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+				}
+				TGraphErrors *graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_err);
+				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " divisions").data());
+				graph->SetMarkerStyle(plot::div_marker_styles[div]);
+				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				mg->Add(graph, "APZ");
+				set_num++;
+				if(can_index == 1) {
+					leg->SetBorderSize(plot::legend_border_width);
+					leg->SetFillStyle(0);
+					leg->AddEntry(graph, (to_string(energy) + "GeV " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				}
+			}
+		}
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(0, 80);
+		mg->GetXaxis()->SetRangeUser(0, 80);
+//		mg->GetXaxis()->SetLabelSize(0.06);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Average Number of Particles per Event"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+		else { gPad->SetBottomMargin(0.07); }
+		gPad->SetTopMargin(0.06);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
+		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+		can_index++;
+	}
+	can->Update();
+	can->Write(name.data());
+	delete can;
+}
+
+
+// Not implemented
+void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name) {
+	double y_max = numeric_limits<double>::min(); //---
+	double y_min = numeric_limits<double>::max(); //---
+	for(int cent:cents) {
+		for(int div:divs) {
+			vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
+			Measure stat_meas;
+			for(int energy:analysis::energy_list) {
+				energy_val.push_back(plot::energy_match[energy]);
+				energy_err.push_back(0.0);
+				stat_meas = stats[energy][div][cent][stat_name];
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+				stat_sys.push_back(sys[energy][div][cent][stat_name]);
+				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+				if(stat_meas.get_val() + stat_sys.back() > y_max) { y_max = stat_meas.get_val() + stat_sys.back(); }
+				if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
+			}
+		}
+	}
+
+
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	gStyle->SetTitleFontSize(0.09);
+	gStyle->SetTitleOffset(1.2);
+	pair<int, int> can_div = get_canvas_div(cents.size());
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
+	int can_index = 1;
+	for(int cent:cents) {
+		can->cd(can_index);
+		auto *mg = new TMultiGraph();
+		pair<int, int> range = get_cent9_range(cent);
+		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"%").data());
+//		double y_max = numeric_limits<double>::min();
+//		double y_min = numeric_limits<double>::max();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+		for(int div:divs) {
+			vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
+			Measure stat_meas;
+			for(int energy:analysis::energy_list) {
+				energy_val.push_back(plot::energy_match[energy]);
+				energy_err.push_back(0.0);
+				stat_meas = stats[energy][div][cent][stat_name];
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+				stat_sys.push_back(sys[energy][div][cent][stat_name]);
+				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+				if(stat_meas.get_val() + stat_sys.back() > y_max) { y_max = stat_meas.get_val() + stat_sys.back(); }
+				if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
+			}
+			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
+			graph->SetNameTitle((stat_name + " " + to_string(div) + " divisions").data());
+			graph->SetMarkerStyle(plot::div_marker_styles[div]);
+			graph->SetMarkerColor(plot::div_marker_colors[div]);
+			graph->SetMarkerSize(plot::div_marker_sizes[div]);
+			graph->SetLineColor(plot::div_marker_colors[div]);
+			mg->Add(graph, "APZ");
+			TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
+			sys_graph->SetLineColor(plot::div_marker_colors[div]);
+			mg->Add(sys_graph, "[]");
+			if(can_index == 1) {
+				leg->SetBorderSize(plot::legend_border_width);
+				leg->SetFillStyle(0);
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
+			}
+		}
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(0, 80);
+		mg->GetXaxis()->SetRangeUser(0, 80);
+		mg->GetXaxis()->SetLabelSize(0.06);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+		else { gPad->SetBottomMargin(0.07); }
+		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
+		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+		can_index++;
+	}
+
+	can->Update();
+	can->Write(name.data());
+	delete can;
+}
+
+
+// Not implemented
+void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name) {
+	double y_max = numeric_limits<double>::min(); //---
+	double y_min = numeric_limits<double>::max(); //---
+	for(int cent:cents) {
+		for(int div:divs) {
+			vector<double> stat_vals, energy_val, stat_err, energy_err;
+			Measure stat_meas;
+			for(int energy:analysis::energy_list) {
+				energy_val.push_back(plot::energy_match[energy]);
+				energy_err.push_back(0.0);
+				stat_meas = stats[energy][div][cent][stat_name];
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+			}
+		}
+	}
+
+
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	gStyle->SetTitleFontSize(0.09);
+	gStyle->SetTitleOffset(1.2);
+	pair<int, int> can_div = get_canvas_div(cents.size());
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
+	int can_index = 1;
+	for(int cent:cents) {
+		can->cd(can_index);
+		auto *mg = new TMultiGraph();
+		pair<int, int> range = get_cent9_range(cent);
+		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"%").data());
+//		double y_max = numeric_limits<double>::min();
+//		double y_min = numeric_limits<double>::max();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+		for(int div:divs) {
+			vector<double> stat_vals, energy_val, stat_err, energy_err;
+			Measure stat_meas;
+			for(int energy:analysis::energy_list) {
+				energy_val.push_back(plot::energy_match[energy]);
+				energy_err.push_back(0.0);
+				stat_meas = stats[energy][div][cent][stat_name];
+				stat_vals.push_back(stat_meas.get_val());
+				stat_err.push_back(stat_meas.get_err());
+				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+			}
+			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
+			graph->SetNameTitle((stat_name + " " + to_string(div) + " divisions").data());
+			graph->SetMarkerStyle(plot::div_marker_styles[div]);
+			graph->SetMarkerColor(plot::div_marker_colors[div]);
+			graph->SetMarkerSize(plot::div_marker_sizes[div]);
+			graph->SetLineColor(plot::div_marker_colors[div]);
+			mg->Add(graph, "AP");
+			if(can_index == 1) {
+				leg->SetBorderSize(plot::legend_border_width);
+				leg->SetFillStyle(0);
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
+			}
+		}
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(0, 80);
+		mg->GetXaxis()->SetRangeUser(0, 80);
+//		mg->GetXaxis()->SetLabelSize(0.06);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+		else { gPad->SetBottomMargin(0.07); }
+		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
+		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+		can_index++;
+	}
+
+	can->Update();
+	can->Write(name.data());
+	delete can;
+}
+
+
+void stat_vs_mult_mean_cor(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name) {
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+	map<int, vector<TF1*>> lines;
+//	gStyle->SetTitleFontSize(0.09);
+//	gStyle->SetTitleOffset(1.2);
+	pair<int, int> can_div = get_canvas_div(cents.size());
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
+	int can_index = 1;
+	for(int cent:cents) {
+		can->cd(can_index);
+		auto *mg = new TMultiGraph();
+		pair<int, int> range = get_cent9_range(cent);
+		mg->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"%").data(), (to_string(range.first)+"-"+to_string(range.second)+"% Centrality " + stat_name).data());
+		double y_max = numeric_limits<double>::min();
+		double y_min = numeric_limits<double>::max();
+		double x_max = numeric_limits<double>::min();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+		for(int div:divs) {
+			int set_num = 0;
+			for(int energy:analysis::energy_list) {
+				vector<double> stat_vals, dmean_val, stat_err, dmean_err, stat_sys, total_err;
+				Measure stat_meas, dmean_meas;
+				for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
+					dmean_meas = data_set.second[energy][div][cent]["particle_dist_mean"];
+					dmean_val.push_back(dmean_meas.get_val());  // Offset sets on x (Energy) axis.
+					dmean_err.push_back(dmean_meas.get_err());
+					stat_meas = data_set.second[energy][div][cent][stat_name];
+					stat_meas = (stat_meas - 1) / dmean_meas * 50 + 1;
+					stat_vals.push_back(stat_meas.get_val());
+					stat_err.push_back(stat_meas.get_err());
+					stat_sys.push_back(sys[data_set.first][energy][div][cent][stat_name]);
+					total_err.push_back(pow(pow(sys[data_set.first][energy][div][cent][stat_name], 2) + pow(stat_meas.get_err(), 2), 0.5));
+					if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+					if(stat_meas.get_val() + stat_sys.back() > y_max) { y_max = stat_meas.get_val() + stat_sys.back(); }
+					if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
+					if(dmean_meas.get_val() + dmean_meas.get_err() > x_max) { x_max = dmean_meas.get_val() + dmean_meas.get_err(); }
+				}
+				TGraphErrors *graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_err);
+				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " divisions").data());
+				graph->SetMarkerStyle(plot::div_marker_styles[div]);
+				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				TGraphErrors *graph_fit = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, total_err);
+				lines[can_index].push_back(new TF1((to_string(energy) + "GeV_" + to_string(div) + "_div_fit").data(), "[0]+[1]*x", 0, *max_element(dmean_val.begin(), dmean_val.end()) * 1.05));
+				lines[can_index].back()->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph_fit->Fit(lines[can_index].back(), "Q");
+				mg->Add(graph, "APZ");
+				TGraphErrors *sys_graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_sys);
+				sys_graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				mg->Add(sys_graph, "[]");
+				set_num++;
+				if(can_index == 1) {
+					leg->SetBorderSize(plot::legend_border_width);
+					leg->SetFillStyle(0);
+					string b = to_string(lines[can_index].back()->GetParameter(0));
+					string m = to_string(lines[can_index].back()->GetParameter(1));
+					string b_err = to_string(lines[can_index].back()->GetParError(0));
+					string m_err = to_string(lines[can_index].back()->GetParError(1));
+					string fit_lab = "y= " + m + "+-" + m_err + "x + " + b + "+-" + b_err; //±
+					leg->AddEntry(graph, (to_string(energy) + "GeV " + to_string(div) + " divs " + fit_lab).data(), "p");
+				}
+			}
+		}
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(0, x_max*1.05);
+		mg->GetXaxis()->SetRangeUser(0, x_max*1.05);
+//		mg->GetXaxis()->SetLabelSize(0.06);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Average Number of Particles per Event");}// mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+		else { gPad->SetBottomMargin(0.07); }
+//		gPad->SetTopMargin(0.09);
+		gPad->SetRightMargin(0.04);
+		gPad->SetLeftMargin(0.1);
+		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+		if(in_string(name, {"pull", "divide"}, false)) { for(auto line:lines[can_index]) { line->Draw("Same"); } }
+		can_index++;
+	}
+	can->Update();
+	can->Write(name.data());
+	delete can;
+	for(auto can_lines:lines) { for(auto line:can_lines.second) { delete line; } }
+}
+
 
 
 void type_per_row(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<string> types, vector<string> stat_names, vector<int> cents, vector<int> divs, string name) {

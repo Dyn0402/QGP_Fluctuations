@@ -48,9 +48,12 @@ public:
 	void set_sets(map<string, vector<int>> sets);
 	void set_energies(vector<int> energies);
 	void set_all_centralities(vector<int> centralities);
+	void set_centralities(vector<int> centralities);
+	void set_plot_cents(vector<int> centralities);
 	void set_can_wh(int can_width, int can_height);
 	void set_set_combos(map<string, vector<string>> set_combos);
 	void set_plot_dists(bool plot);
+	void set_plot_dist_canvases(bool plot);
 
 	// Doers
 	void analyze();
@@ -116,6 +119,8 @@ private:
 
 	map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders);
 	void calc_stat(AzimuthBinData *data, string type, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats);
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> calculate_mix_diff_sds(map<int, map<int, map<int, AzimuthBinData>>> data);
+	void calc_mix_diff_sd(AzimuthBinData *data, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats);
 	double sample_sd(vector<double> data);
 	double sample_sd(vector<Measure> data);
 	Measure median(vector<Measure> data);

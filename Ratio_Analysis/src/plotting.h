@@ -57,9 +57,9 @@ void graph_stat_vs_divs(map<int, map<int, map<int, map<string, Measure>>>> stats
 void graph_x_vs_y(vector<int> x, vector<double> y, string name);
 TGraphErrors* graph_x_vs_y_err(vector<double> x, vector<double> y, vector<double> x_err={}, vector<double> y_err={});
 
-void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
-void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data);
-void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, AzimuthBinData>>> data);
+void make_canvas_plots(TFile *out_root, map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> cents, vector<int> divs);
+void make_canvas_plots(TDirectory *out_root, map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> cents, vector<int> divs);
+void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> cents, vector<int> divs);
 void canvas_nprotons(map<int, map<int, map<int, AzimuthBinData>>> data, int cent, string name);
 void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, int div, int cent, string name);
 void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vector<int> div, vector<int> cent, string name);
@@ -76,11 +76,17 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
 void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, vector<string> stat_names, vector<int> cents, vector<int> divs, string name);
 
-
 void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name);
 void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
 void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
 void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name);
+
+void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name);
+void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
+void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
+void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name);
+
+void stat_vs_mult_mean_cor(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name);
 
 void make_comp_stat_plot(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
 void make_comp_stat_plot_hack(map<int, map<string, Measure>> stats1, map<int, map<string, Measure>> stats2);
