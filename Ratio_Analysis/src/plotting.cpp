@@ -1053,7 +1053,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 					energy_val.push_back(plot::energy_match[energy] + set_num*0.15);  // Offset sets on x (Energy) axis.
 					energy_err.push_back(0.0);
 					stat_meas = data_set.second[energy][div][cent][stat_name];
-					if(in_string(name, {"pull", "divide"}, false) && stat_name == "standard_deviation") {
+					if(in_string(name, "_cor") && stat_name == "standard_deviation") {
 						Measure dmean_meas = data_set.second[energy][div][cent]["particle_dist_mean"];
 						stat_meas = (stat_meas - 1) / dmean_meas * 50 + 1;
 					}
@@ -1426,7 +1426,10 @@ void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measur
 					string m = to_string(lines[can_index].back()->GetParameter(1));
 					string b_err = to_string(lines[can_index].back()->GetParError(0));
 					string m_err = to_string(lines[can_index].back()->GetParError(1));
-					string fit_lab = "y= " + m + "+-" + m_err + "x + " + b + "+-" + b_err; //±
+					string fit_lab = "";
+					if(in_string(name, "_cor")) {
+						string fit_lab = "y= " + m + "+-" + m_err + "x + " + b + "+-" + b_err; //±
+					}
 					leg->AddEntry(graph, (to_string(energy) + "GeV " + to_string(div) + " divs " + fit_lab).data(), "p");
 				}
 			}
@@ -1445,7 +1448,7 @@ void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measur
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
-		if(in_string(name, {"pull", "divide"}, false)) { for(auto line:lines[can_index]) { line->Draw("Same"); } }
+		if(in_string(name, "_cor")) { for(auto line:lines[can_index]) { line->Draw("Same"); } }
 		can_index++;
 	}
 	can->Update();

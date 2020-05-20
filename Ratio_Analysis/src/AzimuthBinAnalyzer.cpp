@@ -188,6 +188,7 @@ void AzimuthBinAnalyzer::combine_sets() {
 				for(int div:divs) {
 					centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
 					centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
+					centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_cor_"+name+to_string(div));
 				}
 				centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, "centralities_raw_"+name);
 				centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, divs, "centralities_pull_"+name);
@@ -257,6 +258,7 @@ void AzimuthBinAnalyzer::combine_sets() {
 				name_dir->cd();
 				for(int div:divs) {
 					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_cor_"+name+to_string(div));
 				}
 				centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "centralities_divide_"+name);
 			}
@@ -962,6 +964,7 @@ void AzimuthBinAnalyzer::calc_stat(AzimuthBinData *data, string type, int energy
 	(*stats)[energy][div][cent]["skewness"] = stat.get_skewness();
 	(*stats)[energy][div][cent]["kurtosis"] = stat.get_kurtosis();
 	(*stats)[energy][div][cent]["non_excess_kurtosis"] = stat.get_non_excess_kurtosis();
+	(*stats)[energy][div][cent]["kurtosis*variance"] = stat.get_kurt_var();
 	Stats dist_mean_stat;
 	dist_mean_stat.set_distribution(data->get_proton_dist());
 	(*stats)[energy][div][cent]["particle_dist_mean"] = dist_mean_stat.get_mean();

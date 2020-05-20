@@ -60,8 +60,8 @@ public:
 
 private:
 	// Parameters
-	vector<string> stat_names = {"standard_deviation", "skewness", "non_excess_kurtosis"};
-	vector<string> stat_names_rows = {"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis"};
+	vector<string> stat_names = {"standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"};
+	vector<string> stat_names_rows = {"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"};
 	vector<string> cumulant_names = {"cumulant 2", "cumulant 3", "cumulant 4"};
 	vector<string> raw_moment_names = {"raw moment 2", "raw moment 3", "raw moment 4"};
 	vector<string> central_moment_names = {"central moment 2", "central moment 3", "central moment 4"};

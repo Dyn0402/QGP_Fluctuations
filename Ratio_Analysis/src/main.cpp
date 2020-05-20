@@ -50,7 +50,7 @@ void azimuth_bin_analyze() {
 	analyzer.set_in_path("/home/dylan/Research/Data_Ampt/");
 	analyzer.set_in_mix_path("/home/dylan/Research/Data_Ampt_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("5-15-20_ampt_eff_test_pull_slice_test.root");
+	analyzer.set_out_root_name("5-19-20_ampt_eff_test_pull_slice.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8});
