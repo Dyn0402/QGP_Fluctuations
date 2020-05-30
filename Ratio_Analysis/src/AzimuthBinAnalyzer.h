@@ -96,16 +96,19 @@ private:
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> mix_stats_sets;
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> divide_stats_sets;
 	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> pull_stats_sets;
+	map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> diff_stats_sets;
 
 	map<string, map<int, map<int, map<int, map<string, double>>>>> raw_stats_sd;
 	map<string, map<int, map<int, map<int, map<string, double>>>>> mix_stats_sd;
 	map<string, map<int, map<int, map<int, map<string, double>>>>> divide_stats_sd;
 	map<string, map<int, map<int, map<int, map<string, double>>>>> pull_stats_sd;
+	map<string, map<int, map<int, map<int, map<string, double>>>>> diff_stats_sd;
 
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> raw_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> mix_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_stats_median;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> diff_stats_median;
 
 
 	// Doers

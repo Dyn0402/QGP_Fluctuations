@@ -139,15 +139,17 @@ void AzimuthBinAnalyzer::combine_sets() {
 			set_pairs[combo.first]["mix"][set] = mix_stats_median[set];
 			set_pairs[combo.first]["divide"][set] = divide_stats_median[set];
 			set_pairs[combo.first]["pull"][set] = pull_stats_median[set];
+			set_pairs[combo.first]["diff"][set] = diff_stats_median[set];
 
 			set_pairs_sd[combo.first]["raw"][set] = raw_stats_sd[set];
 			set_pairs_sd[combo.first]["mix"][set] = mix_stats_sd[set];
 			set_pairs_sd[combo.first]["divide"][set] = divide_stats_sd[set];
 			set_pairs_sd[combo.first]["pull"][set] = pull_stats_sd[set];
+			set_pairs_sd[combo.first]["diff"][set] = diff_stats_sd[set];
 		}
 	}
-	set_pairs["All"] = {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}};
-	set_pairs_sd["All"] = {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}};
+	set_pairs["All"] = {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}, {"diff", diff_stats_median}};
+	set_pairs_sd["All"] = {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}, {"diff", diff_stats_sd}};
 
 	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> set_type;
 	map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>> set_type_sd;
@@ -182,28 +184,38 @@ void AzimuthBinAnalyzer::combine_sets() {
 				}
 			}
 			TDirectory *centralities_dir = data_dir->mkdir("centralities");
-			for(string name:stat_names) {
-				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			for(pair<string, vector<string>> stat_type:names) {
+				TDirectory *name_dir = centralities_dir->mkdir(stat_type.first.data());
 				name_dir->cd();
-				for(int div:divs) {
-					centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
-					centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
-					centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_cor_"+name+to_string(div));
+				for(string name:stat_type.second) {
+					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
+					stat_name_dir->cd();
+					for(int div:divs) {
+						centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
+						centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
+						centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "centralities_pull_cor_"+name+to_string(div));
+						centralities_stat(set_pair.second["diff"], set_pairs_sd[set_pair.first]["diff"], name, all_centralities, {div}, "centralities_diff_"+name+to_string(div));
+					}
+					centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, "centralities_raw_"+name);
+					centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, divs, "centralities_pull_"+name);
 				}
-				centralities_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, "centralities_raw_"+name);
-				centralities_stat(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, divs, "centralities_pull_"+name);
 			}
 			TDirectory *dist_mean_dir = data_dir->mkdir("dist_means");
-			for(string name:stat_names) {
-				TDirectory *name_dir = dist_mean_dir->mkdir(name.data());
+			for(pair<string, vector<string>> stat_type:names) {
+				TDirectory *name_dir = dist_mean_dir->mkdir(stat_type.first.data());
 				name_dir->cd();
-				for(int div:divs) {
-					stat_vs_mult_mean(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "stat_vs_mult_mean_raw_"+name+to_string(div));
-					stat_vs_mult_mean(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "stat_vs_mult_mean_pull_"+name+to_string(div));
-					stat_vs_mult_mean_cor(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "stat_vs_mult_mean_cor_pull_"+name+to_string(div));
+				for(string name:stat_type.second) {
+					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
+					stat_name_dir->cd();
+					for(int div:divs) {
+						stat_vs_mult_mean(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, {div}, "stat_vs_mult_mean_raw_"+name+to_string(div));
+						stat_vs_mult_mean(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "stat_vs_mult_mean_pull_"+name+to_string(div));
+						stat_vs_mult_mean(set_pair.second["diff"], set_pairs_sd[set_pair.first]["diff"], name, all_centralities, {div}, "stat_vs_mult_mean_diff_"+name+to_string(div));
+						stat_vs_mult_mean_cor(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, {div}, "stat_vs_mult_mean_cor_pull_"+name+to_string(div));
+					}
+					stat_vs_mult_mean(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, "stat_vs_mult_mean_raw_"+name);
+					stat_vs_mult_mean(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, divs, "stat_vs_mult_mean_pull_"+name);
 				}
-				stat_vs_mult_mean(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, "stat_vs_mult_mean_raw_"+name);
-				stat_vs_mult_mean(set_pair.second["pull"], set_pairs_sd[set_pair.first]["pull"], name, all_centralities, divs, "stat_vs_mult_mean_pull_"+name);
 			}
 		}
 
@@ -220,22 +232,30 @@ void AzimuthBinAnalyzer::combine_sets() {
 				}
 			}
 			TDirectory *centralities_dir = mix_dir->mkdir("centralities");
-			for(string name:stat_names) {
-				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			for(pair<string, vector<string>> stat_type:names) {
+				TDirectory *name_dir = centralities_dir->mkdir(stat_type.first.data());
 				name_dir->cd();
-				for(int div:divs) {
-					centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+				for(string name:stat_type.second) {
+					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
+					stat_name_dir->cd();
+					for(int div:divs) {
+						centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, {div}, "centralities_mix_"+name+to_string(div));
+					}
+					centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, "centralities_mix_"+name);
 				}
-				centralities_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, "centralities_mix_"+name);
 			}
 			TDirectory *dist_mean_dir = mix_dir->mkdir("dist_means");
-			for(string name:stat_names) {
-				TDirectory *name_dir = dist_mean_dir->mkdir(name.data());
+			for(pair<string, vector<string>> stat_type:names) {
+				TDirectory *name_dir = dist_mean_dir->mkdir(stat_type.first.data());
 				name_dir->cd();
-				for(int div:divs) {
-					stat_vs_mult_mean(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, {div}, "stat_vs_mult_mean_mix_"+name+to_string(div));
+				for(string name:stat_type.second) {
+					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
+					stat_name_dir->cd();
+					for(int div:divs) {
+						stat_vs_mult_mean(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, {div}, "stat_vs_mult_mean_mix_"+name+to_string(div));
+					}
+					stat_vs_mult_mean(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, "stat_vs_mult_mean_mix_"+name);
 				}
-				stat_vs_mult_mean(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, "stat_vs_mult_mean_mix_"+name);
 			}
 		}
 
@@ -253,24 +273,32 @@ void AzimuthBinAnalyzer::combine_sets() {
 				}
 			}
 			TDirectory *centralities_dir = mix_div_dir->mkdir("centralities");
-			for(string name:stat_names) {
-				TDirectory *name_dir = centralities_dir->mkdir(name.data());
+			for(pair<string, vector<string>> stat_type:names) {
+				TDirectory *name_dir = centralities_dir->mkdir(stat_type.first.data());
 				name_dir->cd();
-				for(int div:divs) {
-					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
-					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_cor_"+name+to_string(div));
+				for(string name:stat_type.second) {
+					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
+					stat_name_dir->cd();
+					for(int div:divs) {
+						centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+						centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_cor_"+name+to_string(div));
+					}
+					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "centralities_divide_"+name);
 				}
-				centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "centralities_divide_"+name);
 			}
 			TDirectory *dist_means_dir = mix_div_dir->mkdir("dist_means");
-			for(string name:stat_names) {
-				TDirectory *name_dir = dist_means_dir->mkdir(name.data());
+			for(pair<string, vector<string>> stat_type:names) {
+				TDirectory *name_dir = dist_means_dir->mkdir(stat_type.first.data());
 				name_dir->cd();
-				for(int div:divs) {
-					stat_vs_mult_mean(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "stat_vs_mult_mean_divide_"+name+to_string(div));
-					stat_vs_mult_mean_cor(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "stat_vs_mult_mean_cor_divide_"+name+to_string(div));
+				for(string name:stat_type.second) {
+					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
+					stat_name_dir->cd();
+					for(int div:divs) {
+						stat_vs_mult_mean(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "stat_vs_mult_mean_divide_"+name+to_string(div));
+						stat_vs_mult_mean_cor(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "stat_vs_mult_mean_cor_divide_"+name+to_string(div));
+					}
+					stat_vs_mult_mean(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "stat_vs_mult_mean_divide_"+name);
 				}
-				stat_vs_mult_mean(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "stat_vs_mult_mean_divide_"+name);
 			}
 		}
 	}
@@ -405,6 +433,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> mix_stats_all;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_all;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_stats_all;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> diff_stats_all;
 
 	// Calculate standard deviations for systematics
 	for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets[set_name]) {
@@ -415,17 +444,20 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 					mix_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					divide_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					pull_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					diff_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
 					raw_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					mix_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					pull_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					diff_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
 					for(int i=0; i<(int)raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].size(); i++) {
 						raw_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 						mix_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 						divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 						pull_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
+						diff_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 					}
 				}
 			}
@@ -493,6 +525,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
 					centralities_stat(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
+					centralities_stat(diff_stats_median[set_name], diff_stats_sd[set_name], name, all_centralities, {div}, "centralities_diff_"+name+to_string(div));
 				}
 				centralities_stat(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, divs, "centralities_raw_"+name);
 				centralities_stat(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, divs, "centralities_pull_"+name);
@@ -504,6 +537,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					stat_vs_mult_mean(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, {div}, "stat_vs_mult_mean_raw_"+name+to_string(div));
 					stat_vs_mult_mean(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, {div}, "stat_vs_mult_mean_pull_"+name+to_string(div));
+					stat_vs_mult_mean(diff_stats_median[set_name], diff_stats_sd[set_name], name, all_centralities, {div}, "stat_vs_mult_mean_diff_"+name+to_string(div));
 				}
 				stat_vs_mult_mean(raw_stats_median[set_name], raw_stats_sd[set_name], name, all_centralities, divs, "stat_vs_mult_mean_raw_"+name);
 				stat_vs_mult_mean(pull_stats_median[set_name], pull_stats_sd[set_name], name, all_centralities, divs, "stat_vs_mult_mean_pull_"+name);
@@ -528,6 +562,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					centralities_stat(raw_stats_all, name, all_centralities, {div}, "centralities_raw_"+name+to_string(div));
 					centralities_stat(pull_stats_all, name, all_centralities, {div}, "centralities_pull_"+name+to_string(div));
+					centralities_stat(diff_stats_all, name, all_centralities, {div}, "centralities_diff_"+name+to_string(div));
 				}
 				centralities_stat(raw_stats_all, name, all_centralities, divs, "centralities_raw_"+name);
 				centralities_stat(pull_stats_all, name, all_centralities, divs, "centralities_pull_"+name);
@@ -539,6 +574,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				for(int div:divs) {
 					stat_vs_mult_mean(raw_stats_all, name, all_centralities, {div}, "stat_vs_mult_mean_raw_"+name+to_string(div));
 					stat_vs_mult_mean(pull_stats_all, name, all_centralities, {div}, "stat_vs_mult_mean_pull_"+name+to_string(div));
+					stat_vs_mult_mean(diff_stats_all, name, all_centralities, {div}, "stat_vs_mult_mean_diff_"+name+to_string(div));
 				}
 				stat_vs_mult_mean(raw_stats_all, name, all_centralities, divs, "stat_vs_mult_mean_raw_"+name);
 				stat_vs_mult_mean(pull_stats_all, name, all_centralities, divs, "stat_vs_mult_mean_pull_"+name);
@@ -707,7 +743,6 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	for(auto &energy:ratio_stats) {
 		for(auto &div:energy.second) {
 			for(auto &cent:div.second) {
-//				cout << "Energy: " + to_string(energy.first) + "GeV " + "Cent: " + to_string(cent.first) + " Div: " + to_string(div.first) + " Mix_Diff_Sd: " + to_string(diff_stats_mix[energy.first][div.first][cent.first]["standard_deviation"].get_val()) << endl;
 				for(auto &stat:cent.second) {
 					if(stat.first == "particle_dist_mean") { stats_mix_divide[energy.first][div.first][cent.first][stat.first] = stat.second; }
 					else { stats_mix_divide[energy.first][div.first][cent.first][stat.first] = stat.second / ratio_stats_mix[energy.first][div.first][cent.first][stat.first]; }
@@ -715,6 +750,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 					raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second);
 					mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(ratio_stats_mix[energy.first][div.first][cent.first][stat.first]);
 					divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stats_mix_divide[energy.first][div.first][cent.first][stat.first]);
+					diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(diff_stats[energy.first][div.first][cent.first][stat.first]);
 				}
 			}
 		}
@@ -724,7 +760,6 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 		for(auto &div:energy.second) {
 			for(auto &cent:div.second) {
 				for(auto &particles:cent.second) {
-//					cout << "total particles: " << particles.first << " | Mixed Sd: " << particles.second["standard_deviation"].get_val();
 					data[energy.first][div.first][cent.first].set_diff_slice_divisor(particles.first, particles.second["standard_deviation"].get_val());
 				}
 			}
