@@ -35,10 +35,10 @@ void binomial_analyze();
 
 
 int main() {
-	cout << "Running AzimuthBinAnalyzer" << endl << endl;
-	azimuth_bin_analyze();
-//	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
-//	binomial_analyze();
+//	cout << "Running AzimuthBinAnalyzer" << endl << endl;
+//	azimuth_bin_analyze();
+	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
+	binomial_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
