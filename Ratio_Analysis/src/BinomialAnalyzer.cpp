@@ -333,7 +333,7 @@ void BinomialAnalyzer::calc_stat(map<int, int> &slice_data, int particles, int e
 	(*stats)[energy][div][cent][particles]["skewness"] = stat.get_skewness();
 	(*stats)[energy][div][cent][particles]["skewness_sd"] = stat.get_skew_sd();
 	(*stats)[energy][div][cent][particles]["kurtosis"] = stat.get_kurtosis();
-	(*stats)[energy][div][cent][particles]["kurtosis_variance"] = stat.get_kurtosis() * stat.get_standard_deviation() * stat.get_standard_deviation();//stat.get_kurt_var();
+	(*stats)[energy][div][cent][particles]["kurtosis_variance"] = stat.get_kurt_var();
 	(*stats)[energy][div][cent][particles]["non_excess_kurtosis"] = stat.get_non_excess_kurtosis();
 }
 

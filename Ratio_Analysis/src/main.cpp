@@ -108,7 +108,7 @@ void binomial_analyze() {
 	analyzer.set_in_path("/home/dylan/Research/Data_Old_Ref3/");
 	analyzer.set_in_mix_path("/home/dylan/Research/Data_Old_Ref3_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("6-1-20_binom_BES1_high_order_moment2.root");
+	analyzer.set_out_root_name("6-1-20_binom_BES1_high_order_moment.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 	analyzer.set_centralities({8});
 	analyzer.set_can_wh(950, 828);
