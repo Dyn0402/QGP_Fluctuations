@@ -20,6 +20,7 @@
 
 Mixer::Mixer() {
 	single_ratio = false;
+	n1_ratios = false;
 	rand_rotate = false;
 	event_plane_rotate = false;
 	energy = 0;
@@ -36,6 +37,7 @@ Mixer::Mixer() {
 
 Mixer::Mixer(int energy) {
 	single_ratio = false;
+	n1_ratios = false;
 	rand_rotate = false;
 	event_plane_rotate = false;
 	this->energy = energy;
@@ -57,6 +59,7 @@ Mixer::Mixer(int energy) {
 
 Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
 	this->single_ratio = single_ratio;
+	n1_ratios = false;
 	this->rand_rotate = rand_rotate;
 	event_plane_rotate = false;
 	this->energy = energy;
@@ -135,6 +138,10 @@ vector<int> Mixer::get_divs() {
 
 void Mixer::set_single_ratio(bool single_ratio) {
 	this->single_ratio = single_ratio;
+}
+
+void Mixer::set_n1_ratios(bool n1_ratios) {
+	this->n1_ratios = n1_ratios;
 }
 
 void Mixer::set_rand_rotate(bool rand_rotate) {
@@ -233,6 +240,9 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 		} else {
 			for(int protons_in_bin:event_ratios) {
 				data[div][cent][mix_angles.size()][protons_in_bin]++;
+			}
+			if(n1_ratios) {
+				data[div][cent][mix_angles.size()][event_ratios[((int)trand->Rndm()*event_ratios.size())]]--;
 			}
 		}
 	}

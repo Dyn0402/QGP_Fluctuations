@@ -115,6 +115,7 @@ public:
 	void set_pile_up(bool pile_up);
 	void set_efficiency(bool efficiency);
 	void set_single_ratio(bool single_ratio);
+	void set_n1_ratios(bool n1_ratios);
 	void set_check_charge(bool check);
 	void set_sim_eff(bool sim_eff);
 	void set_sim_flow(bool sim_flow);
@@ -182,6 +183,7 @@ private:
 	bool pile_up;
 	bool efficiency;
 	bool single_ratio;
+	bool n1_ratios;
 	bool sim_eff;
 	bool sim_flow;
 	bool check_charge;

@@ -54,6 +54,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	n1_ratios = false;
 	check_charge = true;
 
 	sim_eff = false;
@@ -86,6 +87,7 @@ TreeReader::TreeReader(int energy) {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	n1_ratios = false;
 	check_charge = true;
 
 	sim_eff = false;
@@ -118,6 +120,7 @@ TreeReader::TreeReader() {
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
+	n1_ratios = false;
 	check_charge = true;
 
 	sim_eff = false;
@@ -307,6 +310,11 @@ void TreeReader::set_efficiency(bool efficiency) {
 void TreeReader::set_single_ratio(bool single_ratio) {
 	this->single_ratio = single_ratio;
 	mix.set_single_ratio(single_ratio);
+}
+
+void TreeReader::set_n1_ratios(bool n1_ratios) {
+	this->n1_ratios = n1_ratios;
+	mix.set_n1_ratios(n1_ratios);
 }
 
 void TreeReader::set_check_charge(bool check) {
@@ -842,6 +850,13 @@ void TreeReader::process_event(Event& event) {
 							data[div][cent][good_proton_angles.size()][protons_in_bin]++;
 						}
 					}
+					if(n1_ratios) {
+						if(cbwc) {
+							data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
+						} else {
+							data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
+						}
+					}
 				}
 			}
 		}
@@ -988,6 +1003,7 @@ void TreeReader::write_info_file() {
 		out << "pile_up: " << boolalpha << pile_up << endl;
 		out << "efficiency: " << boolalpha << efficiency << endl;
 		out << "single_ratio: " << boolalpha << single_ratio << endl;
+		out << "n1_ratios: " << boolalpha << n1_ratios << endl;
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;
 		out << "cent_binning: " << cent_binning << endl;

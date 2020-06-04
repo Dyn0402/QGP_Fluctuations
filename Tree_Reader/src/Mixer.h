@@ -40,6 +40,7 @@ public:
 
 	// Setters
 	void set_single_ratio(bool single_ratio);
+	void set_n1_ratios(bool n1_ratios);
 	void set_rand_rotate(bool rand_rotate);
 	void set_event_plane_rotate(bool event_plane_rotate);
 	void set_energy(int energy);
@@ -63,6 +64,7 @@ public:
 private:
 	// Attributes
 	bool single_ratio;
+	bool n1_ratios;
 	bool rand_rotate;
 	bool event_plane_rotate;
 	int energy;
