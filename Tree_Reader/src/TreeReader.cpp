@@ -678,6 +678,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 			particle.set_p(p.Mag());
 			particle.set_pt(p.Perp());
 			particle.set_phi(p.Phi() + M_PI);
+			particle.set_eta(p.PseudoRapidity());
 			particle.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
 			particles.push_back(particle);
 		}
@@ -994,6 +995,8 @@ void TreeReader::write_info_file() {
 		for(int div:divs) { out << to_string(div) << " "; }
 		out << "}" << endl;
 
+		out << "particle: " << particle << endl;
+
 		out << "cbwc: " << boolalpha << cbwc << endl;
 		out << "rotate_random: " << boolalpha << rotate_random << endl;
 		out << "event_plane: " << boolalpha << event_plane << endl;
@@ -1004,6 +1007,7 @@ void TreeReader::write_info_file() {
 		out << "efficiency: " << boolalpha << efficiency << endl;
 		out << "single_ratio: " << boolalpha << single_ratio << endl;
 		out << "n1_ratios: " << boolalpha << n1_ratios << endl;
+		out << "check_charge: " << boolalpha << check_charge << endl;
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;
 		out << "cent_binning: " << cent_binning << endl;
@@ -1031,6 +1035,10 @@ void TreeReader::write_info_file() {
 
 		out << "sim p_group: " << to_string(sim.get_p_group()) << endl;
 		out << "sim spread_sigma: " << to_string(sim.get_spread_sigma()) << endl;
+
+		out << "Ampt Particle PIDs: ";
+		for(auto &pid:ampt_particle_pid) { out << to_string(pid) << " "; }
+		out << endl;
 	}
 }
 

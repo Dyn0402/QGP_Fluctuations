@@ -107,6 +107,7 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
 	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_01p002s_Flat100_", {0,0}}, {"Sim_01p05s_Flat100_", {0,0}}, {"Sim_002p002s_Flat100_", {0,0}}, {"Sim_002p05s_Flat100_", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p05s_Flat1000", {0,2}}};
 
@@ -181,10 +182,8 @@ void run_set(int energy, int set_num, string set_name) {
 		reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
 	}
 
-//	if(set_name == "Single_Ratio" || set_name == "No_Rotate_Single" ) { reader.set_single_ratio(true); reader.mix.set_single_ratio(true); }
-	reader.set_single_ratio(true); reader.mix.set_single_ratio(true);
-
-	if(in_string(set_name, "_n1ratios")) { reader.set_n1_ratios(true); }
+	if(in_string(set_name, "_n1ratios")) { reader.set_n1_ratios(true); reader.set_single_ratio(false); }
+	else { reader.set_single_ratio(true); }
 
 	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
 	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }
