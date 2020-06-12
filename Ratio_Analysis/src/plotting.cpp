@@ -1050,7 +1050,7 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 				Measure stat_meas;
 				for(int energy:analysis::energy_list) {
-					energy_val.push_back(plot::energy_match[energy] + set_num*0.15);  // Offset sets on x (Energy) axis.
+					energy_val.push_back(plot::energy_match[energy] + set_num*0.4);  // Offset sets on x (Energy) axis.
 					energy_err.push_back(0.0);
 					stat_meas = data_set.second[energy][div][cent][stat_name];
 					if(in_string(name, "_cor") && stat_name == "standard_deviation") {
@@ -1199,6 +1199,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 	double y_min = numeric_limits<double>::max(); //---
 	for(int cent:cents) {
 		for(int div:divs) {
+			if(divs.size() > 1 && div == 2 && stat_name == "skewness") { continue; }
 			vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 			Measure stat_meas;
 			for(int energy:analysis::energy_list) {
@@ -1232,10 +1233,11 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 //		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
 		for(int div:divs) {
+			if(divs.size() > 1 && div == 2 && stat_name == "skewness") { continue; }
 			vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 			Measure stat_meas;
 			for(int energy:analysis::energy_list) {
-				energy_val.push_back(plot::energy_match[energy]);
+				energy_val.push_back(plot::energy_match[energy] + (div - divs[0])*0.4);
 				energy_err.push_back(0.0);
 				stat_meas = stats[energy][div][cent][stat_name];
 				stat_vals.push_back(stat_meas.get_val());
@@ -1252,14 +1254,14 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			graph->SetMarkerColor(plot::div_marker_colors[div]);
 			graph->SetMarkerSize(plot::div_marker_sizes[div]);
 			graph->SetLineColor(plot::div_marker_colors[div]);
-			mg->Add(graph, "APZ");
+			mg->Add(graph, "APLZ");
 			TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 			sys_graph->SetLineColor(plot::div_marker_colors[div]);
 			mg->Add(sys_graph, "[]");
 			if(can_index == 1) {
 				leg->SetBorderSize(plot::legend_border_width);
 				leg->SetFillStyle(0);
-				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "lp");
 			}
 		}
 		double y_range = y_max - y_min;
@@ -1323,7 +1325,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			vector<double> stat_vals, energy_val, stat_err, energy_err;
 			Measure stat_meas;
 			for(int energy:analysis::energy_list) {
-				energy_val.push_back(plot::energy_match[energy]);
+				energy_val.push_back(plot::energy_match[energy] + (div - divs[0])*0.4);
 				energy_err.push_back(0.0);
 				stat_meas = stats[energy][div][cent][stat_name];
 				stat_vals.push_back(stat_meas.get_val());

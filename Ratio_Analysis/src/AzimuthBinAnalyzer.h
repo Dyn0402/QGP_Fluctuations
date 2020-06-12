@@ -54,6 +54,7 @@ public:
 	void set_set_combos(map<string, vector<string>> set_combos);
 	void set_plot_dists(bool plot);
 	void set_plot_dist_canvases(bool plot);
+	void set_divs(vector<int> divisions);
 
 	// Doers
 	void analyze();

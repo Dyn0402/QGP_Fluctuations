@@ -88,6 +88,10 @@ void AzimuthBinAnalyzer::set_plot_dist_canvases(bool plot) {
 	this->plot_dist_canvases = plot;
 }
 
+void AzimuthBinAnalyzer::set_divs(vector<int> divisions) {
+	this->divs = divisions;
+}
+
 // Doers
 
 void AzimuthBinAnalyzer::analyze() {

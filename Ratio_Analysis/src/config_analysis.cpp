@@ -11,6 +11,8 @@
 #include <vector>
 #include <map>
 
+#include "TCanvas.h"
+
 using namespace std;
 
 
@@ -60,7 +62,7 @@ namespace plot {
 //	vector<int> div_marker_styles = {8, 8, 28, 24, 25, 26, 27};
 	vector<int> div_marker_styles = {8, 8, 34, 20, 21, 22, 33};
 	vector<int> div_marker_width = {2, 2, 2, 2, 2, 2, 2};
-	vector<int> div_marker_colors = {28, 9, 6, 1, 2, 8, 4};
+	vector<int> div_marker_colors = {28, 9, 6, 1, 2, kGreen+2, 4};
 	vector<double> div_marker_sizes = {1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5};
 
 	map<int, int> energy_marker_styles = {{7,24}, {11,25}, {19,26}, {27,27}, {39,28}, {62,30}};

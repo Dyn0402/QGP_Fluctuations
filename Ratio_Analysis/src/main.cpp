@@ -37,8 +37,8 @@ void binomial_analyze();
 int main() {
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 	azimuth_bin_analyze();
-//	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
-//	binomial_analyze();
+	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
+	binomial_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -50,15 +50,17 @@ void azimuth_bin_analyze() {
 	analyzer.set_in_path("/home/dylan/Research/Data_Bes1_Ampt/");
 	analyzer.set_in_mix_path("/home/dylan/Research/Data_Bes1_Ampt_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("6-4-20_BES1_Ampt.root");
+	analyzer.set_out_root_name("6-12-20_BES1_AMPT_Debugged.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8});
 	analyzer.set_centralities({8});
+	analyzer.set_divs({2,3,4,5,6});
 	analyzer.set_plot_cents({8});
 	analyzer.set_plot_dists(true);
 	analyzer.set_plot_dist_canvases(true);
-	analyzer.set_can_wh(936, 780);
+//	analyzer.set_can_wh(625, 550);
+	analyzer.set_can_wh(935, 820);
 //	analyzer.set_sets({{"Sim_0p0s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}}, {"Sim_15p002s", {0,0}}, {"Sim_0p0s_Eff", {0,0}}, {"Sim_0p0s_No_Rotate_Eff", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_No_Rotate_Eff", {0,0}},{"Sim_0p0s_Eff_Hole3-4", {0,0}}, {"Sim_0p0s_No_Rotate_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_No_Rotate_Eff_Hole3-4", {0,0}}});
 //	analyzer.set_sets({{"Sim_Eff_Flow", {0,0}}, {"Sim_Eff_Flow_No_Rotate", {0,0}}, {"Sim_Flow", {0,0}}, {"Sim_Flow_No_Rotate", {0,0}}, {"Sim_Eff_Hole3-4_Flow", {0,0}}, {"Sim_Eff_Hole3-4_Flow_No_Rotate", {0,0}}, {"Sim_Flow_Reaction_Plane", {0,0}}});
 //	analyzer.set_sets({{"Sim_Flow_08res_05v2", {0,0}}, {"Sim_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_Flow_05res_05v2", {0,0}}, {"Sim_Flow_05res_05v2_No_Rotate", {0,0}}, {"Sim_Flow_05v2_Reaction_Plane", {0,0}}, {"Sim_Flow_05v2_Reaction_Plane_No_Rotate", {0,0}}});
@@ -98,23 +100,27 @@ void azimuth_bin_analyze() {
 //	analyzer.set_set_combos({{"Protons", {"Ampt_p-", "Ampt_p+", "Ampt_ptotal"}}, {"Pions", {"Ampt_pion-", "Ampt_pion+", "Ampt_pion0", "Ampt_piontotal", "Ampt_pionall"}}, {"Unobs", {"Ampt_p+", "Ampt_gamma", "Ampt_neutron", "Ampt_neutronbar", "Ampt_pi0"}}, {"Obs", {"Ampt_p-", "Ampt_p+", "Ampt_pion+", "Ampt_pion-"}}, {"Hadrons", {"Ampt_p-", "Ampt_hadrontotal", "Ampt_mesontotal", "Ampt_baryontotal", "Ampt_handronobs"}}});
 //	analyzer.set_set_combos({{"All_Combo", {"Ampt_hadrontotal", "Ampt_hadronobs", "Ampt_baryontotal", "Ampt_mesontotal", "Ampt_p+"}}});
 //	analyzer.set_sets({{"Ampt_ptotal", {0, 2}}});
-	analyzer.set_sets({{"eta05", {0, 4}}, {"Ampt_p+", {0, 4}}});
-	analyzer.set_set_combos({{"Bes1_Ampt", {"eta05", "Ampt_p+"}}});
+//	analyzer.set_sets({{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}, {"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {0, 4}}});
+//	analyzer.set_set_combos({{"Bes1_Ampt", {"eta05_n1ratios", "Ampt_p+_n1ratios"}}, {"BES1_p+_eff", {"eta05_n1ratios", "eta05_n1ratios_Efficiency1", "eta05_n1ratios_Efficiency3", "eta05_n1ratios_Efficiency5", "eta05_n1ratios_Efficiency8"}}, {"AMPT_p+_eff", {"Ampt_p+_n1ratios", "Ampt_p+_n1ratios_Efficiency1", "Ampt_p+_n1ratios_Efficiency3", "Ampt_p+_n1ratios_Efficiency5", "Ampt_p+_n1ratios_Efficiency8"}}});
+	analyzer.set_sets({{"eta05_n1ratios", {0, 4}}, {"Ampt_p+_n1ratios", {0, 4}}});
+	analyzer.set_set_combos({{"Bes1_Ampt", {"eta05_n1ratios", "Ampt_p+_n1ratios"}}});
 	analyzer.analyze();
 }
 
 
 void binomial_analyze() {
 	BinomialAnalyzer analyzer;
-	analyzer.set_in_path("/home/dylan/Research/Data_Old_Ref3/");
-	analyzer.set_in_mix_path("/home/dylan/Research/Data_Old_Ref3_Mix/");
+	analyzer.set_in_path("/home/dylan/Research/Data_Bes1_Ampt/");
+	analyzer.set_in_mix_path("/home/dylan/Research/Data_Bes1_Ampt_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("6-1-20_binom_BES1_high_order_moment.root");
+	analyzer.set_out_root_name("6-12-20_binom_BES1_AMPT_Debugged.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 	analyzer.set_centralities({8});
-	analyzer.set_can_wh(950, 828);
-//	analyzer.set_can_wh(936, 780);
-	analyzer.set_sets({{"eta05", {0, 4}}});
+	analyzer.set_can_wh(1920, 900);
+//	analyzer.set_can_wh(1700, 800);
+	analyzer.set_sets({{"eta05_n1ratios", {0, 4}}, {"Ampt_p+_n1ratios", {0, 4}}});
+	analyzer.set_set_combos({{"Bes1_Ampt", {"eta05_n1ratios", "Ampt_p+_n1ratios"}}});
+//	analyzer.set_sets({{"eta05", {0, 4}}});
 //	analyzer.set_sets({{"Ampt_mesontotal", {0, 0}}, {"Ampt_ptotal_Efficiency0", {0,0}}});
 //	analyzer.set_sets({{"Ampt_mesontotal_Efficiency8", {0, 0}}, {"Ampt_mesontotal_Efficiency5", {0, 0}}, {"Ampt_mesontotal_Efficiency3", {0, 0}}, {"Ampt_mesontotal_Efficiency1", {0, 0}}, {"Ampt_mesontotal", {0, 0}}, {"Ampt_ptotal_Efficiency8", {0,0}}, {"Ampt_ptotal_Efficiency5", {0,0}}, {"Ampt_ptotal_Efficiency3", {0,0}}, {"Ampt_ptotal_Efficiency1", {0,0}}, {"Ampt_ptotal_Efficiency0", {0,0}}});
 //	analyzer.set_sets({{"Ampt_baryontotal", {0, 0}}, {"Ampt_mesontotal", {0, 0}}, {"Ampt_hadrontotal", {0, 0}}, {"Ampt_hadronobs", {0, 0}}});
