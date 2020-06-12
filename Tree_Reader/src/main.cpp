@@ -52,7 +52,7 @@ void ref_mult_test();
 void ampt_cent_test();
 void ampt_cent_b_corr();
 
-void run_set(int energy, int set_num, string set_name);
+void run_set(int energy, int set_num, string set_name, int job_num, int jobs);
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -106,24 +106,33 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta1", {0,0}}, {"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
-	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {1, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios", {0, 0}}};
+	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_01p002s_Flat100_", {0,0}}, {"Sim_01p05s_Flat100_", {0,0}}, {"Sim_002p002s_Flat100_", {0,0}}, {"Sim_002p05s_Flat100_", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p05s_Flat1000", {0,2}}};
 
 	int set_sleep = 100;
 	int energy_sleep = 1;
 
+	int jobs = 0;
+	for(pair<string, pair<int, int>> set_pair:set_pairs) {
+		for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
+			jobs++;
+		}
+	}
+
 	ROOT::EnableThreadSafety();
 	{
+		int job_num = 0;
 		ThreadPool pool(thread::hardware_concurrency());
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
-				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
+				cout << endl << "Queueing " + set_dir <<  "  job " << ++job_num << " of " << jobs << endl << endl;
 				vector<int> energy_list {7, 11, 39, 27, 62, 19};
 				for(int energy:energy_list) {
-					pool.enqueue(run_set, energy, set_num, set_pair.first);
+					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs);
 					this_thread::sleep_for(chrono::seconds(energy_sleep));
 				}
 				this_thread::sleep_for(chrono::seconds(set_sleep));
@@ -133,15 +142,15 @@ void read_class() {
 }
 
 
-void run_set(int energy, int set_num, string set_name) {
+void run_set(int energy, int set_num, string set_name, int job_num, int jobs) {
 	string base_path = "/home/dylan/Research/";
 	string in_base_path = "/media/dylan/SSD_Storage/Research/";//base_path;
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "Trees_Ampt/";
-	string out_dir = out_base_path + "Data_Ampt/";
-	string mix_out_dir = out_base_path + "Data_Ampt_Mix/";
+	string in_path = in_base_path + "Trees/";
+	string out_dir = out_base_path + "Data/";
+	string mix_out_dir = out_base_path + "Data_Mix/";
 
 	vector<int> divs {2, 3, 4, 5, 6};
 //	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
@@ -292,6 +301,8 @@ void run_set(int energy, int set_num, string set_name) {
 	} else{
 		reader.read_trees();
 	}
+
+	cout << "Finished " << set_name << "#" << set_num << ", job " << job_num << " of " << jobs << endl << endl;
 }
 
 
