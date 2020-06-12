@@ -401,7 +401,6 @@ void TreeReader::read_trees() {
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
 	if(rand_data) {random.write_random_data(); }
-	cout << endl;
 }
 
 
@@ -463,7 +462,6 @@ void TreeReader::read_trees_chain() {
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
 	if(rand_data) {random.write_random_data(); }
-	cout << endl;
 }
 
 
@@ -512,7 +510,6 @@ void TreeReader::read_ampt_trees() {
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
 	if(rand_data) {random.write_random_data(); }
-	cout << endl;
 }
 
 
@@ -556,7 +553,6 @@ void TreeReader::read_nsm_ampt_trees() {
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
 	if(rand_data) {random.write_random_data(); }
-	cout << endl;
 }
 
 
@@ -607,7 +603,6 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 	if(mixed) { mix.write_mixed_data(); }
 	if(mixed_sets) { mix_sets.write_mixed_data(); }
 	if(rand_data) {random.write_random_data(); }
-	cout << endl;
 }
 
 
@@ -1143,6 +1138,8 @@ bool TreeReader::check_proton_good(Track& proton) {
 				good_proton = true;
 				post_m2_hist.Fill(m2);
 			}
+		} else {
+			good_proton = true;
 		}
 	} else {
 		good_proton = true;
