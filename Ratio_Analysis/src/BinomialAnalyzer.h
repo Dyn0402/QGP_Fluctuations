@@ -48,6 +48,7 @@ public:
 	void set_out_root_name(string name);
 	void set_energies(vector<int> energies);
 	void set_sets(map<string, vector<int>> sets);
+	void set_set_combos(map<string, vector<string>> combos);
 	void set_centralities(vector<int> centralities);
 	void set_can_wh(int can_width, int can_height);
 
@@ -64,6 +65,7 @@ private:
 	string out_root_name = "3-05-20_Binomial_Ref3_partial.root";
 
 	map<string, vector<int>> sets {{"Single_Ratio", {0,0}}};
+	map<string, vector<string>> set_combos;
 
 	vector<int> energy_list = {7,11,19,27,39,62};
 	vector<int> divs = {2,3,4,5,6};
@@ -81,7 +83,7 @@ private:
 
 	vector<int> div_marker_style = {8, 8, 34, 20, 21, 22, 33};
 	vector<int> div_marker_color = {28, 9, 6, 1, 2, 8, 4};
-	vector<double> div_marker_size = {1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2};
+	vector<double> div_marker_size = {1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3};
 
 	map<int, int> energy_marker_style = {{7,24}, {11,25}, {19,26}, {27,27}, {39,28}, {62,30}};
 	map<int, int> energy_marker_color = {{7,1}, {11,2}, {19,8}, {27,4}, {39,6}, {62,9}};
@@ -93,9 +95,9 @@ private:
 
 	map<int, double> energy_match = {{7,7.7}, {11,11.5}, {19,19.6}, {27,27.0}, {39,39.0}, {62,62.4}};
 
-	map<string, int> raw_mix_marker_style = {{"raw", 20}, {"mix", 20}};
-	map<string, int> raw_mix_marker_color = {{"raw", kBlue}, {"mix", kGreen+3}};
-	map<string, int> raw_mix_marker_size = {{"raw", 1.2}, {"mix", 1.2}};
+	map<string, int> marker_style = {{"raw", 20}, {"mix", 20}, {"raw/mix", 20}, {"eta05_n1ratios_raw", 20}, {"eta05_n1ratios_mix", 20}, {"eta05_n1ratios_raw/mix", 20}, {"Ampt_p+_n1ratios_raw", 20}, {"Ampt_p+_n1ratios_mix", 20}, {"Ampt_p+_n1ratios_raw/mix", 20}};
+	map<string, int> marker_color = {{"raw", kBlue}, {"mix", kGreen+3}, {"raw/mix", kRed+1}, {"eta05_n1ratios_raw", kBlue}, {"eta05_n1ratios_mix", kGreen+3}, {"eta05_n1ratios_raw/mix", 9}, {"Ampt_p+_n1ratios_raw", kRed+2}, {"Ampt_p+_n1ratios_mix", kViolet}, {"Ampt_p+_n1ratios_raw/mix", 28}};
+	map<string, int> marker_size = {{"raw", 1.3}, {"mix", 1.3}, {"raw/mix", 1.3}, {"eta05_n1ratios_raw", 1.3}, {"eta05_n1ratios_mix", 1.3}, {"eta05_n1ratios_raw/mix", 1.3}, {"Ampt_p+_n1ratios_raw", 1.3}, {"Ampt_p+_n1ratios_mix", 1.3}, {"Ampt_p+_n1ratios_raw/mix", 1.3}};
 
 	pair<int, int> plot_x_range = {0, 40};  // Max val is obselete
 	int min_events = 250;
@@ -112,14 +114,17 @@ private:
 
 	// Doers
 	void analyze_sets();
+	void combine_sets();
 	void combine_subsets(string set_name);
 	void plot_set_combo(string set_name, TDirectory *dir);
+	void plot_combo_sets(vector<string> set_names, TDirectory *dir);
 	map<int, map<int, map<int, AzimuthBinData>>> get_data(string path, int min_num_events = 1);  // [energy][div][cent]
 
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> get_slice_stats(map<int, map<int, map<int, AzimuthBinData>>> &data);
 	void calc_stat(map<int, int> &slice_data, int protons, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats);
 
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> divide_binomial(map<int, map<int, map<int, map<int, map<string, Measure>>>>> &slice_stats);
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> divide_mix(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats);
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> get_stat_ratios(map<int, map<int, map<int, map<int, map<string, Measure>>>>> &slice_stats);
 
 	// Plotters
@@ -132,6 +137,8 @@ private:
 	void plot_all_stat_ratios(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stat_ratios, TDirectory *dir);
 	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stat_ratios, TDirectory *dir);
 	void plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stat_ratios, TDirectory *dir);
+	void plot_mix_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir);
+	void plot_mix_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, TDirectory *dir);
 
 	void slice_dist_plot(map<int, int> &slice_data, int total_protons, int div, string name);
 	void slice_diff_dist_plot(map<double, int> &slice_data, int total_protons, int div, string name);

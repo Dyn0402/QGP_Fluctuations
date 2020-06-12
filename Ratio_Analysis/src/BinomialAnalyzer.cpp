@@ -68,6 +68,10 @@ void BinomialAnalyzer::set_sets(map<string, vector<int>> set_name) {
 	this->sets = set_name;
 }
 
+void BinomialAnalyzer::set_set_combos(map<string, vector<string>> combos) {
+	this->set_combos = combos;
+}
+
 void BinomialAnalyzer::set_centralities(vector<int> centralities) {
 	this->centralities = centralities;
 }
@@ -89,6 +93,43 @@ void BinomialAnalyzer::analyze_sets() {
 	for(pair<string, vector<int>> set:sets) {
 		analyze_set(set.first, set.second);
 	}
+	cout << "Combining Set Combos" << endl;
+	combine_sets();
+}
+
+
+void BinomialAnalyzer::combine_sets() {
+	TDirectory *combos_dir = out_root->mkdir("Combined_Sets");
+	for(auto &set:set_combos) {
+		TDirectory *combo_dir = combos_dir->mkdir(set.first.data());
+		plot_combo_sets(set.second, combo_dir);
+	}
+}
+
+
+void BinomialAnalyzer::plot_combo_sets(vector<string> set_names, TDirectory *dir) {
+//	plot_all_stats(sys_stats[set_name]["slice_stats"], dir);
+//	plot_all_stat_ratios(sys_stats[set_name]["slice_stat_ratios"], dir);
+	map<string, map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>>> slice_stat_combos;
+	for(auto &set_name:set_names) {
+		for(auto &slice_stat:sys_stats[set_name]) {
+			for(auto &data_type:slice_stat.second) {
+				for(auto &energy:data_type.second) {
+					for(auto &div:energy.second) {
+						for(auto &cent:div.second) {
+							for(auto &total_part:cent.second) {
+								for(auto &stat:total_part.second) {
+									slice_stat_combos[slice_stat.first][set_name+"_"+data_type.first][energy.first][div.first][cent.first][total_part.first][stat.first] = stat.second;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	plot_all_divided_stats(slice_stat_combos["slice_divided_stats"], slice_stat_combos["slice_divided_stat_ratios"], dir);
+	plot_mix_divided_stats(slice_stat_combos["slice_mix_divided_stats"], dir);
 }
 
 
@@ -136,6 +177,7 @@ void BinomialAnalyzer::plot_set_combo(string set_name, TDirectory *dir) {
 	plot_all_stats(sys_stats[set_name]["slice_stats"], dir);
 	plot_all_stat_ratios(sys_stats[set_name]["slice_stat_ratios"], dir);
 	plot_all_divided_stats(sys_stats[set_name]["slice_divided_stats"], sys_stats[set_name]["slice_divided_stat_ratios"], dir);
+	plot_mix_divided_stats(sys_stats[set_name]["slice_mix_divided_stats"], dir);
 }
 
 
@@ -164,8 +206,11 @@ void BinomialAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *
 	map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> slice_divided_stat_ratios {{"raw", divide_binomial(slice_stat_ratios["raw"])}, {"mix", divide_binomial(slice_stat_ratios["mix"])}};
 	plot_all_divided_stats(slice_divided_stats, slice_divided_stat_ratios, set_num_dir);
 
+	map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> slice_mix_divided_stats {{"raw/mix", divide_mix(slice_stats)}};
+	plot_mix_divided_stats(slice_mix_divided_stats, set_num_dir);
+
 	// maps are copied in line below, clean up for optimization
-	map<string, map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>>> slice_stats_combined = {{"slice_stats", slice_stats}, {"slice_stat_ratios", slice_stat_ratios}, {"slice_divided_stats", slice_divided_stats}, {"slice_divided_stat_ratios", slice_divided_stat_ratios}};
+	map<string, map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>>> slice_stats_combined = {{"slice_stats", slice_stats}, {"slice_stat_ratios", slice_stat_ratios}, {"slice_divided_stats", slice_divided_stats}, {"slice_divided_stat_ratios", slice_divided_stat_ratios}, {"slice_mix_divided_stats", slice_mix_divided_stats}};
 
 	for(auto &slice_stat:slice_stats_combined) {
 		for(auto &data_type:slice_stat.second) {
@@ -294,6 +339,31 @@ map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::d
 						} else { // Placeholder for higher orders
 							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second * 0.0;
 						}
+					}
+				}
+			}
+		}
+	}
+	return(result);
+}
+
+
+// Divide each statistic by the corresponding statistic for binomial distribution.
+map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::divide_mix(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats) {
+	map<int, map<int, map<int, map<int, map<string, Measure>>>>> result;
+	for(auto &energy:slice_stats["raw"]) {
+		for(auto &div:energy.second) {
+			for(auto &cent:div.second) {
+				for(auto &total_particle:cent.second) {
+					for(auto &stat:total_particle.second) {
+						result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / slice_stats["mix"][energy.first][div.first][cent.first][total_particle.first][stat.first];
+//						string raw = (string)stat.second;
+//						string mix = (string)slice_stats["mix"][energy.first][div.first][cent.first][total_particle.first][stat.first];
+//						string ratio = (string)result[energy.first][div.first][cent.first][total_particle.first][stat.first];
+//						cout << "raw: " << raw << endl;
+//						cout << "mix: " << mix << endl;
+//						cout << "ratio: " << ratio << endl;
+//						this_thread::sleep_for(chrono::seconds(1));
 					}
 				}
 			}
@@ -484,11 +554,43 @@ void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<
 			cent_dir->cd();
 			for(auto &stat:stats) {
 				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-//				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
 			}
 			for(auto &stat:stat_ratios) {
 				auto fits = slice_stats_divided_plot(slice_stat_ratios, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-//				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+			}
+		}
+	}
+}
+
+
+void BinomialAnalyzer::plot_mix_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
+	TDirectory* stats_divided_dir = dir->mkdir("Stats_Mix_Divided_vs_Total_Particles");
+	for(auto &div:divs) {
+		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
+		for(auto &cent:centralities) {
+			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
+			cent_dir->cd();
+			for(auto &stat:stats) {
+				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Mix_Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+			}
+		}
+	}
+}
+
+
+void BinomialAnalyzer::plot_mix_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, TDirectory *dir) {
+	TDirectory* stats_divided_dir = dir->mkdir("Stats_Mix_Divided_vs_Total_Particles");
+	for(auto &div:divs) {
+		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
+		for(auto &cent:centralities) {
+			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
+			cent_dir->cd();
+			for(auto &stat:stats) {
+				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -559,10 +661,10 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(raw_mix_marker_size[data_set.first]);
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
+			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -674,10 +776,10 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(raw_mix_marker_size[data_set.first]);
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
+			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -685,7 +787,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "[]");
 		}
 //		double y_range = y_max - y_min;
@@ -780,10 +882,10 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(raw_mix_marker_size[data_set.first]);
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
+			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -885,10 +987,10 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(raw_mix_marker_size[data_set.first]);
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
+			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -896,7 +998,7 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "[]");
 		}
 //		double y_range = y_max - y_min;
@@ -980,6 +1082,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 
 			for(auto &particle_data:data_set.second[energy][div][cent]) {
 				stat_meas = particle_data.second[stat_name];
+//				if(in_string(data_set.first, "raw/mix") && stat_name == "standard_deviation") { cout << (string)stat_meas << endl; }
 				if(stat_meas.get_err() == 0 || isnan(stat_meas.get_err())) { continue; }
 				particle_val.push_back(particle_data.first);
 				particle_err.push_back(0.0);
@@ -988,16 +1091,17 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 //				if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
 //				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
+//			if(in_string(data_set.first, "raw/mix") && stat_name == "standard_deviation") { for(auto &val:particle_val) { cout << val << endl; } }
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(raw_mix_marker_size[data_set.first]);
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
+			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 
-			linear_fits[data_set.first][energy] = new TF1((data_set.first+to_string(energy)+stat_name).data(), "pol1");
-			linear_fits[data_set.first][energy]->SetLineColor(raw_mix_marker_color[data_set.first]-3);
-//			graphs.back()->Fit(linear_fits[data_set.first][energy], "Q");
+			linear_fits[data_set.first][energy] = new TF1((data_set.first+to_string(energy)+stat_name).data(), "[0]*(x-1)+1");
+			linear_fits[data_set.first][energy]->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->Fit(linear_fits[data_set.first][energy], "Q");
 
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
@@ -1122,14 +1226,14 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(raw_mix_marker_size[data_set.first]);
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
+			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 
-			linear_fits[data_set.first][energy] = new TF1((data_set.first+to_string(energy)+stat_name).data(), "pol1");
-			linear_fits[data_set.first][energy]->SetLineColor(raw_mix_marker_color[data_set.first]-3);
-//			graphs.back()->Fit(linear_fits[data_set.first][energy], "Q");
+			linear_fits[data_set.first][energy] = new TF1((data_set.first+to_string(energy)+stat_name).data(), "[0]*(x-1)+1");
+			linear_fits[data_set.first][energy]->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->Fit(linear_fits[data_set.first][energy], "Q");
 
 			mgs.back()->Add(graphs.back(), "APZ");
 
@@ -1140,7 +1244,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			}
 
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
-			graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+			graphs.back()->SetLineColor(marker_color[data_set.first]);
 			mgs.back()->Add(graphs.back(), "[]");
 		}
 //		double y_range = y_max - y_min;
@@ -1197,69 +1301,48 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 
 
 void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int div, string name) {
-	TCanvas can(name.data(), name.data(), canvas_width, canvas_height);
+	TCanvas can(name.data(), name.data(), canvas_width/2, canvas_height);
 //	gStyle->SetTitleFontSize(0.09);
 //	gStyle->SetTitleOffset(1.2);
-	pair<int, int> can_div = get_canvas_div(2);
-	can.Divide(can_div.first, can_div.second);
 
-	auto int_mg = new TMultiGraph();
 	auto slope_mg = new TMultiGraph();
-	int_mg->SetNameTitle("Intercept", "Intercept");
 	slope_mg->SetNameTitle("Slope", "Slope");
-	double y_max_int = numeric_limits<double>::min();
-	double y_min_int = numeric_limits<double>::max();
 	double y_max_slope = numeric_limits<double>::min();
 	double y_min_slope = numeric_limits<double>::max();
 
-	auto int_leg = new TLegend();
+	auto slope_leg = new TLegend();
+	slope_leg->SetBorderSize(legend_border_width);
+	slope_leg->SetFillStyle(0);
+	slope_leg->SetMargin(0.1);
+
 	auto zero_line = new TLine(0, 0, 80, 0);
 	zero_line->SetLineColor(kBlack);
-	auto one_line = new TLine(0, 1, 80, 1);
-	one_line->SetLineColor(kBlack);
 
 	vector<TGraphErrors*> graphs;
 
+	int set_num = 0;
 	for(auto &data_set:fits) {
-		vector<double> int_vals, slope_vals, energy_val, int_err, slope_err, energy_err;
+		vector<double> slope_vals, energy_val, slope_err, energy_err;
 
 		for(auto &energy:data_set.second) {
-			int_vals.push_back(energy.second->GetParameter(0));
-			slope_vals.push_back(energy.second->GetParameter(1));
-			energy_val.push_back(energy_match[energy.first]);
-			int_err.push_back(energy.second->GetParError(0));
-			slope_err.push_back(energy.second->GetParError(1));
+			slope_vals.push_back(energy.second->GetParameter(0));
+			energy_val.push_back(energy_match[energy.first] + 0.7*set_num);
+			slope_err.push_back(energy.second->GetParError(0));
 			energy_err.push_back(0.0);
-			if(int_vals.back() + int_err.back() > y_max_int) { y_max_int = int_vals.back() + int_err.back(); }
-			if(int_vals.back() - int_err.back() < y_min_int) { y_min_int = int_vals.back() - int_err.back(); }
 			if(slope_vals.back() + slope_err.back() > y_max_slope) { y_max_slope = slope_vals.back() + slope_err.back(); }
 			if(slope_vals.back() - slope_err.back() < y_min_slope) { y_min_slope = slope_vals.back() - slope_err.back(); }
 		}
-		graphs.push_back(new TGraphErrors((int)energy_val.size(), energy_val.data(), int_vals.data(), energy_err.data(), int_err.data()));
-		graphs.back()->SetNameTitle((data_set.first + " intercept").data());
-		graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-		graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-		graphs.back()->SetMarkerSize(1.5);
-		graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
-		int_mg->Add(graphs.back(), "APZ");
-		int_leg->AddEntry(graphs.back(), data_set.first.data(), "p");
 
 		graphs.push_back(new TGraphErrors((int)energy_val.size(), energy_val.data(), slope_vals.data(), energy_err.data(), slope_err.data()));
 		graphs.back()->SetNameTitle((data_set.first + " slope").data());
-		graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-		graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
+		graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
+		graphs.back()->SetMarkerColor(marker_color[data_set.first]);
+		graphs.back()->SetLineColor(marker_color[data_set.first]);
 		graphs.back()->SetMarkerSize(1.5);
-		graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
 		slope_mg->Add(graphs.back(), "APZ");
+		slope_leg->AddEntry(graphs.back(), data_set.first.data(), "p");
+		set_num++;
 	}
-	double y_range_int = y_max_int - y_min_int;
-	int_mg->GetXaxis()->SetLimits(0, 80);
-	int_mg->GetXaxis()->SetRangeUser(0, 80);
-//	int_mg->GetXaxis()->SetLabelSize(0.06);
-	int_mg->GetYaxis()->SetLimits(y_min_int - 0.1 * y_range_int, y_max_int + 0.1 * y_range_int);
-	int_mg->GetYaxis()->SetRangeUser(y_min_int - 0.1 * y_range_int, y_max_int + 0.1 * y_range_int);
-//	int_mg->GetYaxis()->SetLabelSize(0.06);
-	int_mg->GetXaxis()->SetTitle("Energy (GeV)");
 
 	double y_range_slope = y_max_slope - y_min_slope;
 	slope_mg->GetXaxis()->SetLimits(0, 80);
@@ -1270,26 +1353,113 @@ void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int
 //	slope_mg->GetYaxis()->SetLabelSize(0.06);
 	slope_mg->GetXaxis()->SetTitle("Energy (GeV)");
 
-	can.cd(1);
-	int_mg->Draw("AP");
-	one_line->Draw("same");
-//	int_leg->SetMargin(0.1);
-	int_leg->Draw();
-
-	can.cd(2);
 	slope_mg->Draw("AP");
 	zero_line->Draw("same");
+	slope_leg->Draw();
 
 	can.Update();
 	can.Write(name.data());
 
 	for(auto graph:graphs) { delete graph; }
-	delete int_leg;
 	delete zero_line;
-	delete one_line;
 	delete slope_mg;
-	delete int_mg;
 }
+
+
+//void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int div, string name) {
+//	TCanvas can(name.data(), name.data(), canvas_width, canvas_height);
+////	gStyle->SetTitleFontSize(0.09);
+////	gStyle->SetTitleOffset(1.2);
+//	pair<int, int> can_div = get_canvas_div(2);
+//	can.Divide(can_div.first, can_div.second);
+//
+//	auto int_mg = new TMultiGraph();
+//	auto slope_mg = new TMultiGraph();
+//	int_mg->SetNameTitle("Intercept", "Intercept");
+//	slope_mg->SetNameTitle("Slope", "Slope");
+//	double y_max_int = numeric_limits<double>::min();
+//	double y_min_int = numeric_limits<double>::max();
+//	double y_max_slope = numeric_limits<double>::min();
+//	double y_min_slope = numeric_limits<double>::max();
+//
+//	auto int_leg = new TLegend();
+//	auto zero_line = new TLine(0, 0, 80, 0);
+//	zero_line->SetLineColor(kBlack);
+//	auto one_line = new TLine(0, 1, 80, 1);
+//	one_line->SetLineColor(kBlack);
+//
+//	vector<TGraphErrors*> graphs;
+//
+//	for(auto &data_set:fits) {
+//		vector<double> int_vals, slope_vals, energy_val, int_err, slope_err, energy_err;
+//
+//		for(auto &energy:data_set.second) {
+//			int_vals.push_back(energy.second->GetParameter(0));
+//			slope_vals.push_back(energy.second->GetParameter(1));
+//			energy_val.push_back(energy_match[energy.first]);
+//			int_err.push_back(energy.second->GetParError(0));
+//			slope_err.push_back(energy.second->GetParError(1));
+//			energy_err.push_back(0.0);
+//			if(int_vals.back() + int_err.back() > y_max_int) { y_max_int = int_vals.back() + int_err.back(); }
+//			if(int_vals.back() - int_err.back() < y_min_int) { y_min_int = int_vals.back() - int_err.back(); }
+//			if(slope_vals.back() + slope_err.back() > y_max_slope) { y_max_slope = slope_vals.back() + slope_err.back(); }
+//			if(slope_vals.back() - slope_err.back() < y_min_slope) { y_min_slope = slope_vals.back() - slope_err.back(); }
+//		}
+//		graphs.push_back(new TGraphErrors((int)energy_val.size(), energy_val.data(), int_vals.data(), energy_err.data(), int_err.data()));
+//		graphs.back()->SetNameTitle((data_set.first + " intercept").data());
+//		graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
+//		graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
+//		graphs.back()->SetMarkerSize(1.5);
+//		graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+//		int_mg->Add(graphs.back(), "APZ");
+//		int_leg->AddEntry(graphs.back(), data_set.first.data(), "p");
+//
+//		graphs.push_back(new TGraphErrors((int)energy_val.size(), energy_val.data(), slope_vals.data(), energy_err.data(), slope_err.data()));
+//		graphs.back()->SetNameTitle((data_set.first + " slope").data());
+//		graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
+//		graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
+//		graphs.back()->SetMarkerSize(1.5);
+//		graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
+//		slope_mg->Add(graphs.back(), "APZ");
+//	}
+//	double y_range_int = y_max_int - y_min_int;
+//	int_mg->GetXaxis()->SetLimits(0, 80);
+//	int_mg->GetXaxis()->SetRangeUser(0, 80);
+////	int_mg->GetXaxis()->SetLabelSize(0.06);
+//	int_mg->GetYaxis()->SetLimits(y_min_int - 0.1 * y_range_int, y_max_int + 0.1 * y_range_int);
+//	int_mg->GetYaxis()->SetRangeUser(y_min_int - 0.1 * y_range_int, y_max_int + 0.1 * y_range_int);
+////	int_mg->GetYaxis()->SetLabelSize(0.06);
+//	int_mg->GetXaxis()->SetTitle("Energy (GeV)");
+//
+//	double y_range_slope = y_max_slope - y_min_slope;
+//	slope_mg->GetXaxis()->SetLimits(0, 80);
+//	slope_mg->GetXaxis()->SetRangeUser(0, 80);
+////	slope_mg->GetXaxis()->SetLabelSize(0.06);
+//	slope_mg->GetYaxis()->SetLimits(y_min_slope - 0.1 * y_range_slope, y_max_slope + 0.1 * y_range_slope);
+//	slope_mg->GetYaxis()->SetRangeUser(y_min_slope - 0.1 * y_range_slope, y_max_slope + 0.1 * y_range_slope);
+////	slope_mg->GetYaxis()->SetLabelSize(0.06);
+//	slope_mg->GetXaxis()->SetTitle("Energy (GeV)");
+//
+//	can.cd(1);
+//	int_mg->Draw("AP");
+//	one_line->Draw("same");
+////	int_leg->SetMargin(0.1);
+//	int_leg->Draw();
+//
+//	can.cd(2);
+//	slope_mg->Draw("AP");
+//	zero_line->Draw("same");
+//
+//	can.Update();
+//	can.Write(name.data());
+//
+//	for(auto graph:graphs) { delete graph; }
+//	delete int_leg;
+//	delete zero_line;
+//	delete one_line;
+//	delete slope_mg;
+//	delete int_mg;
+//}
 
 
 void BinomialAnalyzer::slice_dist_plot(map<int, int> &slice_data, int total_particles, int div, string name) {
