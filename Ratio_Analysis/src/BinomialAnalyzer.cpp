@@ -661,10 +661,10 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
+			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
+			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
+			graphs.back()->SetLineColor(get_marker_color(data_set.first));
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -776,10 +776,10 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
+			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
+			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
+			graphs.back()->SetLineColor(get_marker_color(data_set.first));
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -787,7 +787,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetLineColor(get_marker_color(data_set.first));
 			mgs.back()->Add(graphs.back(), "[]");
 		}
 //		double y_range = y_max - y_min;
@@ -882,10 +882,10 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
+			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
+			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
+			graphs.back()->SetLineColor(get_marker_color(data_set.first));
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -987,10 +987,10 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
+			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
+			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
+			graphs.back()->SetLineColor(get_marker_color(data_set.first));
 			mgs.back()->Add(graphs.back(), "APZ");
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
@@ -998,7 +998,7 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetLineColor(get_marker_color(data_set.first));
 			mgs.back()->Add(graphs.back(), "[]");
 		}
 //		double y_range = y_max - y_min;
@@ -1076,6 +1076,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
 		lines.push_back(new TLine(plot_x_range.first, 1, x_max + 2, 1));
 		lines.back()->SetLineColor(kBlack);
+		int set_num = 0;
 		for(auto &data_set:slice_divided_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err;
 			Measure stat_meas;
@@ -1094,13 +1095,13 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 //			if(in_string(data_set.first, "raw/mix") && stat_name == "standard_deviation") { for(auto &val:particle_val) { cout << val << endl; } }
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first, set_num));
+			graphs.back()->SetMarkerColor(get_marker_color(data_set.first, set_num));
+			graphs.back()->SetMarkerSize(get_marker_size(data_set.first, set_num));
+			graphs.back()->SetLineColor(get_marker_color(data_set.first, set_num));
 
 			linear_fits[data_set.first][energy] = new TF1((data_set.first+to_string(energy)+stat_name).data(), "[0]*(x-1)+1");
-			linear_fits[data_set.first][energy]->SetLineColor(marker_color[data_set.first]);
+			linear_fits[data_set.first][energy]->SetLineColor(get_marker_color(data_set.first, set_num));
 			graphs.back()->Fit(linear_fits[data_set.first][energy], "Q");
 
 			mgs.back()->Add(graphs.back(), "APZ");
@@ -1109,6 +1110,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 				legends.back()->SetFillStyle(0);
 				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
 			}
+			set_num++;
 		}
 //		double y_range = y_max - y_min;
 		int x_pos = (can_index - 1) % can_div.first;
@@ -1209,6 +1211,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
 		lines.push_back(new TLine(plot_x_range.first, 1, x_max + 2, 1));
 		lines.back()->SetLineColor(kBlack);
+		int set_num = 0;
 		for(auto &data_set:slice_divided_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err, stat_sys;
 			Measure stat_meas;
@@ -1226,13 +1229,13 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
 			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
-			graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
-			graphs.back()->SetMarkerColor(marker_color[data_set.first]);
-			graphs.back()->SetMarkerSize(marker_size[data_set.first]);
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first, set_num));
+			graphs.back()->SetMarkerColor(get_marker_color(data_set.first, set_num));
+			graphs.back()->SetMarkerSize(get_marker_size(data_set.first, set_num));
+			graphs.back()->SetLineColor(get_marker_color(data_set.first, set_num));
 
 			linear_fits[data_set.first][energy] = new TF1((data_set.first+to_string(energy)+stat_name).data(), "[0]*(x-1)+1");
-			linear_fits[data_set.first][energy]->SetLineColor(marker_color[data_set.first]);
+			linear_fits[data_set.first][energy]->SetLineColor(get_marker_color(data_set.first, set_num));
 			graphs.back()->Fit(linear_fits[data_set.first][energy], "Q");
 
 			mgs.back()->Add(graphs.back(), "APZ");
@@ -1244,8 +1247,9 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			}
 
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
-			graphs.back()->SetLineColor(marker_color[data_set.first]);
+			graphs.back()->SetLineColor(get_marker_color(data_set.first, set_num));
 			mgs.back()->Add(graphs.back(), "[]");
+			set_num++;
 		}
 //		double y_range = y_max - y_min;
 		int x_pos = (can_index - 1) % can_div.first;
@@ -1326,7 +1330,7 @@ void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int
 
 		for(auto &energy:data_set.second) {
 			slope_vals.push_back(energy.second->GetParameter(0));
-			energy_val.push_back(energy_match[energy.first] + 0.7*set_num);
+			energy_val.push_back(energy_match[energy.first] + 0.15*set_num);
 			slope_err.push_back(energy.second->GetParError(0));
 			energy_err.push_back(0.0);
 			if(slope_vals.back() + slope_err.back() > y_max_slope) { y_max_slope = slope_vals.back() + slope_err.back(); }
@@ -1335,9 +1339,9 @@ void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int
 
 		graphs.push_back(new TGraphErrors((int)energy_val.size(), energy_val.data(), slope_vals.data(), energy_err.data(), slope_err.data()));
 		graphs.back()->SetNameTitle((data_set.first + " slope").data());
-		graphs.back()->SetMarkerStyle(marker_style[data_set.first]);
-		graphs.back()->SetMarkerColor(marker_color[data_set.first]);
-		graphs.back()->SetLineColor(marker_color[data_set.first]);
+		graphs.back()->SetMarkerStyle(get_marker_style(data_set.first, set_num));
+		graphs.back()->SetMarkerColor(get_marker_color(data_set.first, set_num));
+		graphs.back()->SetLineColor(get_marker_color(data_set.first, set_num));
 		graphs.back()->SetMarkerSize(1.5);
 		slope_mg->Add(graphs.back(), "APZ");
 		slope_leg->AddEntry(graphs.back(), data_set.first.data(), "p");
@@ -1518,4 +1522,29 @@ pair<int, int> BinomialAnalyzer::get_canvas_div(int plots) {
 	divs.second = ceil((float)plots / divs.first);
 
 	return(divs);
+}
+
+
+int BinomialAnalyzer::get_marker_style(string key, int alt_key) {
+	if(marker_style.find(key) != marker_style.end()) {
+		return marker_style[key];
+	} else {
+		return marker_style_def[alt_key];
+	}
+}
+
+int BinomialAnalyzer::get_marker_color(string key, int alt_key) {
+	if(marker_style.find(key) != marker_style.end()) {
+		return marker_color[key];
+	} else {
+		return marker_color_def[alt_key];
+	}
+}
+
+double BinomialAnalyzer::get_marker_size(string key, int alt_key) {
+	if(marker_style.find(key) != marker_style.end()) {
+		return marker_size[key];
+	} else {
+		return marker_size_def[alt_key];
+	}
 }

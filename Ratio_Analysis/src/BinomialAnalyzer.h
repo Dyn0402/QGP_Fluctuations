@@ -97,7 +97,11 @@ private:
 
 	map<string, int> marker_style = {{"raw", 20}, {"mix", 20}, {"raw/mix", 20}, {"eta05_n1ratios_raw", 20}, {"eta05_n1ratios_mix", 20}, {"eta05_n1ratios_raw/mix", 20}, {"Ampt_p+_n1ratios_raw", 20}, {"Ampt_p+_n1ratios_mix", 20}, {"Ampt_p+_n1ratios_raw/mix", 20}};
 	map<string, int> marker_color = {{"raw", kBlue}, {"mix", kGreen+3}, {"raw/mix", kRed+1}, {"eta05_n1ratios_raw", kBlue}, {"eta05_n1ratios_mix", kGreen+3}, {"eta05_n1ratios_raw/mix", 9}, {"Ampt_p+_n1ratios_raw", kRed+2}, {"Ampt_p+_n1ratios_mix", kViolet}, {"Ampt_p+_n1ratios_raw/mix", 28}};
-	map<string, int> marker_size = {{"raw", 1.3}, {"mix", 1.3}, {"raw/mix", 1.3}, {"eta05_n1ratios_raw", 1.3}, {"eta05_n1ratios_mix", 1.3}, {"eta05_n1ratios_raw/mix", 1.3}, {"Ampt_p+_n1ratios_raw", 1.3}, {"Ampt_p+_n1ratios_mix", 1.3}, {"Ampt_p+_n1ratios_raw/mix", 1.3}};
+	map<string, double> marker_size = {{"raw", 1.3}, {"mix", 1.3}, {"raw/mix", 1.3}, {"eta05_n1ratios_raw", 1.3}, {"eta05_n1ratios_mix", 1.3}, {"eta05_n1ratios_raw/mix", 1.3}, {"Ampt_p+_n1ratios_raw", 1.3}, {"Ampt_p+_n1ratios_mix", 1.3}, {"Ampt_p+_n1ratios_raw/mix", 1.3}};
+
+	vector<int> marker_style_def = {20, 20, 20, 20, 20, 20, 20, 20};
+	vector<double> marker_size_def = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+	vector<int> marker_color_def {6, 1, 2, kGreen+2, 4, kViolet}; //9,22
 
 	pair<int, int> plot_x_range = {0, 40};  // Max val is obselete
 	int min_events = 250;
@@ -150,6 +154,11 @@ private:
 	map<string, map<int, TF1*>> slice_stats_divided_plot(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, string stat_name, vector<int> &energies, int cent, int div, string name);
 	void plot_fit(map<string, map<int, TF1*>> &fits, int cent, int div, string name);
 	pair<int, int> get_canvas_div(int plots);
+
+	// Helpers
+	int get_marker_style(string key, int alt_key=3);
+	double get_marker_size(string key, int alt_key=3);
+	int get_marker_color(string key, int alt_key=3);
 };
 
 

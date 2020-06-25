@@ -107,8 +107,9 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {1, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios", {0, 0}}};
-	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
+	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_01p002s_Flat100_", {0,0}}, {"Sim_01p05s_Flat100_", {0,0}}, {"Sim_002p002s_Flat100_", {0,0}}, {"Sim_002p05s_Flat100_", {0,0}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_05p05s_Flat1000", {0,2}}};
 
@@ -302,7 +303,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs) {
 		reader.read_trees();
 	}
 
-	cout << "Finished " << set_name << "#" << set_num << ", job " << job_num << " of " << jobs << endl << endl;
+	cout << "Finished " << set_name << " set " << set_num << " " << energy <<  "GeV, job " << job_num << " of " << jobs << endl << endl;
 }
 
 
