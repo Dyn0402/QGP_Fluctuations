@@ -671,7 +671,7 @@ void TreeReader::process_event(Event& event) {
 
 		// Iterate over particles in event and add corresponding phi to good_particle_angles if particle good.
 		for(Track& particle:event.get_particles()) {
-			if(check_proton_good(particle)) {
+			if(check_particle_good(particle)) {
 				if(efficiency) {  // Skip good particle with chance efficiency_prob
 					if(trand->Rndm() < efficiency_prob) { continue; }
 				}
@@ -923,7 +923,7 @@ bool TreeReader::check_event(Event& event) {
 	event_cut_hist.Fill("Original", 1);
 	if(check_good_run((int)event.get_run())) {
 		event_cut_hist.Fill("Good Run", 1);
-		if(check_enough_protons(event)) {
+		if(check_enough_particles(event)) {
 			event_cut_hist.Fill("Enough Protons", 1);
 			if(check_slope(event.get_btof(), event.get_ref())) {
 				event_cut_hist.Fill("Pile Up Rejected", 1);
@@ -949,7 +949,7 @@ bool TreeReader::check_good_run(int run) {
 
 //Checks if there are enough protons in the event.
 //If more protons than minimum, return true, else false.
-bool TreeReader::check_enough_protons(Event& event) {
+bool TreeReader::check_enough_particles(Event& event) {
 	if(event.get_num_particles() >=  cut.min_multi) { return(true);	}
 	else { return(false); }
 }
@@ -969,7 +969,7 @@ bool TreeReader::check_slope(int btof, int ref_mult) {
 
 
 // Returns true if proton is good and false if proton is bad.
-bool TreeReader::check_proton_good(Track& proton) {
+bool TreeReader::check_particle_good(Track& proton) {
 	bool good_proton = false;
 	track_cut_hist.Fill("Original", 1);
 

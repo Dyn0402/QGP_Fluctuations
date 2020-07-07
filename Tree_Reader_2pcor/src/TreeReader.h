@@ -208,10 +208,10 @@ private:
 	TH1D* get_sim_efficiency_dist();
 
 	bool check_event(Event& event);
-	bool check_enough_protons(Event& event);
+	bool check_enough_particles(Event& event);
 	bool check_good_run(int run);
 	bool check_slope(int btof, int ref_mult);
-	bool check_proton_good(Track& proton);
+	bool check_particle_good(Track& proton);
 
 	void define_qa();
 	void add_cut_hists(TFile* file);
