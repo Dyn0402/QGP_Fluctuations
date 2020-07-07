@@ -634,11 +634,15 @@ void TreeReader::read_tree(TTree* tree) {
 void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus("*", 0);
 	tree->SetBranchStatus("run", 1);
+	tree->SetBranchStatus("event_id", 1);
 	tree->SetBranchStatus("Nprim", 1);
 	tree->SetBranchStatus(("ref"+to_string(ref_num)).data(), 1);
 	tree->SetBranchStatus("btof", 1);
 	tree->SetBranchStatus("vtx_z", 1);
-	tree->SetBranchStatus(("event_plane_ref"+to_string(ref_num)).data(), 1);
+	tree->SetBranchStatus("qx", 1);
+	tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus("dca_xy_avg", 1);
+	tree->SetBranchStatus("dca_xy_sd", 1);
 	tree->SetBranchStatus((particle+"*").data(), 1);
 }
 
@@ -781,15 +785,15 @@ void TreeReader::process_event(Event& event) {
 
 	// Check if each event is good. Analyze if so, continue if not.
 	if(check_event(event)) {
-		vector<double> good_proton_angles = {};
+		vector<double> good_particle_angles = {};
 
 		// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
-		for(Track& proton:event.get_particles()) {
-			if(check_proton_good(proton)) {
-				if(efficiency) {  // Skip good proton with chance efficiency_prob
+		for(Track& particle:event.get_particles()) {
+			if(check_particle_good(particle)) {
+				if(efficiency) {  // Skip good particle with chance efficiency_prob
 					if(trand->Rndm() < efficiency_prob) { continue; }
 				}
-				good_proton_angles.push_back(proton.get_phi());
+				good_particle_angles.push_back(particle.get_phi());
 			}
 		}
 
@@ -799,8 +803,8 @@ void TreeReader::process_event(Event& event) {
 		int cent16_corr = refmultCorrUtil->getCentralityBin16();
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
-		// If there are enough good protons, calculate ratios for each division and save to data.
-		if(good_proton_angles.size() >= (unsigned)cut.min_multi) {
+		// If there are enough good particles, calculate ratios for each division and save to data.
+		if(good_particle_angles.size() >= (unsigned)cut.min_multi) {
 			cent16_events.Fill(cent16_corr);
 			cent9_events.Fill(cent9_corr);
 			event_cut_hist.Fill("Enough Good Protons", 1);
@@ -811,46 +815,54 @@ void TreeReader::process_event(Event& event) {
 			} else {
 				cent = cent9_corr;
 			}
-			post_n_particles[cent].Fill((int)good_proton_angles.size());
+			post_n_particles[cent].Fill((int)good_particle_angles.size());
+
+			TVector2 q(event.get_qx(), event.get_qy());
+			for(double &angle:good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
+				TVector2 q_new(cos(2*angle), sin(2*angle));
+				q -= q_new;
+			}
+			double event_plane = 0.5 * q.Phi();
 
 			// If mixed/rand flagged append event to mix/rand object.
-			if(mixed) { mix.append_event(good_proton_angles, cent, event.get_event_plane(), event.get_vz()); }
-			if(mixed_sets) { mix_sets.append_event(good_proton_angles, event.get_refn()); }
-			if(rand_data) { random.append_event((int)good_proton_angles.size(), event.get_refn(), trand); }
+			if(mixed) { mix.append_event(good_particle_angles, cent, event_plane, event.get_vz()); }
+			if(mixed_sets) { mix_sets.append_event(good_particle_angles, event.get_refn()); }
+			if(rand_data) { random.append_event((int)good_particle_angles.size(), event.get_refn(), trand); }
 
 
 			if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
-				good_proton_angles = rotate_angles(good_proton_angles, -event.get_event_plane());
+				good_particle_angles = rotate_angles(good_particle_angles, -event_plane);
 			} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 				double rand_angle = trand->Rndm() * 2 * M_PI;
-				good_proton_angles = rotate_angles(good_proton_angles, rand_angle);
-				event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));
+				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
+//				q.Rotate(rand_angle);  // Untested
+//				event.set_event_plane(rotate_angle(event_plane, rand_angle));  // Need to rotate event plane if it's used after this point. Currently is not.
 			}
 
 
 			for(int div:divs) {
-				vector<int> event_ratios = get_Rs(good_proton_angles, div);  // Convert proton angles in event to ratio values.
+				vector<int> event_ratios = get_Rs(good_particle_angles, div);  // Convert particle angles in event to ratio values.
 
 				// Save ratio values to data
 				if(single_ratio) { // Only save a single ratio per event at random.
 					if(cbwc) {
-						data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
+						data[div][event.get_refn()][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
 					} else {
-						data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
+						data[div][cent][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
 					}
 				} else { // Save all ratios from event.
 					for(int protons_in_bin:event_ratios) {
 						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-							data[div][event.get_refn()][good_proton_angles.size()][protons_in_bin]++;
+							data[div][event.get_refn()][good_particle_angles.size()][protons_in_bin]++;
 						} else {
-							data[div][cent][good_proton_angles.size()][protons_in_bin]++;
+							data[div][cent][good_particle_angles.size()][protons_in_bin]++;
 						}
 					}
 					if(n1_ratios) {
 						if(cbwc) {
-							data[div][event.get_refn()][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
+							data[div][event.get_refn()][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
 						} else {
-							data[div][cent][good_proton_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
+							data[div][cent][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
 						}
 					}
 				}
@@ -1054,7 +1066,7 @@ bool TreeReader::check_event(Event& event) {
 	event_cut_hist.Fill("Original", 1);
 	if(check_good_run((int)event.get_run())) {
 		event_cut_hist.Fill("Good Run", 1);
-		if(check_enough_protons(event)) {
+		if(check_enough_particles(event)) {
 			event_cut_hist.Fill("Enough Protons", 1);
 			if(check_slope(event.get_btof(), event.get_ref())) {
 				event_cut_hist.Fill("Pile Up Rejected", 1);
@@ -1080,7 +1092,7 @@ bool TreeReader::check_good_run(int run) {
 
 //Checks if there are enough protons in the event.
 //If more protons than minimum, return true, else false.
-bool TreeReader::check_enough_protons(Event& event) {
+bool TreeReader::check_enough_particles(Event& event) {
 	if(event.get_num_particles() >=  cut.min_multi) { return(true);	}
 	else { return(false); }
 }
@@ -1100,7 +1112,7 @@ bool TreeReader::check_slope(int btof, int ref_mult) {
 
 
 // Returns true if proton is good and false if proton is bad.
-bool TreeReader::check_proton_good(Track& proton) {
+bool TreeReader::check_particle_good(Track& proton) {
 	bool good_proton = false;
 	track_cut_hist.Fill("Original", 1);
 

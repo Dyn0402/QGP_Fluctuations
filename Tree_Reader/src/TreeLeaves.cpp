@@ -13,13 +13,17 @@
 tree_leaves get_tree_leaves(TTree* tree, string particle, int ref) {
 	tree_leaves leaves;
 	leaves.run = tree->GetLeaf("run");
+	leaves.event_id = tree->GetLeaf("event_id");
+	leaves.dca_xy_avg = tree->GetLeaf("dca_xy_avg");
+	leaves.dca_xy_sd = tree->GetLeaf("dca_xy_sd");
 	leaves.ref_mult = tree->GetLeaf("Nprim");
 	leaves.ref_multn = tree->GetLeaf(("ref"+to_string(ref)).data());
 	leaves.btof = tree->GetLeaf("btof");
 	leaves.vx = tree->GetLeaf("vtx_x");
 	leaves.vy = tree->GetLeaf("vtx_y");
 	leaves.vz = tree->GetLeaf("vtx_z");
-	leaves.event_plane = tree->GetLeaf(("event_plane_ref"+to_string(ref)).data());
+	leaves.qx = tree->GetLeaf("qx");
+	leaves.qy = tree->GetLeaf("qy");
 
 	leaves.pt = tree->GetLeaf((particle+".pt").data());
 	leaves.phi = tree->GetLeaf((particle+".phi").data());

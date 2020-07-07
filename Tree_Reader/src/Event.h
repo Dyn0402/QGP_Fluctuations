@@ -28,7 +28,12 @@ struct event_defaults {
 	double vx = 0.;
 	double vy = 0.;
 	double vz = 0.;
-	double event_plane = 0.;
+	double qx = 0.;
+	double qy = 0.;
+	double dca_xy_avg = 0.;
+	double dca_xy_sd = 0.;
+
+	unsigned event_id = 0;
 
 	// Values for centrality bin 0-5% in 9 bins
 	map<int, unsigned> run {{7, 11130000}, {11, 11152039}, {19, 12114300}, {27, 12175000}, {39, 11100000}, {62, 11079000}};  //Guessed number in range and check it wasn't bad run.
@@ -58,7 +63,7 @@ public:
 	Event();
 	Event(event_defaults& defaults, int energy, int ref_num, int cent);
 	Event(tree_leaves leaves);
-	Event(tree_branches branches);
+	Event(tree_branches branches);  // Not implemented
 	Event(Event *event);
 	~Event();
 
@@ -66,9 +71,13 @@ public:
 	double get_vx();
 	double get_vy();
 	double get_vz();
-	double get_event_plane();
+	double get_qx();
+	double get_qy();
+	double get_dca_xy_avg();
+	double get_dca_xy_sd();
 	unsigned get_ref();
 	unsigned get_run();
+	unsigned get_event_id();
 	unsigned get_refn();
 	unsigned get_btof();
 	vector<Track> get_particles();
@@ -78,18 +87,23 @@ public:
 	void set_vx(double vx);
 	void set_vy(double vy);
 	void set_vz(double vz);
-	void set_event_plane(double event_plane);
+	void set_qx(double qx);
+	void set_qy(double qy);
+	void set_dca_xy_avg(double avg);
+	void set_dca_xy_sd(double sd);
 	void set_ref(unsigned ref);
 	void set_run(unsigned run);
+	void set_event_id(unsigned id);
 	void set_refn(unsigned refn);
 	void set_btof(unsigned btof);
 	void set_particles(vector<Track> particles);
 
 	// Doers
 	void read_tree_event(tree_leaves leaves);
-	void read_tree_event(tree_branches branches);
+	void read_tree_event(tree_branches branches);  // Not implemented
 	void read_tree_event(Event *event);
-	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned refn, unsigned btof, double event_plane);
+	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned event_id,
+			unsigned refn, unsigned btof, double qx, double qy, double dca_xy_avg, double dca_xy_sd);
 	void clear();
 	void pile_up(Event pile);
 	void set_defaults();
@@ -102,10 +116,15 @@ private:
 	double vx;
 	double vy;
 	double vz;
-	double event_plane;
+	double qx;
+	double qy;
+
+	double dca_xy_avg;
+	double dca_xy_sd;
 
 	unsigned ref;
 	unsigned run;
+	unsigned event_id;
 	unsigned refn;  // Referring to refmult2, refmult3, etc
 	unsigned btof;
 };

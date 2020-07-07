@@ -18,13 +18,21 @@ using namespace std;
 
 struct tree_leaves {
 	TLeaf *run;
+	TLeaf *event_id;
+
+	TLeaf *dca_xy_avg;
+	TLeaf *dca_xy_sd;
+
 	TLeaf *ref_mult;
 	TLeaf *ref_multn;
 	TLeaf *btof;
+
 	TLeaf *vx;
 	TLeaf *vy;
 	TLeaf *vz;
-	TLeaf *event_plane;
+
+	TLeaf *qx;
+	TLeaf *qy;
 
 	TLeaf *phi;
 	TLeaf *pt;
