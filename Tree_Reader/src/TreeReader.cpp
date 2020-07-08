@@ -270,7 +270,7 @@ void TreeReader::set_energy(int energy) {
 	this->energy = energy;
 }
 
-void TreeReader::set_divs(vector<int> list) {
+void TreeReader::set_divs(vector<double> list) {
 	divs = list;
 }
 
@@ -840,30 +840,18 @@ void TreeReader::process_event(Event& event) {
 			}
 
 
-			for(int div:divs) {
-				vector<int> event_ratios = get_Rs(good_particle_angles, div);  // Convert particle angles in event to ratio values.
+			for(auto &div:divs) {
+				int bin_num = (int) 360 / div;
+				if(single_ratio) { bin_num = 1; }
+				else if(n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+				vector<int> event_ratios = get_Rs(good_particle_angles, div, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 				// Save ratio values to data
-				if(single_ratio) { // Only save a single ratio per event at random.
-					if(cbwc) {
-						data[div][event.get_refn()][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
+				for(int protons_in_bin:event_ratios) {
+					if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
+						data[div][event.get_refn()][good_particle_angles.size()][protons_in_bin]++;
 					} else {
-						data[div][cent][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]++;
-					}
-				} else { // Save all ratios from event.
-					for(int protons_in_bin:event_ratios) {
-						if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-							data[div][event.get_refn()][good_particle_angles.size()][protons_in_bin]++;
-						} else {
-							data[div][cent][good_particle_angles.size()][protons_in_bin]++;
-						}
-					}
-					if(n1_ratios) {
-						if(cbwc) {
-							data[div][event.get_refn()][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
-						} else {
-							data[div][cent][good_particle_angles.size()][event_ratios[((int)trand->Rndm()*div)]]--;
-						}
+						data[div][cent][good_particle_angles.size()][protons_in_bin]++;
 					}
 				}
 			}
@@ -999,7 +987,7 @@ void TreeReader::write_info_file() {
 
 		out << "energy: " << to_string(energy) << endl;
 		out << "divs: { ";
-		for(int div:divs) { out << to_string(div) << " "; }
+		for(auto &div:divs) { out << to_string(div) << " "; }
 		out << "}" << endl;
 
 		out << "particle: " << particle << endl;

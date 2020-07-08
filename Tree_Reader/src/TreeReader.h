@@ -168,7 +168,7 @@ private:
 	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
 	vector<string> sim_eff_dist_path {};
 
-	vector<int> divs = {2,3,4,5,6};
+	vector<int> divs = {180, 120, 90, 72, 60};
 	int energy;
 
 	string particle = "Proton";
