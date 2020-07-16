@@ -19,7 +19,9 @@ struct track_vars {
 };
 
 void Tree_Branch_Test() {
-	TFile *f = new TFile("/home/dylan/Desktop/test.root", "RECREATE");
+//	string out_path = "/home/dylan/Desktop/test.root";
+	string out_path = "/star/u/dneff/Desktop/test.root";
+	TFile *f = new TFile(out_path.data(), "RECREATE");
 	TTree *t = new TTree("tree", "tree");
 	TRandom3 *r = new TRandom3(0);
 
