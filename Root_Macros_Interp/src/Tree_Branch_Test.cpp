@@ -28,8 +28,8 @@ void Tree_Branch_Test() {
 	event_vars event;
 	t->Branch("run", &event.run, "run/I");
 	track_vars p_tracks;
-	t->Branch("p.", "px", &p_tracks.px, 8000, 1);
-	t->Branch("p.", "py", &p_tracks.py, 8000, 1);
+	t->Branch("p.px", &p_tracks.px, 8000, 1);
+	t->Branch("p.py", &p_tracks.py, 8000, 1);
 	track_vars r_tracks;
 	t->Branch("r.px", &r_tracks.px, 8000, 1);
 	t->Branch("r.py", &r_tracks.py, 8000, 1);

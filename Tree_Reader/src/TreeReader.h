@@ -154,7 +154,7 @@ private:
 	StRefMultCorr *refmultCorrUtil;
 	TRandom3 *trand = new TRandom3(0);
 
-	string tree_name = "nsmTree";
+	string tree_name = "tree";
 	string event_cut_hist_name = "Event Cut Hist";
 	string track_cut_hist_name = "Track Cut Hist";
 	string qa_name = "QA_CBWC_";
@@ -242,7 +242,7 @@ private:
 	TH1I pre_ref_hist;
 	TH1I pre_refn_hist;
 	TH1I pre_btof_hist;
-	TH1I pre_ep_hist;
+//	TH1I pre_ep_hist;
 
 	TH1I post_run_hist;
 	TH1I post_vx_hist;

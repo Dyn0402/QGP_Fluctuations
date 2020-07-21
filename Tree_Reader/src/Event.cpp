@@ -19,6 +19,7 @@ Event::Event() {
 	vz = 0;
 	qx = 0;
 	qy = 0;
+	event_plane = 0.;
 	dca_xy_avg = 0;
 	dca_xy_sd = 0;
 	ref = 0;
@@ -34,6 +35,7 @@ Event::Event(event_defaults& defaults, int energy, int ref_num, int cent) {
 	vz = defaults.vz;
 	qx = defaults.qx;
 	qy = defaults.qy;
+	event_plane = defaults.event_plane;
 	dca_xy_avg = defaults.dca_xy_avg;
 	dca_xy_sd = defaults.dca_xy_sd;
 	ref = defaults.ref;
@@ -78,6 +80,10 @@ double Event::get_qx() {
 
 double Event::get_qy() {
 	return qy;
+}
+
+double Event::get_event_plane() {
+	return event_plane;
 }
 
 double Event::get_dca_xy_avg() {
@@ -139,6 +145,10 @@ void Event::set_qy(double qy) {
 	this->qy = qy;
 }
 
+void Event::set_event_plane(double event_plane) {
+	this->event_plane = event_plane;
+}
+
 void Event::set_dca_xy_avg(double avg) {
 	dca_xy_avg = avg;
 }
@@ -185,6 +195,7 @@ void Event::read_tree_event(tree_leaves leaves) {
 	vz = leaves.vz->GetValue();
 	qx = leaves.qx->GetValue();
 	qy = leaves.qy->GetValue();
+	// Need to calculate event plane from qx, qy
 	dca_xy_avg = leaves.dca_xy_avg->GetValue();
 	dca_xy_sd = leaves.dca_xy_sd->GetValue();
 
@@ -238,6 +249,7 @@ void Event::read_tree_event(Event *event) {
 	vz = event->get_vz();
 	qx = event->get_qx();
 	qy = event->get_qy();
+	event_plane = event->get_event_plane();
 	dca_xy_avg = event->get_dca_xy_avg();
 	dca_xy_sd = event->get_dca_xy_sd();
 
@@ -258,7 +270,7 @@ void Event::read_tree_event(Event *event) {
 }
 
 void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned event_id,
-		unsigned refn, unsigned btof, double qx, double qy, double dca_xy_avg, double dca_xy_sd) {
+		unsigned refn, unsigned btof, double qx, double qy, double event_plane, double dca_xy_avg, double dca_xy_sd) {
 	this->vx = vx;
 	this->vy = vy;
 	this->vz = vz;
@@ -269,6 +281,7 @@ void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned ru
 	this->btof = btof;
 	this->qx = qx;
 	this->qy = qy;
+	this->event_plane = event_plane;
 	this->dca_xy_avg = dca_xy_avg;
 	this->dca_xy_sd = dca_xy_sd;
 }
@@ -284,6 +297,7 @@ void Event::clear() {
 	btof = 0;
 	qx = 0;
 	qy = 0;
+	event_plane = 0;
 	dca_xy_avg = 0;
 	dca_xy_sd = 0;
 

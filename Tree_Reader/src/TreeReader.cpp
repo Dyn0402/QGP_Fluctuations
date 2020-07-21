@@ -270,7 +270,7 @@ void TreeReader::set_energy(int energy) {
 	this->energy = energy;
 }
 
-void TreeReader::set_divs(vector<double> list) {
+void TreeReader::set_divs(vector<int> list) {
 	divs = list;
 }
 
@@ -666,7 +666,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 	while(tree->GetEvent(event_index)) {
 		cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
 		Event event(event_defs, energy, ref_num, cent_9bin);
-		event.set_event_plane(leaves.event_plane->GetValue());
+//		event.set_event_plane(leaves.event_plane->GetValue()); fix
 		particle_mult = leaves.pmult->GetValue();
 
 		vector<Track> particles;
@@ -689,7 +689,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 				if(tree->GetEntry(event_index)) {
 					cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
 					Event event2(event_defs, energy, ref_num, cent_9bin);
-					event2.set_event_plane(leaves.event_plane->GetValue());
+//					event2.set_event_plane(leaves.event_plane->GetValue()); fix
 					particle_mult = leaves.pmult->GetValue();
 
 					particles.clear();
@@ -822,16 +822,16 @@ void TreeReader::process_event(Event& event) {
 				TVector2 q_new(cos(2*angle), sin(2*angle));
 				q -= q_new;
 			}
-			double event_plane = 0.5 * q.Phi();
+			event.set_event_plane(0.5 * q.Phi());
 
 			// If mixed/rand flagged append event to mix/rand object.
-			if(mixed) { mix.append_event(good_particle_angles, cent, event_plane, event.get_vz()); }
+			if(mixed) { mix.append_event(good_particle_angles, cent, event.get_event_plane(), event.get_vz()); }
 			if(mixed_sets) { mix_sets.append_event(good_particle_angles, event.get_refn()); }
 			if(rand_data) { random.append_event((int)good_particle_angles.size(), event.get_refn(), trand); }
 
 
 			if(event_plane) { // If event_plane flag then rotate all angles by -event_plane.
-				good_particle_angles = rotate_angles(good_particle_angles, -event_plane);
+				good_particle_angles = rotate_angles(good_particle_angles, -event.get_event_plane());
 			} else if(rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
 				double rand_angle = trand->Rndm() * 2 * M_PI;
 				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
@@ -1208,7 +1208,7 @@ void TreeReader::define_qa() {
 	pre_ref_hist = TH1I(("pre_ref_"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
 	pre_refn_hist = TH1I(("pre_refn_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
 	pre_btof_hist = TH1I(("pre_btof_"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
-	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
+//	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
 	post_run_hist = TH1I(("post_run_"+set_name+"_"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
 	post_vx_hist = TH1I(("post_vx_"+set_name+"_"+to_string(energy)).data(), "post_vx", 100, -2.5, 2.5);
@@ -1282,7 +1282,7 @@ void TreeReader::fill_pre_event_qa(Event& event) {
 	pre_ref_hist.Fill(event.get_ref());
 	pre_refn_hist.Fill(event.get_refn());
 	pre_btof_hist.Fill(event.get_btof());
-	pre_ep_hist.Fill(event.get_event_plane());
+//	pre_ep_hist.Fill(event.get_event_plane());
 }
 
 // Fill histograms for post-qa for event
@@ -1325,7 +1325,7 @@ void TreeReader::write_qa() {
 	pre_ref_hist.Write();
 	pre_refn_hist.Write();
 	pre_btof_hist.Write();
-	pre_ep_hist.Write();
+//	pre_ep_hist.Write();
 
 	post_run_hist.Write();
 	post_vx_hist.Write();
@@ -1435,8 +1435,8 @@ void TreeReader::write_qa() {
 	post_btof_hist.Draw("sames");
 	btof_can.Write();
 	TCanvas ep_can("ep_can");
-	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
-	pre_ep_hist.Draw();
+//	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
+//	pre_ep_hist.Draw();
 	post_ep_hist.SetLineColor(kRed);
 	post_ep_hist.Draw("sames");
 	ep_can.Write();

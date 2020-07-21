@@ -15,7 +15,7 @@ tree_leaves get_tree_leaves(TTree* tree, string particle, int ref) {
 	leaves.run = tree->GetLeaf("run");
 	leaves.event_id = tree->GetLeaf("event_id");
 	leaves.dca_xy_avg = tree->GetLeaf("dca_xy_avg");
-	leaves.dca_xy_sd = tree->GetLeaf("dca_xy_sd");
+	leaves.dca_xy_sd = tree->GetLeaf("dca_xy_err");
 	leaves.ref_mult = tree->GetLeaf("Nprim");
 	leaves.ref_multn = tree->GetLeaf(("ref"+to_string(ref)).data());
 	leaves.btof = tree->GetLeaf("btof");
