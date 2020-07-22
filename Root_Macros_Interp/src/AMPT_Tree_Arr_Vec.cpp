@@ -54,7 +54,7 @@ track_vars set_track_branches(TTree *in_tree, TTree *out_tree);
 void AMPT_Tree_Arr_Vec() {
 	gBenchmark->Start("AMPT_Tree_Arr_Vec");
 
-	string path = "/gpfs01/star/pwg/dneff/data/AMPT/ampt_brian_min_bias/output/27GeV/";
+	string path = "/gpfs01/star/pwg/dneff/data/AMPT/Brian_Data/min_bias/27GeV/";
 	string tree_name = "tree";
 	string tree_title = "AMPT Data";
 	string new_file_ext = "_convert";
