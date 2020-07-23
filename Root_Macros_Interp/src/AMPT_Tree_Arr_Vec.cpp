@@ -42,7 +42,7 @@ struct track_vars {
 	float pz_arr[track_mult];
 };
 
-vector<string> get_files_in_dir(string dir_path, string ext, string out);
+vector<string> get_files_in_dir(string dir_path, string ext, string out="name");
 vector<string> split_string_by_char(string str, char del);
 void copy_tree(TTree *in_tree, TTree *out_tree);
 event_vars set_event_branches(TTree *in_tree, TTree *out_tree);
@@ -54,7 +54,9 @@ track_vars set_track_branches(TTree *in_tree, TTree *out_tree);
 void AMPT_Tree_Arr_Vec() {
 	gBenchmark->Start("AMPT_Tree_Arr_Vec");
 
-	string path = "/gpfs01/star/pwg/dneff/data/AMPT/Brian_Data/min_bias/27GeV/";
+//	string path = "/gpfs01/star/pwg/dneff/data/AMPT/Brian_Data/min_bias/27GeV/";
+	string path = "/home/dylan/Desktop/";
+//	string path = "/media/ucla/Research/AMPT_To_Convert/";
 	string tree_name = "tree";
 	string tree_title = "AMPT Data";
 	string new_file_ext = "_convert";
