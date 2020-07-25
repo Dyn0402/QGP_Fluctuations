@@ -53,7 +53,8 @@ void speed_test_class();
 void ref_mult_test();
 void ampt_cent_test();
 void ampt_cent_b_corr();
-void dca_xy_qa();
+void dca_xy_qa(int energy);
+void run_dca_xy_qa();
 
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs);
 
@@ -71,11 +72,12 @@ int main(int argc, char** argv) {
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
 //	read_class();
-	cout << gErrorIgnoreLevel << endl;
-	gErrorIgnoreLevel = 3001;
-	string b = (string)gSystem->GetFromPipe("lsof /media/dylan/SSD_Storage/Research/Sim_Efficiency_Hists.root");
-	gErrorIgnoreLevel = -1;
-//	dca_xy_qa();
+//	cout << gErrorIgnoreLevel << endl;
+//	gErrorIgnoreLevel = 3001;
+//	string b = (string)gSystem->GetFromPipe("lsof /media/ssd/Research/Sim_Efficiency_Hists.root");
+//	cout << b << endl;
+//	gErrorIgnoreLevel = -1;
+	run_dca_xy_qa();
 //	ampt_cent_b_corr();
 //	ampt_cent_test();
 //	ref_mult_test();
@@ -644,10 +646,20 @@ void ref_mult_test() {
 }
 
 
-void dca_xy_qa() {
-	vector<int> energies {12};
-	for(auto &energy:energies) {
-		DcaxyQAer qa(energy);
-		qa.run_qa();
+void dca_xy_qa(int energy) {
+	DcaxyQAer qa(energy);
+	qa.run_qa();
+}
+
+void run_dca_xy_qa() {
+	vector<int> energies {7};//, 11, 19, 27, 39, 62};
+
+	ROOT::EnableThreadSafety();
+	{
+		ThreadPool pool(thread::hardware_concurrency());
+		for(int energy:energies) {
+			pool.enqueue(dca_xy_qa, energy);
+			this_thread::sleep_for(chrono::seconds(1));
+		}
 	}
 }
