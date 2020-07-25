@@ -113,6 +113,9 @@ bool comp_trees(TTree *in_tree, TTree *out_tree) {
 		same = tracks_same(tvars, pmult);
 	}
 
+	in_tree->ResetBranchAddresses();
+	out_tree->ResetBranchAddresses();
+
 	return same;
 }
 
