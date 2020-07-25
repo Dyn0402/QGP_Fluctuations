@@ -513,7 +513,6 @@ Double_t StRefMultCorr::getRefMultCorr(
 	}
 	
 	Double_t RefMult_corr  = -9999. ;
-	cout << flag << " " << RefMult_d << " " << Hovno << " " << correction_luminosity << endl;
 	switch ( flag ) 
 	{
 		case 0: return RefMult_d*correction_luminosity;
