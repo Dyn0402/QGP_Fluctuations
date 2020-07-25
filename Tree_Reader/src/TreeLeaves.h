@@ -21,7 +21,7 @@ struct tree_leaves {
 	TLeaf *event_id;
 
 	TLeaf *dca_xy_avg;
-	TLeaf *dca_xy_sd;
+	TLeaf *dca_xy_err;
 
 	TLeaf *ref_mult;
 	TLeaf *ref_multn;
@@ -77,8 +77,8 @@ struct tree_branches {
 };
 
 
-tree_leaves get_tree_leaves(TTree* tree, string particle = "Proton", int ref = 3);
-tree_branches get_chain_branches(TChain* chain, string particle = "Proton", int ref = 3);
+tree_leaves get_tree_leaves(TTree* tree, string particle = "proton", int ref = 3);
+tree_branches get_chain_branches(TChain* chain, string particle = "proton", int ref = 3);
 ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref = 3);
 
 

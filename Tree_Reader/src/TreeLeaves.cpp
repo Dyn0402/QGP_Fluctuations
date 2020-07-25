@@ -12,16 +12,16 @@
 //Get tree leaves and return them in a tree_leaves struct.
 tree_leaves get_tree_leaves(TTree* tree, string particle, int ref) {
 	tree_leaves leaves;
-	leaves.run = tree->GetLeaf("run");
+	leaves.run = tree->GetLeaf("run_num");
 	leaves.event_id = tree->GetLeaf("event_id");
 	leaves.dca_xy_avg = tree->GetLeaf("dca_xy_avg");
-	leaves.dca_xy_sd = tree->GetLeaf("dca_xy_err");
-	leaves.ref_mult = tree->GetLeaf("Nprim");
-	leaves.ref_multn = tree->GetLeaf(("ref"+to_string(ref)).data());
+	leaves.dca_xy_err = tree->GetLeaf("dca_xy_err");
+	leaves.ref_mult = tree->GetLeaf("refmult");
+	leaves.ref_multn = tree->GetLeaf(("refmult"+to_string(ref)).data());
 	leaves.btof = tree->GetLeaf("btof");
-	leaves.vx = tree->GetLeaf("vtx_x");
-	leaves.vy = tree->GetLeaf("vtx_y");
-	leaves.vz = tree->GetLeaf("vtx_z");
+	leaves.vx = tree->GetLeaf("vx");
+	leaves.vy = tree->GetLeaf("vy");
+	leaves.vz = tree->GetLeaf("vz");
 	leaves.qx = tree->GetLeaf("qx");
 	leaves.qy = tree->GetLeaf("qy");
 

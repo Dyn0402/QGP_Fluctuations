@@ -21,7 +21,7 @@ Event::Event() {
 	qy = 0;
 	event_plane = 0.;
 	dca_xy_avg = 0;
-	dca_xy_sd = 0;
+	dca_xy_err = 0;
 	ref = 0;
 	run = 0;
 	event_id = 0;
@@ -37,7 +37,7 @@ Event::Event(event_defaults& defaults, int energy, int ref_num, int cent) {
 	qy = defaults.qy;
 	event_plane = defaults.event_plane;
 	dca_xy_avg = defaults.dca_xy_avg;
-	dca_xy_sd = defaults.dca_xy_sd;
+	dca_xy_err = defaults.dca_xy_err;
 	ref = defaults.ref;
 	run = defaults.run[energy];
 	event_id = defaults.event_id;
@@ -90,8 +90,8 @@ double Event::get_dca_xy_avg() {
 	return dca_xy_avg;
 }
 
-double Event::get_dca_xy_sd() {
-	return dca_xy_sd;
+double Event::get_dca_xy_err() {
+	return dca_xy_err;
 }
 
 unsigned Event::get_ref() {
@@ -153,8 +153,8 @@ void Event::set_dca_xy_avg(double avg) {
 	dca_xy_avg = avg;
 }
 
-void Event::set_dca_xy_sd(double sd) {
-	dca_xy_sd = sd;
+void Event::set_dca_xy_err(double sd) {
+	dca_xy_err = sd;
 }
 
 void Event::set_ref(unsigned ref) {
@@ -197,7 +197,7 @@ void Event::read_tree_event(tree_leaves leaves) {
 	qy = leaves.qy->GetValue();
 	// Need to calculate event plane from qx, qy
 	dca_xy_avg = leaves.dca_xy_avg->GetValue();
-	dca_xy_sd = leaves.dca_xy_sd->GetValue();
+	dca_xy_err = leaves.dca_xy_err->GetValue();
 
 	for(int particle_index = 0; particle_index<leaves.phi->GetLen(); particle_index++) {
 		Track particle;
@@ -251,7 +251,7 @@ void Event::read_tree_event(Event *event) {
 	qy = event->get_qy();
 	event_plane = event->get_event_plane();
 	dca_xy_avg = event->get_dca_xy_avg();
-	dca_xy_sd = event->get_dca_xy_sd();
+	dca_xy_err = event->get_dca_xy_err();
 
 	vector<Track> old_particles = event->get_particles();
 	unsigned num_particles = old_particles.size();
@@ -270,7 +270,7 @@ void Event::read_tree_event(Event *event) {
 }
 
 void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned event_id,
-		unsigned refn, unsigned btof, double qx, double qy, double event_plane, double dca_xy_avg, double dca_xy_sd) {
+		unsigned refn, unsigned btof, double qx, double qy, double event_plane, double dca_xy_avg, double dca_xy_err) {
 	this->vx = vx;
 	this->vy = vy;
 	this->vz = vz;
@@ -283,7 +283,7 @@ void Event::set_event(double vx, double vy, double vz, unsigned ref, unsigned ru
 	this->qy = qy;
 	this->event_plane = event_plane;
 	this->dca_xy_avg = dca_xy_avg;
-	this->dca_xy_sd = dca_xy_sd;
+	this->dca_xy_err = dca_xy_err;
 }
 
 void Event::clear() {
@@ -299,7 +299,7 @@ void Event::clear() {
 	qy = 0;
 	event_plane = 0;
 	dca_xy_avg = 0;
-	dca_xy_sd = 0;
+	dca_xy_err = 0;
 
 	particles.clear();
 }

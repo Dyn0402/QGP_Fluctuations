@@ -32,7 +32,7 @@ struct event_defaults {
 	double qy = 0.;
 	double event_plane = 0.;
 	double dca_xy_avg = 0.;
-	double dca_xy_sd = 0.;
+	double dca_xy_err = 0.;
 
 	unsigned event_id = 0;
 
@@ -76,7 +76,7 @@ public:
 	double get_qy();
 	double get_event_plane();
 	double get_dca_xy_avg();
-	double get_dca_xy_sd();
+	double get_dca_xy_err();
 	unsigned get_ref();
 	unsigned get_run();
 	unsigned get_event_id();
@@ -93,7 +93,7 @@ public:
 	void set_qy(double qy);
 	void set_event_plane(double event_plane);
 	void set_dca_xy_avg(double avg);
-	void set_dca_xy_sd(double sd);
+	void set_dca_xy_err(double sd);
 	void set_ref(unsigned ref);
 	void set_run(unsigned run);
 	void set_event_id(unsigned id);
@@ -106,7 +106,7 @@ public:
 	void read_tree_event(tree_branches branches);  // Not implemented
 	void read_tree_event(Event *event);
 	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned event_id,
-			unsigned refn, unsigned btof, double qx, double qy, double event_plane, double dca_xy_avg, double dca_xy_sd);
+			unsigned refn, unsigned btof, double qx, double qy, double event_plane, double dca_xy_avg, double dca_xy_err);
 	void clear();
 	void pile_up(Event pile);
 	void set_defaults();
@@ -124,7 +124,7 @@ private:
 	double event_plane;
 
 	double dca_xy_avg;
-	double dca_xy_sd;
+	double dca_xy_err;
 
 	unsigned ref;
 	unsigned run;
