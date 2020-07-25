@@ -95,7 +95,7 @@ private:
 
 	map<int, double> energy_match = {{7,7.7}, {11,11.5}, {19,19.6}, {27,27.0}, {39,39.0}, {62,62.4}};
 
-	map<string, int> marker_style = {{"raw", 20}, {"mix", 20}, {"raw/mix", 20}, {"eta05_n1ratios_raw", 20}, {"eta05_n1ratios_mix", 20}, {"eta05_n1ratios_raw/mix", 20}, {"Ampt_p+_n1ratios_raw", 20}, {"Ampt_p+_n1ratios_mix", 20}, {"Ampt_p+_n1ratios_raw/mix", 20}};
+	map<string, int> marker_style = {{"raw", 20}, {"mix", 22}, {"raw/mix", 20}, {"eta05_n1ratios_raw", 20}, {"eta05_n1ratios_mix", 20}, {"eta05_n1ratios_raw/mix", 20}, {"Ampt_p+_n1ratios_raw", 20}, {"Ampt_p+_n1ratios_mix", 20}, {"Ampt_p+_n1ratios_raw/mix", 20}};
 	map<string, int> marker_color = {{"raw", kBlue}, {"mix", kGreen+3}, {"raw/mix", kRed+1}, {"eta05_n1ratios_raw", kBlue}, {"eta05_n1ratios_mix", kGreen+3}, {"eta05_n1ratios_raw/mix", 9}, {"Ampt_p+_n1ratios_raw", kRed+2}, {"Ampt_p+_n1ratios_mix", kViolet}, {"Ampt_p+_n1ratios_raw/mix", 28}};
 	map<string, double> marker_size = {{"raw", 1.3}, {"mix", 1.3}, {"raw/mix", 1.3}, {"eta05_n1ratios_raw", 1.3}, {"eta05_n1ratios_mix", 1.3}, {"eta05_n1ratios_raw/mix", 1.3}, {"Ampt_p+_n1ratios_raw", 1.3}, {"Ampt_p+_n1ratios_mix", 1.3}, {"Ampt_p+_n1ratios_raw/mix", 1.3}};
 
