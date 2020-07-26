@@ -19,7 +19,7 @@ DcaxyQAer::DcaxyQAer(int energy) {
 }
 
 DcaxyQAer::~DcaxyQAer() {
-	delete out_file;
+//	delete refmultCorrUtil;
 }
 
 
@@ -51,21 +51,17 @@ void DcaxyQAer::read_trees() {
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 
-//	cout << "here 0" << endl;
-
 	for(string path:in_files) {
 
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
-//			cout << "here 1" << endl;
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
 			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
 			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (double)(clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 		}
 
-//		cout << "here 2" << endl;
-//		cout << path << endl;
+
 //		gErrorIgnoreLevel = 3001;
 //		while(true) {  // Check if file is open before reading, if so sleep/check till closed.
 //			if((string)gSystem->GetFromPipe(("lsof " + path).data()) == "") { break; };
@@ -74,11 +70,8 @@ void DcaxyQAer::read_trees() {
 //		}
 //		gErrorIgnoreLevel = -1;
 		TFile *file = new TFile(path.data(), "READ");
-//		cout << "here 3" << endl;
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-//		cout << "here 4" << endl;
 		read_tree(tree);  // Read tree from file into data
-//		cout << "here 5" << endl;
 		file->Close();
 		delete file;
 		file_index++;
@@ -93,9 +86,7 @@ void DcaxyQAer::read_trees() {
 
 void DcaxyQAer::read_tree(TTree* tree) {
 	tree_leaves leaves = get_tree_leaves(tree, "Proton", 3);
-//	cout << "here 4.1" << endl;
 	set_branches(tree);
-//	cout << "here 4.2" << endl;
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
@@ -106,7 +97,6 @@ void DcaxyQAer::read_tree(TTree* tree) {
 //		refmultCorrUtil->initEvent(leaves.ref_multn->GetValue(), (double)leaves.vz->GetValue());
 		int cent9_corr = 0; // refmultCorrUtil->getCentralityBin9();
 
-//		cout << "here 4.3" << endl;
 		unsigned event_id = leaves.event_id->GetValue();
 		float dca_xy_avg = leaves.dca_xy_avg->GetValue();
 		float dca_xy_err = leaves.dca_xy_err->GetValue();
@@ -117,12 +107,11 @@ void DcaxyQAer::read_tree(TTree* tree) {
 //		cout << "Run " << run << ", event " << event_id << " | cent: " << cent9_corr << " ref3: " << leaves.ref_multn->GetValue() << " vz: " << leaves.vz->GetValue() << " dca_xy_avg: " << dca_xy_avg << endl;
 //		cout << refmultCorrUtil->getRefMultCorr() << endl;
 
-		if(cent9_corr >= cent_min) { continue; }
+		if(cent9_corr < cent_min) { continue; }
 
 //		cout << event_id << " " << dca_xy_avg << "  " << dca_xy_sd << " " << leaves.ref_multn->GetValue() << endl;
 
 		if(dca_xy_avg == -899 && dca_xy_err == -899) {
-//			cout << "Zero tracks for Run " << run << " Event " << event_id << endl;
 			continue;
 		}
 
@@ -166,8 +155,10 @@ void DcaxyQAer::analyze_runs() {
 	}
 	set_avg /= set_count; set_err = pow(set_err / set_count - pow(set_avg, 2), 0.5);
 
-	out_file = new TFile((out_path+"Dca_xy_qa_"+to_string(energy)+"_cent_6-8.root").data(), "RECREATE");
+	out_file = new TFile((out_path+"Dca_xy_qa_"+to_string(energy)+"_cent_"+to_string(cent_min)+"-8.root").data(), "RECREATE");
 	out_file->cd();
+
+
 	string energy_str = to_string(energy);
 	TCanvas can_dataset((energy_str+"GeV_Dca_xy_vs_Run_Can").data(), (energy_str+"GeV Dca XY vs Run").data());
 	TGraphErrors dca_xy_dataset((int)run_num.size(), run_num.data(), dca_xy_run_avg.data(), 0, dca_xy_run_err.data());
@@ -191,68 +182,43 @@ void DcaxyQAer::analyze_runs() {
 	sig_high_7_dataset.SetParameter(0, set_avg + 7 * set_err);
 	sig_high_7_dataset.SetLineColor(kOrange+9); sig_high_7_dataset.Draw("Same");
 	can_dataset.Write();
-//	TCanvas *can_dataset = new TCanvas((energy_str+"GeV_Dca_xy_vs_Run_Can").data(), (energy_str+"GeV Dca XY vs Run").data());
-//	TGraphErrors* dca_xy_dataset = new TGraphErrors((int)run_num.size(), run_num.data(), dca_xy_run_avg.data(), 0, dca_xy_run_err.data());
-//	dca_xy_dataset->SetNameTitle((energy_str+"GeV_Dca_xy_vs_Run_Graph").data(), (energy_str+"GeV Dca XY vs Run").data());
-//	dca_xy_dataset->SetMarkerStyle(kOpenCircle);
-//	dca_xy_dataset->Draw("APZ");
-//	can_dataset->Update();
-//	TF1 *avg_dataset = new TF1((energy_str + "GeV_avg_dataset").data(), "[0]", can_dataset->GetUxmin(), can_dataset->GetUxmax());
-//	avg_dataset->SetParameter(0, set_avg);
-//	avg_dataset->SetLineColor(kGreen+2); avg_dataset->Draw("Same");
-//	TF1 *sig_low_3_dataset = new TF1((energy_str + "GeV_sig_low_3_dataset").data(), "[0]", can_dataset->GetUxmin(), can_dataset->GetUxmax());
-//	sig_low_3_dataset->SetParameter(0, set_avg - 3 * set_err);
-//	sig_low_3_dataset->SetLineColor(kOrange+7); sig_low_3_dataset->Draw("Same");
-//	TF1 *sig_high_3_dataset = new TF1((energy_str + "GeV_sig_high_3_dataset").data(), "[0]", can_dataset->GetUxmin(), can_dataset->GetUxmax());
-//	sig_high_3_dataset->SetParameter(0, set_avg + 3 * set_err);
-//	sig_high_3_dataset->SetLineColor(kOrange+7); sig_high_3_dataset->Draw("Same");
-//	TF1 *sig_low_7_dataset = new TF1((energy_str + "GeV_sig_low_7_dataset").data(), "[0]", can_dataset->GetUxmin(), can_dataset->GetUxmax());
-//	sig_low_7_dataset->SetParameter(0, set_avg - 7 * set_err);
-//	sig_low_7_dataset->SetLineColor(kOrange+9); sig_low_7_dataset->Draw("Same");
-//	TF1 *sig_high_7_dataset = new TF1((energy_str + "GeV_sig_high_7_dataset").data(), "[0]", can_dataset->GetUxmin(), can_dataset->GetUxmax());
-//	sig_high_7_dataset->SetParameter(0, set_avg + 7 * set_err);
-//	sig_high_7_dataset->SetLineColor(kOrange+9); sig_high_7_dataset->Draw("Same");
-//	can_dataset->Write();
 
-	TCanvas *can_index_dataset = new TCanvas((energy_str+"GeV_Dca_xy_vs_Run_Index_Can").data(), (energy_str+"GeV Dca XY vs Run Index").data());
-	TGraphErrors* dca_xy_index_dataset = new TGraphErrors((int)run_indexes.size(), run_indexes.data(), dca_xy_run_avg.data(), 0, dca_xy_run_err.data());
-	dca_xy_index_dataset->SetNameTitle((energy_str+"GeV_Dca_xy_vs_Run_Index_Graph").data(), (energy_str+"GeV Dca XY vs Run Index").data());
-	dca_xy_index_dataset->SetMarkerStyle(kOpenCircle);
-	dca_xy_index_dataset->GetXaxis()->SetTitle("Run Index");
-	dca_xy_index_dataset->GetYaxis()->SetTitle("Dca_XY Run Average");
-	dca_xy_index_dataset->Draw("APZ");
-	can_index_dataset->Update();
-	TF1 *avg_index_dataset = new TF1((energy_str + "GeV_avg_index_dataset").data(), "[0]", can_index_dataset->GetUxmin(), can_index_dataset->GetUxmax());
-	avg_index_dataset->SetParameter(0, set_avg);
-	avg_index_dataset->SetLineColor(kGreen+2); avg_index_dataset->Draw("Same");
-	TF1 *sig_low_3_index_dataset = new TF1((energy_str + "GeV_sig_low_3_index_dataset").data(), "[0]", can_index_dataset->GetUxmin(), can_index_dataset->GetUxmax());
-	sig_low_3_index_dataset->SetParameter(0, set_avg - 3 * set_err);
-	sig_low_3_index_dataset->SetLineColor(kOrange+7); sig_low_3_index_dataset->Draw("Same");
-	TF1 *sig_high_3_index_dataset = new TF1((energy_str + "GeV_sig_high_3_index_dataset").data(), "[0]", can_index_dataset->GetUxmin(), can_index_dataset->GetUxmax());
-	sig_high_3_index_dataset->SetParameter(0, set_avg + 3 * set_err);
-	sig_high_3_index_dataset->SetLineColor(kOrange+7); sig_high_3_index_dataset->Draw("Same");
-	TF1 *sig_low_7_index_dataset = new TF1((energy_str + "GeV_sig_low_7_index_dataset").data(), "[0]", can_index_dataset->GetUxmin(), can_index_dataset->GetUxmax());
-	sig_low_7_index_dataset->SetParameter(0, set_avg - 7 * set_err);
-	sig_low_7_index_dataset->SetLineColor(kOrange+9); sig_low_7_index_dataset->Draw("Same");
-	TF1 *sig_high_7_index_dataset = new TF1((energy_str + "GeV_sig_high_7_index_dataset").data(), "[0]", can_index_dataset->GetUxmin(), can_index_dataset->GetUxmax());
-	sig_high_7_index_dataset->SetParameter(0, set_avg + 7 * set_err);
-	sig_high_7_index_dataset->SetLineColor(kOrange+9); sig_high_7_index_dataset->Draw("Same");
-	TLegend *leg_index_dataset = new TLegend();
-	leg_index_dataset->SetBorderSize(0); leg_index_dataset->SetFillStyle(0);
-	leg_index_dataset->AddEntry(avg_index_dataset, "Set Average", "l");
-	leg_index_dataset->AddEntry(sig_low_3_index_dataset, "Set Avg +- 3 sigma", "l");
-	leg_index_dataset->AddEntry(sig_low_7_index_dataset, "Set Avg +- 7 sigma", "l");
-	leg_index_dataset->Draw();
-	can_index_dataset->SetGrid();
-	can_index_dataset->Write();
+	TCanvas can_index_dataset((energy_str+"GeV_Dca_xy_vs_Run_Index_Can").data(), (energy_str+"GeV Dca XY vs Run Index").data());
+	TGraphErrors dca_xy_index_dataset((int)run_indexes.size(), run_indexes.data(), dca_xy_run_avg.data(), 0, dca_xy_run_err.data());
+	dca_xy_index_dataset.SetNameTitle((energy_str+"GeV_Dca_xy_vs_Run_Index_Graph").data(), (energy_str+"GeV Dca XY vs Run Index").data());
+	dca_xy_index_dataset.SetMarkerStyle(kOpenCircle);
+	dca_xy_index_dataset.GetXaxis()->SetTitle("Run Index");
+	dca_xy_index_dataset.GetYaxis()->SetTitle("Dca_XY Run Average");
+	dca_xy_index_dataset.Draw("APZ");
+	can_index_dataset.Update();
+	TF1 avg_index_dataset((energy_str + "GeV_avg_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
+	avg_index_dataset.SetParameter(0, set_avg);
+	avg_index_dataset.SetLineColor(kGreen+2); avg_index_dataset.Draw("Same");
+	TF1 sig_low_3_index_dataset((energy_str + "GeV_sig_low_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
+	sig_low_3_index_dataset.SetParameter(0, set_avg - 3 * set_err);
+	sig_low_3_index_dataset.SetLineColor(kOrange+7); sig_low_3_index_dataset.Draw("Same");
+	TF1 sig_high_3_index_dataset((energy_str + "GeV_sig_high_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
+	sig_high_3_index_dataset.SetParameter(0, set_avg + 3 * set_err);
+	sig_high_3_index_dataset.SetLineColor(kOrange+7); sig_high_3_index_dataset.Draw("Same");
+	TF1 sig_low_7_index_dataset((energy_str + "GeV_sig_low_7_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
+	sig_low_7_index_dataset.SetParameter(0, set_avg - 7 * set_err);
+	sig_low_7_index_dataset.SetLineColor(kOrange+9); sig_low_7_index_dataset.Draw("Same");
+	TF1 sig_high_7_index_dataset((energy_str + "GeV_sig_high_7_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
+	sig_high_7_index_dataset.SetParameter(0, set_avg + 7 * set_err);
+	sig_high_7_index_dataset.SetLineColor(kOrange+9); sig_high_7_index_dataset.Draw("Same");
+	TLegend leg_index_dataset;
+	leg_index_dataset.SetBorderSize(0); leg_index_dataset.SetFillStyle(0);
+	leg_index_dataset.AddEntry(&avg_index_dataset, "Set Average", "l");
+	leg_index_dataset.AddEntry(&sig_low_3_index_dataset, "Set Avg +- 3 sigma", "l");
+	leg_index_dataset.AddEntry(&sig_low_7_index_dataset, "Set Avg +- 7 sigma", "l");
+	leg_index_dataset.Draw();
+	can_index_dataset.SetGrid();
+	can_index_dataset.Write();
 
 
-	TDirectory *runs = out_file->mkdir("Individual Runs");
-	runs->cd();
-
-	vector<TGraphErrors*> dca_xy_runs;
-	vector<TGraph*> dca_xy_mv_avg;
-	vector<TCanvas*> dca_xy_runs_can;
+	TDirectory *bad_runs_dir = out_file->mkdir("Bad Runs");
+	TDirectory *good_runs_dir = out_file->mkdir("Good Runs");
+	good_runs_dir->cd();
 
 	int num_events = 0;
 	int num_7sig_events = 0;
@@ -268,10 +234,13 @@ void DcaxyQAer::analyze_runs() {
 		vector<float> event_ids;
 		vector<float> dca_xy_val;
 		vector<float> dca_xy_err;
+		vector<float> event_ids_fit;
+		vector<float> dca_xy_val_fit;
+		vector<float> dca_xy_err_fit;
 		bool flag = false;
 		for(auto &event:run.second) {
 			num_events++;
-			float sigmas = (event.second.first - run_avg) / set_err;
+			float sigmas = (event.second.first - set_avg) / set_err;
 			if(fabs(sigmas) > 7) {
 				if(!flag) {
 					flag = true;
@@ -280,97 +249,65 @@ void DcaxyQAer::analyze_runs() {
 				}
 				num_7sig_events++;
 			}
+			sigmas = (event.second.first - run_avg) / set_err;
+			if(fabs(sigmas) < n_sigma_fit) {
+				event_ids_fit.push_back(event.first);
+				dca_xy_val_fit.push_back(event.second.first);
+				dca_xy_err_fit.push_back(event.second.second);
+			}
+
 			event_ids.push_back(event.first);
 			dca_xy_val.push_back(event.second.first);
 			dca_xy_err.push_back(event.second.second);
 		}
 
-		pair<vector<float>, vector<float>> mv_avg = moving_average(event_ids, dca_xy_val, mv_avg_num);
-		bool mv_avg_flag = false;
-		vector<pair<int, int>> bad_ranges;
-		for(int i = 0; i < (int)mv_avg.second.size(); i++) {  // Depends on mv_avg.first being sorted ascending
-			float sigmas = (mv_avg.second[i] - run_avg) / set_err;
-			if(fabs(sigmas) > mv_avg_sigmas) {
-				int low = i;
-				float sigmas_check = sigmas;
-				while(fabs(sigmas_check) >= mv_avg_sigmas_relax) {
-					if(--low <= 0) { break; }
-					sigmas_check = (mv_avg.second[low] - run_avg) / set_err;
-				}
-				if(low > 0) { low = floor(mv_avg.first[low]); }
-				else { low = 0; }  // If first point then leave low = 0
-
-				int high = i;
-				sigmas_check = sigmas;
-				while(fabs(sigmas_check) >= mv_avg_sigmas_relax) {
-					if(!(++high < (int)mv_avg.second.size())) { break; }
-					sigmas_check = (mv_avg.second[high] - run_avg) / set_err;
-				}
-				if(high >= (int)mv_avg.second.size()) {
-					high = -1;  // If last point then set to -1 as a flag.
-					i = 1 + (int)mv_avg.second.size();  // Want to break at end of loop
-				} else {
-					i = 1 + high;  // Skip the range already check and found to be bad
-					high = ceil(mv_avg.first[high]);
-				}
-
-				bad_ranges.push_back(make_pair(low, high));
-
-				if(!mv_avg_flag) { energy_str = "0Bad_" + energy_str; run_str += " Bad Mv Avg"; mv_avg_flag = true; }
-			}
+		TF1 lin_fit(("Run"+run_str+"lin_fit").data(), "pol1", event_ids.front(), event_ids.back());
+		lin_fit.SetLineColor(kBlue);
+		if((int)event_ids_fit.size() > min_points_fit) {
+			TGraphErrors fit_graph((int)event_ids_fit.size(), event_ids_fit.data(), dca_xy_val_fit.data(), 0, dca_xy_err_fit.data());
+			fit_graph.Fit(&lin_fit, "NQ");
+		} else {
+//			cout << run.first << " " << (int)event_ids_fit.size() << endl;
+			lin_fit.SetParameters(set_avg, 0);
 		}
 
-		pair<float, float> y_range {-1.5, 0.3};
+		vector<vector<pair<int, int>>> bad_ranges;
 
-		dca_xy_runs.push_back(new TGraphErrors((int)event_ids.size(), event_ids.data(), dca_xy_val.data(), 0, dca_xy_err.data()));
-		dca_xy_runs.back()->SetNameTitle((energy_str + "GeV_Graph_Run_"+run_str).data(), ("Run "+run_str).data());
-		dca_xy_runs.back()->SetMarkerStyle(kOpenCircle);
-		dca_xy_runs.back()->GetXaxis()->SetTitle("Event Number");
-		dca_xy_runs.back()->GetYaxis()->SetTitle("Dca_XY Event Average");
-		dca_xy_runs_can.push_back(new TCanvas((energy_str + "GeV_Can_Run_"+run_str).data(), ("Run "+run_str).data()));
-		dca_xy_runs.back()->GetYaxis()->SetRangeUser(y_range.first, y_range.second);
-		dca_xy_runs.back()->Draw("APZ");
-		dca_xy_runs_can.back()->Update();
-
-		for(pair<int, int> bad_pair:bad_ranges) {
-			int r = bad_pair.second == -1 ? dca_xy_runs_can.back()->GetUxmax() : bad_pair.second;
-			TLine *left = new TLine(bad_pair.first, y_range.first*0.9, bad_pair.first, y_range.second*0.9);
-			TLine *right = new TLine(r, y_range.first*0.9, r, y_range.second*0.9);
-			TLine *top = new TLine(bad_pair.first, y_range.second*0.9, r, y_range.second*0.9);
-			TLine *bottom = new TLine(bad_pair.first, y_range.first*0.9, r, y_range.first*0.9);
-			left->SetLineColor(kViolet); right->SetLineColor(kViolet); top->SetLineColor(kViolet); bottom->SetLineColor(kViolet);
-			left->Draw("SAMEL"); right->Draw("SAMEL"); top->Draw("SAMEL"); bottom->Draw("SAMEL");
+		for(pair<int, pair<float, float>> mv_avg_num:mv_avg_pars) {
+			pair<vector<float>, vector<float>> mv_avg = moving_average(event_ids, dca_xy_val, mv_avg_num.first);
+			float sigmas_thresh = -convert_sigmas(-mv_avg_num.second.first, mv_avg_num.first);
+			float sigmas_relax = -convert_sigmas(-mv_avg_num.second.second, mv_avg_num.first);
+			vector<pair<int, int>> new_ranges = get_npt_bad_ranges(mv_avg, lin_fit, set_err, sigmas_thresh, sigmas_relax);
+			if(new_ranges.size() > 0) {mv_avg_stats[mv_avg_num.first]++; run_str += " " + to_string(mv_avg_num.first) + " "; }
+			bad_ranges.push_back(new_ranges);
 		}
 
-		TF1 *avg_set = new TF1((energy_str + "GeV_SetAvg_Run_"+run_str).data(), "[0]", dca_xy_runs_can.back()->GetUxmin(), dca_xy_runs_can.back()->GetUxmax());
-		avg_set->SetParameter(0, set_avg); avg_set->SetLineColor(kGreen+2); avg_set->Draw("Same");
-		TF1 *avg_run = new TF1((energy_str + "GeV_RunAvg_Run_"+run_str).data(), "[0]", dca_xy_runs_can.back()->GetUxmin(), dca_xy_runs_can.back()->GetUxmax());
-		avg_run->SetParameter(0, run_avg); avg_run->SetLineColor(kBlue); avg_run->Draw("Same");
-		TF1 *sig_low_mv_avg = new TF1((energy_str + "GeV_sig_low_mv_avg_Run_"+run_str).data(), "[0]", dca_xy_runs_can.back()->GetUxmin(), dca_xy_runs_can.back()->GetUxmax());
-		sig_low_mv_avg->SetParameter(0, run_avg - mv_avg_sigmas * set_err); sig_low_mv_avg->SetLineColor(kOrange+7); sig_low_mv_avg->Draw("Same");
-		TF1 *sig_high_mv_avg = new TF1((energy_str + "GeV_sig_high_mv_avg_Run_"+run_str).data(), "[0]", dca_xy_runs_can.back()->GetUxmin(), dca_xy_runs_can.back()->GetUxmax());
-		sig_high_mv_avg->SetParameter(0, run_avg + mv_avg_sigmas * set_err); sig_high_mv_avg->SetLineColor(kOrange+7); sig_high_mv_avg->Draw("Same");
-		TF1 *sig_low_7 = new TF1((energy_str + "GeV_sig_low_7_Run_"+run_str).data(), "[0]", dca_xy_runs_can.back()->GetUxmin(), dca_xy_runs_can.back()->GetUxmax());
-		sig_low_7->SetParameter(0, run_avg - 7 * set_err); sig_low_7->SetLineColor(kOrange+9); sig_low_7->Draw("Same");
-		TF1 *sig_high_7 = new TF1((energy_str + "GeV_sig_high_7_Run_"+run_str).data(), "[0]", dca_xy_runs_can.back()->GetUxmin(), dca_xy_runs_can.back()->GetUxmax());
-		sig_high_7->SetParameter(0, run_avg + 7 * set_err); sig_high_7->SetLineColor(kOrange+9); sig_high_7->Draw("Same");
-		dca_xy_mv_avg.push_back(new TGraph((int)mv_avg.first.size(), mv_avg.first.data(), mv_avg.second.data()));
-		dca_xy_mv_avg.back()->SetLineColor(kRed); dca_xy_mv_avg.back()->SetLineWidth(2);
-		dca_xy_mv_avg.back()->Draw("SAMEL");
-		TLegend *leg = new TLegend();
-		leg->SetBorderSize(0); leg->SetFillStyle(0);
-		leg->AddEntry(avg_set, "Set Average", "l");
-		leg->AddEntry(avg_run, "Run Average", "l");
-		leg->AddEntry(sig_low_mv_avg, ("Set Avg +- " + to_string(mv_avg_sigmas) +" sigma").data(), "l");
-		leg->AddEntry(sig_low_7, "Set Avg +- 7 sigma", "l");
-		leg->AddEntry(dca_xy_mv_avg.back(), (to_string(mv_avg_num) + "pt Moving Average").data(), "l");
-		leg->Draw();
-		dca_xy_runs_can.back()->SetGrid();
-		dca_xy_runs_can.back()->Write();
+		vector<pair<int, int>> combined_bad_ranges = combine_ranges(bad_ranges);
+
+		TDirectory *run_dir;
+		if(combined_bad_ranges.size() > 0) {  // There is a bad range
+			run_dir = bad_runs_dir->mkdir(("Run " + run_str).data());
+		} else {
+			run_dir = good_runs_dir->mkdir(("Run " + run_str).data());
+		}
+		run_dir->cd();
+
+		for(pair<int, pair<float, float>> mv_avg_num:mv_avg_pars) {  // Huge waste just to get bad run status on TDirectory name but apparently faster than available options to rename TDirectory
+			pair<vector<float>, vector<float>> mv_avg = moving_average(event_ids, dca_xy_val, mv_avg_num.first);
+			float sigmas_thresh = -convert_sigmas(-mv_avg_num.second.first, mv_avg_num.first);
+			float sigmas_relax = -convert_sigmas(-mv_avg_num.second.second, mv_avg_num.first);
+			vector<pair<int, int>> new_ranges = get_npt_bad_ranges(mv_avg, lin_fit, set_err, sigmas_thresh, sigmas_relax);
+			plot_mv_avg(event_ids, dca_xy_val, dca_xy_err, mv_avg, new_ranges, lin_fit, run_avg, set_avg, set_err, sigmas_thresh, mv_avg_num.first, run.first);
+		}
+
+		plot_final(event_ids, dca_xy_val, dca_xy_err, combined_bad_ranges, lin_fit, run_avg, set_avg, set_err, run.first);
+		run_dir->Close();
+
+
 		if(flag) { num_7sig_runs++; }
-		if(mv_avg_flag) { num_mv_avg_runs++; }
 	}
 	cout << endl << energy << "GeV:" << endl;
+	good_runs_dir->Close(); bad_runs_dir->Close();
 	cout << "Runs: " << num_runs << endl;
 	cout << "7sig runs: " << num_7sig_runs << endl;
 	cout << "Percentage of runs with bad event: " << ((float)num_7sig_runs) / num_runs * 100 << "%" << endl;
@@ -379,14 +316,89 @@ void DcaxyQAer::analyze_runs() {
 	cout << "Events: " << num_events << endl;
 	cout << "7sig events: " << num_7sig_events << endl;
 	cout << "Percentage of events bad: " << ((float)num_7sig_events) / num_events * 100 << "%" << endl;
+	cout << "Moving Average Stats: " << endl;
+	for(pair<int, int> mv_avg_stat:mv_avg_stats) {
+		cout << " " << mv_avg_stat.first << "pt: " << mv_avg_stat.second << " runs" << endl;
+	}
 
 	out_file->Close();
-
-//	for(auto &graph:dca_xy_runs) { graph->Write(); }
 }
 
 
-pair<vector<float>, vector<float>> moving_average(vector<float> x, vector<float> y, int n_point) {
+vector<pair<int, int>> DcaxyQAer::get_npt_bad_ranges(const pair<vector<float>, vector<float>> &mv_avg, TF1 &lin_fit, float sigma, float sigma_thresh, float sigma_relax) {
+	vector<pair<int, int>> bad_ranges;
+
+	for(int i = 0; i < (int)mv_avg.second.size(); i++) {  // Depends on mv_avg.first being sorted ascending
+		float sigmas = (mv_avg.second[i] - lin_fit.Eval(mv_avg.first[i])) / sigma;
+		if(fabs(sigmas) > sigma_thresh) {
+			int low = i;
+			float sigmas_check = sigmas;
+			while(sigmas_check * TMath::Sign(1, sigmas) >= sigma_relax) {
+				if(--low <= 0) { break; }
+				sigmas_check = (mv_avg.second[low] - lin_fit.Eval(mv_avg.first[low])) / sigma;
+			}
+			if(low > 0) { low = floor(mv_avg.first[low]); }
+			else { low = 0; }  // If first point then leave low = 0
+
+			int high = i;
+			sigmas_check = sigmas;
+			while(sigmas_check * TMath::Sign(1, sigmas) >= sigma_relax) {
+				if(!(++high < (int)mv_avg.second.size())) { break; }
+				sigmas_check = (mv_avg.second[high] - lin_fit.Eval(mv_avg.first[high])) / sigma;
+			}
+			// Check if high is the last event or within tolerance of the last event
+			if(high >= (int)mv_avg.second.size() || mv_avg.first[high] + range_comb_tol >= mv_avg.first.back()) {
+				high = -1;  // If last point then set to -1 as a flag.
+				i = 1 + (int)mv_avg.second.size();  // Want to break at end of loop
+			} else {
+				i = 1 + high;  // Skip the range already checked and found to be bad
+				high = ceil(mv_avg.first[high]);
+			}
+
+			bad_ranges.push_back(make_pair(low, high));
+		}
+	}
+
+	return bad_ranges;
+}
+
+
+float convert_sigmas(float old_sigma, int new_points, int old_points) {
+	double prob = pow(ROOT::Math::normal_cdf(old_sigma) * 2, (double)old_points/(double)new_points) / 2;
+	return ROOT::Math::gaussian_quantile(prob, 1);
+}
+
+
+vector<pair<int, int>> DcaxyQAer::combine_ranges(const vector<vector<pair<int, int>>> &ranges) {
+	vector<pair<int, int>> all_ranges;
+	for(const vector<pair<int, int>> &range:ranges) {
+		all_ranges.insert(all_ranges.end(), range.begin(), range.end());
+	}
+	sort(all_ranges.begin(), all_ranges.end());
+
+	vector<pair<int, int>> combined_ranges;
+	if(all_ranges.size() < 1) { return combined_ranges; }
+
+	int start_index = all_ranges[0].first < range_comb_tol ? 0 : all_ranges[0].first;
+	int end_index = all_ranges[0].second;
+	if(end_index != -1) {
+		for(pair<int, int> &range:all_ranges) {
+			if(range.first <= end_index + range_comb_tol) {
+				if(range.second == -1) { end_index = range.second; break; }  // -1 is flag for end of run
+				if(range.second > end_index) { end_index = range.second; }
+			} else {
+				combined_ranges.push_back(make_pair(start_index, end_index));
+				start_index = range.first; end_index = range.second;
+			}
+		}
+	}
+	combined_ranges.push_back(make_pair(start_index, end_index));
+
+	return combined_ranges;
+}
+
+
+pair<vector<float>, vector<float>> moving_average(const vector<float> &x, const vector<float> &y, int n_point) {
 	vector<float> x_avg;
 	vector<float> y_avg;
 	if(x.size() != y.size()) { cout << "Moving average mismatch in vector sizes!" << endl; }
@@ -402,4 +414,114 @@ pair<vector<float>, vector<float>> moving_average(vector<float> x, vector<float>
 	}
 
 	return make_pair(x_avg, y_avg);
+}
+
+
+void DcaxyQAer::plot_mv_avg(const vector<float> &event_ids, const vector<float> &dca_xy_val, const vector<float> &dca_xy_err, const pair<vector<float>, vector<float>> &mv_avg, const vector<pair<int, int>> &bad_ranges, TF1 &lin_fit, float run_avg, float set_avg, float set_err, float sigmas_thresh, int mv_avg_num, int run_num) {
+	string energy_str = to_string(energy), run_str = to_string(run_num), mv_pt_str = to_string(mv_avg_num);
+
+	TGraphErrors run_graph((int)event_ids.size(), event_ids.data(), dca_xy_val.data(), 0, dca_xy_err.data());
+	run_graph.SetNameTitle((energy_str + "GeV_Graph_Run_"+run_str).data(), (mv_pt_str + " Point Moving Average " + energy_str + "GeV Run "+run_str).data());
+	run_graph.SetMarkerStyle(kOpenCircle);
+	run_graph.GetXaxis()->SetTitle("Event Number");
+	run_graph.GetYaxis()->SetTitle("Dca_XY Event Average");
+	TCanvas can((mv_pt_str + "pt_" + energy_str + "GeV_Can_Run_"+run_str).data(), ("Run "+run_str).data());
+	run_graph.GetYaxis()->SetRangeUser(y_range.first, y_range.second);
+	run_graph.Draw("APZ");
+	can.Update();
+
+	vector<TLine> lines;
+	for(pair<int, int> bad_pair:bad_ranges) {
+		int r = bad_pair.second == -1 ? can.GetUxmax() : bad_pair.second;
+		TLine left(bad_pair.first, y_range.first*0.9, bad_pair.first, y_range.second*0.9);
+		TLine right(r, y_range.first*0.9, r, y_range.second*0.9);
+		TLine top(bad_pair.first, y_range.second*0.9, r, y_range.second*0.9);
+		TLine bottom(bad_pair.first, y_range.first*0.9, r, y_range.first*0.9);
+		left.SetLineColor(kViolet); right.SetLineColor(kViolet); top.SetLineColor(kViolet); bottom.SetLineColor(kViolet);
+		lines.push_back(left); lines.push_back(right); lines.push_back(top); lines.push_back(bottom);
+	} for(TLine &line:lines) { line.Draw("SAMEL"); }
+
+	lin_fit.SetRange(can.GetUxmin(), can.GetUxmax()); lin_fit.Draw("Same");
+	TF1 avg_set((energy_str + "GeV_SetAvg_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	avg_set.SetParameter(0, set_avg); avg_set.SetLineColor(kGreen+2); avg_set.SetLineStyle(2); avg_set.Draw("Same");
+	TF1 avg_run((energy_str + "GeV_RunAvg_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	avg_run.SetParameter(0, run_avg); avg_run.SetLineColor(kCyan-7); avg_run.SetLineStyle(2); avg_run.Draw("Same");
+	TF1 sig_low_mv_avg((energy_str + "GeV_sig_low_mv_avg_Run_"+run_str).data(), "pol1", can.GetUxmin(), can.GetUxmax());
+	sig_low_mv_avg.SetParameters(lin_fit.GetParameter(0) - sigmas_thresh * set_err, lin_fit.GetParameter(1));
+	sig_low_mv_avg.SetLineColor(kOrange+7); sig_low_mv_avg.Draw("Same");
+	TF1 sig_high_mv_avg((energy_str + "GeV_sig_high_mv_avg_Run_"+run_str).data(), "pol1", can.GetUxmin(), can.GetUxmax());
+	sig_high_mv_avg.SetParameters(lin_fit.GetParameter(0) + sigmas_thresh * set_err, lin_fit.GetParameter(1));
+	sig_high_mv_avg.SetLineColor(kOrange+7); sig_high_mv_avg.Draw("Same");
+	TF1 sig_low_7((energy_str + "GeV_sig_low_7_Run_"+run_str).data(), "pol1", can.GetUxmin(), can.GetUxmax());
+	sig_low_7.SetParameters(lin_fit.GetParameter(0) - 7 * set_err, lin_fit.GetParameter(1));
+	sig_low_7.SetLineColor(kOrange+9); sig_low_7.Draw("Same");
+	TF1 sig_high_7((energy_str + "GeV_sig_high_7_Run_"+run_str).data(), "pol1", can.GetUxmin(), can.GetUxmax());
+	sig_high_7.SetParameters(lin_fit.GetParameter(0) + 7 * set_err, lin_fit.GetParameter(1));
+	sig_high_7.SetLineColor(kOrange+9); sig_high_7.Draw("Same");
+	TGraph dca_xy_mv_avg((int)mv_avg.first.size(), mv_avg.first.data(), mv_avg.second.data());
+	dca_xy_mv_avg.SetLineColor(kRed); dca_xy_mv_avg.SetLineWidth(2);
+	dca_xy_mv_avg.Draw("SAMEL");
+
+	TLegend leg;
+	leg.SetBorderSize(0); leg.SetFillStyle(0);
+	leg.AddEntry(&avg_set, "Set Average", "l");
+	leg.AddEntry(&avg_run, "Run Average", "l");
+	leg.AddEntry(&lin_fit, "Linear Baseline", "l");
+	leg.AddEntry(&sig_low_mv_avg, ("Set Avg +- " + to_string(sigmas_thresh) +" sigma").data(), "l");
+	leg.AddEntry(&sig_low_7, "Set Avg +- 7 sigma", "l");
+	leg.AddEntry(&dca_xy_mv_avg, (to_string(mv_avg_num) + "pt Moving Average").data(), "l");
+	leg.Draw();
+	can.SetGrid();
+	can.Write();
+}
+
+
+void DcaxyQAer::plot_final(const vector<float> &event_ids, const vector<float> &dca_xy_val, const vector<float> &dca_xy_err, const vector<pair<int, int>> &bad_ranges, TF1 &lin_fit, float run_avg, float set_avg, float set_err, int run_num) {
+	string energy_str = to_string(energy), run_str = to_string(run_num);
+
+	TGraphErrors run_graph((int)event_ids.size(), event_ids.data(), dca_xy_val.data(), 0, dca_xy_err.data());
+	run_graph.SetNameTitle((energy_str + "GeV_Graph_Run_"+run_str).data(), ("Final " + energy_str + "GeV Run "+run_str).data());
+	run_graph.SetMarkerStyle(kOpenCircle);
+	run_graph.GetXaxis()->SetTitle("Event Number");
+	run_graph.GetYaxis()->SetTitle("Dca_XY Event Average");
+	TCanvas can(("Final_"+ energy_str + "GeV_Can_Run_"+run_str+"_final").data(), ("Run "+run_str).data());
+	run_graph.GetYaxis()->SetRangeUser(y_range.first, y_range.second);
+	run_graph.Draw("APZ");
+	can.Update();
+
+	vector<TLine> lines;
+	for(pair<int, int> bad_pair:bad_ranges) {
+		int r = bad_pair.second == -1 ? can.GetUxmax() : bad_pair.second;
+		TLine left(bad_pair.first, y_range.first*0.9, bad_pair.first, y_range.second*0.9);
+		TLine right(r, y_range.first*0.9, r, y_range.second*0.9);
+		TLine top(bad_pair.first, y_range.second*0.9, r, y_range.second*0.9);
+		TLine bottom(bad_pair.first, y_range.first*0.9, r, y_range.first*0.9);
+		left.SetLineColor(kViolet); right.SetLineColor(kViolet); top.SetLineColor(kViolet); bottom.SetLineColor(kViolet);
+		lines.push_back(left); lines.push_back(right); lines.push_back(top); lines.push_back(bottom);
+	} for(TLine &line:lines) { line.Draw("SAMEL"); }
+
+	lin_fit.SetRange(can.GetUxmin(), can.GetUxmax()); lin_fit.Draw("Same");
+	TF1 avg_set((energy_str + "GeV_SetAvg_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	avg_set.SetParameter(0, set_avg); avg_set.SetLineColor(kGreen+2); avg_set.SetLineStyle(2); avg_set.Draw("Same");
+	TF1 avg_run((energy_str + "GeV_RunAvg_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	avg_run.SetParameter(0, run_avg); avg_run.SetLineColor(kCyan-7); avg_run.SetLineStyle(2); avg_run.Draw("Same");
+	TF1 sig_low_7((energy_str + "GeV_sig_low_7_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	sig_low_7.SetParameter(0, run_avg - 7 * set_err); sig_low_7.SetLineColor(kOrange+9); sig_low_7.Draw("Same");
+	TF1 sig_high_7((energy_str + "GeV_sig_high_7_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	sig_high_7.SetParameter(0, run_avg + 7 * set_err); sig_high_7.SetLineColor(kOrange+9); sig_high_7.Draw("Same");
+	TF1 sig_low_fit((energy_str + "GeV_sig_low_fit_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	sig_low_fit.SetParameter(0, run_avg - n_sigma_fit * set_err); sig_low_fit.SetLineColor(kOrange+7); sig_low_fit.Draw("Same");
+	TF1 sig_high_fit((energy_str + "GeV_sig_high_fit_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
+	sig_high_fit.SetParameter(0, run_avg + n_sigma_fit * set_err); sig_high_fit.SetLineColor(kOrange+7); sig_high_fit.Draw("Same");
+
+	TLegend leg;
+	leg.SetBorderSize(0); leg.SetFillStyle(0);
+	leg.AddEntry(&avg_set, "Set Average", "l");
+	leg.AddEntry(&avg_run, "Run Average", "l");
+	leg.AddEntry(&lin_fit, "Linear Baseline", "l");
+	leg.AddEntry(&sig_low_7, "Run Avg +- 7 sigma", "l");
+	leg.AddEntry(&sig_low_fit, ("Run Avg +-" + to_string(n_sigma_fit) + " sigma").data(), "l");
+	leg.Draw();
+	can.SetGrid();
+	can.Write();
 }

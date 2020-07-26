@@ -652,7 +652,7 @@ void dca_xy_qa(int energy) {
 }
 
 void run_dca_xy_qa() {
-	vector<int> energies {7};//, 11, 19, 27, 39, 62};
+	vector<int> energies {7, 39};//{7, 11, 19, 27, 39, 62};
 
 	ROOT::EnableThreadSafety();
 	{
