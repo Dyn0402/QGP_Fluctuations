@@ -233,9 +233,10 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 	}
 	for(auto &div:divs) {
 		int bin_num = (int) 360 / div;
+		double div_rads = (double)div / 180 * M_PI;
 		if(single_ratio) { bin_num = 1; }
 		else if(n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
-		vector<int> event_ratios = get_Rs(mix_angles, div, trand, bin_num);  // Convert proton angles in event to ratio values.
+		vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert proton angles in event to ratio values.
 
 		// Save ratio values to data
 		for(int protons_in_bin:event_ratios) {
