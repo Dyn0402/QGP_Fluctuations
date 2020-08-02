@@ -202,8 +202,6 @@ TreeReader::TreeReader() {
 
 	mix = Mixer(energy, single_ratio, rotate_random);
 //	sim = Simulator();
-
-//	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
 
 
@@ -332,7 +330,7 @@ void TreeReader::set_sim_eff_dist_path(string root_path, string hist_name) {
 
 void TreeReader::set_energy(int energy) {
 	this->energy = energy;
-	cut.set_values(energy);
+	cut.set_values(energy, particle);
 }
 
 void TreeReader::set_divs(vector<int> list) {
@@ -414,6 +412,7 @@ void TreeReader::set_ref_num(int ref_num) {
 
 void TreeReader::set_particle(string particle) {
 	this->particle = particle;
+	cut.set_values(energy, particle);
 }
 
 void TreeReader::set_particle_dist_hist_max(int max) {
@@ -423,6 +422,7 @@ void TreeReader::set_particle_dist_hist_max(int max) {
 void TreeReader::set_ampt_particle_pid(vector<int> pid) {
 	ampt_particle_pid = pid;
 }
+
 
 // Doers
 
@@ -486,8 +486,8 @@ void TreeReader::read_trees_chain() {
 		chain->AddFile(path.data());
 	}
 
-	set_branches(chain);
 	set_tree_branches(chain, branches, particle, ref_num);
+	set_branches(chain);
 
 	int num_events = chain->GetEntries();
 	for(int event_index = 0; event_index < num_events; event_index++) {
@@ -515,6 +515,8 @@ void TreeReader::read_trees_chain() {
 
 		process_event(event);
 	}
+
+	chain->ResetBranchAddresses();
 
 	reset_out_dir();
 	write_info_file();
@@ -715,6 +717,7 @@ void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus((particle+".nsigma").data(), 1);
 	tree->SetBranchStatus((particle+".eta").data(), 1);
 }
+
 
 void TreeReader::set_branches(TChain* chain) {
 	chain->SetBranchStatus("*", 0);
@@ -1187,7 +1190,7 @@ bool TreeReader::check_enough_particles(Event& event) {
 // Check slope of event. If within cuts, return true for good event, else false.
 bool TreeReader::check_slope(int btof, int ref_mult) {
 	double slope = (double)btof / ref_mult;
-	btof_ref_hist.Fill(btof, ref_mult);
+	btof_ref_hist.Fill(ref_mult, btof);
 	if(slope > cut.max_slope || slope < cut.min_slope) {
 		return false;
 	}
@@ -1247,7 +1250,7 @@ bool TreeReader::check_particle_good(Track& particle) {
 // Define all histograms collected for qa.
 void TreeReader::define_qa() {
 	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
-	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
+	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 601, -0.5, 600.5, 1401, -0.5, 1400.5);
 
 	de_dx_pq_hist = TH2F(("de_dx_pid_"+set_name+"_"+to_string(energy)).data(), "Dedx PID", 1000, -3, 3, 1000, 0, 0.5e-4);
 	beta_pq_hist = TH2F(("beta_pq_pid_"+set_name+"_"+to_string(energy)).data(), "Beta PID", 1000, -3, 3, 1000, 0, 5);
@@ -1294,7 +1297,7 @@ void TreeReader::define_qa() {
 	event_cut_hist.GetXaxis()->SetBinLabel(5, "Pile Up Rejected");
 	event_cut_hist.GetXaxis()->SetBinLabel(6, "Enough Good Particles");
 
-	track_cut_hist = TH1D(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
+	track_cut_hist = TH1D(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 6, -0.5, 5.5);
 	track_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
 	track_cut_hist.GetXaxis()->SetBinLabel(2, "Good charge");
 	track_cut_hist.GetXaxis()->SetBinLabel(3, "Good eta");
@@ -1415,7 +1418,10 @@ void TreeReader::write_qa() {
 	cent_hist.Write();
 
 	TCanvas pile_can("pile_can");
+	btof_ref_hist.GetXaxis()->SetTitle("Refmult");
+	btof_ref_hist.GetYaxis()->SetTitle("Btof Multiplicity");
 	btof_ref_hist.Draw("COLZ");
+	pile_can.Update();
 	TF1 up_cut("pile_up_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
 	up_cut.SetParameters(0, cut.max_slope); up_cut.SetLineColor(kRed);
 	TF1 low_cut("pile_low_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
@@ -1425,12 +1431,20 @@ void TreeReader::write_qa() {
 	btof_ref_hist.Write();
 
 	TCanvas de_dx_can("de_dx_pq_can");
+	de_dx_pq_hist.GetXaxis()->SetTitle("p*q");
+	de_dx_pq_hist.GetYaxis()->SetTitle("dEdx");
 	de_dx_pq_hist.Draw("COLZ");
+	de_dx_can.SetLogz();
+	de_dx_can.Update();
 	de_dx_can.Write();
 	de_dx_pq_hist.Write();
 
 	TCanvas beta_pq_can("beta_pq_can");
+	beta_pq_hist.GetXaxis()->SetTitle("p*q");
+	beta_pq_hist.GetYaxis()->SetTitle("beta");
 	beta_pq_hist.Draw("COLZ");
+	beta_pq_can.SetLogz();
+	beta_pq_can.Update();
 	beta_pq_can.Write();
 	beta_pq_hist.Write();
 

@@ -105,7 +105,7 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios", {0, 2}}, {"eta1_n1ratios", {0, 2}}};
 
-	vector<int> energy_list {7, 11, 39, 27, 62, 19};
+	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
