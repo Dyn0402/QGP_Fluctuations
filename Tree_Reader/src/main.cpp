@@ -15,6 +15,7 @@
 #include <chrono>
 #include <unistd.h>
 #include <cstdlib>
+#include <mutex>
 
 #include <TFile.h>
 #include <TTree.h>
@@ -31,13 +32,13 @@
 #include "TreeReader.h"
 #include "AmptCentralityMaker.h"
 #include "AmptConverter.h"
-#include "TreeLeaves.h"
 #include "DcaxyQAer.h"
 #include "ratio_methods.h"
 #include "file_io.h"
 
 #include "../StRefMultCorr/CentralityMaker.h"
 #include "../StRefMultCorr/StRefMultCorr.h"
+#include "TreeBranches.h"
 
 using namespace std;
 
@@ -53,10 +54,12 @@ void speed_test_class();
 void ref_mult_test();
 void ampt_cent_test();
 void ampt_cent_b_corr();
-void dca_xy_qa(int energy);
+void dca_xy_qa(int energy, mutex *mtx);
 void run_dca_xy_qa();
+void tchain_test();
+void run_tchain();
 
-void run_set(int energy, int set_num, string set_name, int job_num, int jobs);
+void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx);
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -71,13 +74,14 @@ int main(int argc, char** argv) {
 //	converter39.convert_trees();
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
-//	read_class();
+	read_class();
 //	cout << gErrorIgnoreLevel << endl;
 //	gErrorIgnoreLevel = 3001;
 //	string b = (string)gSystem->GetFromPipe("lsof /media/ssd/Research/Sim_Efficiency_Hists.root");
 //	cout << b << endl;
 //	gErrorIgnoreLevel = -1;
-	run_dca_xy_qa();
+//	run_dca_xy_qa();
+//	tchain_test();
 //	ampt_cent_b_corr();
 //	ampt_cent_test();
 //	ref_mult_test();
@@ -95,35 +99,15 @@ int main(int argc, char** argv) {
 
 
 void read_class() {
-//	map<string, pair<int, int>> set_pairs = {{"Sim_Flow", {0,0}}, {"Sim_Flow_No_Rotate", {0,0}}, {"Sim_Eff_Hole3-4_Flow", {0,0}}, {"Sim_Eff_Hole3-4_Flow_No_Rotate", {0,0}}};
-//	map<string, pair<int, int>> set_pairs = {{"Sim_Flow_08res_05v2", {0,0}}, {"Sim_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_Flow_05res_05v2", {0,0}}, {"Sim_Flow_05res_05v2_No_Rotate", {0,0}}};
-//	map<string, pair<int, int>> set_pairs {{"Sim_Flow_05v2_08res_Test", {0,0}}, {"Sim_Flow_05v2_05res_Test", {0,0}}};
-//	map<string, pair<int, int>> set_pairs = {{"Sim_0p0s", {0,0}}, {"Sim_05p002s", {0,0}}, {"Sim_0p0s_No_Rotate", {0,0}}, {"Sim_05p002s_No_Rotate", {0,0}},
-//				{"Sim_0p0s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_0p0s_Eff_Hole3-4_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_Hole3-4_No_Rotate", {0,0}},
-//				{"Sim_0p0s_Eff", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_0p0s_Eff_No_Rotate", {0,0}}, {"Sim_05p002s_Eff_No_Rotate", {0,0}},
-//				{"Sim_0p0s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_0p0s_Flow_08res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_08res_05v2_No_Rotate", {0,0}},
-//				{"Sim_0p0s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_0p0s_Flow_05res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_05res_05v2_No_Rotate", {0,0}},
-//				{"Sim_0p0s_Flow_099res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}, {"Sim_0p0s_Flow_099res_05v2_No_Rotate", {0,0}}, {"Sim_05p002s_Flow_099res_05v2_No_Rotate", {0,0}}
-//				};
-//map<string, pair<int, int>> set_pairs = {{"Sim_05p05s", {0,0}}, {"Sim_05p05s_No_Rotate", {0,0}},
-//				{"Sim_05p05s_Eff_Hole3-4", {0,0}}, {"Sim_05p05s_Eff_Hole3-4_No_Rotate", {0,0}},
-//				{"Sim_05p05s_Eff", {0,0}}, {"Sim_05p05s_Eff_No_Rotate", {0,0}},
-//				{"Sim_05p05s_Flow_08res_05v2", {0,0}}, {"Sim_05p05s_Flow_08res_05v2_No_Rotate", {0,0}},
-//				{"Sim_05p05s_Flow_05res_05v2", {0,0}}, {"Sim_05p05s_Flow_05res_05v2_No_Rotate", {0,0}},
-//				{"Sim_05p05s_Flow_099res_05v2", {0,0}}, {"Sim_05p05s_Flow_099res_05v2_No_Rotate", {0,0}}
-//				};
-//	map<string, pair<int, int>> set_pairs = {{"Sim_05p002s", {0,0}}, {"Sim_05p002s_Eff_Hole3-4", {0,0}}, {"Sim_05p002s_Eff", {0,0}}, {"Sim_05p002s_Flow_08res_05v2", {0,0}}, {"Sim_05p002s_Flow_05res_05v2", {0,0}}, {"Sim_05p002s_Flow_099res_05v2", {0,0}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta05", {0,0}}, {"eta1", {0,0}}, {"eta05_No_Rotate", {0,0}}, {"eta1_No_Rotate", {0,0}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta05_old", {5,9}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {1, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"Sim_01p002s_Flat100_", {0,0}}, {"Sim_01p05s_Flat100_", {0,0}}, {"Sim_002p002s_Flat100_", {0,0}}, {"Sim_002p05s_Flat100_", {0,0}}};
-//	map<string, pair<int, int>> set_pairs = {{"Sim_05p05s_Flat1000", {0,2}}};
+	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios", {0, 2}}, {"eta1_n1ratios", {0, 2}}};
 
-	int set_sleep = 100;
+	vector<int> energy_list {7, 11, 39, 27, 62, 19};
+
+	int set_sleep = 1;
 	int energy_sleep = 1;
 
 	int jobs = 0;
@@ -133,6 +117,7 @@ void read_class() {
 		}
 	}
 
+	mutex *mtx;
 	ROOT::EnableThreadSafety();
 	{
 		int job_num = 0;
@@ -141,9 +126,8 @@ void read_class() {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
 				cout << endl << "Queueing " + set_dir <<  "  job " << ++job_num << " of " << jobs << endl << endl;
-				vector<int> energy_list {7, 11, 39, 27, 62, 19};
 				for(int energy:energy_list) {
-					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs);
+					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs, mtx);
 					this_thread::sleep_for(chrono::seconds(energy_sleep));
 				}
 				this_thread::sleep_for(chrono::seconds(set_sleep));
@@ -153,23 +137,23 @@ void read_class() {
 }
 
 
-void run_set(int energy, int set_num, string set_name, int job_num, int jobs) {
+void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx) {
 	string base_path = "/home/dylan/Research/";
-	string in_base_path = "/media/dylan/SSD_Storage/Research/";//base_path;
+	string in_base_path = "/media/ucla/Research/";//base_path;
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "Trees/";
+	string in_path = in_base_path + "BES1_Trees/";
 	string out_dir = out_base_path + "Data/";
 	string mix_out_dir = out_base_path + "Data_Mix/";
 
-	vector<int> divs {2, 3, 4, 5, 6};
+	vector<int> divs {180, 120, 90, 72, 60};
 //	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
 	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 20000000}};
 
 	string set_dir = set_name + to_string(set_num) + "/";
 
-	TreeReader reader(energy, ref);
+	TreeReader reader(energy, ref, mtx);
 	reader.set_divs(divs);
 	reader.set_cbwc(false);
 	reader.set_cent_binning(9);
@@ -197,10 +181,10 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs) {
 	else if(in_string(set_name, "Pile_Up_0002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0002); }
 	else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
 
-	if(in_string(set_name,  "No_BTof_Rej")) {
-		reader.cut.max_slope = {{7, 999}, {11, 999}, {14, 999}, {19, 999}, {27, 999}, {39, 999}, {62, 999}, {200, 999}};
-		reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
-	}
+//	if(in_string(set_name,  "No_BTof_Rej")) {
+//		reader.cut.max_slope = {{7, 999}, {11, 999}, {14, 999}, {19, 999}, {27, 999}, {39, 999}, {62, 999}, {200, 999}};
+//		reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
+//	}
 
 	if(in_string(set_name, "_n1ratios")) { reader.set_n1_ratios(true); reader.set_single_ratio(false); }
 	else { reader.set_single_ratio(true); }
@@ -270,7 +254,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs) {
 	if(!in_string(set_name, "Ampt") && in_string(set_name, "pion")) {
 		reader.cut.min_m2 = -0.15;
 		reader.cut.max_m2 = 0.15;
-		reader.set_particle("Pion");
+		reader.set_particle("pion");
 	}
 	if(in_string(set_name, "pion+")) { reader.cut.charge = 1; reader.set_ampt_particle_pid({211}); }
 	if(in_string(set_name, "pion-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-211}); }
@@ -310,7 +294,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs) {
 	} else if(in_string(set_name, "Ampt")) {
 		reader.read_ampt_trees();
 	} else{
-		reader.read_trees();
+		reader.read_trees_chain();
 	}
 
 	cout << "Finished " << set_name << " set " << set_num << " " << energy <<  "GeV, job " << job_num << " of " << jobs << endl << endl;
@@ -646,20 +630,61 @@ void ref_mult_test() {
 }
 
 
-void dca_xy_qa(int energy) {
-	DcaxyQAer qa(energy);
-	qa.run_qa();
+void dca_xy_qa(int energy, mutex *mtx) {
+	{
+		DcaxyQAer qa(energy, mtx);
+		qa.run_qa();
+	}
+//	DcaxyQAer qa(energy);
+//	map<int, vector<pair<int, int>>> bad_ranges = qa.get_bad_ranges();
+//	for(pair<int, vector<pair<int, int>>> run:bad_ranges) {
+//		cout << "Run " << run.first << ":\t" << flush;
+//		for(pair<int, int> range:run.second) {
+//			cout << "[" << range.first << " , " << range.second << "]\t" << flush;
+//		}
+//		cout << endl;
+//	}
 }
 
 void run_dca_xy_qa() {
-	vector<int> energies {7, 39};//{7, 11, 19, 27, 39, 62};
+	vector<int> energies {7, 11, 19, 27, 39, 62};
+	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();
 	{
 		ThreadPool pool(thread::hardware_concurrency());
 		for(int energy:energies) {
-			pool.enqueue(dca_xy_qa, energy);
+			pool.enqueue(dca_xy_qa, energy, mtx);
 			this_thread::sleep_for(chrono::seconds(1));
 		}
+	}
+}
+
+
+void tchain_test() {
+	ROOT::EnableThreadSafety();
+	{
+		ThreadPool pool(thread::hardware_concurrency());
+		pool.enqueue(run_tchain);
+		pool.enqueue(run_tchain);
+	}
+}
+
+void run_tchain() {
+	string in_path = "/media/ucla/Research/BES1_Trees/";
+	int energy = 7;
+
+	TChain chain("tree");
+	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+	for(string file:in_files) {
+		chain.Add(file.data());
+	}
+
+	int event_id;
+	chain.SetBranchAddress("event_id", &event_id);
+
+	int event_index = -1;
+	while(chain.GetEntry(++event_index)) {
+		cout << event_index << ": " << event_id << endl;
 	}
 }

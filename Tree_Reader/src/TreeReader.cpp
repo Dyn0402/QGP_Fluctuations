@@ -68,12 +68,44 @@ TreeReader::TreeReader(int energy, int ref_num) {
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
-	this->energy = energy;
+	set_energy(energy);
 
 	mix = Mixer(energy, single_ratio, rotate_random);
 //	sim = Simulator();
+}
 
-	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
+TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
+	start_sys = chrono::system_clock::now();
+
+	this->mtx = mtx;
+
+	cbwc = false;
+	rotate_random = false;
+	event_plane = false;
+	mixed_sets = false;
+	mixed = false;
+	rand_data = false;
+	pile_up = false;
+	efficiency = false;
+	single_ratio = false;
+	n1_ratios = false;
+	check_charge = true;
+
+	sim_eff = false;
+	sim_flow = false;
+
+	pile_up_prob = 0;
+	efficiency_prob = 0;
+
+	cent_binning = 9;
+	this->ref_num = ref_num;
+
+	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+
+	set_energy(energy);
+
+	mix = Mixer(energy, single_ratio, rotate_random);
+//	sim = Simulator();
 }
 
 TreeReader::TreeReader(int energy) {
@@ -101,12 +133,44 @@ TreeReader::TreeReader(int energy) {
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
-	this->energy = energy;
+	set_energy(energy);
 
 	mix = Mixer(energy, single_ratio, rotate_random);
 //	sim = Simulator();
+}
 
-	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
+TreeReader::TreeReader(int energy, mutex *mtx) {
+	start_sys = chrono::system_clock::now();
+
+	this->mtx = mtx;
+
+	cbwc = false;
+	rotate_random = false;
+	event_plane = false;
+	mixed_sets = false;
+	mixed = false;
+	rand_data = false;
+	pile_up = false;
+	efficiency = false;
+	single_ratio = false;
+	n1_ratios = false;
+	check_charge = true;
+
+	sim_eff = false;
+	sim_flow = false;
+
+	pile_up_prob = 0;
+	efficiency_prob = 0;
+
+	cent_binning = 9;
+	ref_num = 2;
+
+	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+
+	set_energy(energy);
+
+	mix = Mixer(energy, single_ratio, rotate_random);
+//	sim = Simulator();
 }
 
 TreeReader::TreeReader() {
@@ -134,12 +198,12 @@ TreeReader::TreeReader() {
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
-	this->energy = 7;
+	set_energy(7);
 
 	mix = Mixer(energy, single_ratio, rotate_random);
 //	sim = Simulator();
 
-	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
+//	if(energy == 27) { cut.min_nsigma = -1.0; cut.max_nsigma = 1.0; }
 }
 
 
@@ -268,6 +332,7 @@ void TreeReader::set_sim_eff_dist_path(string root_path, string hist_name) {
 
 void TreeReader::set_energy(int energy) {
 	this->energy = energy;
+	cut.set_values(energy);
 }
 
 void TreeReader::set_divs(vector<int> list) {
@@ -385,6 +450,7 @@ void TreeReader::read_trees() {
 		add_cut_hists(file);
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		read_tree(tree);  // Read tree from file into data
+		tree->ResetBranchAddresses();
 		file->Close();
 		delete file;
 		file_index++;
@@ -421,11 +487,10 @@ void TreeReader::read_trees_chain() {
 	}
 
 	set_branches(chain);
+	set_tree_branches(chain, branches, particle, ref_num);
 
 	int num_events = chain->GetEntries();
 	for(int event_index = 0; event_index < num_events; event_index++) {
-
-		tree_leaves leaves = get_tree_leaves(chain, particle, ref_num);
 
 		// Display progress and time while running.
 		if(!(event_index % (unsigned)(num_events/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
@@ -436,13 +501,13 @@ void TreeReader::read_trees_chain() {
 		}
 
 		chain->GetEntry(event_index);
-		Event event(leaves);
+		Event event(branches);
 
 		if(pile_up) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
 				event_index++;
 				if(chain->GetEntry(event_index)) {
-					Event event2(leaves);
+					Event event2(branches);
 					event.pile_up(event2);
 				}
 			}
@@ -608,18 +673,19 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 
 // Read individual tree. Read out and then process each event.
 void TreeReader::read_tree(TTree* tree) {
-	tree_leaves leaves = get_tree_leaves(tree, particle, ref_num);
+//	tree_leaves leaves = get_tree_leaves(tree, particle, ref_num);
+	set_tree_branches(tree, branches, particle, ref_num);
 	set_branches(tree);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
-		Event event(leaves);
+		Event event(branches);
 
 		if(pile_up) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
 				event_index++;
 				if(tree->GetEntry(event_index)) {
-					Event event2(leaves);
+					Event event2(branches);
 					event.pile_up(event2);
 				}
 			}
@@ -633,28 +699,40 @@ void TreeReader::read_tree(TTree* tree) {
 
 void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus("*", 0);
-	tree->SetBranchStatus("run", 1);
+	tree->SetBranchStatus("run_num", 1);
 	tree->SetBranchStatus("event_id", 1);
-	tree->SetBranchStatus("Nprim", 1);
-	tree->SetBranchStatus(("ref"+to_string(ref_num)).data(), 1);
+	tree->SetBranchStatus("refmult", 1);
+	tree->SetBranchStatus(("refmult"+to_string(ref_num)).data(), 1);
 	tree->SetBranchStatus("btof", 1);
-	tree->SetBranchStatus("vtx_z", 1);
+	tree->SetBranchStatus("vz", 1);
 	tree->SetBranchStatus("qx", 1);
 	tree->SetBranchStatus("qy", 1);
-	tree->SetBranchStatus("dca_xy_avg", 1);
-	tree->SetBranchStatus("dca_xy_sd", 1);
-	tree->SetBranchStatus((particle+"*").data(), 1);
+	tree->SetBranchStatus((particle+".pt").data(), 1);
+	tree->SetBranchStatus((particle+".phi").data(), 1);
+	tree->SetBranchStatus((particle+".beta").data(), 1);
+	tree->SetBranchStatus((particle+".charge").data(), 1);
+	tree->SetBranchStatus((particle+".dca").data(), 1);
+	tree->SetBranchStatus((particle+".nsigma").data(), 1);
+	tree->SetBranchStatus((particle+".eta").data(), 1);
 }
 
 void TreeReader::set_branches(TChain* chain) {
 	chain->SetBranchStatus("*", 0);
-	chain->SetBranchStatus("run", 1);
-	chain->SetBranchStatus("Nprim", 1);
-	chain->SetBranchStatus(("ref"+to_string(ref_num)).data(), 1);
+	chain->SetBranchStatus("run_num", 1);
+	chain->SetBranchStatus("event_id", 1);
+	chain->SetBranchStatus("refmult", 1);
+	chain->SetBranchStatus(("refmult"+to_string(ref_num)).data(), 1);
 	chain->SetBranchStatus("btof", 1);
-	chain->SetBranchStatus("vtx_z", 1);
-	chain->SetBranchStatus(("event_plane_ref"+to_string(ref_num)).data(), 1);
-	chain->SetBranchStatus((particle+"*").data(), 1);
+	chain->SetBranchStatus("vz", 1);
+	chain->SetBranchStatus("qx", 1);
+	chain->SetBranchStatus("qy", 1);
+	chain->SetBranchStatus((particle+".pt").data(), 1);
+	chain->SetBranchStatus((particle+".phi").data(), 1);
+	chain->SetBranchStatus((particle+".beta").data(), 1);
+	chain->SetBranchStatus((particle+".charge").data(), 1);
+	chain->SetBranchStatus((particle+".dca").data(), 1);
+	chain->SetBranchStatus((particle+".nsigma").data(), 1);
+	chain->SetBranchStatus((particle+".eta").data(), 1);
 }
 
 
@@ -756,7 +834,7 @@ TH1D* TreeReader::get_sim_proton_dist(int cent) {
 	file->Close();
 	delete file;
 
-	return(proton_dist);
+	return proton_dist;
 }
 
 
@@ -776,18 +854,18 @@ TH1D* TreeReader::get_sim_efficiency_dist() {
 	file->Close();
 	delete file;
 
-	return(efficiency_dist);
+	return efficiency_dist;
 }
 
 
-//  For good events/tracks, azimuthally bin protons and save to data
+//  For good events/tracks, azimuthally bin particles and save to data
 void TreeReader::process_event(Event& event) {
 
 	// Check if each event is good. Analyze if so, continue if not.
 	if(check_event(event)) {
 		vector<double> good_particle_angles = {};
 
-		// Iterate over protons in event and add corresponding phi to good_proton_angles if proton good.
+		// Iterate over particles in event and add corresponding phi to good_particle_angles if particle good.
 		for(Track& particle:event.get_particles()) {
 			if(check_particle_good(particle)) {
 				if(efficiency) {  // Skip good particle with chance efficiency_prob
@@ -807,7 +885,7 @@ void TreeReader::process_event(Event& event) {
 		if(good_particle_angles.size() >= (unsigned)cut.min_multi) {
 			cent16_events.Fill(cent16_corr);
 			cent9_events.Fill(cent9_corr);
-			event_cut_hist.Fill("Enough Good Protons", 1);
+			event_cut_hist.Fill("Enough Good Particles", 1);
 
 			int cent;
 			if(cent_binning == 16) {
@@ -842,16 +920,17 @@ void TreeReader::process_event(Event& event) {
 
 			for(auto &div:divs) {
 				int bin_num = (int) 360 / div;
+				double div_rads = (double)div / 180 * M_PI;
 				if(single_ratio) { bin_num = 1; }
 				else if(n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
-				vector<int> event_ratios = get_Rs(good_particle_angles, div, trand, bin_num);  // Convert particle angles in event to ratio values.
+				vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 				// Save ratio values to data
-				for(int protons_in_bin:event_ratios) {
+				for(int particles_in_bin:event_ratios) {
 					if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-						data[div][event.get_refn()][good_particle_angles.size()][protons_in_bin]++;
+						data[div][event.get_refn()][good_particle_angles.size()][particles_in_bin]++;
 					} else {
-						data[div][cent][good_particle_angles.size()][protons_in_bin]++;
+						data[div][cent][good_particle_angles.size()][particles_in_bin]++;
 					}
 				}
 			}
@@ -1008,10 +1087,6 @@ void TreeReader::write_info_file() {
 		out << "cent_binning: " << cent_binning << endl;
 		out << "ref_num: " << ref_num << endl;
 
-		out << "min_p: " << to_string(cut.min_p) << endl;
-		out << "max_p: " << to_string(cut.max_p) << endl;
-		out << "min_pt: " << to_string(cut.min_pt) << endl;
-		out << "max_pt: " << to_string(cut.max_pt) << endl;
 		out << "min_beta: " << to_string(cut.min_beta) << endl;
 		out << "max_beta: " << to_string(cut.max_beta) << endl;
 		out << "charge: " << to_string(cut.charge) << endl;
@@ -1023,8 +1098,12 @@ void TreeReader::write_info_file() {
 		out << "max_dca: " << to_string(cut.max_dca) << endl;
 		out << "min_m2: " << to_string(cut.min_m2) << endl;
 		out << "max_m2: " << to_string(cut.max_m2) << endl;
-		out << "min_pt_for_m: " << to_string(cut.min_pt_for_m) << endl;
-		out << "max_pt_for_m: " << to_string(cut.max_pt_for_m) << endl;
+		out << "min_pt_tof: " << to_string(cut.min_pt_tof) << endl;
+		out << "max_pt_tof: " << to_string(cut.max_pt_tof) << endl;
+		out << "min_pt_no_tof: " << to_string(cut.min_pt_no_tof) << endl;
+		out << "max_pt_no_tof: " << to_string(cut.max_pt_no_tof) << endl;
+		out << "max_p_tof: " << to_string(cut.max_p_tof) << endl;
+		out << "max_p_no_tof: " << to_string(cut.max_p_no_tof) << endl;
 
 		out << "min_multi: " << to_string(cut.min_multi) << endl;
 
@@ -1042,113 +1121,126 @@ void TreeReader::write_info_file() {
 void TreeReader::add_cut_hists(TFile *file) {
 	TH1D *event_hist = (TH1D*)file->Get(event_cut_hist_name.data());
 	TH1D *track_hist = (TH1D*)file->Get(track_cut_hist_name.data());
+	TH2F *de_dx_pq = (TH2F*)file->Get(de_dx_pq_hist_name.data());
+	TH2F *beta_pq = (TH2F*)file->Get(beta_pq_hist_name.data());
+
 	event_cut_tree_maker.Add(event_hist);
 	track_cut_tree_maker.Add(track_hist);
+	de_dx_pq_hist.Add(de_dx_pq);
+	beta_pq_hist.Add(beta_pq);
 }
 
 
 //Returns true if event is good, false if it is bad.
 bool TreeReader::check_event(Event& event) {
-	bool good_event = false;
 	fill_pre_event_qa(event);
 	event_cut_hist.Fill("Original", 1);
-	if(check_good_run((int)event.get_run())) {
-		event_cut_hist.Fill("Good Run", 1);
-		if(check_enough_particles(event)) {
-			event_cut_hist.Fill("Enough Protons", 1);
-			if(check_slope(event.get_btof(), event.get_ref())) {
-				event_cut_hist.Fill("Pile Up Rejected", 1);
-				fill_post_event_qa(event);
-				good_event = true;
-			}
-		}
+
+	if(!check_good_dca_xy(event.get_run(), event.get_event_id())) return false;
+	event_cut_hist.Fill("Good Dca_xy", 1);
+
+	if(!check_good_run(event.get_run())) return false;
+	event_cut_hist.Fill("Good Run", 1);
+
+	if(!check_enough_particles(event)) return false;
+	event_cut_hist.Fill("Enough Particles", 1);
+
+	if(!check_slope(event.get_btof(), event.get_ref())) return false;
+	event_cut_hist.Fill("Pile Up Rejected", 1);
+
+	fill_post_event_qa(event);
+
+	return true;
+}
+
+
+// Check DcaxyQAer bad runs and bad events. If either bad run or bad event, return false. Otherwise true.
+bool TreeReader::check_good_dca_xy(int run, int event_id) {
+	if(find(cut.dca_xy_bad_runs.begin(), cut.dca_xy_bad_runs.end(), run) != cut.dca_xy_bad_runs.end()) { return false; }
+
+	for(const pair<int, int> &range:cut.dca_xy_bad_event_ranges[run]) {
+		if(event_id >= range.first && event_id <= range.second) { return false; }
 	}
 
-	return(good_event);
+	return true;
 }
 
 
-//Check the list of bad runs for input run.
-//If input run is contained in bad run list, return false (bad run) else return true (good run).
+// Check the list of bad runs for input run.
+// If input run is contained in bad run list, return false (bad run) else return true (good run).
 bool TreeReader::check_good_run(int run) {
-	bool list_good_run = find(cut.bad_runs.begin(), cut.bad_runs.end(), run) == cut.bad_runs.end();
-	bool ref_good_run = !refmultCorrUtil->isBadRun(run);
+	if(find(cut.bad_runs.begin(), cut.bad_runs.end(), run) != cut.bad_runs.end()) { return false; }
+	if(refmultCorrUtil->isBadRun(run)) { return false; }
 
-	return(list_good_run && ref_good_run);
+	return true;
 }
 
 
-//Checks if there are enough protons in the event.
-//If more protons than minimum, return true, else false.
+// Checks if there are enough good particles in the event.
+// If more particles than minimum, return true, else false.
 bool TreeReader::check_enough_particles(Event& event) {
 	if(event.get_num_particles() >=  cut.min_multi) { return(true);	}
-	else { return(false); }
+	else { return false; }
 }
 
 
 // Check slope of event. If within cuts, return true for good event, else false.
 bool TreeReader::check_slope(int btof, int ref_mult) {
-	bool good_event = true;
 	double slope = (double)btof / ref_mult;
-	if(slope > cut.max_slope[energy] || slope < cut.min_slope[energy]) {
-		good_event = false;
-	}
 	btof_ref_hist.Fill(btof, ref_mult);
+	if(slope > cut.max_slope || slope < cut.min_slope) {
+		return false;
+	}
 
-	return(good_event);
+	return true;
 }
 
 
-// Returns true if proton is good and false if proton is bad.
-bool TreeReader::check_particle_good(Track& proton) {
-	bool good_proton = false;
+// Returns true if particle is good and false if particle is bad.
+bool TreeReader::check_particle_good(Track& particle) {
+	bool good_particle = false;
 	track_cut_hist.Fill("Original", 1);
 
-	fill_pre_track_qa(proton);
+	fill_pre_track_qa(particle);
 
-	double p = proton.get_p();
-	if(p < cut.min_p) { return(good_proton); }
-	track_cut_hist.Fill("Good p", 1);
-
-	double pt = proton.get_pt();
-	if(!(pt >= cut.min_pt && pt <= cut.max_pt)) { return(good_proton); }
-	track_cut_hist.Fill("Good pt", 1);
-
-	if(check_charge && !(proton.get_charge() == cut.charge)) { return(good_proton); }
+	if(check_charge && !(particle.get_charge() == cut.charge)) { return false; }
 	track_cut_hist.Fill("Good charge", 1);
 
-	double eta = proton.get_eta();
-	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return(good_proton); }
+	double eta = particle.get_eta();
+	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return false; }
 	track_cut_hist.Fill("Good eta", 1);
 
-	double nsigma = proton.get_nsigma();
-	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return(good_proton); }
+	double nsigma = particle.get_nsigma();
+	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return false; }
 	track_cut_hist.Fill("Good nsigma", 1);
 
-	double dca = proton.get_dca();
-	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return(good_proton); }
+	double dca = particle.get_dca();
+	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return false; }
 	track_cut_hist.Fill("Good dca", 1);
 
-	if(pt >= cut.min_pt_for_m && pt <= cut.max_pt_for_m) {
-		double beta = proton.get_beta();
+	double p = particle.get_p();
+	double pt = particle.get_pt();
+
+	if(pt >= cut.min_pt_no_tof && pt <= cut.max_pt_no_tof && p <= cut.max_p_no_tof) {
+		good_particle = true;
+	} else if(pt >= cut.min_pt_tof && pt <= cut.max_pt_tof && p <= cut.max_p_tof) {
+		double beta = particle.get_beta();
 		if(beta > cut.min_beta) {
 			double m2 = pow(p, 2) * (pow(beta, -2) - 1.);
 			pre_m2_hist.Fill(m2);
 			if(m2 > cut.min_m2 && m2 < cut.max_m2) {
-				good_proton = true;
+				good_particle = true;
 				post_m2_hist.Fill(m2);
 			}
-		} else {
-			good_proton = true;
-		}
-	} else {
-		good_proton = true;
+		}  // Else leave good_particle = false
 	}
-	if(good_proton) { track_cut_hist.Fill("Good mass*", 1); }
 
-	fill_post_track_qa(proton);
+	if(good_particle) { track_cut_hist.Fill("Good mass*", 1); }
+	else { return false; }
 
-	return(good_proton);
+	fill_post_track_qa(particle);
+
+	return(good_particle);
 }
 
 
@@ -1157,45 +1249,58 @@ void TreeReader::define_qa() {
 	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
 	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 3001, -0.5, 3000.5, 601, -0.5, 600.5);
 
-	event_cut_tree_maker = TH1D(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 8, -0.5, 7.5);
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Original");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Is muEvent");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Good Trigger");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Good Run");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(5, "Good Vz");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(6, "Good Vr");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Vertex Non-Zero");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(8, "Good VPD Vz");
+	de_dx_pq_hist = TH2F(("de_dx_pid_"+set_name+"_"+to_string(energy)).data(), "Dedx PID", 1000, -3, 3, 1000, 0, 0.5e-4);
+	beta_pq_hist = TH2F(("beta_pq_pid_"+set_name+"_"+to_string(energy)).data(), "Beta PID", 1000, -3, 3, 1000, 0, 5);
 
-	track_cut_tree_maker = TH1D(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 13, -0.5, 12.5);
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Original");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Charge");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(3, "p_low");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(4, "ratio_low");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(5, "ratio_high");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(6, "eta");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(7, "nHitsFit");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(8, "nHitsDedx");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(9, "dca");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(10, "pt_low");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(11, "pt_high");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(12, "nsigma");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(13, "m");
-	event_cut_hist = TH1D(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 5, -0.5, 4.5);
+	event_cut_tree_maker = TH1D(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 9, -0.5, 8.5);
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Expected");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Events Read");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Is muEvent");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Good Trigger");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(5, "Good Run");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(6, "Good Vz");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Good Vr");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(8, "Vertex Non-Zero");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(9, "Good VPD Vz");
+
+	event_cut_tree_maker.Fill("Expected", cut.expected_events);
+
+	track_cut_tree_maker = TH1D(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 19, -0.5, 18.5);
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Tracks Read");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Is Track");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Vertex Index 0");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Global Index > 0");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(5, "Primary Flag");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(6, "Global Flag");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Charge");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(8, "nHitsRatio Min");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(9, "nHitsRatio Max");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(10, "eta");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(11, "nHitsFit");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(12, "nHitsDedx");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(13, "dca");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(14, "pt_low");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(15, "pt_high");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(16, "nsigma_proton");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(17, "m_proton");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(18, "nsigma_pion");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(19, "m_pion");
+
+	event_cut_hist = TH1D(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 6, -0.5, 5.5);
 	event_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
-	event_cut_hist.GetXaxis()->SetBinLabel(2, "Good Run");
-	event_cut_hist.GetXaxis()->SetBinLabel(3, "Enough Protons");
-	event_cut_hist.GetXaxis()->SetBinLabel(4, "Pile Up Rejected");
-	event_cut_hist.GetXaxis()->SetBinLabel(5, "Enough Good Protons");
+	event_cut_hist.GetXaxis()->SetBinLabel(2, "Good Dca_xy");
+	event_cut_hist.GetXaxis()->SetBinLabel(3, "Good Run");
+	event_cut_hist.GetXaxis()->SetBinLabel(4, "Enough Particles");
+	event_cut_hist.GetXaxis()->SetBinLabel(5, "Pile Up Rejected");
+	event_cut_hist.GetXaxis()->SetBinLabel(6, "Enough Good Particles");
+
 	track_cut_hist = TH1D(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 8, -0.5, 7.5);
 	track_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
-	track_cut_hist.GetXaxis()->SetBinLabel(2, "Good p");
-	track_cut_hist.GetXaxis()->SetBinLabel(3, "Good pt");
-	track_cut_hist.GetXaxis()->SetBinLabel(4, "Good charge");
-	track_cut_hist.GetXaxis()->SetBinLabel(5, "Good eta");
-	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good nsigma");
-	track_cut_hist.GetXaxis()->SetBinLabel(7, "Good dca");
-	track_cut_hist.GetXaxis()->SetBinLabel(8, "Good mass*");
+	track_cut_hist.GetXaxis()->SetBinLabel(2, "Good charge");
+	track_cut_hist.GetXaxis()->SetBinLabel(3, "Good eta");
+	track_cut_hist.GetXaxis()->SetBinLabel(4, "Good nsigma");
+	track_cut_hist.GetXaxis()->SetBinLabel(5, "Good dca");
+	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good mass*");
 
 
 	cent16_events = TH1I(("cent16_events_"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
@@ -1248,28 +1353,28 @@ void TreeReader::define_qa() {
 
 
 // Fill histograms for pre-qa for tracks
-void TreeReader::fill_pre_track_qa(Track&proton) {
-	pre_phi_hist.Fill(proton.get_phi());
-	pre_p_hist.Fill(proton.get_p());
-	pre_pt_hist.Fill(proton.get_pt());
-	pre_beta_hist.Fill(proton.get_beta());
-	pre_charge_hist.Fill(proton.get_charge());
-	pre_eta_hist.Fill(proton.get_eta());
-	pre_nsigma_hist.Fill(proton.get_nsigma());
-	pre_dca_hist.Fill(proton.get_dca());
+void TreeReader::fill_pre_track_qa(Track&particle) {
+	pre_phi_hist.Fill(particle.get_phi());
+	pre_p_hist.Fill(particle.get_p());
+	pre_pt_hist.Fill(particle.get_pt());
+	pre_beta_hist.Fill(particle.get_beta());
+	pre_charge_hist.Fill(particle.get_charge());
+	pre_eta_hist.Fill(particle.get_eta());
+	pre_nsigma_hist.Fill(particle.get_nsigma());
+	pre_dca_hist.Fill(particle.get_dca());
 }
 
 
 // Fill histograms for post-qa for tracks
-void TreeReader::fill_post_track_qa(Track& proton) {
-	post_phi_hist.Fill(proton.get_phi());
-	post_p_hist.Fill(proton.get_p());
-	post_pt_hist.Fill(proton.get_pt());
-	post_beta_hist.Fill(proton.get_beta());
-	post_charge_hist.Fill(proton.get_charge());
-	post_eta_hist.Fill(proton.get_eta());
-	post_nsigma_hist.Fill(proton.get_nsigma());
-	post_dca_hist.Fill(proton.get_dca());
+void TreeReader::fill_post_track_qa(Track& particle) {
+	post_phi_hist.Fill(particle.get_phi());
+	post_p_hist.Fill(particle.get_p());
+	post_pt_hist.Fill(particle.get_pt());
+	post_beta_hist.Fill(particle.get_beta());
+	post_charge_hist.Fill(particle.get_charge());
+	post_eta_hist.Fill(particle.get_eta());
+	post_nsigma_hist.Fill(particle.get_nsigma());
+	post_dca_hist.Fill(particle.get_dca());
 }
 
 
@@ -1300,17 +1405,35 @@ void TreeReader::fill_post_event_qa(Event& event) {
 
 // Write all qa plots into TFile.
 void TreeReader::write_qa() {
+	if(mtx) mtx->lock();
+
 	TFile qa((qa_path + qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
 
 	TCanvas cent_can("cent_can");
 	cent_hist.Draw("COLZ");
 	cent_can.Write();
 	cent_hist.Write();
+
 	TCanvas pile_can("pile_can");
 	btof_ref_hist.Draw("COLZ");
+	TF1 up_cut("pile_up_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
+	up_cut.SetParameters(0, cut.max_slope); up_cut.SetLineColor(kRed);
+	TF1 low_cut("pile_low_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
+	low_cut.SetParameters(0, cut.max_slope); up_cut.SetLineColor(kRed);
+	up_cut.Draw("same"); low_cut.Draw("same");
 	pile_can.Write();
-
 	btof_ref_hist.Write();
+
+	TCanvas de_dx_can("de_dx_pq_can");
+	de_dx_pq_hist.Draw("COLZ");
+	de_dx_can.Write();
+	de_dx_pq_hist.Write();
+
+	TCanvas beta_pq_can("beta_pq_can");
+	beta_pq_hist.Draw("COLZ");
+	beta_pq_can.Write();
+	beta_pq_hist.Write();
+
 	event_cut_tree_maker.Write();
 	track_cut_tree_maker.Write();
 	event_cut_hist.Write();
@@ -1435,10 +1558,10 @@ void TreeReader::write_qa() {
 	post_btof_hist.Draw("sames");
 	btof_can.Write();
 	TCanvas ep_can("ep_can");
-//	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
-//	pre_ep_hist.Draw();
 	post_ep_hist.SetLineColor(kRed);
-	post_ep_hist.Draw("sames");
+	post_ep_hist.Draw();
+//	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
+//	pre_ep_hist.Draw("sames");
 	ep_can.Write();
 	TCanvas phi_can("phi_can");
 	pre_phi_hist.GetYaxis()->SetRangeUser(0, pre_phi_hist.GetMaximum()*1.05);
@@ -1496,6 +1619,8 @@ void TreeReader::write_qa() {
 	m2_can.Write();
 
 	qa.Close();
+
+	if(mtx) mtx->unlock();
 }
 
 
