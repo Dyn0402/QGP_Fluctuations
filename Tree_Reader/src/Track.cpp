@@ -24,7 +24,7 @@ Track::Track() {
 	charge = 0;
 }
 
-Track::Track(double pt, double p, double phi, double eta, float dca, double nsigma, float beta, short charge) {
+Track::Track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge) {
 	this->pt = pt;
 	this->p = p;
 	this->phi = phi;
@@ -51,19 +51,19 @@ Track::~Track() {}
 
 // Getters
 
-double Track::get_pt() {
+float Track::get_pt() {
 	return(pt);
 }
 
-double Track::get_p() {
+float Track::get_p() {
 	return(p);
 }
 
-double Track::get_phi() {
+float Track::get_phi() {
 	return(phi);
 }
 
-double Track::get_eta() {
+float Track::get_eta() {
 	return(eta);
 }
 
@@ -71,7 +71,7 @@ float Track::get_dca() {
 	return(dca);
 }
 
-double Track::get_nsigma() {
+float Track::get_nsigma() {
 	return(nsigma);
 }
 
@@ -86,19 +86,19 @@ short Track::get_charge() {
 
 // Setters
 
-void Track::set_pt(double pt) {
+void Track::set_pt(float pt) {
 	this->pt = pt;
 }
 
-void Track::set_p(double p) {
+void Track::set_p(float p) {
 	this->p = p;
 }
 
-void Track::set_phi(double phi) {
+void Track::set_phi(float phi) {
 	this->phi = phi;
 }
 
-void Track::set_eta(double eta) {
+void Track::set_eta(float eta) {
 	this->eta = eta;
 }
 
@@ -106,7 +106,7 @@ void Track::set_dca(float dca) {
 	this->dca = dca;
 }
 
-void Track::set_nsigma(double nsigma) {
+void Track::set_nsigma(float nsigma) {
 	this->nsigma = nsigma;
 }
 
@@ -121,7 +121,7 @@ void Track::set_charge(short charge) {
 
 // Doers
 
-void Track::set_track(double pt, double p, double phi, double eta, float dca, double nsigma, float beta, short charge) {
+void Track::set_track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge) {
 	this->pt = pt;
 	this->p = p;
 	this->phi = phi;

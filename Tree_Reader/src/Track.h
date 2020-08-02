@@ -15,13 +15,13 @@
 
 
 struct track_defaults {
-	double pt = 0.7;
-	double p = 0.7;
-	double phi = 0.0;
-	double eta = 0.0;
+	float pt = 0.7;
+	float p = 0.7;
+	float phi = 0.0;
+	float eta = 0.0;
 
 	float dca = 0.1;
-	double nsigma = 1.0;
+	float nsigma = 1.0;
 	float beta = -999;
 	short charge = 1;
 };
@@ -31,40 +31,40 @@ struct track_defaults {
 class Track {
 public:
 	Track();
-	Track(double pt, double p, double phi, double eta, float dca, double nsigma, float beta, short charge);
+	Track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge);
 	Track(const track_defaults& defaults);
 	~Track();
 
-	double get_pt();
-	double get_p();
-	double get_phi();
-	double get_eta();
+	float get_pt();
+	float get_p();
+	float get_phi();
+	float get_eta();
 	float get_dca();
-	double get_nsigma();
+	float get_nsigma();
 	float get_beta();
 	short get_charge();
 
-	void set_pt(double pt);
-	void set_p(double p);
-	void set_phi(double phi);
-	void set_eta(double eta);
+	void set_pt(float pt);
+	void set_p(float p);
+	void set_phi(float phi);
+	void set_eta(float eta);
 	void set_dca(float dca);
-	void set_nsigma(double nsigma);
+	void set_nsigma(float nsigma);
 	void set_beta(float beta);
 	void set_charge(short charge);
 
-	void set_track(double pt, double p, double phi, double eta, float dca, double nsigma, float beta, short charge);
+	void set_track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge);
 	void clear();
 
 //	ClassDef(Track, 1);
 
 private:
-	double pt;
-	double p;
-	double phi;
-	double eta;
+	float p;
+	float pt;
+	float phi;
+	float eta;
 	float dca;
-	double nsigma;
+	float nsigma;
 	float beta;
 	short charge;
 };

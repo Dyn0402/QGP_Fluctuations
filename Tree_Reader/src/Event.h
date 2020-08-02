@@ -18,32 +18,32 @@
 #include <TVector3.h>
 //#include <TObject.h>
 
-#include "TreeLeaves.h"
 #include "Track.h"
+#include "TreeBranches.h"
 
 using namespace std;
 
 
 struct event_defaults {
-	double vx = 0.;
-	double vy = 0.;
-	double vz = 0.;
-	double qx = 0.;
-	double qy = 0.;
-	double event_plane = 0.;
-	double dca_xy_avg = 0.;
-	double dca_xy_err = 0.;
+	float vx = 0.;
+	float vy = 0.;
+	float vz = 0.;
+	float qx = 0.;
+	float qy = 0.;
+	float event_plane = 0.;
+	float dca_xy_avg = 0.;
+	float dca_xy_err = 0.;
 
-	unsigned event_id = 0;
+	int event_id = 0;
 
 	// Values for centrality bin 0-5% in 9 bins
-	map<int, unsigned> run {{7, 11130000}, {11, 11152039}, {19, 12114300}, {27, 12175000}, {39, 11100000}, {62, 11079000}};  //Guessed number in range and check it wasn't bad run.
-	map<int, unsigned> btof {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};  //Fixed ref 350 value multiplied such that ratio passes cut.
-	unsigned ref = 350;  // Pretty arbitrary
-//	unsigned refn = 600;
+	map<int, int> run {{7, 11130000}, {11, 11152039}, {19, 12114300}, {27, 12175000}, {39, 11100000}, {62, 11079000}};  //Guessed number in range and check it wasn't bad run.
+	map<int, short> btof {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};  //Fixed ref 350 value multiplied such that ratio passes cut.
+	short ref = 350;  // Pretty arbitrary
+//	short refn = 600;
 	// refn[ref_num][energy][cent] for 9 bins. Took midpoint of centrality bin edges from StRefMultCorr and plugged in for refmult2 and 3.
-//	map<int, map<int, map<int, unsigned>>> test {{2, {{7, {{-1, 1}, {0, 10}}}, {11, {{-1, 2}, {0, 12}}}}}, {3, {{7, {{-1, 1}, {0, 10}}}, {11, {{-1, 2}, {0, 12}}}}}};
-	map<int, map<int, map<int, unsigned>>> refn {{3, {{7, {{-1, 1}, {0, 9}, {1, 18}, {2, 33}, {3, 55}, {4, 87}, {5, 131}, {6, 191}, {7, 248}, {8, 325}}},
+//	map<int, map<int, map<int, short>>> test {{2, {{7, {{-1, 1}, {0, 10}}}, {11, {{-1, 2}, {0, 12}}}}}, {3, {{7, {{-1, 1}, {0, 10}}}, {11, {{-1, 2}, {0, 12}}}}}};
+	map<int, map<int, map<int, short>>> refn {{3, {{7, {{-1, 1}, {0, 9}, {1, 18}, {2, 33}, {3, 55}, {4, 87}, {5, 131}, {6, 191}, {7, 248}, {8, 325}}},
 		{11, {{-1, 1}, {0, 12}, {1, 23}, {2, 42}, {3, 71}, {4, 111}, {5, 167}, {6, 244}, {7, 316}, {8, 412}}},
 		{19, {{-1, 1}, {0, 15}, {1, 31}, {2, 56}, {3, 94}, {4, 148}, {5, 221}, {6, 320}, {7, 413}, {8, 538}}},
 		{27, {{-1, 1}, {0, 17}, {1, 34}, {2, 62}, {3, 103}, {4, 162}, {5, 243}, {6, 351}, {7, 452}, {8, 589}}},
@@ -69,44 +69,44 @@ public:
 	~Event();
 
 	// Getters
-	double get_vx();
-	double get_vy();
-	double get_vz();
-	double get_qx();
-	double get_qy();
-	double get_event_plane();
-	double get_dca_xy_avg();
-	double get_dca_xy_err();
-	unsigned get_ref();
-	unsigned get_run();
-	unsigned get_event_id();
-	unsigned get_refn();
-	unsigned get_btof();
+	float get_vx();
+	float get_vy();
+	float get_vz();
+	float get_qx();
+	float get_qy();
+	float get_event_plane();
+	float get_dca_xy_avg();
+	float get_dca_xy_err();
+	short get_ref();
+	int get_run();
+	int get_event_id();
+	short get_refn();
+	short get_btof();
 	vector<Track> get_particles();
 	int get_num_particles();
 
 	// Setters
-	void set_vx(double vx);
-	void set_vy(double vy);
-	void set_vz(double vz);
-	void set_qx(double qx);
-	void set_qy(double qy);
-	void set_event_plane(double event_plane);
-	void set_dca_xy_avg(double avg);
-	void set_dca_xy_err(double sd);
-	void set_ref(unsigned ref);
-	void set_run(unsigned run);
-	void set_event_id(unsigned id);
-	void set_refn(unsigned refn);
-	void set_btof(unsigned btof);
+	void set_vx(float vx);
+	void set_vy(float vy);
+	void set_vz(float vz);
+	void set_qx(float qx);
+	void set_qy(float qy);
+	void set_event_plane(float event_plane);
+	void set_dca_xy_avg(float avg);
+	void set_dca_xy_err(float sd);
+	void set_ref(short ref);
+	void set_run(int run);
+	void set_event_id(int id);
+	void set_refn(short refn);
+	void set_btof(short btof);
 	void set_particles(vector<Track> particles);
 
 	// Doers
 	void read_tree_event(tree_leaves leaves);
 	void read_tree_event(tree_branches branches);  // Not implemented
 	void read_tree_event(Event *event);
-	void set_event(double vx, double vy, double vz, unsigned ref, unsigned run, unsigned event_id,
-			unsigned refn, unsigned btof, double qx, double qy, double event_plane, double dca_xy_avg, double dca_xy_err);
+	void set_event(float vx, float vy, float vz, short ref, int run, int event_id,
+			short refn, short btof, float qx, float qy, float event_plane, float dca_xy_avg, float dca_xy_err);
 	void clear();
 	void pile_up(Event pile);
 	void set_defaults();
@@ -116,21 +116,22 @@ public:
 private:
 	vector<Track> particles;
 
-	double vx;
-	double vy;
-	double vz;
-	double qx;
-	double qy;
-	double event_plane;
+	int run;
+	int event_id;
 
-	double dca_xy_avg;
-	double dca_xy_err;
+	short ref;
+	short refn;  // Referring to refmult2, refmult3, etc
+	short btof;
 
-	unsigned ref;
-	unsigned run;
-	unsigned event_id;
-	unsigned refn;  // Referring to refmult2, refmult3, etc
-	unsigned btof;
+	float vx;
+	float vy;
+	float vz;
+	float qx;
+	float qy;
+	float event_plane;
+
+	float dca_xy_avg;
+	float dca_xy_err;
 };
 
 
