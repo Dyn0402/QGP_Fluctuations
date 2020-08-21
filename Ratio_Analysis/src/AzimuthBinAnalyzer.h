@@ -72,21 +72,21 @@ private:
 	vector<int> all_centralities = {8,7,6,5,4,3,2,1,0};
 	string in_path = "/home/dylan/Research/Data/";
 	string in_mix_path = "/home/dylan/Research/Data_Mix/";
-	vector<int> energy_list = {7,11,19,27,39,62};
-	vector<int> divs = {2,3,4,5,6};
-	vector<int> orders = {1,2,3,4};
-	vector<int> plot_divs = {6};
-	vector<int> plot_cents = {8,5,1};//{0,1,2,3,4,5,6,7,8,9};
+	vector<int> energy_list {7,11,19,27,39,62};
+	vector<int> divs {180, 120, 90, 72, 60};
+	vector<int> orders {1,2,3,4};
+	vector<int> plot_divs {60};
+	vector<int> plot_cents {8,5,1};//{0,1,2,3,4,5,6,7,8,9};
 	string out_path = "/home/dylan/Research/Results/";
 	string out_root_name = "1-25-20_pull_test.root";
 
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
-//	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
-//	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
-//	map<string, vector<int>> sets = {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
-//	map<string, vector<int>> sets = {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
-	map<string, vector<int>> sets = {{"Single_Ratio", {0,0}}};
+//	map<string, vector<int>> sets {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
+//	map<string, vector<int>> sets {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
+//	map<string, vector<int>> sets {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
+//	map<string, vector<int>> sets {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
+	map<string, vector<int>> sets {{"Single_Ratio", {0,0}}};
 	map<string, vector<string>> set_combos;
 
 

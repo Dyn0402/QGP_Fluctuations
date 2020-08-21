@@ -941,9 +941,9 @@ map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string
 				AzimuthBinData az_data(div);
 				az_data.read_data_from_dir(path, div, cent);  // Read azimuthal bin data from file path
 
-				if(az_data.get_num_bins() / div <= min_num_events) {
+				if(az_data.get_num_bins() <= min_num_events) {
 					if(div == divs[0]) {
-						cout << "Centrality " << cent << " with only " << az_data.get_num_bins() / div << " events. Skipping." << endl;
+						cout << "Centrality " << cent << " with only " << az_data.get_num_bins() << " entries. Skipping." << endl;
 					}
 				} else {
 					data[energy][div][cent] = az_data;  // Store azimuthal bin data in data under corresponding centrality (refmult2) value

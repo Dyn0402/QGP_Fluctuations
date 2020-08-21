@@ -58,10 +58,10 @@ namespace plot {
 	extern double protons_hist_low;
 	extern double protons_hist_high;
 
-	extern vector<int> div_marker_styles;
-	extern vector<int> div_marker_width;
-	extern vector<int> div_marker_colors;
-	extern vector<double> div_marker_sizes;
+	extern map<int, int> div_marker_styles;
+	extern map<int, int> div_marker_width;
+	extern map<int, int> div_marker_colors;
+	extern map<int, double> div_marker_sizes;
 
 	extern map<int, int> energy_marker_styles;
 	extern map<int, int> energy_marker_width;

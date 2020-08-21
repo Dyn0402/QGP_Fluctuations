@@ -64,6 +64,10 @@ void BinomialAnalyzer::set_energies(vector<int> energies) {
 	energy_list = energies;
 }
 
+void BinomialAnalyzer::set_divs(vector<int> divs) {
+	this->divs = divs;
+}
+
 void BinomialAnalyzer::set_sets(map<string, vector<int>> set_name) {
 	this->sets = set_name;
 }
@@ -245,9 +249,9 @@ map<int, map<int, map<int, AzimuthBinData>>> BinomialAnalyzer::get_data(string p
 				AzimuthBinData az_data(div);
 				az_data.read_data_from_dir(energy_path, div, cent);  // Read azimuthal bin data from file path
 
-				if(az_data.get_num_bins() / div <= min_num_events) {
+				if(az_data.get_num_bins() <= min_num_events) {
 					if(div == divs[0]) {
-						cout << "Centrality " << cent << " with only " << az_data.get_num_bins() / div << " events. Skipping." << endl;
+						cout << "Centrality " << cent << " with only " << az_data.get_num_bins() << " entries. Skipping." << endl;
 					}
 				} else {
 					data[energy][div][cent] = az_data;  // Store azimuthal bin data in data under corresponding centrality (refmult2) value
@@ -314,7 +318,7 @@ map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::d
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> result;
 	for(auto &energy:slice_stats) {
 		for(auto &div:energy.second) {
-			double p = 1.0 / div.first;
+			double p = (double)div.first / 360;
 			double q = 1.0 - p;
 			for(auto &cent:div.second) {
 				for(auto &total_particle:cent.second) {
@@ -378,11 +382,8 @@ map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::g
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> result;
 	for(auto &energy:slice_stats) {
 		for(auto &div:energy.second) {
-//			double p = 1.0 / div.first;
-//			double q = 1.0 - p;
 			for(auto &cent:div.second) {
 				for(auto &total_particle:cent.second) {
-//					int n = total_particle.first;
 					Measure sd = total_particle.second["standard_deviation"];
 					Measure mean = total_particle.second["mean"];
 					result[energy.first][div.first][cent.first][total_particle.first]["variance/mean"] = sd*sd / mean;
@@ -434,7 +435,7 @@ void BinomialAnalyzer::draw_proton_bin_plots(map<int, map<int, map<int, AzimuthB
 			cent_dir->cd();
 
 			for(int div:divs) {
-				data[energy][div][cent].canvas_2d_dist("Particle_Bin_Dist " + to_string(energy) + "GeV, " + to_string(cent) + " cent, " + to_string(div) + " div");
+				data[energy][div][cent].canvas_2d_dist("Particle_Bin_Dist " + to_string(energy) + "GeV, " + to_string(cent) + " cent, " + to_string(div) + " degree bins");
 			}
 		}
 	}
@@ -444,7 +445,7 @@ void BinomialAnalyzer::draw_proton_bin_plots(map<int, map<int, map<int, AzimuthB
 void BinomialAnalyzer::plot_slices(map<int, map<int, map<int, AzimuthBinData>>> &data, TDirectory *dir) {
 
 	for(auto &div:divs) {
-		TDirectory* div_dir = dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
@@ -452,7 +453,7 @@ void BinomialAnalyzer::plot_slices(map<int, map<int, map<int, AzimuthBinData>>> 
 				TDirectory *energy_dir = cent_dir->mkdir((to_string(energy)+"GeV").data());
 				energy_dir->cd();
 				for(auto &total_particle:data[energy][div][cent].get_bin_data()) {
-					slice_dist_plot(total_particle.second, total_particle.first, div, "Slice Dist " + to_string(total_particle.first) + " particles " + to_string(energy) + "GeV " + to_string(cent) + " cent " + to_string(div) + " divs");
+					slice_dist_plot(total_particle.second, total_particle.first, div, "Slice Dist " + to_string(total_particle.first) + " particles " + to_string(energy) + "GeV " + to_string(cent) + " cent " + to_string(div) + " degree bins");
 				}
 //				for(auto &total_particle:data[energy][div][cent].get_diff_slice_hist()) {
 //					slice_diff_dist_plot(total_proton.second, total_proton.first, div, "Diff Slice Dist " + to_string(total_particle.first) + " particles " + to_string(energy) + "GeV " + to_string(cent) + " cent " + to_string(div) + " divs");
@@ -466,13 +467,13 @@ void BinomialAnalyzer::plot_slices(map<int, map<int, map<int, AzimuthBinData>>> 
 void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
 	TDirectory* stats_dir = dir->mkdir("Stats_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(auto &stat:stats) {
 //				cout << "all " << div << " div " << cent << " cent " << stat << endl;
-				slice_stats_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				slice_stats_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -482,13 +483,13 @@ void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map
 void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, TDirectory *dir) {
 	TDirectory* stats_dir = dir->mkdir("Stats_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(auto &stat:stats) {
 //				cout << "all " << div << " div " << cent << " cent " << stat << endl;
-				slice_stats_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				slice_stats_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -498,12 +499,12 @@ void BinomialAnalyzer::plot_all_stats(map<string, map<int, map<int, map<int, map
 void BinomialAnalyzer::plot_all_stat_ratios(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
 	TDirectory* stats_dir = dir->mkdir("Stat_Ratios_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(string &stat:stat_ratios) {
-				slice_stat_ratios_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				slice_stat_ratios_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -513,12 +514,12 @@ void BinomialAnalyzer::plot_all_stat_ratios(map<string, map<int, map<int, map<in
 void BinomialAnalyzer::plot_all_stat_ratios(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, TDirectory *dir) {
 	TDirectory* stats_dir = dir->mkdir("Stat_Ratios_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(string &stat:stat_ratios) {
-				slice_stat_ratios_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				slice_stat_ratios_plot(slice_stats, stat, energy_list, cent, div, stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -528,17 +529,17 @@ void BinomialAnalyzer::plot_all_stat_ratios(map<string, map<int, map<int, map<in
 void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stat_ratios, TDirectory *dir) {
 	TDirectory* stats_divided_dir = dir->mkdir("Stats_Divided_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(auto &stat:stats) {
-				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 			for(auto &stat:stat_ratios) {
-				auto fits = slice_stats_divided_plot(slice_stat_ratios, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				auto fits = slice_stats_divided_plot(slice_stat_ratios, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -548,17 +549,17 @@ void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<
 void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stat_ratios, TDirectory *dir) {
 	TDirectory* stats_divided_dir = dir->mkdir("Stats_Divided_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(auto &stat:stats) {
-				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 			for(auto &stat:stat_ratios) {
-				auto fits = slice_stats_divided_plot(slice_stat_ratios, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				auto fits = slice_stats_divided_plot(slice_stat_ratios, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -568,13 +569,13 @@ void BinomialAnalyzer::plot_all_divided_stats(map<string, map<int, map<int, map<
 void BinomialAnalyzer::plot_mix_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, Measure>>>>>> &slice_stats, TDirectory *dir) {
 	TDirectory* stats_divided_dir = dir->mkdir("Stats_Mix_Divided_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(auto &stat:stats) {
-				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Mix_Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Mix_Divided "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -584,13 +585,13 @@ void BinomialAnalyzer::plot_mix_divided_stats(map<string, map<int, map<int, map<
 void BinomialAnalyzer::plot_mix_divided_stats(map<string, map<int, map<int, map<int, map<int, map<string, pair<Measure, double>>>>>>> &slice_stats, TDirectory *dir) {
 	TDirectory* stats_divided_dir = dir->mkdir("Stats_Mix_Divided_vs_Total_Particles");
 	for(auto &div:divs) {
-		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Divisions").data());
+		TDirectory* div_dir = stats_divided_dir->mkdir((to_string(div)+" Degree Bins").data());
 		for(auto &cent:centralities) {
 			TDirectory* cent_dir = div_dir->mkdir((to_string(cent)+" Centrality").data());
 			cent_dir->cd();
 			for(auto &stat:stats) {
-				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
-				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" div "+to_string(cent)+" cent");
+				auto fits = slice_stats_divided_plot(slice_stats, stat, energy_list, cent, div, "Divided "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
+				plot_fit(fits, cent, div, "Fits "+stat+" "+to_string(div)+" degree bins "+to_string(cent)+" cent");
 			}
 		}
 	}
@@ -636,13 +637,14 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 		mgs.back()->SetNameTitle((to_string(energy) + "GeV").data(), (to_string(energy) + "GeV").data());
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
+		double p = (double)div / 360;
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
-		if(stat_name == "mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "standard_deviation") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "skewness") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 2*[0]) / TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "skewness_sd") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1 - 2*[0]", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "kurtosis_variance") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0]))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
+		if(stat_name == "mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "standard_deviation") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "skewness") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 2*[0]) / TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "skewness_sd") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1 - 2*[0]", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "kurtosis_variance") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0]))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else { binoms.push_back(new TF1()); }
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err;
@@ -660,7 +662,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 //				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
-			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
 			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
 			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
@@ -669,7 +671,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->SetFillStyle(0);
-				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 
 			}
 		}
@@ -750,13 +752,14 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 		mgs.back()->SetNameTitle((to_string(energy) + "GeV").data(), (to_string(energy) + "GeV").data());
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
+		double p = (double)div / 360;
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
-		if(stat_name == "mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "standard_deviation") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "skewness") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 2*[0]) / TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "skewness_sd") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1 - 2*[0]", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "kurtosis_variance") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0]))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
+		if(stat_name == "mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "standard_deviation") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "skewness") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 2*[0]) / TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "skewness_sd") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1 - 2*[0]", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "kurtosis_variance") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0]))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else { binoms.push_back(new TF1()); }
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err, stat_sys;
@@ -775,7 +778,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 //				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
-			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
 			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
 			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
@@ -784,7 +787,7 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->SetFillStyle(0);
-				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
 			graphs.back()->SetLineColor(get_marker_color(data_set.first));
@@ -862,9 +865,10 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 		mgs.back()->SetNameTitle((to_string(energy) + "GeV").data(), (to_string(energy) + "GeV").data());
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
+		double p = (double)div / 360;
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
-		if(stat_name == "variance/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1-[0]", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "sd/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt((1-[0])/([0]*x))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
+		if(stat_name == "variance/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1-[0]", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "sd/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt((1-[0])/([0]*x))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else { binoms.push_back(new TF1()); }
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err;
@@ -881,7 +885,7 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 //				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
-			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
 			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
 			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
@@ -890,7 +894,7 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->SetFillStyle(0);
-				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 
 			}
 		}
@@ -966,9 +970,10 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 		mgs.back()->SetNameTitle((to_string(energy) + "GeV").data(), (to_string(energy) + "GeV").data());
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
+		double p = (double)div / 360;
 		legends.push_back(new TLegend(0.3, 0.21, 0.3, 0.21));
-		if(stat_name == "variance/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1-[0]", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, 1.0/div); }
-		else if(stat_name == "sd/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt((1-[0])/([0]*x))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, 1.0/div); }
+		if(stat_name == "variance/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1-[0]", plot_x_range.first, x_max + 2)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "sd/mean") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "TMath::Sqrt((1-[0])/([0]*x))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else { binoms.push_back(new TF1()); }
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err, stat_sys;
@@ -986,7 +991,7 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 //				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
-			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first));
 			graphs.back()->SetMarkerColor(get_marker_color(data_set.first));
 			graphs.back()->SetMarkerSize(get_marker_size(data_set.first));
@@ -995,7 +1000,7 @@ void BinomialAnalyzer::slice_stat_ratios_plot(map<string, map<int, map<int, map<
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->SetFillStyle(0);
-				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
 			graphs.back()->SetLineColor(get_marker_color(data_set.first));
@@ -1094,7 +1099,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			}
 //			if(in_string(data_set.first, "raw/mix") && stat_name == "standard_deviation") { for(auto &val:particle_val) { cout << val << endl; } }
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
-			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first, set_num));
 			graphs.back()->SetMarkerColor(get_marker_color(data_set.first, set_num));
 			graphs.back()->SetMarkerSize(get_marker_size(data_set.first, set_num));
@@ -1108,7 +1113,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->SetFillStyle(0);
-				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 			}
 			set_num++;
 		}
@@ -1228,7 +1233,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 //				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_err.data()));
-			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+			graphs.back()->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 			graphs.back()->SetMarkerStyle(get_marker_style(data_set.first, set_num));
 			graphs.back()->SetMarkerColor(get_marker_color(data_set.first, set_num));
 			graphs.back()->SetMarkerSize(get_marker_size(data_set.first, set_num));
@@ -1243,7 +1248,7 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			if(can_index == 1) {
 				legends.back()->SetBorderSize(legend_border_width);
 				legends.back()->SetFillStyle(0);
-				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+				legends.back()->AddEntry(graphs.back(), (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 			}
 
 			graphs.push_back(new TGraphErrors((int)particle_val.size(), particle_val.data(), stat_vals.data(), particle_err.data(), stat_sys.data()));
@@ -1370,102 +1375,6 @@ void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int
 }
 
 
-//void BinomialAnalyzer::plot_fit(map<string, map<int, TF1*>> &fits, int cent, int div, string name) {
-//	TCanvas can(name.data(), name.data(), canvas_width, canvas_height);
-////	gStyle->SetTitleFontSize(0.09);
-////	gStyle->SetTitleOffset(1.2);
-//	pair<int, int> can_div = get_canvas_div(2);
-//	can.Divide(can_div.first, can_div.second);
-//
-//	auto int_mg = new TMultiGraph();
-//	auto slope_mg = new TMultiGraph();
-//	int_mg->SetNameTitle("Intercept", "Intercept");
-//	slope_mg->SetNameTitle("Slope", "Slope");
-//	double y_max_int = numeric_limits<double>::min();
-//	double y_min_int = numeric_limits<double>::max();
-//	double y_max_slope = numeric_limits<double>::min();
-//	double y_min_slope = numeric_limits<double>::max();
-//
-//	auto int_leg = new TLegend();
-//	auto zero_line = new TLine(0, 0, 80, 0);
-//	zero_line->SetLineColor(kBlack);
-//	auto one_line = new TLine(0, 1, 80, 1);
-//	one_line->SetLineColor(kBlack);
-//
-//	vector<TGraphErrors*> graphs;
-//
-//	for(auto &data_set:fits) {
-//		vector<double> int_vals, slope_vals, energy_val, int_err, slope_err, energy_err;
-//
-//		for(auto &energy:data_set.second) {
-//			int_vals.push_back(energy.second->GetParameter(0));
-//			slope_vals.push_back(energy.second->GetParameter(1));
-//			energy_val.push_back(energy_match[energy.first]);
-//			int_err.push_back(energy.second->GetParError(0));
-//			slope_err.push_back(energy.second->GetParError(1));
-//			energy_err.push_back(0.0);
-//			if(int_vals.back() + int_err.back() > y_max_int) { y_max_int = int_vals.back() + int_err.back(); }
-//			if(int_vals.back() - int_err.back() < y_min_int) { y_min_int = int_vals.back() - int_err.back(); }
-//			if(slope_vals.back() + slope_err.back() > y_max_slope) { y_max_slope = slope_vals.back() + slope_err.back(); }
-//			if(slope_vals.back() - slope_err.back() < y_min_slope) { y_min_slope = slope_vals.back() - slope_err.back(); }
-//		}
-//		graphs.push_back(new TGraphErrors((int)energy_val.size(), energy_val.data(), int_vals.data(), energy_err.data(), int_err.data()));
-//		graphs.back()->SetNameTitle((data_set.first + " intercept").data());
-//		graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-//		graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-//		graphs.back()->SetMarkerSize(1.5);
-//		graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
-//		int_mg->Add(graphs.back(), "APZ");
-//		int_leg->AddEntry(graphs.back(), data_set.first.data(), "p");
-//
-//		graphs.push_back(new TGraphErrors((int)energy_val.size(), energy_val.data(), slope_vals.data(), energy_err.data(), slope_err.data()));
-//		graphs.back()->SetNameTitle((data_set.first + " slope").data());
-//		graphs.back()->SetMarkerStyle(raw_mix_marker_style[data_set.first]);
-//		graphs.back()->SetMarkerColor(raw_mix_marker_color[data_set.first]);
-//		graphs.back()->SetMarkerSize(1.5);
-//		graphs.back()->SetLineColor(raw_mix_marker_color[data_set.first]);
-//		slope_mg->Add(graphs.back(), "APZ");
-//	}
-//	double y_range_int = y_max_int - y_min_int;
-//	int_mg->GetXaxis()->SetLimits(0, 80);
-//	int_mg->GetXaxis()->SetRangeUser(0, 80);
-////	int_mg->GetXaxis()->SetLabelSize(0.06);
-//	int_mg->GetYaxis()->SetLimits(y_min_int - 0.1 * y_range_int, y_max_int + 0.1 * y_range_int);
-//	int_mg->GetYaxis()->SetRangeUser(y_min_int - 0.1 * y_range_int, y_max_int + 0.1 * y_range_int);
-////	int_mg->GetYaxis()->SetLabelSize(0.06);
-//	int_mg->GetXaxis()->SetTitle("Energy (GeV)");
-//
-//	double y_range_slope = y_max_slope - y_min_slope;
-//	slope_mg->GetXaxis()->SetLimits(0, 80);
-//	slope_mg->GetXaxis()->SetRangeUser(0, 80);
-////	slope_mg->GetXaxis()->SetLabelSize(0.06);
-//	slope_mg->GetYaxis()->SetLimits(y_min_slope - 0.1 * y_range_slope, y_max_slope + 0.1 * y_range_slope);
-//	slope_mg->GetYaxis()->SetRangeUser(y_min_slope - 0.1 * y_range_slope, y_max_slope + 0.1 * y_range_slope);
-////	slope_mg->GetYaxis()->SetLabelSize(0.06);
-//	slope_mg->GetXaxis()->SetTitle("Energy (GeV)");
-//
-//	can.cd(1);
-//	int_mg->Draw("AP");
-//	one_line->Draw("same");
-////	int_leg->SetMargin(0.1);
-//	int_leg->Draw();
-//
-//	can.cd(2);
-//	slope_mg->Draw("AP");
-//	zero_line->Draw("same");
-//
-//	can.Update();
-//	can.Write(name.data());
-//
-//	for(auto graph:graphs) { delete graph; }
-//	delete int_leg;
-//	delete zero_line;
-//	delete one_line;
-//	delete slope_mg;
-//	delete int_mg;
-//}
-
-
 void BinomialAnalyzer::slice_dist_plot(map<int, int> &slice_data, int total_particles, int div, string name) {
 	TCanvas can((name + " canvas").data(), (name + " canvas").data(), canvas_width, canvas_height);
 	gStyle->SetOptStat("niMRSK");
@@ -1477,7 +1386,7 @@ void BinomialAnalyzer::slice_dist_plot(map<int, int> &slice_data, int total_part
 		dist.Fill(bin_particles.first, bin_particles.second);
 	}
 	int norm = dist.Integral();
-	double p = 1.0 / div;
+	double p = (double)div / 360;
 	double q = 1 - p;
 	int n = total_particles;
 	for(int k = 0; k <= n; k++) {
@@ -1494,19 +1403,19 @@ void BinomialAnalyzer::slice_dist_plot(map<int, int> &slice_data, int total_part
 void BinomialAnalyzer::slice_diff_dist_plot(map<double, int> &slice_data, int total_particles, int div, string name) {
 	TCanvas can((name + " canvas").data(), (name + " canvas").data(), canvas_width, canvas_height);
 	gStyle->SetOptStat("niMRSK");
-	TH1D dist((name + " hist").data(), (name + " hist").data(), total_particles+1, -(float)total_particles/div, (float)total_particles*(1 - 1.0 / div));
-	TH1D binom((name + " hist_binom").data(), (name + " binom").data(), total_particles+1, -(float)total_particles/div, (float)total_particles*(1 - 1.0 / div));
+	double p = (double)div / 360;
+	double q = 1 - p;
+	TH1D dist((name + " hist").data(), (name + " hist").data(), total_particles+1, -(float)total_particles * p, (float)total_particles*q);
+	TH1D binom((name + " hist_binom").data(), (name + " binom").data(), total_particles+1, -(float)total_particles * p, (float)total_particles*q);
 	binom.SetLineColor(kRed);
 
 	for(auto &bin_particles:slice_data) {
 		dist.Fill(bin_particles.first, bin_particles.second);
 	}
 	int norm = dist.Integral();
-	double p = 1.0 / div;
-	double q = 1 - p;
 	int n = total_particles;
 	for(int k = 0; k <= n; k++) {
-		binom.Fill(k - (double)n / div, norm * TMath::Binomial(n, k) * pow(p, k) * pow(q, n - k));
+		binom.Fill(k - (double)n * p, norm * TMath::Binomial(n, k) * pow(p, k) * pow(q, n - k));
 	}
 
 	dist.Draw("HIST");

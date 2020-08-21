@@ -53,10 +53,10 @@ void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<i
 		TDirectory *energy_dir = ratio_dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
 		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
-			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Degree_Bins").data());
 			div_dir->cd();
 			for(pair<int, AzimuthBinData> cent:div.second) {
-				cent.second.canvas_ratio_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first));
+				cent.second.canvas_ratio_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " degree bins Centrality " + to_string(cent.first));
 			}
 		}
 	}
@@ -64,7 +64,7 @@ void create_ratio_dist_plots(TDirectory *ratio_dist_dir, map<int, map<int, map<i
 
 
 void hist_ratio_dist(map<int, map<int, int>> ratios, int energy, int div, int cent, string mode, int color) {
-	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
+	string name = to_string(energy) + "GeV " + to_string(div) + " degree bins Centrality " + to_string(cent);
 	TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
 	ratio_hist->SetLineColor(color);
 	for(pair<int, map<int, int>> event:ratios) {
@@ -118,11 +118,11 @@ void create_diff_dist_plots(TDirectory *diff_dist_dir, map<int, map<int, map<int
 		TDirectory *energy_dir = diff_dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
 		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
-			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Degree_Bins").data());
 			div_dir->cd();
 			for(pair<int, AzimuthBinData> cent:div.second) {
-				cent.second.canvas_diff_dist("Diff " +to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first), "no");
-				cent.second.canvas_diff_dist("Pull " + to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first), "yes");
+				cent.second.canvas_diff_dist("Diff " +to_string(energy.first) + "GeV " + to_string(div.first) + " degree bins Centrality " + to_string(cent.first), "no");
+				cent.second.canvas_diff_dist("Pull " + to_string(energy.first) + "GeV " + to_string(div.first) + " degree bins Centrality " + to_string(cent.first), "yes");
 			}
 		}
 	}
@@ -147,10 +147,10 @@ void create_2d_dist_plots(TDirectory *dist_dir, map<int, map<int, map<int, Azimu
 		TDirectory *energy_dir = dist_dir->mkdir((to_string(energy.first) + "GeV").data());
 		energy_dir->cd();
 		for(pair<int, map<int, AzimuthBinData>> div:energy.second) {
-			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Divs").data());
+			TDirectory *div_dir = energy_dir->mkdir((to_string(div.first) + "_Degree_Bins").data());
 			div_dir->cd();
 			for(pair<int, AzimuthBinData> cent:div.second) {
-				cent.second.canvas_2d_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " divisions Centrality " + to_string(cent.first));
+				cent.second.canvas_2d_dist(to_string(energy.first) + "GeV " + to_string(div.first) + " degree bins Centrality " + to_string(cent.first));
 			}
 		}
 	}
@@ -158,10 +158,10 @@ void create_2d_dist_plots(TDirectory *dist_dir, map<int, map<int, map<int, Azimu
 
 
 void canvas_2d_dist(map<int, map<int, int>> dist, int energy, int div, int cent) {
-	string name = to_string(energy) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
+	string name = to_string(energy) + "GeV " + to_string(div) + " degree bins Centrality " + to_string(cent);
 	TH2I *hist = ratios_map_to_hist(dist, name);
 	TCanvas *can = new TCanvas(name.data()); // Memory leak
-	TF1 *avg_line = new TF1(name.data(), ("x/"+to_string(div)).data(), -0.5, 0.5+(--dist.end())->first);
+	TF1 *avg_line = new TF1(name.data(), ("x/360*"+to_string(div)).data(), -0.5, 0.5+(--dist.end())->first);
 	TF1 *max_line = new TF1((name+"max").data(), "x", -0.5, 0.5+(--dist.end())->first);
 	max_line->SetLineColor(4);
 	can->SetLogz();
@@ -252,7 +252,7 @@ void graph_cumulant_vs_energy(map<int, map<int, map<int, map<int, Measure>>>> cu
 		energies.push_back((double)energy);
 		energies_err.push_back(0.0);
 	}
-	string name = to_string(div) + " division " + to_string(cent) + " centrality " + to_string(order) + " order";
+	string name = to_string(div) + " degree bins " + to_string(cent) + " centrality " + to_string(order) + " order";
 	TGraphErrors *graph = graph_x_vs_y_err(energies, cumulant, energies_err, cumulant_err);
 	graph->Write(name.data());
 }
@@ -315,7 +315,7 @@ void graph_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> sta
 		energies.push_back((double)energy);
 		energies_err.push_back(0.0);
 	}
-	string name = to_string(div) + " division " + to_string(cent) + " centrality " + stat;
+	string name = to_string(div) + " degree bins " + to_string(cent) + " centrality " + stat;
 	TGraphErrors *graph = graph_x_vs_y_err(energies, stat_val, energies_err, stat_err);
 	graph->Write(name.data());
 }
@@ -379,10 +379,10 @@ void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, Azimuth
 	TDirectory *ratios_can_dir = can_dir->mkdir(plot::ratio_dist_dir_name.data());
 	ratios_can_dir->cd();
 	for(int div:divs) {
-		TDirectory *div_dir = ratios_can_dir->mkdir((to_string(div) + "_Divs").data());
+		TDirectory *div_dir = ratios_can_dir->mkdir((to_string(div) + "_Degree_Bins").data());
 		div_dir->cd();
 		for(int cent:cents) {
-			canvas_ratio_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
+			canvas_ratio_dists(data, div, cent, to_string(div) + " degree bins " + to_string(cent) + " centrality");
 		}
 	}
 
@@ -390,10 +390,10 @@ void create_canvas_plots(TDirectory *can_dir, map<int, map<int, map<int, Azimuth
 	TDirectory *diff_can_dir = can_dir->mkdir("Diff_Dist_Canvases");
 	diff_can_dir->cd();
 	for(int div:divs) {
-		TDirectory *div_dir = diff_can_dir->mkdir((to_string(div) + "_Divs").data());
+		TDirectory *div_dir = diff_can_dir->mkdir((to_string(div) + "_Degree_Bins").data());
 		div_dir->cd();
 		for(int cent:cents) {
-			canvas_diff_dists(data, div, cent, to_string(div) + " divisions " + to_string(cent) + " centrality");
+			canvas_diff_dists(data, div, cent, to_string(div) + " degree bins " + to_string(cent) + " centrality");
 		}
 	}
 }
@@ -476,7 +476,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vecto
 
 		for(int cent:cents) {
 			for(int div:divs) {
-				string name = to_string(energy.first) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
+				string name = to_string(energy.first) + "GeV " + to_string(div) + " degree bins Centrality " + to_string(cent);
 				TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
 				ratio_hist->SetLineColor(plot::cent_marker_colors[cent]);
 				for(pair<int, map<int, int>> event:energy.second[div][cent].get_bin_data()) {
@@ -489,7 +489,7 @@ void canvas_ratio_dists(map<int, map<int, map<int, AzimuthBinData>>> data, vecto
 
 				if(can_index == 1) {
 					pair<int, int> range = get_cent9_range(cent);
-					leg->AddEntry(ratio_hist, (to_string(div) + " divisions \t" + to_string(range.first)+"-"+to_string(range.second)+"% central").data(), "l");
+					leg->AddEntry(ratio_hist, (to_string(div) + "#circ bins \t" + to_string(range.first)+"-"+to_string(range.second)+"% central").data(), "l");
 				}
 			}
 		}
@@ -528,7 +528,7 @@ void canvas_cumulant_dists(map<int, map<int, map<int, map<int, Measure>>>> cumul
 			cumulant_err.push_back(cum.get_err());
 		}
 		TGraphErrors *graph = graph_x_vs_y_err(energy, cumulant, energy_err, cumulant_err);
-		graph->SetNameTitle((to_string(div) + " divisions").data());
+		graph->SetNameTitle((to_string(div) + " degree bins").data());
 		graph->SetMarkerStyle(plot::div_marker_styles[div]);
 		graph->SetMarkerColor(plot::div_marker_colors[div]);
 		graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -557,7 +557,7 @@ void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			stat_err.push_back(stat_meas.get_err());
 		}
 		TGraphErrors *graph = graph_x_vs_y_err(energy, stat_vals, energy_err, stat_err);
-		graph->SetNameTitle((to_string(div) + " divisions").data());
+		graph->SetNameTitle((to_string(div) + " degree bins").data());
 		graph->SetMarkerStyle(plot::div_marker_styles[div]);
 		graph->SetMarkerColor(plot::div_marker_colors[div]);
 		graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -571,74 +571,8 @@ void canvas_stat_dists(map<int, map<int, map<int, map<string, Measure>>>> stats,
 }
 
 
-//void canvas_diff_dists(TDirectory *can_dir, map<string, map<int, map<int, map<int, AzimuthBinData>>>> data, vector<int> divs, vector<int> cents, string name) {
-////	double y_max = numeric_limits<double>::min(); //---
-////	double y_min = numeric_limits<double>::max(); //---
-//
-//
-//
-//	vector<TH1D*> hists;
-//	vector<THStack*> stacks;
-//	vector<TLegend*> legends;
-//
-//	TCanvas *ratio_can = new TCanvas();
-//	ratio_can->SetTitle(name.data());
-//	ratio_can->SetName(name.data());
-//	gStyle->SetTitleFontSize(0.09);
-//	gStyle->SetTitleOffset(1.2);
-//
-//	pair<int, int> can_div = {ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5)))};
-//	ratio_can->Divide(can_div.first, can_div.second, 0.001, 0.001);
-//	int can_index = 0;
-//
-//	for(pair<int, map<int, map<int, AzimuthBinData>>> energy:data) {
-//		ratio_can->cd(++can_index);
-//		THStack *stack = new THStack((to_string(energy.first) + "GeV").data(), (to_string(energy.first) + "GeV").data());
-//		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-//		stacks.push_back(stack);
-//		legends.push_back(leg);
-//
-//		for(int cent:cents) {
-//			for(int div:divs) {
-//				string name = to_string(energy.first) + "GeV " + to_string(div) + " divisions Centrality " + to_string(cent);
-//				TH1D *ratio_hist = new TH1D(name.data(), name.data(), plot::ratio_hist_bins, plot::ratio_hist_low, plot::ratio_hist_high);
-//				ratio_hist->SetLineColor(plot::cent_marker_colors[cent]);
-//				for(pair<int, map<int, int>> event:energy.second[div][cent].get_bin_data()) {
-//					for(pair<int, int> bin:event.second) {
-//						ratio_hist->Fill(((double)bin.first) / event.first, bin.second);
-//					}
-//				}
-//				hists.push_back(ratio_hist);
-//				stack->Add(ratio_hist);
-//
-//				if(can_index == 1) {
-//					pair<int, int> range = get_cent9_range(cent);
-//					leg->AddEntry(ratio_hist, (to_string(div) + " divisions \t" + to_string(range.first)+"-"+to_string(range.second)+"% central").data(), "l");
-//				}
-//			}
-//		}
-//		stack->Draw("nostackHIST");
-//		gStyle->SetOptStat(0);
-//		gPad->SetLogy();
-//		if(can_index > can_div.first*(can_div.second-1)) { gPad->SetBottomMargin(0.12); }
-//		else { gPad->SetBottomMargin(0.05); }
-//		if(can_index > can_div.first) { gPad->SetTopMargin(0.07); }
-//		else { gPad->SetTopMargin(0.08); }
-//		gPad->SetRightMargin(0.02);
-//		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
-//
-//	}
-//	ratio_can->Update();
-//	ratio_can->Write(name.data());
-//	for(TH1D* hist:hists) { delete hist; }
-//	for(THStack* stack:stacks) { delete stack; }
-//	for(TLegend* legend:legends) { delete legend; }
-//	delete ratio_can;
-//}
-
-
 void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>> stats, string name) {
-	int div = 6; //Hardcode, fix.
+	int div = 60; //Hardcode, fix.
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	can->Divide(2,2, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
@@ -692,7 +626,7 @@ void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, Measure>>>>
 
 
 void athic_stat_vs_energy(map<int, map<int, map<int, map<string, Measure>>>> stats, string name) {
-	int div = 6; //Hardcode, fix.
+	int div = 60; //Hardcode, fix.
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 	can->Divide(2,2, plot::can_div_x, plot::can_div_y);
 	int can_index = 1;
@@ -776,13 +710,13 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-				graph->SetNameTitle((to_string(div) + " divisions").data());
+				graph->SetNameTitle((to_string(div) + " degree bins").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
 				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
 				graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(graph, "AP");
-				if(can_index == 1) { leg->AddEntry(graph, (to_string(div) + " divs").data(), "p"); }
+				if(can_index == 1) { leg->AddEntry(graph, (to_string(div) + "#circ bins").data(), "p"); }
 			}
 			double y_range = y_max - y_min;
 			mg->GetXaxis()->SetLimits(0, 80);
@@ -844,7 +778,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 					if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-				graph->SetNameTitle((to_string(div) + " divisions").data());
+				graph->SetNameTitle((to_string(div) + " degree bins").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
 				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -853,7 +787,7 @@ void roli_thesis_stats(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 				sys_graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(sys_graph, "[]");
-				if(can_index == 1) { leg->AddEntry(graph, (to_string(div) + " divs").data(), "p"); }
+				if(can_index == 1) { leg->AddEntry(graph, (to_string(div) + "#circ bins").data(), "p"); }
 			}
 			double y_range = y_max - y_min;
 			mg->GetXaxis()->SetLimits(0, 80);
@@ -917,16 +851,16 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 						if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
 					}
 					TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-					graph->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+					graph->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 					graph->SetMarkerStyle(plot::div_marker_styles[div]);
-					graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+					graph->SetMarkerColor(plot::div_marker_colors[div]);
 					graph->SetMarkerSize(plot::div_marker_sizes[div]);
-					graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+					graph->SetLineColor(plot::div_marker_colors[div]);
 					mg->Add(graph, "APZ");
 					TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
-					sys_graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+					sys_graph->SetLineColor(plot::div_marker_colors[div]);
 					mg->Add(sys_graph, "[]");
-					if(can_index == 1) { leg->AddEntry(graph, (data_set.first + " " + to_string(div) + " divs").data(), "p"); }
+					if(can_index == 1) { leg->AddEntry(graph, (data_set.first + " " + to_string(div) + "#circ bins").data(), "p"); }
 					set_num++;
 				}
 			}
@@ -989,13 +923,13 @@ void roli_thesis_stats(map<string, map<int, map<int, map<int, map<string, Measur
 						if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 					}
 					TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-					graph->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+					graph->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 					graph->SetMarkerStyle(plot::div_marker_styles[div]);
-					graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+					graph->SetMarkerColor(plot::div_marker_colors[div]);
 					graph->SetMarkerSize(plot::div_marker_sizes[div]);
-					graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+					graph->SetLineColor(plot::div_marker_colors[div]);
 					mg->Add(graph, "AP");
-					if(can_index == 1) { leg->AddEntry(graph, (data_set.first + " " + to_string(div) + " divs").data(), "p"); }
+					if(can_index == 1) { leg->AddEntry(graph, (data_set.first + " " + to_string(div) + "#circ bins").data(), "p"); }
 					set_num++;
 				}
 			}
@@ -1066,20 +1000,20 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 					if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-				graph->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+				graph->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(graph, "APLZ");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
-				sys_graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				sys_graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(sys_graph, "[]");
 				set_num++;
 				if(can_index == 1) {
 					leg->SetBorderSize(plot::legend_border_width);
 					leg->SetFillStyle(0);
-					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "lp");
+					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "lp");
 				}
 			}
 		}
@@ -1157,17 +1091,17 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-				graph->SetNameTitle((data_set.first + " " + to_string(div) + " divisions").data());
+				graph->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[(div+set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(graph, "AP");
 				set_num++;
 				if(can_index == 1) {
 					leg->SetBorderSize(plot::legend_border_width);
 					leg->SetFillStyle(0);
-					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + " divs").data(), "p");
+					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 				}
 			}
 		}
@@ -1233,11 +1167,11 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 //		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
 		for(int div:divs) {
-			if(divs.size() > 1 && div == 2 && stat_name == "skewness") { continue; }
+			if(divs.size() > 1 && div == 180 && stat_name == "skewness") { continue; }
 			vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
 			Measure stat_meas;
 			for(int energy:analysis::energy_list) {
-				energy_val.push_back(plot::energy_match[energy] + (div - divs[0])*0.4);
+				energy_val.push_back(plot::energy_match[energy]);
 				energy_err.push_back(0.0);
 				stat_meas = stats[energy][div][cent][stat_name];
 				stat_vals.push_back(stat_meas.get_val());
@@ -1249,7 +1183,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-			graph->SetNameTitle((stat_name + " " + to_string(div) + " divisions").data());
+			graph->SetNameTitle((stat_name + " " + to_string(div) + " degree bins").data());
 			graph->SetMarkerStyle(plot::div_marker_styles[div]);
 			graph->SetMarkerColor(plot::div_marker_colors[div]);
 			graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -1261,7 +1195,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			if(can_index == 1) {
 				leg->SetBorderSize(plot::legend_border_width);
 				leg->SetFillStyle(0);
-				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "lp");
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + "#circ bins").data(), "lp");
 			}
 		}
 		double y_range = y_max - y_min;
@@ -1325,7 +1259,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			vector<double> stat_vals, energy_val, stat_err, energy_err;
 			Measure stat_meas;
 			for(int energy:analysis::energy_list) {
-				energy_val.push_back(plot::energy_match[energy] + (div - divs[0])*0.4);
+				energy_val.push_back(plot::energy_match[energy]);
 				energy_err.push_back(0.0);
 				stat_meas = stats[energy][div][cent][stat_name];
 				stat_vals.push_back(stat_meas.get_val());
@@ -1334,7 +1268,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-			graph->SetNameTitle((stat_name + " " + to_string(div) + " divisions").data());
+			graph->SetNameTitle((stat_name + " " + to_string(div) + " degree bins").data());
 			graph->SetMarkerStyle(plot::div_marker_styles[div]);
 			graph->SetMarkerColor(plot::div_marker_colors[div]);
 			graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -1343,7 +1277,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			if(can_index == 1) {
 				leg->SetBorderSize(plot::legend_border_width);
 				leg->SetFillStyle(0);
-				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 			}
 		}
 		double y_range = y_max - y_min;
@@ -1407,18 +1341,18 @@ void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measur
 					if(dmean_meas.get_val() + dmean_meas.get_err() > x_max) { x_max = dmean_meas.get_val() + dmean_meas.get_err(); }
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_err);
-				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " divisions").data());
+				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " degree bins").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetLineColor(plot::div_marker_colors[div]);
 				TGraphErrors *graph_fit = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, total_err);
-				lines[can_index].push_back(new TF1((to_string(energy) + "GeV_" + to_string(div) + "_div_fit").data(), "[0]+[1]*x", 0, *max_element(dmean_val.begin(), dmean_val.end()) * 1.05));
-				lines[can_index].back()->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				lines[can_index].push_back(new TF1((to_string(energy) + "GeV_" + to_string(div) + "_degree_bins_fit").data(), "[0]+[1]*x", 0, *max_element(dmean_val.begin(), dmean_val.end()) * 1.05));
+				lines[can_index].back()->SetLineColor(plot::div_marker_colors[div]);
 				graph_fit->Fit(lines[can_index].back(), "Q");
 				mg->Add(graph, "APZ");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_sys);
-				sys_graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				sys_graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(sys_graph, "[]");
 				set_num++;
 				if(can_index == 1) {
@@ -1432,7 +1366,7 @@ void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measur
 					if(in_string(name, "_cor")) {
 						string fit_lab = "y= " + m + "+-" + m_err + "x + " + b + "+-" + b_err; //±
 					}
-					leg->AddEntry(graph, (to_string(energy) + "GeV " + to_string(div) + " divs " + fit_lab).data(), "p");
+					leg->AddEntry(graph, (to_string(energy) + "GeV " + to_string(div) + "#circ bins " + fit_lab).data(), "p");
 				}
 			}
 		}
@@ -1513,17 +1447,17 @@ void stat_vs_mult_mean(map<string, map<int, map<int, map<int, map<string, Measur
 					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_err);
-				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " divisions").data());
+				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " degree bins").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(graph, "APZ");
 				set_num++;
 				if(can_index == 1) {
 					leg->SetBorderSize(plot::legend_border_width);
 					leg->SetFillStyle(0);
-					leg->AddEntry(graph, (to_string(energy) + "GeV " + stat_name + " " + to_string(div) + " divs").data(), "p");
+					leg->AddEntry(graph, (to_string(energy) + "GeV " + stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 				}
 			}
 		}
@@ -1603,7 +1537,7 @@ void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-			graph->SetNameTitle((stat_name + " " + to_string(div) + " divisions").data());
+			graph->SetNameTitle((stat_name + " " + to_string(div) + " degree bins").data());
 			graph->SetMarkerStyle(plot::div_marker_styles[div]);
 			graph->SetMarkerColor(plot::div_marker_colors[div]);
 			graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -1615,7 +1549,7 @@ void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			if(can_index == 1) {
 				leg->SetBorderSize(plot::legend_border_width);
 				leg->SetFillStyle(0);
-				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 			}
 		}
 		double y_range = y_max - y_min;
@@ -1689,7 +1623,7 @@ void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats,
 				if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
 			}
 			TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
-			graph->SetNameTitle((stat_name + " " + to_string(div) + " divisions").data());
+			graph->SetNameTitle((stat_name + " " + to_string(div) + " degree bins").data());
 			graph->SetMarkerStyle(plot::div_marker_styles[div]);
 			graph->SetMarkerColor(plot::div_marker_colors[div]);
 			graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -1698,7 +1632,7 @@ void stat_vs_mult_mean(map<int, map<int, map<int, map<string, Measure>>>> stats,
 			if(can_index == 1) {
 				leg->SetBorderSize(plot::legend_border_width);
 				leg->SetFillStyle(0);
-				leg->AddEntry(graph, (stat_name + " " + to_string(div) + " divs").data(), "p");
+				leg->AddEntry(graph, (stat_name + " " + to_string(div) + "#circ bins").data(), "p");
 			}
 		}
 		double y_range = y_max - y_min;
@@ -1763,18 +1697,18 @@ void stat_vs_mult_mean_cor(map<string, map<int, map<int, map<int, map<string, Me
 					if(dmean_meas.get_val() + dmean_meas.get_err() > x_max) { x_max = dmean_meas.get_val() + dmean_meas.get_err(); }
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_err);
-				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " divisions").data());
+				graph->SetNameTitle((to_string(energy) + "GeV " + to_string(div) + " degree bins").data());
 				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				graph->SetLineColor(plot::div_marker_colors[div]);
 				TGraphErrors *graph_fit = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, total_err);
-				lines[can_index].push_back(new TF1((to_string(energy) + "GeV_" + to_string(div) + "_div_fit").data(), "[0]+[1]*x", 0, *max_element(dmean_val.begin(), dmean_val.end()) * 1.05));
-				lines[can_index].back()->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				lines[can_index].push_back(new TF1((to_string(energy) + "GeV_" + to_string(div) + "_degree_bins_fit").data(), "[0]+[1]*x", 0, *max_element(dmean_val.begin(), dmean_val.end()) * 1.05));
+				lines[can_index].back()->SetLineColor(plot::div_marker_colors[div]);
 				graph_fit->Fit(lines[can_index].back(), "Q");
 				mg->Add(graph, "APZ");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(dmean_val, stat_vals, dmean_err, stat_sys);
-				sys_graph->SetLineColor(plot::div_marker_colors[(set_num)%(int)plot::div_marker_styles.size()]);
+				sys_graph->SetLineColor(plot::div_marker_colors[div]);
 				mg->Add(sys_graph, "[]");
 				set_num++;
 				if(can_index == 1) {
@@ -1785,7 +1719,7 @@ void stat_vs_mult_mean_cor(map<string, map<int, map<int, map<int, map<string, Me
 					string b_err = to_string(lines[can_index].back()->GetParError(0));
 					string m_err = to_string(lines[can_index].back()->GetParError(1));
 					string fit_lab = "y= " + m + "+-" + m_err + "x + " + b + "+-" + b_err; //±
-					leg->AddEntry(graph, (to_string(energy) + "GeV " + to_string(div) + " divs " + fit_lab).data(), "p");
+					leg->AddEntry(graph, (to_string(energy) + "GeV " + to_string(div) + "#circ bins " + fit_lab).data(), "p");
 				}
 			}
 		}
@@ -1868,7 +1802,7 @@ void type_per_row(map<string, map<int, map<int, map<int, map<string, Measure>>>>
 					}
 					TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
 					pair<int, int> range = get_cent9_range(cent);
-					graph->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"% " + to_string(div) + " divisions").data());
+					graph->SetNameTitle((to_string(range.first)+"-"+to_string(range.second)+"% " + to_string(div) + " degree bins").data());
 					graph->SetMarkerStyle(plot::div_marker_styles[div]);
 					graph->SetMarkerColor(plot::cent_marker_colors[cent]);
 					graph->SetMarkerSize(plot::div_marker_sizes[div]);
@@ -1878,7 +1812,7 @@ void type_per_row(map<string, map<int, map<int, map<int, map<string, Measure>>>>
 					sys_graph->SetLineColor(plot::cent_marker_colors[cent]);
 					mg->Add(sys_graph, "[]");
 					if(can_index == 1) {
-						leg->AddEntry(graph, (to_string(div) + " divisions \t" + to_string(range.first)+"-"+to_string(range.second)+"% Centrality").data(), "p");
+						leg->AddEntry(graph, (to_string(div) + "#circ bins \t" + to_string(range.first)+"-"+to_string(range.second)+"% Centrality").data(), "p");
 					}
 				}
 			}

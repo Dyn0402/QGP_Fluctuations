@@ -17,11 +17,11 @@ using namespace std;
 
 
 namespace analysis {
-	vector<int> energy_list = {7,11,19,27,39,62};
-	vector<int> divs = {2,3,4,5,6};
-	vector<int> centrals = {0,1,2,3,4,5,6,7,8};
-	vector<int> cumulant_orders = {1,2,3,4};
-	vector<string> stat_names = {"mean", "standard_deviation", "skewness", "kurtosis"};
+	vector<int> energy_list {7,11,19,27,39,62};
+	vector<int> divs {180, 120, 90, 72, 60};
+	vector<int> centrals {0,1,2,3,4,5,6,7,8};
+	vector<int> cumulant_orders {1,2,3,4};
+	vector<string> stat_names {"mean", "standard_deviation", "skewness", "kurtosis"};
 
 	string in_file_prefx = "auau";
 	string in_file_sufx = ".root";
@@ -59,28 +59,27 @@ namespace plot {
 	double protons_hist_low = -0.5;
 	double protons_hist_high = 60.5;
 
-//	vector<int> div_marker_styles = {8, 8, 28, 24, 25, 26, 27};
-	vector<int> div_marker_styles = {8, 8, 34, 20, 21, 22, 33};
-	vector<int> div_marker_width = {2, 2, 2, 2, 2, 2, 2};
-	vector<int> div_marker_colors = {28, 9, 6, 1, 2, kGreen+2, 4};
-	vector<double> div_marker_sizes = {1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5};
+	map<int, int> div_marker_styles {{0, 8}, {360, 8}, {180, 34}, {120, 20}, {90, 21}, {72, 22}, {60, 33}};
+	map<int, int> div_marker_colors {{0, 28}, {360, 9}, {180, 6}, {120, 1}, {90, 2}, {72, kGreen+2}, {60, 4}};
+	map<int, int> div_marker_width {{0, 2}, {360, 2}, {180, 2}, {120, 2}, {90, 2}, {72, 2}, {60, 2}};
+	map<int, double> div_marker_sizes {{0, 1.5}, {360, 1.5}, {180, 1.5}, {120, 1.5}, {90, 1.5}, {72, 1.5}, {60, 1.5}};
 
-	map<int, int> energy_marker_styles = {{7,24}, {11,25}, {19,26}, {27,27}, {39,28}, {62,30}};
-	map<int, int> energy_marker_width = {{7,2}, {11,2}, {19,2}, {27,2}, {39,2}, {62,2}};
-	map<int, int> energy_marker_colors = {{7,1}, {11,2}, {19,8}, {27,4}, {39,6}, {62,9}};
-	map<int, int> energy_marker_sizes = {{7,1}, {11,1}, {19,1}, {27,1}, {39,1}, {62,1}};;
+	map<int, int> energy_marker_styles {{7,24}, {11,25}, {19,26}, {27,27}, {39,28}, {62,30}};
+	map<int, int> energy_marker_width {{7,2}, {11,2}, {19,2}, {27,2}, {39,2}, {62,2}};
+	map<int, int> energy_marker_colors {{7,1}, {11,2}, {19,8}, {27,4}, {39,6}, {62,9}};
+	map<int, int> energy_marker_sizes {{7,1}, {11,1}, {19,1}, {27,1}, {39,1}, {62,1}};;
 
-//	map<int, int> cent_marker_styles = {{15,24}, {14,25}, {13,26}, {12,27}, {11,28}, {10,30}};
-//	map<int, int> cent_marker_width = {{15,2}, {14,2}, {13,2}, {12,2}, {11,2}, {10,2}};
-//	map<int, int> cent_marker_colors = {{15,1}, {14,2}, {13,8}, {12,4}, {11,6}, {10,9}};
-//	map<int, int> cent_marker_sizes = {{15,1}, {14,1}, {13,1}, {12,1}, {11,1}, {10,1}};
+//	map<int, int> cent_marker_styles {{15,24}, {14,25}, {13,26}, {12,27}, {11,28}, {10,30}};
+//	map<int, int> cent_marker_width {{15,2}, {14,2}, {13,2}, {12,2}, {11,2}, {10,2}};
+//	map<int, int> cent_marker_colors {{15,1}, {14,2}, {13,8}, {12,4}, {11,6}, {10,9}};
+//	map<int, int> cent_marker_sizes {{15,1}, {14,1}, {13,1}, {12,1}, {11,1}, {10,1}};
 
-	map<int, int> cent_marker_styles = {{9,24}, {8,25}, {7,26}, {6,27}, {5,28}, {4,30}, {3,30}, {2,30}, {1,30}, {0,30}};
-	map<int, int> cent_marker_width = {{9,2}, {8,2}, {7,2}, {6,2}, {5,2}, {4,2}, {3,2}, {2,2}, {1,2}, {0,2}};
-	map<int, int> cent_marker_colors = {{9,1}, {8,2}, {7,11}, {6,4}, {5,46}, {4,6}, {3,7}, {2,8}, {1,9}, {0,28}};
-	map<int, int> cent_marker_sizes = {{9,1}, {8,1}, {7,1}, {6,1}, {5,1}, {4,1}, {3,1}, {2,1}, {1,1}, {0,1}};
+	map<int, int> cent_marker_styles {{9,24}, {8,25}, {7,26}, {6,27}, {5,28}, {4,30}, {3,30}, {2,30}, {1,30}, {0,30}};
+	map<int, int> cent_marker_width {{9,2}, {8,2}, {7,2}, {6,2}, {5,2}, {4,2}, {3,2}, {2,2}, {1,2}, {0,2}};
+	map<int, int> cent_marker_colors {{9,1}, {8,2}, {7,11}, {6,4}, {5,46}, {4,6}, {3,7}, {2,8}, {1,9}, {0,28}};
+	map<int, int> cent_marker_sizes {{9,1}, {8,1}, {7,1}, {6,1}, {5,1}, {4,1}, {3,1}, {2,1}, {1,1}, {0,1}};
 
-	map<int, double> energy_match = {{7,7.7}, {11,11.5}, {19,19.6}, {27,27.0}, {39,39.0}, {62,62.4}};
+	map<int, double> energy_match {{7,7.7}, {11,11.5}, {19,19.6}, {27,27.0}, {39,39.0}, {62,62.4}};
 	double centrality_slope = 5.0;
 	double centrality_intercept = 2.5;
 }
