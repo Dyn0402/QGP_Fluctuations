@@ -116,9 +116,9 @@ void PileUpQAer::rotate_dist() {
 	map<int, float> slice_raw_moment2;
 	for(pair<short, short> const &event:ref_btof_pairs) {
 		btof_ref_hist.Fill(event.first, event.second);
-		slice_count[event.first]++;
-		slice_raw_moment1[event.first]+=event.second;
-		slice_raw_moment2[event.first]+=pow(event.second, 2);
+		slice_count[event.second]++;
+		slice_raw_moment1[event.second]+=event.first;
+		slice_raw_moment2[event.second]+=pow(event.first, 2);
 	}
 
 	TF1 lin_fit(("lin_fit_"+name).data(), "[0]*x", orig_ref_low, orig_ref_high);
@@ -127,19 +127,19 @@ void PileUpQAer::rotate_dist() {
 //
 //	cout << rot_angle << endl;
 
-	vector<float> x;
+	vector<float> y;
 	vector<float> upper_points;
 	vector<float> lower_points;
 	float sigma = 3.0;
 	for(pair<int, int> slice:slice_count) {
 		float sd = pow(slice_raw_moment2[slice.first] - pow(slice_raw_moment1[slice.first] / slice.second, 2), 0.5);
-		x.push_back(slice.first);
+		y.push_back(slice.first);
 		upper_points.push_back(lin_fit.GetParameter(0) + sigma * sd);
 		lower_points.push_back(lin_fit.GetParameter(0) - sigma * sd);
 	}
 
-	TGraph upper(x.data(), upper_points.data());
-	TGraph lower(x.data(), lower_points.data());
+	TGraph upper((int)y.size(), upper_points.data(), y.data());
+	TGraph lower((int)y.size(), lower_points.data(), y.data());
 	TF1 upper_fit(("upper_fit_"+name).data(), "plo1", orig_ref_low, orig_ref_high);
 	TF1 lower_fit(("lower_fit_"+name).data(), "pol1", orig_ref_low, orig_ref_high);
 	upper.Fit(&upper_fit, "NQ");
@@ -169,6 +169,10 @@ void PileUpQAer::rotate_dist() {
 		TCanvas orig_can(("Can_"+name).data(), title.data());
 		btof_ref_hist.Draw("COLZ");
 		lin_fit.Draw("same");
+		upper.Draw("SameAP");
+		lower.Draw("SameAP");
+		upper_fit.Draw("same");
+		lower_fit.Draw("same");
 		orig_can.SetLogz();
 		orig_can.Update();
 		orig_can.Write();
