@@ -126,6 +126,8 @@ void PileUpQAer::rotate_dist() {
 	string name = orig_btof_ref_name+to_string(energy)+"GeV";
 	string title = orig_btof_ref_title+to_string(energy)+"GeV";
 	TH2F btof_ref_hist(name.data(), title.data(), orig_ref_bins, orig_ref_low, orig_ref_high, orig_btof_bins, orig_btof_low, orig_btof_high);
+	btof_ref_hist.GetXaxis()->SetTitle("Refmult");
+	btof_ref_hist.GetYaxis()->SetTitle("BTOFMatch");
 
 	map<int, int> slice_count;
 	map<int, float> slice_raw_moment1;
@@ -139,9 +141,9 @@ void PileUpQAer::rotate_dist() {
 
 	TF1 lin_fit(("lin_fit_"+name).data(), "[0]*x", orig_ref_low, orig_ref_high);
 	btof_ref_hist.Fit(&lin_fit, "NQ");
-//	double rot_angle = atan(lin_fit.GetParameter(0));
-//
-//	cout << rot_angle << endl;
+	double rot_angle = M_PI / 2 - atan(lin_fit.GetParameter(0));
+
+	cout << rot_angle << endl;
 
 	vector<float> y;
 	vector<float> upper_points;
@@ -161,9 +163,9 @@ void PileUpQAer::rotate_dist() {
 	vector<float> test_y {10, 20, 30, 40, 50};
 	TGraph test((int)test_x.size(), test_x.data(), test_y.data());
 	TGraph upper((int)y.size(), upper_points.data(), y.data());
-	upper.SetMarkerStyle(8); upper.SetMarkerSize(1.0); upper.SetMarkerColor(kOrange);
+	upper.SetLineColor(kViolet);
 	TGraph lower((int)y.size(), lower_points.data(), y.data());
-	lower.SetMarkerStyle(8); lower.SetMarkerSize(1.0); lower.SetMarkerColor(kOrange);
+	lower.SetLineColor(kViolet);
 	TF1 upper_fit(("upper_fit_"+name).data(), "pol1", orig_ref_low, orig_ref_high);
 	upper_fit.SetLineColor(kRed);
 	TF1 lower_fit(("lower_fit_"+name).data(), "pol1", orig_ref_low, orig_ref_high);
@@ -171,45 +173,45 @@ void PileUpQAer::rotate_dist() {
 	upper.Fit(&upper_fit, "NQ");
 	lower.Fit(&lower_fit, "NQ");
 
-	cout << energy << "GeV\t Upper: " << upper_fit.GetParameter(0) << "+" << upper_fit.GetParameter(1) << "x  |  Lower: " << lower_fit.GetParameter(0) << "+" << lower_fit.GetParameter(1) << "x" << endl;
+//	cout << energy << "GeV\t Upper: " << upper_fit.GetParameter(0) << "+" << upper_fit.GetParameter(1) << "x  |  Lower: " << lower_fit.GetParameter(0) << "+" << lower_fit.GetParameter(1) << "x" << endl;
 	low_cut = make_pair(lower_fit.GetParameter(0), lower_fit.GetParameter(1));
 	high_cut = make_pair(upper_fit.GetParameter(0), upper_fit.GetParameter(1));
 
-//	int x_bins = (int)((float)orig_ref_bins*sin(rot_angle) - (float));
-//	float x_low = orig_ref_low * sin(rot_angle) - orig_btof_high * cos(rot_angle);
-//	float x_high = orig_ref_high * sin(rot_angle) - orig_btof_low * cos(rot_angle);
-//	float y_low = orig_ref_low * cos(rot_angle) + orig_btof_low * sin(rot_angle);
-//	float y_high = orig_ref_high * cos(rot_angle) + orig_btof_high * sin(rot_angle);
-////	TH2F rotate_btof_ref_hist(("rotate_"+name).data(), ("Rotated "+title).data(), orig_ref_bins, -0.5*orig_ref_high, +0.5*orig_ref_high, orig_btof_bins, orig_btof_low, orig_btof_high);
-//	TH2F rotate_btof_ref_hist(("rotate_"+name).data(), ("Rotated "+title).data(), (int)(x_high-x_low+1), x_low, x_high, (int)(y_high-y_low+1), y_low, y_high);
-//
-//	for(pair<short, short> const &event:ref_btof_pairs) {
+	int x_bins = (int)((float)orig_ref_bins*sin(rot_angle) - (float));
+	float x_low = orig_ref_low * sin(rot_angle) - orig_btof_high * cos(rot_angle);
+	float x_high = orig_ref_high * sin(rot_angle) - orig_btof_low * cos(rot_angle);
+	float y_low = orig_ref_low * cos(rot_angle) + orig_btof_low * sin(rot_angle);
+	float y_high = orig_ref_high * cos(rot_angle) + orig_btof_high * sin(rot_angle);
+//	TH2F rotate_btof_ref_hist(("rotate_"+name).data(), ("Rotated "+title).data(), orig_ref_bins, -0.5*orig_ref_high, +0.5*orig_ref_high, orig_btof_bins, orig_btof_low, orig_btof_high);
+	TH2F rotate_btof_ref_hist(("rotate_"+name).data(), ("Rotated "+title).data(), (int)(x_high-x_low+1), x_low, x_high, (int)(y_high-y_low+1), y_low, y_high);
+
+	for(pair<short, short> const &event:ref_btof_pairs) {
 //		rotate_btof_ref_hist.Fill((float)event.first*sin(rot_angle) - (float)event.second*cos(rot_angle), (float)event.first*cos(rot_angle) + (float)event.second*sin(rot_angle));
-////		rotate_btof_ref_hist.Fill((float)event.first*cos(rot_angle) - (float)event.second*sin(rot_angle), (float)event.first*sin(rot_angle) + (float)event.second*cos(rot_angle));
-//	}
-//
+		rotate_btof_ref_hist.Fill((float)event.first*cos(rot_angle) - (float)event.second*sin(rot_angle), (float)event.first*sin(rot_angle) + (float)event.second*cos(rot_angle));
+	}
+
 //	TF1 gaus(("gaus_fit_"+name).data(), "gaus", x_low, x_high);
 //	TObjArray slices;
-////	rotate_btof_ref_hist.FitSlicesX(&gaus, 0, 500, 0, "QNR", &slices);
+//	rotate_btof_ref_hist.FitSlicesX(&gaus, 0, 500, 0, "QNR", &slices);
 
 	mtx->lock();
 	{
 		TCanvas orig_can(("Can_"+name).data(), title.data());
 		btof_ref_hist.Draw("COLZ");
 //		lin_fit.Draw("same");
-		upper.Draw("sameP");
-		lower.Draw("sameP");
+		upper.Draw("sameL");
+		lower.Draw("sameL");
 		upper_fit.Draw("same");
 		lower_fit.Draw("same");
 		orig_can.SetLogz();
 		orig_can.Update();
 		orig_can.Write();
 
-//		TCanvas rot_can(("Rot_Can_"+name).data(), ("Rotated "+title).data());
-//		rotate_btof_ref_hist.Draw("COLZ");
-//		rot_can.SetLogz();
-//		rot_can.Update();
-//		rot_can.Write();
+		TCanvas rot_can(("Rot_Can_"+name).data(), ("Rotated "+title).data());
+		rotate_btof_ref_hist.Draw("COLZ");
+		rot_can.SetLogz();
+		rot_can.Update();
+		rot_can.Write();
 	}
 	mtx->unlock();
 
