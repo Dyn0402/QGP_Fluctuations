@@ -78,7 +78,9 @@ private:
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
 	string tree_name = "tree";
+
 	StRefMultCorr *refmultCorrUtil;
+	tree_branches branches;
 
 	map<int, pair<float, float>> mv_avg_pars {{1, {5.0, 0.2}}, {5, {5.5, 2.0}}, {10, {8.0, 4.0}}};//, {20, {9.5, 1.0}}, {30, {12.0, 1.5}}};
 	map<int, int> mv_avg_stats;

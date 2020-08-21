@@ -33,6 +33,7 @@
 #include "AmptCentralityMaker.h"
 #include "AmptConverter.h"
 #include "DcaxyQAer.h"
+#include "PileUpQAer.h"
 #include "ratio_methods.h"
 #include "file_io.h"
 
@@ -56,6 +57,8 @@ void ampt_cent_test();
 void ampt_cent_b_corr();
 void dca_xy_qa(int energy, mutex *mtx);
 void run_dca_xy_qa();
+void pile_up_qa(int energy, mutex *mtx);
+void run_pile_up_qa();
 void tchain_test();
 void run_tchain();
 
@@ -81,6 +84,7 @@ int main(int argc, char** argv) {
 //	cout << b << endl;
 //	gErrorIgnoreLevel = -1;
 //	run_dca_xy_qa();
+//	run_pile_up_qa();
 //	tchain_test();
 //	ampt_cent_b_corr();
 //	ampt_cent_test();
@@ -103,9 +107,10 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {1, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios", {0, 2}}, {"eta1_n1ratios", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
+	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca3", {0, 0}}};
 
-	vector<int> energy_list {39, 62, 27, 19, 11, 7};
+	vector<int> energy_list {7}; //{39, 62, 27, 19, 11, 7};
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -170,6 +175,9 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 
 	if(in_string(set_name, {"No_Rotate", "EP_Rotate"}, false)) { reader.set_rotate_random(false); }
 	else{ reader.set_rotate_random(true); }
+
+	if(in_string(set_name, "dca1")) { reader.cut.max_dca = 1.0; }
+	if(in_string(set_name, "dca3")) { reader.cut.max_dca = 3.0; }
 
 	if(in_string(set_name, "Pile_Up_01_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
 	else if(in_string(set_name, "Pile_Up_008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
@@ -294,7 +302,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	} else if(in_string(set_name, "Ampt")) {
 		reader.read_ampt_trees();
 	} else{
-		reader.read_trees_chain();
+		reader.read_trees();
 	}
 
 	cout << "Finished " << set_name << " set " << set_num << " " << energy <<  "GeV, job " << job_num << " of " << jobs << endl << endl;
@@ -655,6 +663,45 @@ void run_dca_xy_qa() {
 		ThreadPool pool(thread::hardware_concurrency());
 		for(int energy:energies) {
 			pool.enqueue(dca_xy_qa, energy, mtx);
+			this_thread::sleep_for(chrono::seconds(1));
+		}
+	}
+}
+
+
+
+void pile_up_qa(int energy, mutex *mtx) {
+	{
+		PileUpQAer qa(energy, mtx);
+		qa.run_qa();
+	}
+	{
+		PileUpQAer qa(energy, mtx);
+		auto low = qa.get_low_cut();
+		auto high = qa.get_high_cut();
+		cout << "low: " << low.first << " " << low.second << endl;
+		cout << "high: " << high.first << " " << high.second << endl;
+	}
+//	DcaxyQAer qa(energy);
+//	map<int, vector<pair<int, int>>> bad_ranges = qa.get_bad_ranges();
+//	for(pair<int, vector<pair<int, int>>> run:bad_ranges) {
+//		cout << "Run " << run.first << ":\t" << flush;
+//		for(pair<int, int> range:run.second) {
+//			cout << "[" << range.first << " , " << range.second << "]\t" << flush;
+//		}
+//		cout << endl;
+//	}
+}
+
+void run_pile_up_qa() {
+	vector<int> energies {7, 11, 19, 27, 39, 62};
+	mutex *mtx = new mutex;
+
+	ROOT::EnableThreadSafety();
+	{
+		ThreadPool pool(thread::hardware_concurrency());
+		for(int energy:energies) {
+			pool.enqueue(pile_up_qa, energy, mtx);
 			this_thread::sleep_for(chrono::seconds(1));
 		}
 	}

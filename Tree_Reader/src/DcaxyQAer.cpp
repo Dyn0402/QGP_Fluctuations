@@ -104,23 +104,24 @@ void DcaxyQAer::read_trees() {
 
 
 void DcaxyQAer::read_tree(TTree* tree) {
-	tree_leaves leaves = get_tree_leaves(tree, "Proton", 3);
+//	tree_leaves leaves = get_tree_leaves(tree, "Proton", 3);
+	set_tree_branches(tree, branches);
 	set_branches(tree);
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 		event_index++;
-		unsigned run = leaves.run->GetValue();
+		unsigned run = branches.run_num;  //leaves.run->GetValue();
 
 		refmultCorrUtil->init(run);
-		refmultCorrUtil->initEvent(leaves.ref_multn->GetValue(), (double)leaves.vz->GetValue());
+		refmultCorrUtil->initEvent(branches.refmultn, branches.vz);  //leaves.ref_multn->GetValue(), (double)leaves.vz->GetValue());
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
 		if(cent9_corr < cent_min) { continue; }
 
-		unsigned event_id = leaves.event_id->GetValue();
-		float dca_xy_avg = leaves.dca_xy_avg->GetValue();
-		float dca_xy_err = leaves.dca_xy_err->GetValue();
+		unsigned event_id = branches.event_id;  //leaves.event_id->GetValue();
+		float dca_xy_avg = branches.dca_xy_avg;  //leaves.dca_xy_avg->GetValue();
+		float dca_xy_err = branches.dca_xy_err;  //leaves.dca_xy_err->GetValue();
 
 		if(dca_xy_avg == -899 && dca_xy_err == -899) {
 			continue;
@@ -423,12 +424,12 @@ void DcaxyQAer::plot_run(vector<float> &run_num, vector<float> &dca_xy_run_avg, 
 	TF1 avg_index_dataset((energy_str + "GeV_avg_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
 	avg_index_dataset.SetParameter(0, set_avg);
 	avg_index_dataset.SetLineColor(kGreen+2); avg_index_dataset.Draw("Same");
-	TF1 sig_low_3_index_dataset((energy_str + "GeV_sig_low_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
-	sig_low_3_index_dataset.SetParameter(0, set_avg - 3 * set_err);
-	sig_low_3_index_dataset.SetLineColor(kOrange+7); sig_low_3_index_dataset.Draw("Same");
-	TF1 sig_high_3_index_dataset((energy_str + "GeV_sig_high_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
-	sig_high_3_index_dataset.SetParameter(0, set_avg + 3 * set_err);
-	sig_high_3_index_dataset.SetLineColor(kOrange+7); sig_high_3_index_dataset.Draw("Same");
+	TF1 sig_low_cut_index_dataset((energy_str + "GeV_sig_low_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
+	sig_low_cut_index_dataset.SetParameter(0, set_avg - bad_run_sigmas[energy] * set_err);
+	sig_low_cut_index_dataset.SetLineColor(kOrange+7); sig_low_cut_index_dataset.Draw("Same");
+	TF1 sig_high_cut_index_dataset((energy_str + "GeV_sig_high_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
+	sig_high_cut_index_dataset.SetParameter(0, set_avg + bad_run_sigmas[energy] * set_err);
+	sig_high_cut_index_dataset.SetLineColor(kOrange+7); sig_high_cut_index_dataset.Draw("Same");
 	TF1 sig_low_7_index_dataset((energy_str + "GeV_sig_low_7_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
 	sig_low_7_index_dataset.SetParameter(0, set_avg - 7 * set_err);
 	sig_low_7_index_dataset.SetLineColor(kOrange+9); sig_low_7_index_dataset.Draw("Same");
@@ -438,7 +439,7 @@ void DcaxyQAer::plot_run(vector<float> &run_num, vector<float> &dca_xy_run_avg, 
 	TLegend leg_index_dataset;
 	leg_index_dataset.SetBorderSize(0); leg_index_dataset.SetFillStyle(0);
 	leg_index_dataset.AddEntry(&avg_index_dataset, "Set Average", "l");
-	leg_index_dataset.AddEntry(&sig_low_3_index_dataset, "Set Avg +- 3 sigma", "l");
+	leg_index_dataset.AddEntry(&sig_low_cut_index_dataset, ("Set Avg +- " + to_string(bad_run_sigmas[energy]) + " sigma").data(), "l");
 	leg_index_dataset.AddEntry(&sig_low_7_index_dataset, "Set Avg +- 7 sigma", "l");
 	leg_index_dataset.Draw();
 	can_index_dataset.SetGrid();

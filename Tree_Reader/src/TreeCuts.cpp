@@ -38,14 +38,16 @@ TreeCuts::~TreeCuts() {
 void TreeCuts::set_values() {
 	// Dca_xy Cuts
 	DcaxyQAer dca_xy_qa(energy);
-	dca_xy_qa.set_energy(energy);
 	dca_xy_bad_runs = dca_xy_qa.get_bad_runs();
 	dca_xy_bad_event_ranges = dca_xy_qa.get_bad_ranges();
 
+	// Pile Up Cuts
+	PileUpQAer pile_up_qa(energy);
+	pile_up_low = pile_up_qa.get_low_cut();
+	pile_up_high = pile_up_qa.get_high_cut();
+
 	// Event Cuts
 	bad_runs = bad_runs_by_energy[energy];
-	max_slope = max_slope_by_energy[energy];
-	min_slope = min_slope_by_energy[energy];
 
 	// Track Cuts
 	min_beta = min_beta_by_energy[particle][energy];

@@ -28,6 +28,21 @@ PileUpQAer::~PileUpQAer() {
 
 
 // Getters
+pair<float, float> PileUpQAer::get_low_cut() {
+	if(low_cut.first == 0 && low_cut.second == 0) {
+		read_cut_file();
+	}
+
+	return low_cut;
+}
+
+pair<float, float> PileUpQAer::get_high_cut() {
+	if(high_cut.first == 0 && high_cut.second == 0) {
+		read_cut_file();
+	}
+
+	return high_cut;
+}
 
 
 // Setters
@@ -45,6 +60,7 @@ void PileUpQAer::run_qa() {
 	read_trees();
 	rotate_dist();
 //	get_cuts();
+	write_cut_file();
 }
 
 
@@ -130,22 +146,34 @@ void PileUpQAer::rotate_dist() {
 	vector<float> y;
 	vector<float> upper_points;
 	vector<float> lower_points;
-	float sigma = 3.0;
 	for(pair<int, int> slice:slice_count) {
-		float sd = pow(slice_raw_moment2[slice.first] - pow(slice_raw_moment1[slice.first] / slice.second, 2), 0.5);
-		y.push_back(slice.first);
-		upper_points.push_back(lin_fit.GetParameter(0) + sigma * sd);
-		lower_points.push_back(lin_fit.GetParameter(0) - sigma * sd);
+		float mean = slice_raw_moment1[slice.first] / slice.second;
+		float sd = pow(slice_raw_moment2[slice.first] / slice.second - pow(mean, 2), 0.5);
+		cout << "btof " << slice.first << " mean " << mean << "  sd " << sd << endl;
+		if(slice.second > min_points) {
+			y.push_back(slice.first);
+			lower_points.push_back(mean + sigmas * sd);
+			upper_points.push_back(mean - sigmas * sd);
+		}
 	}
 
+	vector<float> test_x {100, 200, 300, 400};
+	vector<float> test_y {10, 20, 30, 40, 50};
+	TGraph test((int)test_x.size(), test_x.data(), test_y.data());
 	TGraph upper((int)y.size(), upper_points.data(), y.data());
+	upper.SetMarkerStyle(8); upper.SetMarkerSize(1.0); upper.SetMarkerColor(kOrange);
 	TGraph lower((int)y.size(), lower_points.data(), y.data());
-	TF1 upper_fit(("upper_fit_"+name).data(), "plo1", orig_ref_low, orig_ref_high);
+	lower.SetMarkerStyle(8); lower.SetMarkerSize(1.0); lower.SetMarkerColor(kOrange);
+	TF1 upper_fit(("upper_fit_"+name).data(), "pol1", orig_ref_low, orig_ref_high);
+	upper_fit.SetLineColor(kRed);
 	TF1 lower_fit(("lower_fit_"+name).data(), "pol1", orig_ref_low, orig_ref_high);
+	lower_fit.SetLineColor(kRed);
 	upper.Fit(&upper_fit, "NQ");
 	lower.Fit(&lower_fit, "NQ");
 
-	cout << energy << "GeV\t Upper: " << upper_fit.GetParameter(0) << "+" << upper_fit.GetParameter(0) << "x  |  Lower: " << lower_fit.GetParameter(0) << "+" << lower_fit.GetParameter(0) << "x" << endl;
+	cout << energy << "GeV\t Upper: " << upper_fit.GetParameter(0) << "+" << upper_fit.GetParameter(1) << "x  |  Lower: " << lower_fit.GetParameter(0) << "+" << lower_fit.GetParameter(1) << "x" << endl;
+	low_cut = make_pair(lower_fit.GetParameter(0), lower_fit.GetParameter(1));
+	high_cut = make_pair(upper_fit.GetParameter(0), upper_fit.GetParameter(1));
 
 //	int x_bins = (int)((float)orig_ref_bins*sin(rot_angle) - (float));
 //	float x_low = orig_ref_low * sin(rot_angle) - orig_btof_high * cos(rot_angle);
@@ -168,9 +196,9 @@ void PileUpQAer::rotate_dist() {
 	{
 		TCanvas orig_can(("Can_"+name).data(), title.data());
 		btof_ref_hist.Draw("COLZ");
-		lin_fit.Draw("same");
-		upper.Draw("SameAP");
-		lower.Draw("SameAP");
+//		lin_fit.Draw("same");
+		upper.Draw("sameP");
+		lower.Draw("sameP");
 		upper_fit.Draw("same");
 		lower_fit.Draw("same");
 		orig_can.SetLogz();
@@ -186,6 +214,51 @@ void PileUpQAer::rotate_dist() {
 	mtx->unlock();
 
 	out_file->Close();
+}
+
+
+
+void PileUpQAer::write_cut_file() {
+	if(!check_path(out_path)) { cout << "Can't access path: " << out_path << " Skipping following read/write." << endl; return; }
+
+	string out_name = out_path + to_string(energy) + "GeV" + out_file_suf;
+	ofstream out_txt(out_name);
+	if(!out_txt.is_open()) { cout << "Could not open " << out_name << " Not writing." << endl; return; }
+	out_txt << energy << "GeV Pile Up cuts with lines of mean +-" << sigmas << " sigmas for each slice with more than " << min_points << " points: " << endl;
+	out_txt << "High cut line (intercept,slope):\t" << high_cut.first << "," << high_cut.second << endl;
+	out_txt << "Low cut line (intercept,slope):\t" << low_cut.first << "," << low_cut.second << endl;
+
+	out_txt.close();
+}
+
+
+void PileUpQAer::read_cut_file() {
+	if(!check_path(out_path)) { cout << "Can't access path: " << out_path << " Skipping following read/write." << endl; return; }
+
+	string in_name = out_path + to_string(energy) + "GeV" + out_file_suf;
+	ifstream in_txt(in_name);
+	if(!in_txt.is_open()) { cout << "Could not open " << in_name << " Not reading." << endl; return; }
+
+	pair<float, float> low_cut_read;
+	pair<float, float> high_cut_read;
+
+	string line;
+	int line_num = 1;
+	while(getline(in_txt, line)) {
+		if(line_num == 2) {
+			vector<string> highs = split(split(line, '\t')[1], ',');
+			high_cut.first = stof(highs[0]);
+			high_cut.second = stof(highs[1]);
+		}
+		if(line_num == 3) {
+			vector<string> lows = split(split(line, '\t')[1], ',');
+			low_cut.first = stof(lows[0]);
+			low_cut.second = stof(lows[1]);
+		}
+		line_num++;
+	}
+
+	in_txt.close();
 }
 
 

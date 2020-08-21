@@ -1189,9 +1189,11 @@ bool TreeReader::check_enough_particles(Event& event) {
 
 // Check slope of event. If within cuts, return true for good event, else false.
 bool TreeReader::check_slope(int btof, int ref_mult) {
-	double slope = (double)btof / ref_mult;
 	btof_ref_hist.Fill(ref_mult, btof);
-	if(slope > cut.max_slope || slope < cut.min_slope) {
+
+	float max_btof = cut.pile_up_high.first + cut.pile_up_high.second * ref_mult;
+	float min_btof = cut.pile_up_low.first + cut.pile_up_low.second * ref_mult;
+	if(btof > max_btof || btof < min_btof) {
 		return false;
 	}
 
@@ -1250,7 +1252,7 @@ bool TreeReader::check_particle_good(Track& particle) {
 // Define all histograms collected for qa.
 void TreeReader::define_qa() {
 	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
-	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 601, -0.5, 600.5, 1401, -0.5, 1400.5);
+	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 601, -0.5, 600.5, 2001, -0.5, 2000.5);
 
 	de_dx_pq_hist = TH2F(("de_dx_pid_"+set_name+"_"+to_string(energy)).data(), "Dedx PID", 1000, -3, 3, 1000, 0, 0.5e-4);
 	beta_pq_hist = TH2F(("beta_pq_pid_"+set_name+"_"+to_string(energy)).data(), "Beta PID", 1000, -3, 3, 1000, 0, 5);
@@ -1258,7 +1260,7 @@ void TreeReader::define_qa() {
 	event_cut_tree_maker = TH1D(("event_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 9, -0.5, 8.5);
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Expected");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Events Read");
-	event_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Is muEvent");
+	event_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Is dstEvent");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Good Trigger");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(5, "Good Run");
 	event_cut_tree_maker.GetXaxis()->SetBinLabel(6, "Good Vz");
@@ -1268,26 +1270,23 @@ void TreeReader::define_qa() {
 
 	event_cut_tree_maker.Fill("Expected", cut.expected_events);
 
-	track_cut_tree_maker = TH1D(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 19, -0.5, 18.5);
+	track_cut_tree_maker = TH1D(("track_cut_tree_maker"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 16, -0.5, 15.5);
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(1, "Tracks Read");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(2, "Is Track");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Vertex Index 0");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Global Index > 0");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(5, "Primary Flag");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(6, "Global Flag");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(7, "Charge");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(8, "nHitsRatio Min");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(9, "nHitsRatio Max");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(10, "eta");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(11, "nHitsFit");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(12, "nHitsDedx");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(13, "dca");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(14, "pt_low");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(15, "pt_high");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(16, "nsigma_proton");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(17, "m_proton");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(18, "nsigma_pion");
-	track_cut_tree_maker.GetXaxis()->SetBinLabel(19, "m_pion");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(3, "Primary Track/Flags");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(4, "Charge");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(5, "nHitsRatio Min");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(6, "nHitsRatio Max");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(7, "eta");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(8, "nHitsFit");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(9, "nHitsDedx");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(10, "dca");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(11, "pt_low");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(12, "pt_high");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(13, "nsigma_proton");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(14, "m_proton");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(15, "nsigma_pion");
+	track_cut_tree_maker.GetXaxis()->SetBinLabel(16, "m_pion");
 
 	event_cut_hist = TH1D(("event_cut"+set_name+"_"+to_string(energy)).data(), "Event Cuts", 6, -0.5, 5.5);
 	event_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
@@ -1423,9 +1422,9 @@ void TreeReader::write_qa() {
 	btof_ref_hist.Draw("COLZ");
 	pile_can.Update();
 	TF1 up_cut("pile_up_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
-	up_cut.SetParameters(0, cut.max_slope); up_cut.SetLineColor(kRed);
+	up_cut.SetParameters(cut.pile_up_high.first, cut.pile_up_high.second); up_cut.SetLineColor(kRed);
 	TF1 low_cut("pile_low_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
-	low_cut.SetParameters(0, cut.max_slope); up_cut.SetLineColor(kRed);
+	low_cut.SetParameters(cut.pile_up_low.first, cut.pile_up_low.second); low_cut.SetLineColor(kRed);
 	up_cut.Draw("same"); low_cut.Draw("same");
 	pile_can.Write();
 	btof_ref_hist.Write();

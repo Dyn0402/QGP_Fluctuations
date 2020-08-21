@@ -35,6 +35,8 @@ public:
 	~PileUpQAer();
 
 	// Getters
+	pair<float, float> get_low_cut();
+	pair<float, float> get_high_cut();
 
 	// Setters
 	void set_energy(int energy);
@@ -50,7 +52,7 @@ private:
 	int energy;
 	string in_path = "/media/ucla/Research/BES1_Trees/";
 	string out_path = "/home/dylan/Research/Pile_Up_QA/";
-	string out_file_suf = "_Bad_DCA_Events_Ranges.txt";
+	string out_file_suf = "_Pile_Up_Cuts.txt";
 	TFile *out_file = NULL;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
@@ -58,6 +60,9 @@ private:
 
 	string orig_btof_ref_name = "btof_ref_original_";
 	string orig_btof_ref_title = "BTof Mutiplicity vs Reference Multiplicity ";
+
+	float sigmas = 3.0;
+	int min_points = 100;
 
 	int orig_btof_bins = 2001;
 	float orig_btof_low = -0.5;
@@ -71,6 +76,8 @@ private:
 
 	// Data Containers
 	vector<pair<short, short>> ref_btof_pairs;  //{refmult, btof}
+	pair<float, float> low_cut;
+	pair<float, float> high_cut;
 
 
 	// Doers
@@ -80,6 +87,9 @@ private:
 
 	void read_tree(TTree *tree);
 	void set_branches(TTree *tree);
+
+	void write_cut_file();
+	void read_cut_file();
 };
 
 
