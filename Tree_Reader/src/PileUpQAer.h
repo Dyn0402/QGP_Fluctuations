@@ -27,6 +27,9 @@
 using namespace std;
 
 
+pair<float, float> rotate_xy(float x, float y, float angle);
+
+
 class PileUpQAer {
 public:
 	// Structors
@@ -64,7 +67,9 @@ private:
 	float sigmas = 3.0;
 	int min_points = 100;
 
-	int orig_btof_bins = 2001;
+	float rot_slice_height = 5.0;
+
+	int orig_btof_bins = 301;
 	float orig_btof_low = -0.5;
 	float orig_btof_high = orig_btof_low + orig_btof_bins;
 

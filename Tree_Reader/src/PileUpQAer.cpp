@@ -105,7 +105,7 @@ void PileUpQAer::read_tree(TTree *tree) {
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
 		event_index++;
-		ref_btof_pairs.push_back(make_pair(branches.refmult, branches.btof));
+		ref_btof_pairs.push_back(make_pair(branches.refmult, branches.btof_match));
 	}
 }
 
@@ -114,7 +114,8 @@ void PileUpQAer::read_tree(TTree *tree) {
 void PileUpQAer::set_branches(TTree *tree) {
 	tree->SetBranchStatus("*", 0);
 	tree->SetBranchStatus("refmult", 1);
-	tree->SetBranchStatus("btof", 1);
+	tree->SetBranchStatus("btof_match", 1);
+	tree->SetBranchStatus("btof_multi", 1);
 }
 
 
@@ -163,9 +164,9 @@ void PileUpQAer::rotate_dist() {
 	vector<float> test_y {10, 20, 30, 40, 50};
 	TGraph test((int)test_x.size(), test_x.data(), test_y.data());
 	TGraph upper((int)y.size(), upper_points.data(), y.data());
-	upper.SetLineColor(kViolet);
+	upper.SetLineColor(kGreen); upper.SetLineWidth(2);
 	TGraph lower((int)y.size(), lower_points.data(), y.data());
-	lower.SetLineColor(kViolet);
+	lower.SetLineColor(kGreen); lower.SetLineWidth(2);
 	TF1 upper_fit(("upper_fit_"+name).data(), "pol1", orig_ref_low, orig_ref_high);
 	upper_fit.SetLineColor(kRed);
 	TF1 lower_fit(("lower_fit_"+name).data(), "pol1", orig_ref_low, orig_ref_high);
@@ -177,22 +178,24 @@ void PileUpQAer::rotate_dist() {
 	low_cut = make_pair(lower_fit.GetParameter(0), lower_fit.GetParameter(1));
 	high_cut = make_pair(upper_fit.GetParameter(0), upper_fit.GetParameter(1));
 
-	int x_bins = (int)((float)orig_ref_bins*sin(rot_angle) - (float));
-	float x_low = orig_ref_low * sin(rot_angle) - orig_btof_high * cos(rot_angle);
-	float x_high = orig_ref_high * sin(rot_angle) - orig_btof_low * cos(rot_angle);
-	float y_low = orig_ref_low * cos(rot_angle) + orig_btof_low * sin(rot_angle);
-	float y_high = orig_ref_high * cos(rot_angle) + orig_btof_high * sin(rot_angle);
-//	TH2F rotate_btof_ref_hist(("rotate_"+name).data(), ("Rotated "+title).data(), orig_ref_bins, -0.5*orig_ref_high, +0.5*orig_ref_high, orig_btof_bins, orig_btof_low, orig_btof_high);
+	float x_low = orig_ref_low * cos(rot_angle) - orig_btof_high * sin(rot_angle);
+	float x_high = orig_ref_high * cos(rot_angle) - orig_btof_low * sin(rot_angle);
+	float y_low = orig_ref_low * sin(rot_angle) + orig_btof_low * cos(rot_angle);
+	float y_high = orig_ref_high * sin(rot_angle) + orig_btof_high * cos(rot_angle);
 	TH2F rotate_btof_ref_hist(("rotate_"+name).data(), ("Rotated "+title).data(), (int)(x_high-x_low+1), x_low, x_high, (int)(y_high-y_low+1), y_low, y_high);
 
-	for(pair<short, short> const &event:ref_btof_pairs) {
-//		rotate_btof_ref_hist.Fill((float)event.first*sin(rot_angle) - (float)event.second*cos(rot_angle), (float)event.first*cos(rot_angle) + (float)event.second*sin(rot_angle));
-		rotate_btof_ref_hist.Fill((float)event.first*cos(rot_angle) - (float)event.second*sin(rot_angle), (float)event.first*sin(rot_angle) + (float)event.second*cos(rot_angle));
-	}
+	map<int, TH1F> slices;
 
-//	TF1 gaus(("gaus_fit_"+name).data(), "gaus", x_low, x_high);
-//	TObjArray slices;
-//	rotate_btof_ref_hist.FitSlicesX(&gaus, 0, 500, 0, "QNR", &slices);
+	for(pair<short, short> const &event:ref_btof_pairs) {
+		pair<float, float> x_y_rotate = rotate_xy((float)event.first, (float)event.second, rot_angle);
+		rotate_btof_ref_hist.Fill(x_y_rotate.first, x_y_rotate.second);
+		int slice_index = x_y_rotate.second / rot_slice_height;
+		if(slices.count(slice_index) == 0) {
+			string title = to_string(energy) + "GeV Slice " + to_string(slice_index * rot_slice_height) + " to " +to_string((slice_index + 1) *rot_slice_height);
+			slices[slice_index] = TH1F(title.data(), title.data(), (int)(x_high-x_low+1), x_low, x_high);
+		}
+		slices[slice_index].Fill(x_y_rotate.first);
+	}
 
 	mtx->lock();
 	{
@@ -212,6 +215,10 @@ void PileUpQAer::rotate_dist() {
 		rot_can.SetLogz();
 		rot_can.Update();
 		rot_can.Write();
+
+		for(pair<int, TH1F> slice:slices) {
+			slice.second.Write();
+		}
 	}
 	mtx->unlock();
 
@@ -264,3 +271,9 @@ void PileUpQAer::read_cut_file() {
 }
 
 
+pair<float, float> rotate_xy(float x, float y, float angle) {
+	float x_rot = x * cos(angle) - y * sin(angle);
+	float y_rot = x * sin(angle) + y * cos(angle);
+
+	return make_pair(x_rot, y_rot);
+}
