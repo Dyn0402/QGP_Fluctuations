@@ -63,7 +63,8 @@ struct tree_branches {
 
 	short refmult;
 	short refmultn;
-	short btof;
+	short btof_multi;
+	short btof_match;
 
 	float vx;
 	float vy;

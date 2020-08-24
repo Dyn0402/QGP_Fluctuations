@@ -26,7 +26,8 @@ Event::Event() {
 	run = 0;
 	event_id = 0;
 	refn = 0;
-	btof = 0;
+	btof_multi = 0;
+	btof_match = 0;
 }
 
 Event::Event(event_defaults& defaults, int energy, int ref_num, int cent) {
@@ -42,7 +43,8 @@ Event::Event(event_defaults& defaults, int energy, int ref_num, int cent) {
 	run = defaults.run[energy];
 	event_id = defaults.event_id;
 	refn = defaults.refn[ref_num][energy][cent];
-	btof = defaults.btof[energy];
+	btof_multi = defaults.btof_multi[energy];
+	btof_match = defaults.btof_match[energy];
 }
 
 Event::Event(tree_leaves leaves) {
@@ -110,8 +112,12 @@ short Event::get_refn() {
 	return refn;
 }
 
-short Event::get_btof() {
-	return btof;
+short Event::get_btof_multi() {
+	return btof_multi;
+}
+
+short Event::get_btof_match() {
+	return btof_match;
 }
 
 vector<Track> Event::get_particles() {
@@ -173,8 +179,12 @@ void Event::set_refn(short refn) {
 	this->refn = refn;
 }
 
-void Event::set_btof(short btof) {
-	this->btof = btof;
+void Event::set_btof_multi(short btof_multi) {
+	this->btof_multi = btof_multi;
+}
+
+void Event::set_btof_match(short btof_match) {
+	this->btof_match = btof_match;
 }
 
 void Event::set_particles(vector<Track> particles) {
@@ -189,7 +199,7 @@ void Event::read_tree_event(tree_leaves leaves) {
 	event_id = leaves.event_id->GetValue();
 	ref = leaves.ref_mult->GetValue();
 	refn = leaves.ref_multn->GetValue();
-	btof = leaves.btof->GetValue();
+	btof_multi = leaves.btof->GetValue();
 	vx = leaves.vx->GetValue();
 	vy = leaves.vy->GetValue();
 	vz = leaves.vz->GetValue();
@@ -226,7 +236,8 @@ void Event::read_tree_event(tree_branches branches) {
 
 	ref = branches.refmult;
 	refn = branches.refmultn;
-	btof = branches.btof;
+	btof_multi = branches.btof_multi;
+	btof_match = branches.btof_match;
 
 	vx = branches.vx;
 	vy = branches.vy;
@@ -266,7 +277,8 @@ void Event::read_tree_event(Event *event) {
 	event_id = event->get_event_id();
 	ref = event->get_ref();
 	refn = event->get_refn();
-	btof = event->get_btof();
+	btof_multi = event->get_btof_multi();
+	btof_match = event->get_btof_match();
 	vx = event->get_vx();
 	vy = event->get_vy();
 	vz = event->get_vz();
@@ -293,7 +305,8 @@ void Event::read_tree_event(Event *event) {
 }
 
 void Event::set_event(float vx, float vy, float vz, short ref, int run, int event_id,
-		short refn, short btof, float qx, float qy, float event_plane, float dca_xy_avg, float dca_xy_err) {
+		short refn, short btof_multi, short btof_match, float qx, float qy, float event_plane,
+		float dca_xy_avg, float dca_xy_err) {
 	this->vx = vx;
 	this->vy = vy;
 	this->vz = vz;
@@ -301,7 +314,8 @@ void Event::set_event(float vx, float vy, float vz, short ref, int run, int even
 	this->run = run;
 	this->event_id = event_id;
 	this->refn = refn;
-	this->btof = btof;
+	this->btof_multi = btof_multi;
+	this->btof_match = btof_match;
 	this->qx = qx;
 	this->qy = qy;
 	this->event_plane = event_plane;
@@ -317,7 +331,8 @@ void Event::clear() {
 	run = 0;
 	event_id = 0;
 	refn = 0;
-	btof = 0;
+	btof_multi = 0;
+	btof_match = 0;
 	qx = 0;
 	qy = 0;
 	event_plane = 0;
@@ -331,7 +346,8 @@ void Event::clear() {
 void Event::pile_up(Event pile) {
 	ref += pile.get_ref();
 	refn += pile.get_refn();
-	btof += pile.get_btof();
+	btof_multi += pile.get_btof_multi();
+	btof_match += pile.get_btof_match();
 	qx += pile.get_qx();
 	qy += pile.get_qy();
 	vector<Track> pile_particless = pile.get_particles();

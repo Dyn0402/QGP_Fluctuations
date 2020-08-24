@@ -77,14 +77,14 @@ int main(int argc, char** argv) {
 //	converter39.convert_trees();
 //	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
 //	converter11.convert_trees();
-	read_class();
+//	read_class();
 //	cout << gErrorIgnoreLevel << endl;
 //	gErrorIgnoreLevel = 3001;
 //	string b = (string)gSystem->GetFromPipe("lsof /media/ssd/Research/Sim_Efficiency_Hists.root");
 //	cout << b << endl;
 //	gErrorIgnoreLevel = -1;
 //	run_dca_xy_qa();
-//	run_pile_up_qa();
+	run_pile_up_qa();
 //	tchain_test();
 //	ampt_cent_b_corr();
 //	ampt_cent_test();
@@ -694,7 +694,7 @@ void pile_up_qa(int energy, mutex *mtx) {
 }
 
 void run_pile_up_qa() {
-	vector<int> energies {7, 11, 19, 27, 39, 62};
+	vector<int> energies {7};//, 11, 19, 27, 39, 62};
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();

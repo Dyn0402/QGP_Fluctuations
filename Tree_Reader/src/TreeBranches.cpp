@@ -46,7 +46,8 @@ void set_tree_branches(TTree* tree, tree_branches &branches, string particle, in
 
 	tree->SetBranchAddress("refmult", &branches.refmult);
 	tree->SetBranchAddress(("refmult"+to_string(ref)).data(), &branches.refmultn);
-	tree->SetBranchAddress("btof", &branches.btof);
+	tree->SetBranchAddress("btof_multi", &branches.btof_multi);
+	tree->SetBranchAddress("btof_match", &branches.btof_match);
 
 	tree->SetBranchAddress("vx", &branches.vx);
 	tree->SetBranchAddress("vy", &branches.vy);
@@ -76,7 +77,8 @@ void set_tree_branches(TChain* chain, tree_branches &branches, string particle, 
 
 	chain->SetBranchAddress("refmult", &branches.refmult);
 	chain->SetBranchAddress(("refmult"+to_string(ref)).data(), &branches.refmultn);
-	chain->SetBranchAddress("btof", &branches.btof);
+	chain->SetBranchAddress("btof_multi", &branches.btof_multi);
+	chain->SetBranchAddress("btof_match", &branches.btof_match);
 
 	chain->SetBranchAddress("vx", &branches.vx);
 	chain->SetBranchAddress("vy", &branches.vy);

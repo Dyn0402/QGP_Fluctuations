@@ -210,7 +210,7 @@ private:
 	bool check_event(Event& event);
 	bool check_enough_particles(Event& event);
 	bool check_good_run(int run);
-	bool check_slope(int btof, int ref_mult);
+	bool check_pile_up(int btof, int ref_mult);
 	bool check_particle_good(Track& proton);
 
 	void define_qa();

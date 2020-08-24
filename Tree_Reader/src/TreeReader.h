@@ -222,7 +222,7 @@ private:
 	bool check_good_dca_xy(int run, int event_id);
 	bool check_enough_particles(Event& event);
 	bool check_good_run(int run);
-	bool check_slope(int btof, int ref_mult);
+	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
 	bool check_particle_good(Track& particle);
 
 	void define_qa();
@@ -237,7 +237,8 @@ private:
 
 	// QA Plots
 	TH2I cent_hist;
-	TH2I btof_ref_hist;
+	TH2I btof_multi_ref_hist;
+	TH2I btof_match_ref_hist;
 
 	TH2F de_dx_pq_hist;
 	TH2F beta_pq_hist;
@@ -255,7 +256,8 @@ private:
 	TH1I pre_vz_hist;
 	TH1I pre_ref_hist;
 	TH1I pre_refn_hist;
-	TH1I pre_btof_hist;
+	TH1I pre_btof_multi_hist;
+	TH1I pre_btof_match_hist;
 //	TH1I pre_ep_hist;
 
 	TH1I post_run_hist;
@@ -264,7 +266,8 @@ private:
 	TH1I post_vz_hist;
 	TH1I post_ref_hist;
 	TH1I post_refn_hist;
-	TH1I post_btof_hist;
+	TH1I post_btof_multi_hist;
+	TH1I post_btof_match_hist;
 	TH1I post_ep_hist;
 
 	TH1D pre_phi_hist;

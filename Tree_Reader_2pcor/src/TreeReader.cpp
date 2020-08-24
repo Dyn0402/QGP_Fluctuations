@@ -925,7 +925,7 @@ bool TreeReader::check_event(Event& event) {
 		event_cut_hist.Fill("Good Run", 1);
 		if(check_enough_particles(event)) {
 			event_cut_hist.Fill("Enough Protons", 1);
-			if(check_slope(event.get_btof(), event.get_ref())) {
+			if(check_pile_up(event.get_btof(), event.get_ref())) {
 				event_cut_hist.Fill("Pile Up Rejected", 1);
 				fill_post_event_qa(event);
 				good_event = true;
@@ -956,7 +956,7 @@ bool TreeReader::check_enough_particles(Event& event) {
 
 
 // Check slope of event. If within cuts, return true for good event, else false.
-bool TreeReader::check_slope(int btof, int ref_mult) {
+bool TreeReader::check_pile_up(int btof, int ref_mult) {
 	bool good_event = true;
 	double slope = (double)btof / ref_mult;
 	if(slope > cut.max_slope[energy] || slope < cut.min_slope[energy]) {

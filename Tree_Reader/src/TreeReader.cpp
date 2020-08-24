@@ -705,7 +705,8 @@ void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus("event_id", 1);
 	tree->SetBranchStatus("refmult", 1);
 	tree->SetBranchStatus(("refmult"+to_string(ref_num)).data(), 1);
-	tree->SetBranchStatus("btof", 1);
+	tree->SetBranchStatus("btof_multi", 1);
+	tree->SetBranchStatus("btof_match", 1);
 	tree->SetBranchStatus("vz", 1);
 	tree->SetBranchStatus("qx", 1);
 	tree->SetBranchStatus("qy", 1);
@@ -725,7 +726,8 @@ void TreeReader::set_branches(TChain* chain) {
 	chain->SetBranchStatus("event_id", 1);
 	chain->SetBranchStatus("refmult", 1);
 	chain->SetBranchStatus(("refmult"+to_string(ref_num)).data(), 1);
-	chain->SetBranchStatus("btof", 1);
+	chain->SetBranchStatus("btof_multi", 1);
+	chain->SetBranchStatus("btof_match", 1);
 	chain->SetBranchStatus("vz", 1);
 	chain->SetBranchStatus("qx", 1);
 	chain->SetBranchStatus("qy", 1);
@@ -1148,7 +1150,7 @@ bool TreeReader::check_event(Event& event) {
 	if(!check_enough_particles(event)) return false;
 	event_cut_hist.Fill("Enough Particles", 1);
 
-	if(!check_slope(event.get_btof(), event.get_ref())) return false;
+	if(!check_pile_up(event.get_btof_multi(), event.get_btof_match(), event.get_ref())) return false;
 	event_cut_hist.Fill("Pile Up Rejected", 1);
 
 	fill_post_event_qa(event);
@@ -1188,12 +1190,13 @@ bool TreeReader::check_enough_particles(Event& event) {
 
 
 // Check slope of event. If within cuts, return true for good event, else false.
-bool TreeReader::check_slope(int btof, int ref_mult) {
-	btof_ref_hist.Fill(ref_mult, btof);
+bool TreeReader::check_pile_up(int btof_multi, int btof_match, int ref_mult) {
+	btof_multi_ref_hist.Fill(ref_mult, btof_multi);
+	btof_match_ref_hist.Fill(ref_mult, btof_match);
 
 	float max_btof = cut.pile_up_high.first + cut.pile_up_high.second * ref_mult;
 	float min_btof = cut.pile_up_low.first + cut.pile_up_low.second * ref_mult;
-	if(btof > max_btof || btof < min_btof) {
+	if(btof_match > max_btof || btof_match < min_btof) {
 		return false;
 	}
 
@@ -1252,7 +1255,8 @@ bool TreeReader::check_particle_good(Track& particle) {
 // Define all histograms collected for qa.
 void TreeReader::define_qa() {
 	cent_hist = TH2I(("cent_comp"+set_name+"_"+to_string(energy)).data(), "Centrality Comparison", 19, -2.5, 16.5, 19, -2.5, 16.5);
-	btof_ref_hist = TH2I(("btof_ref"+set_name+"_"+to_string(energy)).data(), "BTof vs Ref", 601, -0.5, 600.5, 2001, -0.5, 2000.5);
+	btof_multi_ref_hist = TH2I(("btof_multi_ref"+set_name+"_"+to_string(energy)).data(), "BTof_Multi vs Ref", 601, -0.5, 600.5, 2001, -0.5, 2000.5);
+	btof_match_ref_hist = TH2I(("btof_match_ref"+set_name+"_"+to_string(energy)).data(), "BTof_Match vs Ref", 601, -0.5, 600.5, 501, -0.5, 500.5);
 
 	de_dx_pq_hist = TH2F(("de_dx_pid_"+set_name+"_"+to_string(energy)).data(), "Dedx PID", 1000, -3, 3, 1000, 0, 0.5e-4);
 	beta_pq_hist = TH2F(("beta_pq_pid_"+set_name+"_"+to_string(energy)).data(), "Beta PID", 1000, -3, 3, 1000, 0, 5);
@@ -1314,7 +1318,8 @@ void TreeReader::define_qa() {
 	pre_vz_hist = TH1I(("pre_vz_"+set_name+"_"+to_string(energy)).data(), "pre_vz", 100, -55, 55);
 	pre_ref_hist = TH1I(("pre_ref_"+set_name+"_"+to_string(energy)).data(), "pre_ref", 801, -0.5, 800.5);
 	pre_refn_hist = TH1I(("pre_refn_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
-	pre_btof_hist = TH1I(("pre_btof_"+set_name+"_"+to_string(energy)).data(), "pre_btof", 2001, -0.5, 2000.5);
+	pre_btof_multi_hist = TH1I(("pre_btof_multi_"+set_name+"_"+to_string(energy)).data(), "pre_btof_multi", 2001, -0.5, 2000.5);
+	pre_btof_match_hist = TH1I(("pre_btof_match_"+set_name+"_"+to_string(energy)).data(), "pre_btof_match", 501, -0.5, 500.5);
 //	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
 	post_run_hist = TH1I(("post_run_"+set_name+"_"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
@@ -1323,7 +1328,8 @@ void TreeReader::define_qa() {
 	post_vz_hist = TH1I(("post_vz_"+set_name+"_"+to_string(energy)).data(), "post_vz", 100, -55, 55);
 	post_ref_hist = TH1I(("post_ref_"+set_name+"_"+to_string(energy)).data(), "post_ref", 801, -0.5, 800.5);
 	post_refn_hist = TH1I(("post_refn_"+set_name+"_"+to_string(energy)).data(), "post_refn", 801, -0.5, 800.5);
-	post_btof_hist = TH1I(("post_btof_"+set_name+"_"+to_string(energy)).data(), "post_btof", 2001, -0.5, 2000.5);
+	post_btof_multi_hist = TH1I(("post_btof_multi_"+set_name+"_"+to_string(energy)).data(), "post_btof_multi", 2001, -0.5, 2000.5);
+	post_btof_match_hist = TH1I(("post_btof_match_"+set_name+"_"+to_string(energy)).data(), "post_btof_match", 501, -0.5, 500.5);
 	post_ep_hist = TH1I(("post_ep_"+set_name+"_"+to_string(energy)).data(), "post_ep", 100, -0.5, 3.5);
 
 	pre_phi_hist = TH1D(("pre_phi_"+set_name+"_"+to_string(energy)).data(), "pre_phi", 1000, 0.0, 2*TMath::Pi());
@@ -1388,7 +1394,8 @@ void TreeReader::fill_pre_event_qa(Event& event) {
 	pre_vz_hist.Fill(event.get_vz());
 	pre_ref_hist.Fill(event.get_ref());
 	pre_refn_hist.Fill(event.get_refn());
-	pre_btof_hist.Fill(event.get_btof());
+	pre_btof_multi_hist.Fill(event.get_btof_multi());
+	pre_btof_match_hist.Fill(event.get_btof_match());
 //	pre_ep_hist.Fill(event.get_event_plane());
 }
 
@@ -1400,7 +1407,8 @@ void TreeReader::fill_post_event_qa(Event& event) {
 	post_vz_hist.Fill(event.get_vz());
 	post_ref_hist.Fill(event.get_ref());
 	post_refn_hist.Fill(event.get_refn());
-	post_btof_hist.Fill(event.get_btof());
+	post_btof_multi_hist.Fill(event.get_btof_multi());
+	post_btof_match_hist.Fill(event.get_btof_match());
 	post_ep_hist.Fill(event.get_event_plane());
 }
 
@@ -1416,18 +1424,26 @@ void TreeReader::write_qa() {
 	cent_can.Write();
 	cent_hist.Write();
 
-	TCanvas pile_can("pile_can");
-	btof_ref_hist.GetXaxis()->SetTitle("Refmult");
-	btof_ref_hist.GetYaxis()->SetTitle("Btof Multiplicity");
-	btof_ref_hist.Draw("COLZ");
-	pile_can.Update();
-	TF1 up_cut("pile_up_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
+	TCanvas btof_multi_pile_can("btof_multi_pile_can");
+	btof_multi_ref_hist.GetXaxis()->SetTitle("Refmult");
+	btof_multi_ref_hist.GetYaxis()->SetTitle("Btof Multiplicity");
+	btof_multi_ref_hist.Draw("COLZ");
+	btof_multi_pile_can.Update();
+	btof_multi_pile_can.Write();
+	btof_multi_ref_hist.Write();
+
+	TCanvas btof_match_pile_can("btof_match_pile_can");
+	btof_multi_ref_hist.GetXaxis()->SetTitle("Refmult");
+	btof_multi_ref_hist.GetYaxis()->SetTitle("Btof Match");
+	btof_multi_ref_hist.Draw("COLZ");
+	btof_match_pile_can.Update();
+	TF1 up_cut("btof_match_pile_up_cut", "pol1", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
 	up_cut.SetParameters(cut.pile_up_high.first, cut.pile_up_high.second); up_cut.SetLineColor(kRed);
-	TF1 low_cut("pile_low_cut", "pol1", pile_can.GetUxmin(), pile_can.GetUxmax());
+	TF1 low_cut("btof_match_pile_low_cut", "pol1", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
 	low_cut.SetParameters(cut.pile_up_low.first, cut.pile_up_low.second); low_cut.SetLineColor(kRed);
 	up_cut.Draw("same"); low_cut.Draw("same");
-	pile_can.Write();
-	btof_ref_hist.Write();
+	btof_match_pile_can.Write();
+	btof_multi_ref_hist.Write();
 
 	TCanvas de_dx_can("de_dx_pq_can");
 	de_dx_pq_hist.GetXaxis()->SetTitle("p*q");
@@ -1460,7 +1476,8 @@ void TreeReader::write_qa() {
 	pre_vz_hist.Write();
 	pre_ref_hist.Write();
 	pre_refn_hist.Write();
-	pre_btof_hist.Write();
+	pre_btof_multi_hist.Write();
+	pre_btof_match_hist.Write();
 //	pre_ep_hist.Write();
 
 	post_run_hist.Write();
@@ -1469,7 +1486,8 @@ void TreeReader::write_qa() {
 	post_vz_hist.Write();
 	post_ref_hist.Write();
 	post_refn_hist.Write();
-	post_btof_hist.Write();
+	post_btof_multi_hist.Write();
+	post_btof_match_hist.Write();
 	post_ep_hist.Write();
 
 	pre_phi_hist.Write();
@@ -1564,12 +1582,18 @@ void TreeReader::write_qa() {
 	post_refn_hist.SetLineColor(kRed);
 	post_refn_hist.Draw("sames");
 	refn_can.Write();
-	TCanvas btof_can("btof_can");
+	TCanvas btof_multi_can("btof_multi_can");
 	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
-	pre_btof_hist.Draw();
-	post_btof_hist.SetLineColor(kRed);
-	post_btof_hist.Draw("sames");
-	btof_can.Write();
+	pre_btof_multi_hist.Draw();
+	post_btof_multi_hist.SetLineColor(kRed);
+	post_btof_multi_hist.Draw("sames");
+	btof_multi_can.Write();
+	TCanvas btof_match_can("btof_match_can");
+	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
+	pre_btof_match_hist.Draw();
+	post_btof_match_hist.SetLineColor(kRed);
+	post_btof_match_hist.Draw("sames");
+	btof_match_can.Write();
 	TCanvas ep_can("ep_can");
 	post_ep_hist.SetLineColor(kRed);
 	post_ep_hist.Draw();

@@ -147,7 +147,7 @@ nsm_ampt_leaves TreeConverter::get_nsm_ampt_leaves() {
 // Iterate over each track in event, extract all relevant proton info, and add it to event.
 void TreeConverter::get_proton_info(nsm_ampt_leaves leaves, Event &event) {
 	vector<Track> protons;
-	for(unsigned track_index=0; track_index<event.get_ref(); track_index++) {
+	for(short track_index=0; track_index<event.get_ref(); track_index++) {
 		if(pid_codes[leaves.pid->GetValue(track_index)] == "proton") {
 			TVector3 p(leaves.px->GetValue(track_index), leaves.py->GetValue(track_index), leaves.pz->GetValue(track_index));
 			if(p.Perp() >= cut.p_min && p.Perp() >= cut.pt_min && p.Perp() <= cut.pt_max) {
@@ -176,5 +176,5 @@ void TreeConverter::get_other_info(nsm_ampt_leaves leaves, Event &event) {
 
 	event.set_run(event_default.run);
 	event.set_refn(event.get_ref());
-	event.set_btof(event.get_ref() * event_default.btof_ref_multi);
+	event.set_btof_multi(event.get_ref() * event_default.btof_ref_multi);
 }

@@ -37,8 +37,9 @@ struct event_defaults {
 	int event_id = 0;
 
 	// Values for centrality bin 0-5% in 9 bins
-	map<int, int> run {{7, 11130000}, {11, 11152039}, {19, 12114300}, {27, 12175000}, {39, 11100000}, {62, 11079000}};  //Guessed number in range and check it wasn't bad run.
-	map<int, short> btof {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};  //Fixed ref 350 value multiplied such that ratio passes cut.
+	map<int, int> run {{7, 11130000}, {11, 11152039}, {19, 12114300}, {27, 12175000}, {39, 11100000}, {62, 11079000}};  // Guessed number in range and check it wasn't bad run.
+	map<int, short> btof_multi {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};  // Fixed ref 350 value multiplied such that ratio passes cut.
+	map<int, short> btof_match {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};  // Bad values, just copied multi, need to get values for match
 	short ref = 350;  // Pretty arbitrary
 //	short refn = 600;
 	// refn[ref_num][energy][cent] for 9 bins. Took midpoint of centrality bin edges from StRefMultCorr and plugged in for refmult2 and 3.
@@ -81,7 +82,8 @@ public:
 	int get_run();
 	int get_event_id();
 	short get_refn();
-	short get_btof();
+	short get_btof_multi();
+	short get_btof_match();
 	vector<Track> get_particles();
 	int get_num_particles();
 
@@ -98,7 +100,8 @@ public:
 	void set_run(int run);
 	void set_event_id(int id);
 	void set_refn(short refn);
-	void set_btof(short btof);
+	void set_btof_multi(short btof_multi);
+	void set_btof_match(short btof_match);
 	void set_particles(vector<Track> particles);
 
 	// Doers
@@ -106,7 +109,8 @@ public:
 	void read_tree_event(tree_branches branches);  // Not implemented
 	void read_tree_event(Event *event);
 	void set_event(float vx, float vy, float vz, short ref, int run, int event_id,
-			short refn, short btof, float qx, float qy, float event_plane, float dca_xy_avg, float dca_xy_err);
+			short refn, short btof_multi, short btof_match, float qx, float qy, float event_plane,
+			float dca_xy_avg, float dca_xy_err);
 	void clear();
 	void pile_up(Event pile);
 	void set_defaults();
@@ -121,7 +125,8 @@ private:
 
 	short ref;
 	short refn;  // Referring to refmult2, refmult3, etc
-	short btof;
+	short btof_multi;
+	short btof_match;
 
 	float vx;
 	float vy;
