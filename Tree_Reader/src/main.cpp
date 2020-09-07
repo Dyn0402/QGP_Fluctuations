@@ -108,11 +108,11 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
-	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca3", {0, 0}}};
+	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}};
 
-	vector<int> energy_list {7}; //{39, 62, 27, 19, 11, 7};
+	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 
-	int set_sleep = 1;
+	int set_sleep = 60;
 	int energy_sleep = 1;
 
 	int jobs = 0;
@@ -121,17 +121,19 @@ void read_class() {
 			jobs++;
 		}
 	}
+	jobs *= energy_list.size();
 
 	mutex *mtx;
 	ROOT::EnableThreadSafety();
 	{
 		int job_num = 0;
 		ThreadPool pool(thread::hardware_concurrency());
+
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
 				string set_dir = set_pair.first + to_string(set_num) + "/";
-				cout << endl << "Queueing " + set_dir <<  "  job " << ++job_num << " of " << jobs << endl << endl;
 				for(int energy:energy_list) {
+					cout << endl << "Queueing " << set_dir << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
 					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs, mtx);
 					this_thread::sleep_for(chrono::seconds(energy_sleep));
 				}
@@ -655,7 +657,7 @@ void dca_xy_qa(int energy, mutex *mtx) {
 }
 
 void run_dca_xy_qa() {
-	vector<int> energies {7, 11, 19, 27, 39, 62};
+	vector<int> energies {7}; //, 11, 19, 27, 39, 62};
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();
@@ -679,8 +681,15 @@ void pile_up_qa(int energy, mutex *mtx) {
 		PileUpQAer qa(energy, mtx);
 		auto low = qa.get_low_cut();
 		auto high = qa.get_high_cut();
-		cout << "low: " << low.first << " " << low.second << endl;
-		cout << "high: " << high.first << " " << high.second << endl;
+		cout << "low: ";
+		for(unsigned coef=0; coef < low.size(); coef++) {
+			cout << low[coef] << ", ";
+		}
+		cout << endl << "high: ";
+		for(unsigned coef=0; coef < high.size(); coef++) {
+			cout << high[coef] << ", ";
+		}
+		cout << endl << endl;
 	}
 //	DcaxyQAer qa(energy);
 //	map<int, vector<pair<int, int>>> bad_ranges = qa.get_bad_ranges();
@@ -694,7 +703,7 @@ void pile_up_qa(int energy, mutex *mtx) {
 }
 
 void run_pile_up_qa() {
-	vector<int> energies {7};//, 11, 19, 27, 39, 62};
+	vector<int> energies {7, 11, 19, 27, 39, 62};
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();

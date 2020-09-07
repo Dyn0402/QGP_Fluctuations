@@ -20,6 +20,9 @@
 #include "TCanvas.h"
 #include "TF1.h"
 #include "TGraph.h"
+#include "TGraphErrors.h"
+#include "TLegend.h"
+#include "TPaveText.h"
 
 #include "file_io.h"
 #include "TreeBranches.h"
@@ -27,7 +30,7 @@
 using namespace std;
 
 
-pair<float, float> rotate_xy(float x, float y, float angle);
+pair<double, double> rotate_xy(double x, double y, double angle);
 
 
 class PileUpQAer {
@@ -38,8 +41,8 @@ public:
 	~PileUpQAer();
 
 	// Getters
-	pair<float, float> get_low_cut();
-	pair<float, float> get_high_cut();
+	vector<float> get_low_cut();
+	vector<float> get_high_cut();
 
 	// Setters
 	void set_energy(int energy);
@@ -62,12 +65,17 @@ private:
 	string tree_name = "tree";
 
 	string orig_btof_ref_name = "btof_ref_original_";
-	string orig_btof_ref_title = "BTof Mutiplicity vs Reference Multiplicity ";
+	string orig_btof_ref_title = "BTof Match vs Reference Multiplicity ";
 
 	float sigmas = 3.0;
-	int min_points = 100;
+	int min_points = 250;
+
+	int min_btof = 6;
 
 	float rot_slice_height = 5.0;
+	int orig_slice_height = 3;
+
+	int n_plot_points = 5000;
 
 	int orig_btof_bins = 301;
 	float orig_btof_low = -0.5;
@@ -77,12 +85,18 @@ private:
 	float orig_ref_low = -0.5;
 	float orig_ref_high = orig_ref_low + orig_ref_bins;
 
-	tree_branches branches;
-
 	// Data Containers
-	vector<pair<short, short>> ref_btof_pairs;  //{refmult, btof}
-	pair<float, float> low_cut;
-	pair<float, float> high_cut;
+	struct PUEvent {
+		short ref;
+		short btof;
+		vector<float> dca_z;
+		float dca_z_avg;
+		float dca_z_sd;
+	};
+	vector<PUEvent> pu_events;
+
+	vector<float> low_cut;
+	vector<float> high_cut;
 
 
 	// Doers

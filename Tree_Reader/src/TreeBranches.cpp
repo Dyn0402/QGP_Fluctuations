@@ -39,8 +39,6 @@ tree_leaves get_tree_leaves(TTree* tree, string particle, int ref) {
 
 // Set tree branch addresses and return them in a tree_branches struct.
 void set_tree_branches(TTree* tree, tree_branches &branches, string particle, int ref) {
-	tree->ResetBranchAddresses();
-
 	tree->SetBranchAddress("run_num", &branches.run_num);
 	tree->SetBranchAddress("event_id", &branches.event_id);
 
@@ -64,14 +62,13 @@ void set_tree_branches(TTree* tree, tree_branches &branches, string particle, in
 	tree->SetBranchAddress((particle+".beta").data(), &branches.beta, &branches.branch_beta);
 	tree->SetBranchAddress((particle+".charge").data(), &branches.charge, &branches.branch_charge);
 	tree->SetBranchAddress((particle+".dca").data(), &branches.dca, &branches.branch_dca);
+	tree->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	tree->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	tree->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
 }
 
 // Set tree branch addresses and return them in a tree_branches struct.
 void set_tree_branches(TChain* chain, tree_branches &branches, string particle, int ref) {
-	chain->ResetBranchAddresses();
-
 	chain->SetBranchAddress("run_num", &branches.run_num);
 	chain->SetBranchAddress("event_id", &branches.event_id);
 
@@ -95,9 +92,24 @@ void set_tree_branches(TChain* chain, tree_branches &branches, string particle, 
 	chain->SetBranchAddress((particle+".beta").data(), &branches.beta, &branches.branch_beta);
 	chain->SetBranchAddress((particle+".charge").data(), &branches.charge, &branches.branch_charge);
 	chain->SetBranchAddress((particle+".dca").data(), &branches.dca, &branches.branch_dca);
+	chain->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	chain->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	chain->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
 }
+
+
+// Set tree particle branch addresses only return them in a tree_branches struct.
+void set_particle_branches(TTree* tree, tree_branches &branches, string particle) {
+	tree->SetBranchAddress((particle+".phi").data(), &branches.phi, &branches.branch_phi);
+	tree->SetBranchAddress((particle+".pt").data(), &branches.pt, &branches.branch_pt);
+	tree->SetBranchAddress((particle+".beta").data(), &branches.beta, &branches.branch_beta);
+	tree->SetBranchAddress((particle+".charge").data(), &branches.charge, &branches.branch_charge);
+	tree->SetBranchAddress((particle+".dca").data(), &branches.dca, &branches.branch_dca);
+	tree->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
+	tree->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
+	tree->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
+}
+
 
 
 // Get ampt tree leaves and return them in a tree_leaves struct.

@@ -17,6 +17,11 @@ DcaxyQAer::DcaxyQAer(int energy, mutex *mtx) {
 	out_file = NULL;
 	refmultCorrUtil = new StRefMultCorr("refmult3");
 	this->mtx = mtx;
+	cut.set_values(energy, "proton");
+	// Pile Up Cuts
+	PileUpQAer pile_up_qa(energy);
+	cut.pile_up_low = pile_up_qa.get_low_cut();
+	cut.pile_up_high = pile_up_qa.get_high_cut();
 }
 
 DcaxyQAer::DcaxyQAer(int energy) {
@@ -24,6 +29,11 @@ DcaxyQAer::DcaxyQAer(int energy) {
 	this->energy = energy;
 	out_file = NULL;
 	refmultCorrUtil = new StRefMultCorr("refmult3");
+	cut.set_values(energy, "proton");
+	// Pile Up Cuts
+	PileUpQAer pile_up_qa(energy);
+	cut.pile_up_low = pile_up_qa.get_low_cut();
+	cut.pile_up_high = pile_up_qa.get_high_cut();
 }
 
 DcaxyQAer::~DcaxyQAer() {
@@ -67,6 +77,7 @@ void DcaxyQAer::set_in_path(string path) {
 void DcaxyQAer::run_qa() {
 	read_trees();
 	analyze_runs();
+	make_proton_plots();
 	write_bad_dca_file();
 }
 
@@ -104,8 +115,7 @@ void DcaxyQAer::read_trees() {
 
 
 void DcaxyQAer::read_tree(TTree* tree) {
-//	tree_leaves leaves = get_tree_leaves(tree, "Proton", 3);
-	set_tree_branches(tree, branches);
+	set_tree_branches(tree, branches, particle, ref_num);
 	set_branches(tree);
 
 	int event_index = 0;
@@ -123,6 +133,8 @@ void DcaxyQAer::read_tree(TTree* tree) {
 		float dca_xy_avg = branches.dca_xy_avg;  //leaves.dca_xy_avg->GetValue();
 		float dca_xy_err = branches.dca_xy_err;  //leaves.dca_xy_err->GetValue();
 
+		centralities[run][event_id] = cent9_corr;
+
 		if(dca_xy_avg == -899 && dca_xy_err == -899) {
 			continue;
 		}
@@ -134,6 +146,24 @@ void DcaxyQAer::read_tree(TTree* tree) {
 		dca_run[run][0]++; set_count++;
 		dca_run[run][1] += dca_xy_avg; set_avg += dca_xy_avg;
 		dca_run[run][2] += pow(dca_xy_avg, 2); set_err += pow(dca_xy_avg, 2);
+
+		Event event(branches);
+
+		if(check_event(event)) {
+			vector<double> good_particle_angles = {};
+
+			// Iterate over particles in event and add corresponding phi to good_particle_angles if particle good.
+			for(Track& particle:event.get_particles()) {
+				if(check_particle_good(particle)) {
+					good_particle_angles.push_back(particle.get_phi());
+				}
+			}
+
+			// If there are enough good particles, calculate ratios for each division and save to data.
+			if(good_particle_angles.size() >= (unsigned)cut.min_multi) {
+				protons[run][event_id] = (int)good_particle_angles.size();
+			}
+		}
 	}
 }
 
@@ -146,6 +176,23 @@ void DcaxyQAer::set_branches(TTree* tree) {
 	tree->SetBranchStatus("dca_xy_err", 1);
 	tree->SetBranchStatus("refmult3", 1);
 	tree->SetBranchStatus("vz", 1);
+
+	tree->SetBranchStatus("run_num", 1);
+	tree->SetBranchStatus("event_id", 1);
+	tree->SetBranchStatus("refmult", 1);
+	tree->SetBranchStatus(("refmult"+to_string(ref_num)).data(), 1);
+	tree->SetBranchStatus("btof_multi", 1);
+	tree->SetBranchStatus("btof_match", 1);
+	tree->SetBranchStatus("vz", 1);
+	tree->SetBranchStatus("qx", 1);
+	tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus((particle+".pt").data(), 1);
+	tree->SetBranchStatus((particle+".phi").data(), 1);
+	tree->SetBranchStatus((particle+".beta").data(), 1);
+	tree->SetBranchStatus((particle+".charge").data(), 1);
+	tree->SetBranchStatus((particle+".dca").data(), 1);
+	tree->SetBranchStatus((particle+".nsigma").data(), 1);
+	tree->SetBranchStatus((particle+".eta").data(), 1);
 }
 
 
@@ -171,7 +218,6 @@ void DcaxyQAer::analyze_runs() {
 	out_file->cd();
 
 	plot_run(run_num, dca_xy_run_avg, dca_xy_run_err, run_indexes);
-
 
 	TDirectory *bad_runs_dir = out_file->mkdir("Bad Runs");
 	TDirectory *good_runs_dir = out_file->mkdir("Good Runs");
@@ -280,6 +326,91 @@ void DcaxyQAer::analyze_runs() {
 	for(pair<int, int> mv_avg_stat:mv_avg_stats) {
 		cout << " " << mv_avg_stat.first << "pt: " << mv_avg_stat.second << " runs" << endl;
 	}
+
+	out_file->Close();
+}
+
+
+void DcaxyQAer::make_proton_plots() {
+	out_file = new TFile((out_path+"Dca_xy_qa_"+to_string(energy)+"_cent_"+to_string(cent_min)+"-8.root").data(), "UPDATE");
+	out_file->cd();
+
+	TDirectory *proton_dir = out_file->mkdir("Proton_Plots");
+	proton_dir->cd();
+
+	TH2F pre_proton_dca((to_string(energy)+"GeV_Pre_Proton_DCA").data(), (to_string(energy)+"GeV Protons vs sDCAxy").data(), 200, -1.5, 0.5, 51, -0.5, 50.5);
+	pre_proton_dca.GetXaxis()->SetTitle("Dca_XY Event Average (cm)"); pre_proton_dca.GetYaxis()->SetTitle("Number of Protons in Event");
+	TH2F good_proton_dca((to_string(energy)+"GeV_Good_Proton_DCA").data(), (to_string(energy)+"GeV Remaining Protons vs sDCAxy").data(), 200, -1.5, 0.5, 51, -0.5, 50.5);
+	good_proton_dca.GetXaxis()->SetTitle("Dca_XY Event Average (cm)"); good_proton_dca.GetYaxis()->SetTitle("Number of Protons in Event");
+	TH2F bad_proton_dca((to_string(energy)+"GeV_Bad_Proton_DCA").data(), (to_string(energy)+"GeV Removed Protons vs sDCAxy").data(), 200, -1.5, 0.5, 51, -0.5, 50.5);
+	bad_proton_dca.GetXaxis()->SetTitle("Dca_XY Event Average (cm)"); bad_proton_dca.GetYaxis()->SetTitle("Number of Protons in Event");
+
+	map<int, TH1F> pre_slices;
+	for(pair<int, map<int, int>> const &run:protons) {
+		for(pair<int, int> const &event_id:run.second) {
+			if(centralities[run.first][event_id.first] != 8) { continue; }
+			bool bad_dca_xy_event = false;
+			if(find(bad_runs.begin(), bad_runs.end(), run.first) != bad_runs.end()) { bad_dca_xy_event = true; }
+			else {
+				for(pair<int, int> const &range:bad_ranges[run.first]) {
+					if(event_id.first >= range.first && event_id.first <= range.second) { bad_dca_xy_event = true; }
+				}
+			}
+			if(pre_slices.count(event_id.second) == 0) {
+				pre_slices[event_id.second] = TH1F((to_string(energy)+"GeV_"+to_string(event_id.second)+"_Protons_sDCAxy_Slice").data(),
+						(to_string(energy)+"GeV "+to_string(event_id.second)+" Proton sDCAxy Slice").data(), 200, -1.5, 0.5);
+			}
+			pre_slices[event_id.second].Fill(dca_event[run.first][event_id.first].first);
+			pre_proton_dca.Fill(dca_event[run.first][event_id.first].first, event_id.second);
+			if(bad_dca_xy_event) { bad_proton_dca.Fill(dca_event[run.first][event_id.first].first, event_id.second); }
+			else { good_proton_dca.Fill(dca_event[run.first][event_id.first].first, event_id.second); }
+		}
+	}
+
+	map<int, TF1> pre_slice_fits;
+	for(pair<int, TH1F> slice:pre_slices) {
+		if(slice.second.GetEntries() < min_fit_entries) { continue; }
+		float mean = slice.second.GetMean();
+//		float sd = slice.second.GetStdDev();
+		float max_count = slice.second.GetMaximum();
+		float first_fit_bin = slice.second.GetBinCenter(slice.second.FindFirstBinAbove(min_fit_count)-2);
+		float last_fit_bin = slice.second.GetBinCenter(slice.second.FindLastBinAbove(min_fit_count)+2);
+		cout << slice.first << " protons  |  First bin: " << first_fit_bin << "  |  Last bin: " << last_fit_bin << endl;
+		pre_slice_fits[slice.first] = TF1((to_string(energy)+"GeV_"+to_string(slice.first)+"_Protons_sDCAxy_Slice_Fit").data(),
+				"gaus", first_fit_bin, last_fit_bin);
+		pre_slice_fits[slice.first].SetParameters(max_count, mean, 0);
+		slice.second.Fit(&pre_slice_fits[slice.first], "NQR");
+		pre_slice_fits[slice.first].SetNpx(n_plot_points);
+		pre_slice_fits[slice.first].SetRange(-1.5, 0.5);
+	}
+//	TF2 pre_gaus((to_string(energy)+"GeV_Pre_Gaus_Fit").data(), "xygaus", -0.2, 0.2, 0, 40);
+
+	if(mtx) { mtx->lock(); }
+
+	TCanvas pre_can((to_string(energy)+"GeV_Pre_Proton_DCA_Can").data(), (to_string(energy)+"GeV Protons vs DCA").data());
+	pre_proton_dca.Draw("ColZ");
+	pre_can.SetGrid(); pre_can.SetLogz();
+	pre_can.Write();
+	TCanvas good_can((to_string(energy)+"GeV_Good_Proton_DCA_Can").data(), (to_string(energy)+"GeV Remaining Protons vs DCA").data());
+	good_proton_dca.Draw("ColZ");
+	good_can.SetGrid(); good_can.SetLogz();
+	good_can.Write();
+	TCanvas bad_can((to_string(energy)+"GeV_Bad_Proton_DCA_Can").data(), (to_string(energy)+"GeV Removed Protons vs DCA").data());
+	bad_proton_dca.Draw("ColZ");
+	bad_can.SetGrid();
+	bad_can.Write();
+
+	TDirectory *proton_slice_dir = proton_dir->mkdir("Proton_sDCAxy_Slcies");
+	proton_slice_dir->cd();
+	for(pair<int, TF1> slice_fit:pre_slice_fits) {
+		TCanvas slice_can((to_string(energy)+"GeV_"+to_string(slice_fit.first)+"_Protons_sDCAxy_Slice_Can").data(),
+				(to_string(energy)+"GeV "+to_string(slice_fit.first)+" Proton sDCAxy Slice Can").data());
+		pre_slices[slice_fit.first].Draw();
+		slice_fit.second.Draw("Same");
+		slice_can.Write();
+	}
+
+	if(mtx) { mtx->unlock(); }
 
 	out_file->Close();
 }
@@ -644,4 +775,90 @@ void DcaxyQAer::read_bad_dca_file() {
 
 	if(bad_runs_read.size() > 0) { bad_runs = bad_runs_read; }
 	if(bad_ranges_read.size() > 0) { bad_ranges = bad_ranges_read; }
+}
+
+
+// Doers ripped from TreeReader
+
+//Returns true if event is good, false if it is bad.
+bool DcaxyQAer::check_event(Event& event) {
+	if(!check_good_run(event.get_run())) return false;
+
+	if(!check_enough_particles(event)) return false;
+
+	if(!check_pile_up(event.get_btof_multi(), event.get_btof_match(), event.get_ref())) return false;
+
+	return true;
+}
+
+// Check the list of bad runs for input run.
+// If input run is contained in bad run list, return false (bad run) else return true (good run).
+bool DcaxyQAer::check_good_run(int run) {
+	if(find(cut.bad_runs.begin(), cut.bad_runs.end(), run) != cut.bad_runs.end()) { return false; }
+	if(refmultCorrUtil->isBadRun(run)) { return false; }
+
+	return true;
+}
+
+
+// Checks if there are enough good particles in the event.
+// If more particles than minimum, return true, else false.
+bool DcaxyQAer::check_enough_particles(Event& event) {
+	if(event.get_num_particles() >=  cut.min_multi) { return(true);	}
+	else { return false; }
+}
+
+
+// Check slope of event. If within cuts, return true for good event, else false.
+bool DcaxyQAer::check_pile_up(int btof_multi, int btof_match, int ref_mult) {
+	float max_btof = 0; float min_btof = 0;
+	for(unsigned coef=0; coef < cut.pile_up_high.size(); coef++) {
+		max_btof += cut.pile_up_high[coef] * pow(ref_mult, coef);
+		min_btof += cut.pile_up_low[coef] * pow(ref_mult, coef);
+	}
+
+	if(btof_match > max_btof || btof_match < min_btof) {
+		return false;
+	}
+
+	return true;
+}
+
+
+// Returns true if particle is good and false if particle is bad.
+bool DcaxyQAer::check_particle_good(Track& particle) {
+	bool good_particle = false;
+
+	bool check_charge = true;  // Hack to keep same form as TreeReader
+	if(check_charge && !(particle.get_charge() == cut.charge)) { return false; }
+
+	double eta = particle.get_eta();
+	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return false; }
+
+	double nsigma = particle.get_nsigma();
+	if(!(nsigma >= cut.min_nsigma && nsigma <= cut.max_nsigma)) { return false; }
+
+	double dca = particle.get_dca();
+	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return false; }
+
+	double p = particle.get_p();
+	double pt = particle.get_pt();
+
+	if(pt >= cut.min_pt_no_tof && pt <= cut.max_pt_no_tof && p <= cut.max_p_no_tof) {
+		good_particle = true;
+	} else if(pt >= cut.min_pt_tof && pt <= cut.max_pt_tof && p <= cut.max_p_tof) {
+		double beta = particle.get_beta();
+		if(beta > cut.min_beta) {
+			double m2 = pow(p, 2) * (pow(beta, -2) - 1.);
+			if(m2 > cut.min_m2 && m2 < cut.max_m2) {
+				good_particle = true;
+			}
+		}  // Else leave good_particle = false
+	}
+
+	if(good_particle) {  }
+	else { return false; }
+
+
+	return good_particle;
 }

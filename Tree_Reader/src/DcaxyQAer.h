@@ -29,6 +29,7 @@
 #include <TGraphErrors.h>
 #include <TLine.h>
 #include <TSystem.h>
+#include <TStyle.h>
 #include <TLegend.h>
 #include <Math/ProbFuncMathCore.h>
 #include <Math/QuantFuncMathCore.h>
@@ -37,6 +38,10 @@
 #include "../StRefMultCorr/CentralityMaker.h"
 #include "../StRefMultCorr/StRefMultCorr.h"
 #include "TreeBranches.h"
+#include "Event.h"
+#include "Track.h"
+#include "TreeCutsBase.h"
+#include "PileUpQAer.h"
 
 using namespace std;
 
@@ -69,6 +74,7 @@ public:
 private:
 	// Attributes
 	mutex *mtx = NULL;  // To lock non-thread-safe graphics (TCanvas) processes
+	TreeCutsBase cut;
 
 	int energy;
 	string in_path = "/media/ucla/Research/BES1_Trees/";
@@ -78,6 +84,9 @@ private:
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
 	string tree_name = "tree";
+
+	string particle = "proton";
+	int ref_num = 3;
 
 	StRefMultCorr *refmultCorrUtil;
 	tree_branches branches;
@@ -91,10 +100,16 @@ private:
 	pair<float, float> y_range {-1.5, 0.3};
 	map<int, float> bad_run_sigmas {{7, 3.0}, {11, 3.0}, {14, 3.0}, {19, 4.5}, {27, 3.0}, {39, 3.0}, {54, 3.0}, {62, 4.0}, {200, 3.0}};
 
+	int min_fit_entries = 100;
+	int min_fit_count = 3;
+
+	int n_plot_points = 5000;
+
 	// Data Containers
-	map<int, map<int, pair<float, float>>> dca_event;  // [run][event_id]{dca_xy_event_avg, dca_xy_event_sd}
+	map<int, map<int, pair<float, float>>> dca_event;  // [run][event_id]{dca_xy_event_avg, dca_xy_event_err}
 	map<int, vector<double>> dca_run;  // [run]{dca_xy_run_count, dca_xy_run_sum, dca_xy_run_2nd_raw_moment}  std::vector<> default value initialized to 0
 	map<int, map<int, int>> protons;  // [run][event_id]{number of protons}
+	map<int, map<int, int>> centralities;  // [run][event_id]{event centrality}
 	vector<int> bad_runs;
 	map<int, vector<pair<int, int>>> bad_ranges;
 	double set_avg = 0;
@@ -106,6 +121,7 @@ private:
 	void read_tree(TTree *tree);
 	void set_branches(TTree *tree);
 	void analyze_runs();
+	void make_proton_plots();
 
 	void write_bad_dca_file();
 	void read_bad_dca_file();
@@ -118,6 +134,13 @@ private:
 	void plot_run(vector<float> &run_num, vector<float> &dca_xy_run_avg, vector<float> &dca_xy_run_err, vector<float> &run_indexes);
 	void plot_mv_avg(const vector<float> &event_ids, const vector<float> &dca_xy_val, const vector<float> &dca_xy_err, const pair<vector<float>, vector<float>> &mv_avg, const vector<pair<int, int>> &bad_ranges, TF1 &lin_fit, float run_avg, float sigmas_thresh, int mv_avg_num, int run_num);
 	void plot_final(const vector<float> &event_ids, const vector<float> &dca_xy_val, const vector<float> &dca_xy_err, const vector<pair<int, int>> &bad_ranges, TF1 &lin_fit, float run_avg, int run_num);
+
+	// Doers ripped from TreeReader
+	bool check_event(Event& event);
+	bool check_enough_particles(Event& event);
+	bool check_good_run(int run);
+	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
+	bool check_particle_good(Track& particle);
 };
 
 

@@ -1194,8 +1194,14 @@ bool TreeReader::check_pile_up(int btof_multi, int btof_match, int ref_mult) {
 	btof_multi_ref_hist.Fill(ref_mult, btof_multi);
 	btof_match_ref_hist.Fill(ref_mult, btof_match);
 
-	float max_btof = cut.pile_up_high.first + cut.pile_up_high.second * ref_mult;
-	float min_btof = cut.pile_up_low.first + cut.pile_up_low.second * ref_mult;
+	float max_btof = 0; float min_btof = 0;
+	for(unsigned coef=0; coef < cut.pile_up_high.size(); coef++) {
+		max_btof += cut.pile_up_high[coef] * pow(ref_mult, coef);
+		min_btof += cut.pile_up_low[coef] * pow(ref_mult, coef);
+	}
+
+//	float max_btof = cut.pile_up_high.first + cut.pile_up_high.second * ref_mult;
+//	float min_btof = cut.pile_up_low.first + cut.pile_up_low.second * ref_mult;
 	if(btof_match > max_btof || btof_match < min_btof) {
 		return false;
 	}
@@ -1248,7 +1254,7 @@ bool TreeReader::check_particle_good(Track& particle) {
 
 	fill_post_track_qa(particle);
 
-	return(good_particle);
+	return good_particle ;
 }
 
 
@@ -1339,7 +1345,7 @@ void TreeReader::define_qa() {
 	pre_charge_hist = TH1I(("pre_charge_"+set_name+"_"+to_string(energy)).data(), "pre_charge", 100, -2.5, 2.5);
 	pre_eta_hist = TH1I(("pre_eta_"+set_name+"_"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
 	pre_nsigma_hist = TH1I(("pre_nsigma_"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
-	pre_dca_hist = TH1I(("pre_dca_"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 2.5);
+	pre_dca_hist = TH1I(("pre_dca_"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 3.1);
 
 	post_phi_hist = TH1D(("post_phi_"+set_name+"_"+to_string(energy)).data(), "post_phi", 1000, 0.0, 2*TMath::Pi());
 	post_p_hist = TH1I(("post_p_"+set_name+"_"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
@@ -1348,7 +1354,7 @@ void TreeReader::define_qa() {
 	post_charge_hist = TH1I(("post_charge_"+set_name+"_"+to_string(energy)).data(), "post_charge", 100, -2.5, 2.5);
 	post_eta_hist = TH1I(("post_eta_"+set_name+"_"+to_string(energy)).data(), "post_eta", 100, -1.0, 1.0);
 	post_nsigma_hist = TH1I(("post_nsigma_"+set_name+"_"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
-	post_dca_hist = TH1I(("post_dca_"+set_name+"_"+to_string(energy)).data(), "post_dca", 100, 0.0, 2.5);
+	post_dca_hist = TH1I(("post_dca_"+set_name+"_"+to_string(energy)).data(), "post_dca", 100, 0.0, 3.1);
 
 	pre_m2_hist = TH1I(("pre_m2_"+set_name+"_"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
 	post_m2_hist = TH1I(("post_m2_"+set_name+"_"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
@@ -1433,17 +1439,19 @@ void TreeReader::write_qa() {
 	btof_multi_ref_hist.Write();
 
 	TCanvas btof_match_pile_can("btof_match_pile_can");
-	btof_multi_ref_hist.GetXaxis()->SetTitle("Refmult");
-	btof_multi_ref_hist.GetYaxis()->SetTitle("Btof Match");
-	btof_multi_ref_hist.Draw("COLZ");
+	btof_match_ref_hist.GetXaxis()->SetTitle("Refmult");
+	btof_match_ref_hist.GetYaxis()->SetTitle("Btof Match");
+	btof_match_ref_hist.Draw("COLZ");
 	btof_match_pile_can.Update();
-	TF1 up_cut("btof_match_pile_up_cut", "pol1", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
-	up_cut.SetParameters(cut.pile_up_high.first, cut.pile_up_high.second); up_cut.SetLineColor(kRed);
-	TF1 low_cut("btof_match_pile_low_cut", "pol1", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
-	low_cut.SetParameters(cut.pile_up_low.first, cut.pile_up_low.second); low_cut.SetLineColor(kRed);
+	TF1 up_cut("btof_match_pile_up_cut", "pol4", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
+	up_cut.SetParameters(cut.pile_up_high[0], cut.pile_up_high[1], cut.pile_up_high[2], cut.pile_up_high[3], cut.pile_up_high[4]);
+	up_cut.SetLineColor(kRed);
+	TF1 low_cut("btof_match_pile_low_cut", "pol4", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
+	low_cut.SetParameters(cut.pile_up_low[0], cut.pile_up_low[1], cut.pile_up_low[2], cut.pile_up_low[3], cut.pile_up_low[4]);
+	low_cut.SetLineColor(kRed);
 	up_cut.Draw("same"); low_cut.Draw("same");
 	btof_match_pile_can.Write();
-	btof_multi_ref_hist.Write();
+	btof_match_ref_hist.Write();
 
 	TCanvas de_dx_can("de_dx_pq_can");
 	de_dx_pq_hist.GetXaxis()->SetTitle("p*q");

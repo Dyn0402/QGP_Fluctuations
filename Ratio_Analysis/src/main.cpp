@@ -50,7 +50,7 @@ void azimuth_bin_analyze() {
 	analyzer.set_in_path("/home/dylan/Research/Data/");
 	analyzer.set_in_mix_path("/home/dylan/Research/Data_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("8-3-20_BES1_eta_05_1.root");
+	analyzer.set_out_root_name("8-25-20_BES1_eta_05_dca_1_3.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8});
@@ -106,8 +106,11 @@ void azimuth_bin_analyze() {
 //	analyzer.set_set_combos({{"Bes1_Ampt", {"eta05_n1ratios", "Ampt_p+_n1ratios"}}});
 //	analyzer.set_sets({{"pion-_n1ratios", {0, 2}}, {"pion+_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}, {"Ampt_pion-_n1ratios", {0, 2}}, {"Ampt_pion+_n1ratios", {0, 2}}, {"Ampt_piontotal_n1ratios", {0, 2}}});
 //	analyzer.set_set_combos({{"Bes1_Ampt_Pion-", {"pion-_n1ratios", "Ampt_pion-_n1ratios"}}, {"Bes1_Ampt_Pion+", {"pion+_n1ratios", "Ampt_pion+_n1ratios"}},{"Bes1_Ampt_PionTotal", {"piontotal_n1ratios", "Ampt_piontotal_n1ratios"}}, {"Bes1_Pions", {"pion-_n1ratios", "pion+_n1ratios", "piontotal_n1ratios"}}, {"Ampt_Pions", {"Ampt_pion-_n1ratios", "Ampt_pion+_n1ratios", "Ampt_piontotal_n1ratios"}}});
-	analyzer.set_sets({{"eta05_n1ratios", {0, 2}}, {"eta1_n1ratios", {0, 2}}});
-	analyzer.set_set_combos({{"Eta1_05", {"eta05_n1ratios", "eta1_n1ratios"}}});
+//	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}});
+//	analyzer.set_set_combos({{"Eta1_05_dca1", {"eta05_n1ratios_dca1", "eta1_n1ratios_dca1"}}, {"Eta1_dca1", {"eta1_n1ratios_dca1", "eta1_n1ratios_dca1"}},
+//		{"Eta1_05_dca3", {"eta05_n1ratios_dca3", "eta1_n1ratios_dca3"}}, {"Eta1_dca3", {"eta1_n1ratios_dca3", "eta1_n1ratios_dca3"}}});
+	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}});
+	analyzer.set_set_combos({{"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}}});
 	analyzer.analyze();
 }
 
@@ -117,14 +120,17 @@ void binomial_analyze() {
 	analyzer.set_in_path("/home/dylan/Research/Data/");
 	analyzer.set_in_mix_path("/home/dylan/Research/Data_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("8-3-20_binom_BES1_eta_05_1.root");
+	analyzer.set_out_root_name("8-25-20_binom_BES1_eta_05_dca_1_3.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 	analyzer.set_divs({180, 120, 90, 72, 60});
 	analyzer.set_centralities({8});
 	analyzer.set_can_wh(1920, 900);
 //	analyzer.set_can_wh(1700, 800);
-	analyzer.set_sets({{"eta05_n1ratios", {0, 2}}, {"eta1_n1ratios", {0, 2}}});
-	analyzer.set_set_combos({{"Eta1_05", {"eta05_n1ratios", "eta1_n1ratios"}}});
+	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}});
+	analyzer.set_set_combos({{"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}}});
+//	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}});
+//	analyzer.set_set_combos({{"Eta1_05_dca1", {"eta05_n1ratios_dca1", "eta1_n1ratios_dca1"}}, {"Eta1_dca1", {"eta1_n1ratios_dca1", "eta1_n1ratios_dca1"}},
+//		{"Eta1_05_dca3", {"eta05_n1ratios_dca3", "eta1_n1ratios_dca3"}}, {"Eta1_dca3", {"eta1_n1ratios_dca3", "eta1_n1ratios_dca3"}}});
 //	analyzer.set_sets({{"eta05_n1ratios", {0, 4}}, {"Ampt_p+_n1ratios", {0, 4}}});
 //	analyzer.set_set_combos({{"Bes1_Ampt", {"eta05_n1ratios", "Ampt_p+_n1ratios"}}});
 //	analyzer.set_sets({{"pion-_n1ratios", {0, 2}}, {"pion+_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}, {"Ampt_pion-_n1ratios", {0, 2}}, {"Ampt_pion+_n1ratios", {0, 2}}, {"Ampt_piontotal_n1ratios", {0, 2}}});

@@ -80,6 +80,7 @@ struct tree_branches {
 	vector<float> *pt = 0;
 	vector<float> *beta = 0;
 	vector<float> *dca = 0;
+	vector<float> *dca_z = 0;
 	vector<float> *nsigma = 0;
 	vector<float> *eta = 0;
 	vector<short> *charge = 0;
@@ -88,6 +89,7 @@ struct tree_branches {
 	TBranch *branch_phi = 0;
 	TBranch *branch_beta = 0;
 	TBranch *branch_dca = 0;
+	TBranch *branch_dca_z = 0;
 	TBranch *branch_nsigma = 0;
 	TBranch *branch_eta = 0;
 	TBranch *branch_charge = 0;
@@ -98,6 +100,7 @@ tree_leaves get_tree_leaves(TTree* tree, string particle = "proton", int ref = 3
 ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref = 3);
 void set_tree_branches(TTree* tree, tree_branches &branches, string particle = "proton", int ref = 3);
 void set_tree_branches(TChain* chain, tree_branches &branches, string particle = "proton", int ref = 3);
+void set_particle_branches(TTree* tree, tree_branches &branches, string particle = "proton");
 
 
 
