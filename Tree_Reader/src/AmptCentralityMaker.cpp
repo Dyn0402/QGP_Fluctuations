@@ -138,6 +138,13 @@ void AmptCentralityMaker::set_ref_num(int ref) {
 
 // Doers
 
+void AmptCentralityMaker::set_branches(TTree* tree) {
+	tree->SetBranchStatus("*", 0);
+	tree->SetBranchStatus("imp", 1);
+	if(mult_quantity == "ref2") { tree->SetBranchStatus("refmult2", 1); }
+	else if(mult_quantity == "ref3") { tree->SetBranchStatus("refmult3", 1); }
+}
+
 void AmptCentralityMaker::make_centrality() {
 	get_distribution();
 	sort_and_bin();
@@ -146,17 +153,15 @@ void AmptCentralityMaker::make_centrality() {
 void AmptCentralityMaker::get_distribution() {
 	ref_dist.clear();
 	b_dist.clear();
-//	cout << "AmptCentMaker in_path: " << in_path << endl;
 	vector<string> in_files = get_files_in_dir(in_path, "root", "path");
 	for(string path:in_files) {
 		TFile *file = new TFile(path.data(), "READ");
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-//		cout << path << "  " << tree << endl;
-		leaves = get_ampt_tree_leaves(tree, ref_num);
+		set_ampt_tree_branches(tree, branches);
+		set_branches(tree);
 
 		int event_index = 0;
 		while(tree->GetEvent(event_index)) {
-//			cout << leaves.ref3->GetValue() << endl;
 			append_dist_val();
 			event_index++;
 		}
@@ -166,19 +171,19 @@ void AmptCentralityMaker::get_distribution() {
 }
 
 void AmptCentralityMaker::get_ref2() {
-	if(leaves.imp->GetValue() <= max_b) {
-		ref_dist.push_back(leaves.refn->GetValue());
+	if(branches.imp <= max_b) {
+		ref_dist.push_back(branches.refmult2);
 	}
 }
 
 void AmptCentralityMaker::get_ref3() {
-	if(leaves.imp->GetValue() <= max_b) {
-		ref_dist.push_back(leaves.refn->GetValue());
+	if(branches.imp <= max_b) {
+		ref_dist.push_back(branches.refmult3);
 	}
 }
 
 void AmptCentralityMaker::get_b() {
-	b_dist.push_back(leaves.imp->GetValue());
+	b_dist.push_back(branches.imp);
 }
 
 void AmptCentralityMaker::sort_bin_ref() {

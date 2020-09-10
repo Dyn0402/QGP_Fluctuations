@@ -73,18 +73,9 @@ int main(int argc, char** argv) {
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
 //	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
 //	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
-//	AmptConverter converter39("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_39gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/39GeV/");
-//	converter39.convert_trees();
-//	AmptConverter converter11("/media/dylan/SSD_Storage/Research/ampt/AuAu_nt150_3mb_11gev/", "/media/dylan/SSD_Storage/Research/Trees_Ampt/11GeV/");
-//	converter11.convert_trees();
-//	read_class();
-//	cout << gErrorIgnoreLevel << endl;
-//	gErrorIgnoreLevel = 3001;
-//	string b = (string)gSystem->GetFromPipe("lsof /media/ssd/Research/Sim_Efficiency_Hists.root");
-//	cout << b << endl;
-//	gErrorIgnoreLevel = -1;
+	read_class();
 //	run_dca_xy_qa();
-	run_pile_up_qa();
+//	run_pile_up_qa();
 //	tchain_test();
 //	ampt_cent_b_corr();
 //	ampt_cent_test();
@@ -108,7 +99,8 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
-	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}};
+	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios_dca1", {0, 2}}, {"Ampt_eta05_n1ratios_dca3", {0, 2}}};//, {"Ampt_eta1_n1ratios_dca1", {0, 2}}, {"Ampt_eta1_n1ratios_dca3", {0, 2}}};
 
 	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 
@@ -127,7 +119,7 @@ void read_class() {
 	ROOT::EnableThreadSafety();
 	{
 		int job_num = 0;
-		ThreadPool pool(thread::hardware_concurrency());
+		ThreadPool pool(12);
 
 		for(pair<string, pair<int, int>> set_pair:set_pairs) {
 			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
@@ -146,15 +138,15 @@ void read_class() {
 
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx) {
 	string base_path = "/home/dylan/Research/";
-	string in_base_path = "/media/ucla/Research/";//base_path;
+	string in_base_path = "/media/ucla/Research/";
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "BES1_Trees/";
-	string out_dir = out_base_path + "Data/";
-	string mix_out_dir = out_base_path + "Data_Mix/";
+	string in_path = in_base_path + "AMPT_Trees/";  //"BES1_Trees/";
+	string out_dir = out_base_path + "Data_Ampt/";  //"Data/";
+	string mix_out_dir = out_base_path + "Data_Ampt_Mix/";  //"Data_Mix/";
 
-	vector<int> divs {180, 120, 90, 72, 60};
+	vector<int> divs {300, 240, 180, 120, 90, 72, 60};
 //	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
 	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 20000000}};
 
@@ -328,12 +320,12 @@ void ampt_cent_b_corr() {
 	vector<int> energies {7, 11, 19, 27, 39, 62};
 	int cent = 8;
 	for(int energy:energies) {
-		string in_path = "/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/";
+		string in_path = "/media/ucla/Research/AMPT_Trees/min_bias/" + to_string(energy) + "GeV/";
 		AmptCentralityMaker cent_maker(in_path, "ref3");
 		map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
 		cent_maker.set_max_b(opt_bmax[energy]);
 
-		string ampt_path = "/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + ".root";
+		string ampt_path = "/media/ucla/Research/AMPT_Trees/min_bias/" + to_string(energy) + ".root";
 
 		TFile *ampt_file = new TFile(ampt_path.data(), "READ");
 		TTree *ampt_tree = (TTree*)ampt_file->Get("tree");

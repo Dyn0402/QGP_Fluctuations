@@ -39,8 +39,8 @@ struct event_defaults {
 	// Values for centrality bin 0-5% in 9 bins
 	map<int, int> run {{7, 11130000}, {11, 11152039}, {19, 12114300}, {27, 12175000}, {39, 11100000}, {62, 11079000}};  // Guessed number in range and check it wasn't bad run.
 	map<int, short> btof_multi {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};  // Fixed ref 350 value multiplied such that ratio passes cut.
-	map<int, short> btof_match {{7, 1125}, {11, 1125}, {19, 1050}, {27, 1125}, {39, 1400}, {62, 1925}};  // Bad values, just copied multi, need to get values for match
-	short ref = 350;  // Pretty arbitrary
+	map<int, short> btof_match {{7, 117}, {11, 117}, {19, 120}, {27, 115}, {39, 115}, {62, 115}};  // Bad values, just copied multi, need to get values for match
+	short ref = 200;  // Pretty arbitrary
 //	short refn = 600;
 	// refn[ref_num][energy][cent] for 9 bins. Took midpoint of centrality bin edges from StRefMultCorr and plugged in for refmult2 and 3.
 //	map<int, map<int, map<int, short>>> test {{2, {{7, {{-1, 1}, {0, 10}}}, {11, {{-1, 2}, {0, 12}}}}}, {3, {{7, {{-1, 1}, {0, 10}}}, {11, {{-1, 2}, {0, 12}}}}}};

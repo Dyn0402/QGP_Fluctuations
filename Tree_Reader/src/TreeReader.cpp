@@ -536,17 +536,23 @@ void TreeReader::read_trees_chain() {
 void TreeReader::read_ampt_trees() {
 	define_qa();
 
-	ampt_cent = AmptCentralityMaker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref" + to_string(ref_num));
+	ampt_cent = AmptCentralityMaker("/media/ucla/Research/AMPT_Trees/min_bias/" + to_string(energy) + "GeV/", "ref" + to_string(ref_num));
 	map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
 	ampt_cent.set_max_b(opt_bmax[energy]);
 	ampt_cent.set_mult_quantity("ref3");
+	auto edges = ampt_cent.get_ref_bin9_edges();
+	for(auto edge:edges) { cout << edge << ", " << flush; }
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
-	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV_All/", "root", "path");
+	vector<string> in_files = get_files_in_dir(in_path + "most_central/" + to_string(energy)+"GeV/", "root", "path");
+	vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + to_string(energy)+"GeV/", "root", "path");
+	in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
 	cout << endl;
 
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
+
+	cout << num_files << endl;
 
 	for(string path:in_files) {
 		// Display progress and time while running.
@@ -741,27 +747,60 @@ void TreeReader::set_branches(TChain* chain) {
 }
 
 
-void TreeReader::read_ampt_tree(TTree* tree) {
-	ampt_tree_leaves leaves = get_ampt_tree_leaves(tree, ref_num);
+void TreeReader::set_ampt_branches(TTree* tree) {
+	tree->SetBranchStatus("*", 0);
+	tree->SetBranchStatus("qx", 1);
+	tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus("pid", 1);
+	tree->SetBranchStatus("px", 1);
+	tree->SetBranchStatus("py", 1);
+	tree->SetBranchStatus("pz", 1);
 
-	int cent_9bin, particle_mult;
+	switch(ref_num) {
+	case 1 :
+		tree->SetBranchStatus("refmult", 1); break;
+	case 2 :
+		tree->SetBranchStatus("refmult2", 1); break;
+	case 3 :
+		tree->SetBranchStatus("refmult3", 1); break;
+	default :
+		cout << "Unknown ref_num value!" << endl;
+	}
+}
+
+
+void TreeReader::read_ampt_tree(TTree* tree) {
+	set_ampt_tree_branches(tree, ampt_branches);
+
+	int ref_n;
+	switch(ref_num) {
+	case 1 :
+		ref_n = ampt_branches.refmult; break;
+	case 2 :
+		ref_n = ampt_branches.refmult2; break;
+	case 3 :
+		ref_n = ampt_branches.refmult3; break;
+	default :
+		cout << "Unknown ref_num value!" << endl;
+		ref_n = -1;
+	}
+
+	int cent_9bin;
 	int event_index = 0;
 	while(tree->GetEvent(event_index)) {
-		cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
+		cent_9bin = ampt_cent.get_cent_bin9(ref_n);
 		Event event(event_defs, energy, ref_num, cent_9bin);
-//		event.set_event_plane(leaves.event_plane->GetValue()); fix
-		particle_mult = leaves.pmult->GetValue();
 
 		vector<Track> particles;
-		for(int i=0; i<particle_mult; i++) {
-			if(!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), leaves.pid->GetValue(i))) { continue; }
-			TVector3 p(leaves.px->GetValue(i), leaves.py->GetValue(i), leaves.pz->GetValue(i));
+		for(int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
+			if(!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
+			TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
 			Track particle(track_defs);
 			particle.set_p(p.Mag());
 			particle.set_pt(p.Perp());
 			particle.set_phi(p.Phi() + M_PI);
 			particle.set_eta(p.PseudoRapidity());
-			particle.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
+			particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
 			particles.push_back(particle);
 		}
 		event.set_particles(particles);
@@ -770,20 +809,19 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
 				event_index++;
 				if(tree->GetEntry(event_index)) {
-					cent_9bin = ampt_cent.get_cent_bin9(leaves.refn->GetValue());
+					cent_9bin = ampt_cent.get_cent_bin9(ref_n);
 					Event event2(event_defs, energy, ref_num, cent_9bin);
-//					event2.set_event_plane(leaves.event_plane->GetValue()); fix
-					particle_mult = leaves.pmult->GetValue();
 
 					particles.clear();
-					for(int i=0; i<particle_mult; i++) {
-						TVector3 p(leaves.px->GetValue(i), leaves.py->GetValue(i), leaves.pz->GetValue(i));
+					for(int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
+						if(!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
+						TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
 						Track particle(track_defs);
 						particle.set_p(p.Mag());
 						particle.set_pt(p.Perp());
 						particle.set_phi(p.Phi() + M_PI);
 						particle.set_eta(p.PseudoRapidity());
-						particle.set_charge(leaves.pid->GetValue(i) / fabs(leaves.pid->GetValue(i)));
+						particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
 						particles.push_back(particle);
 					}
 					event2.set_particles(particles);
@@ -927,7 +965,7 @@ void TreeReader::process_event(Event& event) {
 				int bin_num = (int) 360 / div;
 				double div_rads = (double)div / 180 * M_PI;
 				if(single_ratio) { bin_num = 1; }
-				else if(n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+				else if(bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
 				vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 				// Save ratio values to data

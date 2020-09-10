@@ -160,6 +160,7 @@ private:
 	StRefMultCorr *refmultCorrUtil;
 	TRandom3 *trand = new TRandom3(0);
 	tree_branches branches;
+	ampt_tree_branches ampt_branches;
 
 	string tree_name = "tree";
 	string event_cut_hist_name = "Event Cut Hist";
@@ -212,8 +213,10 @@ private:
 	void read_nsm_ampt_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
 	void process_event(Event& event);
+
 	void set_branches(TTree* tree);
 	void set_branches(TChain* chain);
+	void set_ampt_branches(TTree* tree);
 
 	TH1D* get_sim_proton_dist(int cent);
 	TH1D* get_sim_efficiency_dist();

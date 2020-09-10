@@ -226,17 +226,8 @@ void PileUpQAer::rotate_dist() {
 			double lower_bound = slice.second.GetBinCenter(slice.second.FindFirstBinAbove());
 			double upper_bound = slice.second.GetBinCenter(slice.second.FindLastBinAbove());
 			slice_fits[slice.first] = TF1(title.data(), "gaus(0)+[3]/(1+exp(-[4]*(x-[5])))", lower_bound, upper_bound);
-//			slice_fits[slice.first] = TF1(title.data(), "gaus(0)+((x>[3])?[4]:0)", lower_bound, upper_bound);
-//			slice_fits[slice.first].SetParameters(slice.second.GetMaximum() / 1000, slice.second.GetStdDev(), slice.second.GetMean()+3*slice.second.GetStdDev(), slice.second.GetMaximum(), slice.second.GetMean(), slice.second.GetStdDev());
-//			slice_fits[slice.first].SetParameters(slice.second.GetMaximum(), slice.second.GetMean(), slice.second.GetStdDev(), slice.second.GetMean() + 3*slice.second.GetStdDev(), 0);
-//			slice_fits[slice.first].SetParLimits(0, 0, slice.second.GetMaximum() / 100);
-//			slice_fits[slice.first].SetParLimits(2, slice.second.GetMean()-1*slice.second.GetStdDev(), slice.second.GetMean()+3*slice.second.GetStdDev());
+			slice_fits[slice.first] = TF1(title.data(), "gaus(0)+([3]*exp()+[])/(1+exp(-[4]*(x-[5])))", lower_bound, upper_bound);
 			slice_fits[slice.first].SetParameters(slice.second.GetMaximum(), slice.second.GetMean(), slice.second.GetStdDev(), 0, 1, slice.second.GetMean() + 0.2*(upper_bound - lower_bound));
-//			slice_fits[slice.first].SetParLimits(0, slice.second.GetMaximum() / 3, slice.second.GetMaximum() * 3);
-//			slice_fits[slice.first].SetParLimits(1, slice.second.GetMean()-1*slice.second.GetStdDev(), slice.second.GetMean()+1*slice.second.GetStdDev());
-//			slice_fits[slice.first].SetParLimits(2, slice.second.GetStdDev() / 10, slice.second.GetStdDev() * 2);
-//			slice_fits[slice.first].SetParLimits(3, slice.second.GetMean()-1*slice.second.GetStdDev(), slice.second.GetMean()+3*slice.second.GetStdDev());
-//			slice_fits[slice.first].SetParLimits(4, 0, slice.second.GetMaximum() / 100);
 			slice_fits[slice.first].SetParLimits(3, 0, slice.second.GetMaximum() / 100);
 //			slice_fits[slice.first].SetParLimits(4, 0, 1000);
 			slice_fits[slice.first].SetParLimits(5, lower_bound, upper_bound);
@@ -257,6 +248,21 @@ void PileUpQAer::rotate_dist() {
 	}
 
 	for(int slice_index:erase_list) { slices.erase(slice_index); }
+
+	map<int, TF1> slice_init_gaus;
+	map<int, TH1F> slice_minus_gaus;
+	for(pair<int, TH1F> slice:slices) {
+		string title = to_string(energy) + "GeV Slice Left Side Gauss Fit " + to_string(slice.first * rot_slice_height) + " to " + to_string((slice.first + 1) *rot_slice_height);
+		double lower_bound = slice.second.GetBinCenter(slice.second.FindFirstBinAbove());
+		double upper_bound = slice.second.GetBinCenter(slice.second.FindLastBinAbove());
+		slice_init_gaus[slice.first] = TF1(title.data(), "gaus", lower_bound, upper_bound);
+		slice.second.Fit(&slice_init_gaus[slice.first], "NQR");
+		upper_bound = slice_init_gaus[slice.first].GetParameter(2);
+		slice_init_gaus[slice.first].SetRange(lower_bound, upper_bound);
+		slice.second.Fit(&slice_init_gaus[slice.first], "NQR");
+		slice_minus_gaus[slice.first] = slice.second;
+		slice_minus_gaus[slice.first].Add(&slice_init_gaus[slice.first], -1);
+	}
 
 	TGraph upper((int)y_upper.size(), upper_points.data(), y_upper.data());
 	upper.SetLineColor(kGreen); upper.SetLineWidth(2);
@@ -338,6 +344,8 @@ void PileUpQAer::rotate_dist() {
 		}
 
 		TDirectory *slice_canvas_dir = out_file->mkdir("Slice Canvases");
+		TDirectory *slice_gaus_dir = out_file->mkdir("Slice Guas Canvases");
+		TDirectory *slice_gaus_sub_dir = out_file->mkdir("Slice Gaus Sub Canvases");
 		TDirectory *slice_prob_dir = out_file->mkdir("Slice Prob Canvases");
 		TDirectory *slice_dcaz_dir = out_file->mkdir("Dca_z Slice Canvases");
 		TDirectory *slice_dcaz_sd_dir = out_file->mkdir("Dca_z_sd Slice Canvases");
@@ -357,9 +365,9 @@ void PileUpQAer::rotate_dist() {
 			bkg.SetNpx(n_plot_points); bkg.SetLineColor(kViolet);
 
 			slice.second.Draw();
-			gaus.Draw("Sames");
-			bkg.Draw("Sames");
-			slice_fits[slice.first].Draw("Sames");
+//			gaus.Draw("Sames");
+//			bkg.Draw("Sames");
+//			slice_fits[slice.first].Draw("Sames");
 
 			TLegend leg(0.35, 0.2);
 			leg.AddEntry(&slice.second, "Slice Distribution", "l");
@@ -392,6 +400,22 @@ void PileUpQAer::rotate_dist() {
 			prob_graphs[slice.first].Draw("apz");
 			slice_prob_can.SetLogy();
 			slice_prob_can.Write();
+
+			slice_gaus_dir->cd();
+			TCanvas slice_gaus_can(("Can_Gaus_"+(string)slice.second.GetName()).data(), slice.second.GetTitle());
+			slice.second.Draw();
+			slice_init_gaus[slice.first].SetNpx(n_plot_points);
+			slice_init_gaus[slice.first].SetRange(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
+			slice_init_gaus[slice.first].Draw("same");
+			slice_gaus_can.SetLogy();
+			slice_gaus_can.Write();
+
+			slice_gaus_sub_dir->cd();
+			TCanvas slice_gaus_sub_can(("Can_Gaus_Sub"+(string)slice.second.GetName()).data(), slice.second.GetTitle());
+			slice_minus_gaus[slice.first].SetAxisRange(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
+			slice_minus_gaus[slice.first].Draw();
+			slice_gaus_sub_can.SetLogy();
+			slice_gaus_sub_can.Write();
 
 			slice_dcaz_dir->cd();
 			TCanvas slice_dcaz_can(("Can_"+(string)dca_z_slices[slice.first].GetName()).data(), dca_z_slices[slice.first].GetTitle());

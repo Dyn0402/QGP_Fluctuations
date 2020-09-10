@@ -111,6 +111,31 @@ void set_particle_branches(TTree* tree, tree_branches &branches, string particle
 }
 
 
+// Set tree branch addresses and return them in a tree_branches struct.
+void set_ampt_tree_branches(TTree* tree, ampt_tree_branches &branches) {
+	tree->SetBranchAddress("event", &branches.event);
+
+	tree->SetBranchAddress("refmult", &branches.refmult);
+	tree->SetBranchAddress("refmult2", &branches.refmult2);
+	tree->SetBranchAddress("refmult3", &branches.refmult3);
+
+	tree->SetBranchAddress("imp", &branches.imp);
+	tree->SetBranchAddress("qx", &branches.qx);
+	tree->SetBranchAddress("qy", &branches.qy);
+
+	tree->SetBranchAddress("npp", &branches.npp);
+	tree->SetBranchAddress("npt", &branches.npt);
+	tree->SetBranchAddress("nesp", &branches.nesp);
+	tree->SetBranchAddress("ninesp", &branches.ninesp);
+	tree->SetBranchAddress("nest", &branches.nest);
+	tree->SetBranchAddress("ninest", &branches.ninest);
+
+	tree->SetBranchAddress("pid", &branches.pid, &branches.branch_pid);
+	tree->SetBranchAddress("px", &branches.px, &branches.branch_px);
+	tree->SetBranchAddress("py", &branches.py, &branches.branch_py);
+	tree->SetBranchAddress("pz", &branches.pz, &branches.branch_pz);
+}
+
 
 // Get ampt tree leaves and return them in a tree_leaves struct.
 ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref) {

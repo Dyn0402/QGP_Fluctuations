@@ -67,9 +67,11 @@ private:
 	vector<int> ref_dist;
 	vector<float> b_dist;
 
-	ampt_tree_leaves leaves;
+	ampt_tree_branches branches;
 
 	// Doers
+	void set_branches(TTree *tree);
+
 	void make_centrality();
 	void get_distribution();
 
