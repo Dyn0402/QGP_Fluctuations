@@ -21,6 +21,8 @@
 #include "TLeaf.h"
 #include "TH1.h"
 #include "TreeBranches.h"
+#include "TMultiGraph.h"
+#include "TLegend.h"
 
 using namespace std;
 
@@ -49,6 +51,7 @@ public:
 	void set_ref_num(int ref);
 
 	// Doers
+	void run_b_opt();
 
 private:
 	// Attributes
@@ -83,6 +86,9 @@ private:
 	function<void()> sort_and_bin;
 	void sort_bin_ref();
 	void sort_bin_b();
+
+	void write_bin_edges();
+	void read_bin_edges();
 };
 
 
