@@ -50,7 +50,7 @@ void azimuth_bin_analyze() {
 	analyzer.set_in_path("/home/dylan/Research/Data/");
 	analyzer.set_in_mix_path("/home/dylan/Research/Data_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/");
-	analyzer.set_out_root_name("8-25-20_BES1_eta_05_dca_1_3.root");
+	analyzer.set_out_root_name("9-15-20_BES1_eta_05_dca_1_3_pull_divide.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8});
