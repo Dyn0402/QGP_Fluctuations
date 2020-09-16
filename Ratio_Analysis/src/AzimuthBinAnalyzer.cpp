@@ -144,16 +144,18 @@ void AzimuthBinAnalyzer::combine_sets() {
 			set_pairs[combo.first]["divide"][set] = divide_stats_median[set];
 			set_pairs[combo.first]["pull"][set] = pull_stats_median[set];
 			set_pairs[combo.first]["diff"][set] = diff_stats_median[set];
+			set_pairs[combo.first]["pull_divide"][set] = pull_divide_stats_median[set];
 
 			set_pairs_sd[combo.first]["raw"][set] = raw_stats_sd[set];
 			set_pairs_sd[combo.first]["mix"][set] = mix_stats_sd[set];
 			set_pairs_sd[combo.first]["divide"][set] = divide_stats_sd[set];
 			set_pairs_sd[combo.first]["pull"][set] = pull_stats_sd[set];
 			set_pairs_sd[combo.first]["diff"][set] = diff_stats_sd[set];
+			set_pairs_sd[combo.first]["pull_divide"][set] = pull_divide_stats_sd[set];
 		}
 	}
-	set_pairs["All"] = {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}, {"diff", diff_stats_median}};
-	set_pairs_sd["All"] = {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}, {"diff", diff_stats_sd}};
+	set_pairs["All"] = {{"raw", raw_stats_median}, {"mix", mix_stats_median}, {"divide", divide_stats_median}, {"pull", pull_stats_median}, {"diff", diff_stats_median}, {"pull_divide", pull_divide_stats_median}};
+	set_pairs_sd["All"] = {{"raw", raw_stats_sd}, {"mix", mix_stats_sd}, {"divide", divide_stats_sd}, {"pull", pull_stats_sd}, {"diff", diff_stats_sd}, {"pull_divide", pull_divide_stats_sd}};
 
 	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> set_type;
 	map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>> set_type_sd;
@@ -286,8 +288,10 @@ void AzimuthBinAnalyzer::combine_sets() {
 					for(int div:divs) {
 						centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
 						centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "centralities_divide_cor_"+name+to_string(div));
+						centralities_stat(set_pair.second["pull_divide"], set_pairs_sd[set_pair.first]["pull_divide"], name, all_centralities, {div}, "centralities_pull_divide_"+name+to_string(div));
 					}
 					centralities_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "centralities_divide_"+name);
+					centralities_stat(set_pair.second["pull_divide"], set_pairs_sd[set_pair.first]["pull_divide"], name, all_centralities, divs, "centralities_pull_divide_"+name);
 				}
 			}
 			TDirectory *dist_means_dir = mix_div_dir->mkdir("dist_means");
@@ -449,12 +453,14 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 					divide_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					pull_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					diff_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					pull_divide_stats_sd[set_name][energy.first][div.first][cent.first][stat.first] = sample_sd(pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
 					raw_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					mix_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					pull_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					diff_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
+					pull_divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
 					for(int i=0; i<(int)raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].size(); i++) {
 						raw_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
@@ -755,28 +761,44 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 					mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(ratio_stats_mix[energy.first][div.first][cent.first][stat.first]);
 					divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stats_mix_divide[energy.first][div.first][cent.first][stat.first]);
 					diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(diff_stats[energy.first][div.first][cent.first][stat.first]);
+
 				}
 			}
 		}
 	}
 
-	for(auto &energy:diff_slice_stats_mix) {
+	for(auto &energy:data) {
 		for(auto &div:energy.second) {
 			for(auto &cent:div.second) {
-				for(auto &particles:cent.second) {
-					data[energy.first][div.first][cent.first].set_diff_slice_divisor(particles.first, particles.second["standard_deviation"].get_val());
+				for(auto &particles:cent.second.get_bin_data()) {
+					float p = 1 / (float)div.first;
+					cent.second.set_diff_slice_divisor(particles.first, sqrt(particles.first * p * (1 - p)));
+				}
+			}
+		}
+	}
+
+	for(auto &energy:data_mix) {
+		for(auto &div:energy.second) {
+			for(auto &cent:div.second) {
+				for(auto &particles:cent.second.get_bin_data()) {
+					float p = 1 / (float)div.first;
+					cent.second.set_diff_slice_divisor(particles.first, sqrt(particles.first * p * (1 - p)));
 				}
 			}
 		}
 	}
 
 	auto pull_stats = calculate_stats(data, "diff_slice_proj", orders);
+	auto pull_mix_stats = calculate_stats(data_mix, "diff_slice_proj", orders);
+	map<int, map<int, map<int, map<string, Measure>>>> pull_divide_stats;
 
 	for(auto &energy:pull_stats) {
 		for(auto &div:energy.second) {
 			for(auto &cent:div.second) {
 				for(auto &stat:cent.second) {
 					pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second);
+					pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second / pull_mix_stats[energy.first][div.first][cent.first]);
 				}
 			}
 		}
