@@ -14,16 +14,24 @@
 
 AmptCentralityMaker::AmptCentralityMaker() {
 	in_path = "";
+	out_path = "";
 	set_mult_quantity("ref3");
 }
 
-AmptCentralityMaker::AmptCentralityMaker(string path) {
-	in_path = path;
+AmptCentralityMaker::AmptCentralityMaker(string in_path) {
+	this->in_path = in_path;
+	out_path = "";  // "/home/dylan/Research/Ampt_Centralities/"
 	set_mult_quantity("ref3");
 }
 
-AmptCentralityMaker::AmptCentralityMaker(string path, string mult_quantity) {
-	in_path = path;
+AmptCentralityMaker::AmptCentralityMaker(string in_path, string mult_quantity) {
+	this->in_path = in_path;
+	set_mult_quantity(mult_quantity);
+}
+
+AmptCentralityMaker::AmptCentralityMaker(string in_path, string out_path, string mult_quantity) {
+	this->in_path = in_path;
+	this->out_path = out_path;
 	set_mult_quantity(mult_quantity);
 }
 
@@ -104,8 +112,16 @@ int AmptCentralityMaker::get_cent_bin9(int mult) {
 
 // Setters
 
-void AmptCentralityMaker::set_in_path(string path) {
-	in_path = path;
+void AmptCentralityMaker::set_in_path(string in_path) {
+	this->in_path = in_path;
+}
+
+void AmptCentralityMaker::set_out_path(string out_path) {
+	this->out_path = out_path;
+}
+
+void AmptCentralityMaker::set_min_bias_path(string min_bias_path) {
+	this->min_bias_path = min_bias_path;
 }
 
 void AmptCentralityMaker::set_mult_quantity(string quantity) {
@@ -138,120 +154,120 @@ void AmptCentralityMaker::set_ref_num(int ref) {
 
 // Doers
 
-void AmptCentralityMaker::run_b_opt() {
-	float acc = 0.01;
-	map<int, int> energy_color {{7, 1}, {11, 2}, {19, 4}, {27, 6}, {39, 8}, {62, 9}};
-	map<int, float> b_min {{7, 14}, {11, 14}, {19, 13.5}, {27, 13.5}, {39, 13}, {62, 13}};
-	map<int, float> opt;
-
-//	vector<float> b_cuts;
-//	for(float b = b_cut_min; b <= b_cut_max; b += b_cut_step) {
-//		b_cuts.push_back(b);
+//void AmptCentralityMaker::run_b_opt(vector<int> energy_vec, string out_path) {
+//	float acc = 0.01;
+//	map<int, int> energy_color {{7, 1}, {11, 2}, {19, 4}, {27, 6}, {39, 8}, {62, 9}};
+//	map<int, float> b_min {{7, 14}, {11, 14}, {19, 13.5}, {27, 13.5}, {39, 13}, {62, 13}};
+//	map<int, float> opt;
+//
+//	auto *mg = new TMultiGraph();
+//	auto *leg = new TLegend();
+//	float chi_max = 0;
+//
+//	for(int energy:energy_vec) {
+//		float b_cut_step = 0.5;
+//		vector<float> chi_diff;
+//		vector<float> b;
+//		map<float, float> b_chi_map;
+//
+//
+//
+//		b.push_back(b_min[energy]);
+//		cout << "Calculating chi^2 for " + to_string(energy) + "GeV, b = " << b.back() << endl;
+//		chi_diff.push_back(get_chi_diff(b.back(), energy));
+//		b_chi_map[b.back()] = chi_diff.back();
+//
+//		while(fabs(b_cut_step) >= acc) {
+//			b.push_back(b.back() + b_cut_step);
+//			cout << "Calculating chi^2 for " + to_string(energy) + "GeV, b = " << b.back() << endl;
+//			chi_diff.push_back(get_chi_diff(b.back(), energy));
+//			b_chi_map[b.back()] = chi_diff.back();
+//			while(chi_diff.back() < chi_diff[(int)chi_diff.size() - 2]) {
+//				b.push_back(b.back() + b_cut_step);
+//				cout << "Calculating chi^2 for " + to_string(energy) + "GeV, b = " << b.back() << endl;
+//				chi_diff.push_back(get_chi_diff(b.back(), energy));
+//				b_chi_map[b.back()] = chi_diff.back();
+//			}
+//			b_cut_step /= -2;
+//		}
+//		opt[energy] = b[(int)b.size() - 2];
+//		if(chi_diff[(int)chi_diff.size() - 2] > chi_max) { chi_max = chi_diff[(int)chi_diff.size() - 2]; }
+//
+//		chi_diff.clear(); b.clear();
+//		for(pair<float, float> b_chi:b_chi_map) {
+//			b.push_back(b_chi.first);
+//			chi_diff.push_back(b_chi.second);
+//		}
+//
+//		TGraph *graph = new TGraph((int)b.size(), b.data(), chi_diff.data());
+//		graph->SetMarkerColor(energy_color[energy]);
+//		graph->SetLineColor(energy_color[energy]);
+//		graph->SetLineWidth(3);
+//		graph->SetMarkerStyle(8);
+//		mg->Add(graph, "l");
+//		leg->AddEntry(graph, (to_string(energy) + "GeV").data(), "l");
 //	}
-
-	auto *mg = new TMultiGraph();
-	auto *leg = new TLegend();
-	float chi_max = 0;
-
-	float b_cut_step = 0.5;
-	vector<float> chi_diff;
-	vector<float> b;
-	map<float, float> b_chi_map;
-	b.push_back(b_min[energy]);
-	cout << "Calculating chi^2 for " + to_string(energy) + "GeV, b = " << b.back() << endl;
-	chi_diff.push_back(get_chi_diff(b.back(), energy));
-	b_chi_map[b.back()] = chi_diff.back();
-
-	while(fabs(b_cut_step) >= acc) {
-		b.push_back(b.back() + b_cut_step);
-		cout << "Calculating chi^2 for " + to_string(energy) + "GeV, b = " << b.back() << endl;
-		chi_diff.push_back(get_chi_diff(b.back(), energy));
-		b_chi_map[b.back()] = chi_diff.back();
-		while(chi_diff.back() < chi_diff[(int)chi_diff.size() - 2]) {
-			b.push_back(b.back() + b_cut_step);
-			cout << "Calculating chi^2 for " + to_string(energy) + "GeV, b = " << b.back() << endl;
-			chi_diff.push_back(get_chi_diff(b.back(), energy));
-			b_chi_map[b.back()] = chi_diff.back();
-		}
-		b_cut_step /= -2;
-	}
-	opt[energy] = b[(int)b.size() - 2];
-	if(chi_diff[(int)chi_diff.size() - 2] > chi_max) { chi_max = chi_diff[(int)chi_diff.size() - 2]; }
-
-	chi_diff.clear(); b.clear();
-	for(pair<float, float> b_chi:b_chi_map) {
-		b.push_back(b_chi.first);
-		chi_diff.push_back(b_chi.second);
-	}
-
-	TGraph *graph = new TGraph((int)b.size(), b.data(), chi_diff.data());
-	graph->SetMarkerColor(energy_color[energy]);
-	graph->SetLineColor(energy_color[energy]);
-	graph->SetLineWidth(3);
-	graph->SetMarkerStyle(8);
-	mg->Add(graph, "l");
-	leg->AddEntry(graph, (to_string(energy) + "GeV").data(), "l");
-
-	mg->GetXaxis()->SetTitle("Impact Parameter b (fm)");
-	mg->GetYaxis()->SetTitle("Sum( (BES1 - AMPT)^2 )");
-	mg->SetTitle("BES1 to AMPT Ref3 distribution Chi^2 vs b cutoff (max)");
-	mg->Draw("a");
-	leg->Draw();
-
-	for(pair<int, float> opt_pars:opt) {
-		cout << "Energy " << opt_pars.first << "GeV optimal b = " << opt_pars.second << "fm" << endl;
-		auto *line = new TLine(opt_pars.second, 0.0, opt_pars.second, chi_max);
-		line->SetLineColor(energy_color[opt_pars.first]);
-		line->Draw();
-	}
-}
-
-
-float get_chi_diff(float b_cut, int energy) {
-	string data_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3/eta050/" + to_string(energy) + "GeV/QA_" + to_string(energy) + "GeV.root";
-	string ampt_path = "/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + ".root";
-
-	TFile *data_file = new TFile(data_path.data(), "READ");
-	TH1I *int_data_dist = (TH1I*)data_file->Get(("pre_reftwo_eta050_" + to_string(energy)).data());
-	TH1D* data_dist = new TH1D("data_dist", "BES1 Distribution", int_data_dist->GetNbinsX(), int_data_dist->GetXaxis()->GetXmin(), int_data_dist->GetXaxis()->GetXmax());
-	for(int i =1; i<=int_data_dist->GetNbinsX(); i++) { data_dist->SetBinContent(i, int_data_dist->GetBinContent(i)); }
-
-	TFile *ampt_file = new TFile(ampt_path.data(), "READ");
-	TTree *ampt_tree = (TTree*)ampt_file->Get("tree");
-	TH1D *ampt_dist = new TH1D("ampt_dist", "Ampt Distribution", data_dist->GetNbinsX(), data_dist->GetXaxis()->GetXmin(), data_dist->GetXaxis()->GetXmax());
-	TLeaf *dist_leaf = ampt_tree->GetLeaf("refmult3");
-	TLeaf *b_leaf = ampt_tree->GetLeaf("imp");
-	int event_index = 0;
-	while(ampt_tree->GetEntry(event_index)) {
-		if(b_leaf->GetValue() < b_cut) {
-			ampt_dist->Fill(dist_leaf->GetValue());
-		}
-		event_index++;
-	}
-
-	TH1D *norm_data_dist = (TH1D*) data_dist->Clone("norm_data_dist");
-	TH1D *norm_ampt_dist = (TH1D*) ampt_dist->Clone("norm_ampt_dist");
-	norm_data_dist->Scale(1.0/data_dist->Integral());
-	norm_ampt_dist->Scale(1.0/ampt_dist->Integral());
-
-	float chi2 = 0;
-	for(int i = 1; i <= norm_data_dist->GetNbinsX(); i++) {
-		chi2 += pow(norm_data_dist->GetBinContent(i) - norm_ampt_dist ->GetBinContent(i), 2);
-	}
-
-	delete int_data_dist;
-	delete data_dist;
-	delete ampt_dist;
-	delete norm_data_dist;
-	delete norm_ampt_dist;
-
-	data_file->Close();
-	ampt_file->Close();
-	delete data_file;
-	delete ampt_file;
-
-	return chi2;
-}
+//
+//	mg->GetXaxis()->SetTitle("Impact Parameter b (fm)");
+//	mg->GetYaxis()->SetTitle("Sum( (BES1 - AMPT)^2 )");
+//	mg->SetTitle("BES1 to AMPT Ref3 distribution Chi^2 vs b cutoff (max)");
+//	mg->Draw("a");
+//	leg->Draw();
+//
+//	for(pair<int, float> opt_pars:opt) {
+//		cout << "Energy " << opt_pars.first << "GeV optimal b = " << opt_pars.second << "fm" << endl;
+//		auto *line = new TLine(opt_pars.second, 0.0, opt_pars.second, chi_max);
+//		line->SetLineColor(energy_color[opt_pars.first]);
+//		line->Draw();
+//	}
+//}
+//
+//
+//float get_chi_diff(float b_cut, int energy) {
+//	string data_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3/eta050/" + to_string(energy) + "GeV/QA_" + to_string(energy) + "GeV.root";
+//	string ampt_path = "/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + ".root";
+//
+//	TFile *data_file = new TFile(data_path.data(), "READ");
+//	TH1I *int_data_dist = (TH1I*)data_file->Get(("pre_reftwo_eta050_" + to_string(energy)).data());
+//	TH1D* data_dist = new TH1D("data_dist", "BES1 Distribution", int_data_dist->GetNbinsX(), int_data_dist->GetXaxis()->GetXmin(), int_data_dist->GetXaxis()->GetXmax());
+//	for(int i =1; i<=int_data_dist->GetNbinsX(); i++) { data_dist->SetBinContent(i, int_data_dist->GetBinContent(i)); }
+//
+//	TFile *ampt_file = new TFile(ampt_path.data(), "READ");
+//	TTree *ampt_tree = (TTree*)ampt_file->Get("tree");
+//	TH1D *ampt_dist = new TH1D("ampt_dist", "Ampt Distribution", data_dist->GetNbinsX(), data_dist->GetXaxis()->GetXmin(), data_dist->GetXaxis()->GetXmax());
+//	TLeaf *dist_leaf = ampt_tree->GetLeaf("refmult3");
+//	TLeaf *b_leaf = ampt_tree->GetLeaf("imp");
+//	int event_index = 0;
+//	while(ampt_tree->GetEntry(event_index)) {
+//		if(b_leaf->GetValue() < b_cut) {
+//			ampt_dist->Fill(dist_leaf->GetValue());
+//		}
+//		event_index++;
+//	}
+//
+//	TH1D *norm_data_dist = (TH1D*) data_dist->Clone("norm_data_dist");
+//	TH1D *norm_ampt_dist = (TH1D*) ampt_dist->Clone("norm_ampt_dist");
+//	norm_data_dist->Scale(1.0/data_dist->Integral());
+//	norm_ampt_dist->Scale(1.0/ampt_dist->Integral());
+//
+//	float chi2 = 0;
+//	for(int i = 1; i <= norm_data_dist->GetNbinsX(); i++) {
+//		chi2 += pow(norm_data_dist->GetBinContent(i) - norm_ampt_dist->GetBinContent(i), 2);
+//	}
+//
+//	delete int_data_dist;
+//	delete data_dist;
+//	delete ampt_dist;
+//	delete norm_data_dist;
+//	delete norm_ampt_dist;
+//
+//	data_file->Close();
+//	ampt_file->Close();
+//	delete data_file;
+//	delete ampt_file;
+//
+//	return chi2;
+//}
 
 
 void AmptCentralityMaker::set_branches(TTree* tree) {

@@ -30,8 +30,9 @@ class AmptCentralityMaker {
 public:
 	// Structors
 	AmptCentralityMaker();
-	AmptCentralityMaker(string path);
-	AmptCentralityMaker(string path, string mult_quantity);
+	AmptCentralityMaker(string in_path);
+	AmptCentralityMaker(string in_path, string mult_quantity);
+	AmptCentralityMaker(string in_path, string out_path, string mult_quantity);
 	~AmptCentralityMaker();
 
 	// Getters
@@ -45,13 +46,16 @@ public:
 	int get_cent_bin9(int mult);
 
 	// Setters
-	void set_in_path(string path);
+	void set_in_path(string in_path);
+	void set_out_path(string out_path);
+	void set_min_bias_path(string minb_bias_path);
 	void set_mult_quantity(string quantity);
 	void set_max_b(float b);
 	void set_ref_num(int ref);
 
 	// Doers
-	void run_b_opt();
+	void run_b_opt(vector<int> energy_vec, string out_path);
+	float get_chi_diff(float b, int energy);
 
 private:
 	// Attributes
@@ -63,6 +67,8 @@ private:
 	vector<float> b_bin_edges;
 
 	string in_path;
+	string out_path;
+	string min_bias_path;
 	string mult_quantity;
 
 	string tree_name = "tree";
@@ -86,6 +92,9 @@ private:
 	function<void()> sort_and_bin;
 	void sort_bin_ref();
 	void sort_bin_b();
+
+	void write_b_opt();
+	void read_b_opt();
 
 	void write_bin_edges();
 	void read_bin_edges();

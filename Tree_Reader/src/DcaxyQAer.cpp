@@ -135,9 +135,7 @@ void DcaxyQAer::read_tree(TTree* tree) {
 
 		centralities[run][event_id] = cent9_corr;
 
-		if(dca_xy_avg == -899 && dca_xy_err == -899) {
-			continue;
-		}
+		if(dca_xy_avg == -899 && dca_xy_err == -899) { continue; }
 
 		dca_event[run][event_id] = {dca_xy_avg, dca_xy_err};
 		if(dca_run.find(run) == dca_run.end()) {
@@ -763,7 +761,7 @@ void DcaxyQAer::read_bad_dca_file() {
 					vector<string> bad_range_str = split(bad_run_range_str[range_index], ' ');
 					if(bad_range_str.size() == 5) {
 						bad_ranges_read[run].push_back(make_pair(stoi(bad_range_str[1]), stoi(bad_range_str[3])));
-					} else { cout << "Bad range run read" << endl; }
+					} else { cout << "Bad range run read: " << bad_run_range_str[range_index] << endl; }
 				}
 			} else { cout << "Bad range line read" << endl; }
 		}

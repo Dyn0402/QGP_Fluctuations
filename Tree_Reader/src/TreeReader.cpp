@@ -437,7 +437,6 @@ void TreeReader::read_trees() {
 	unsigned file_index = 1;
 
 	for(string path:in_files) {
-
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;

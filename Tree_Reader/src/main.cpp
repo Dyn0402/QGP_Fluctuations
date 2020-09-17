@@ -73,8 +73,8 @@ int main(int argc, char** argv) {
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
 //	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
 //	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
-	read_class();
-//	run_dca_xy_qa();
+//	read_class();
+	run_dca_xy_qa();
 //	run_pile_up_qa();
 //	tchain_test();
 //	ampt_cent_b_corr();
@@ -99,10 +99,10 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}};
-	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios_dca1", {0, 2}}, {"Ampt_eta05_n1ratios_dca3", {0, 2}}};//, {"Ampt_eta1_n1ratios_dca1", {0, 2}}, {"Ampt_eta1_n1ratios_dca3", {0, 2}}};
+	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios_dca1", {0, 2}}, {"Ampt_eta05_n1ratios_dca3", {0, 2}}};//, {"Ampt_eta1_n1ratios_dca1", {0, 2}}, {"Ampt_eta1_n1ratios_dca3", {0, 2}}};
 
-	vector<int> energy_list {39, 62, 27, 19, 11, 7};
+	vector<int> energy_list {62, 7};  // {39, 62, 27, 19, 11, 7};
 
 	int set_sleep = 60;
 	int energy_sleep = 1;
@@ -142,9 +142,9 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "AMPT_Trees/";  //"BES1_Trees/";
-	string out_dir = out_base_path + "Data_Ampt/";  //"Data/";
-	string mix_out_dir = out_base_path + "Data_Ampt_Mix/";  //"Data_Mix/";
+	string in_path = in_base_path + "BES1_Trees/";  // "AMPT_Trees/";  //"BES1_Trees/";
+	string out_dir = out_base_path + "Data/";  // "Data_Ampt/";  //"Data/";
+	string mix_out_dir = out_base_path + "Data_Mix/";  // "Data_Ampt_Mix/";  //"Data_Mix/";
 
 	vector<int> divs {300, 240, 180, 120, 90, 72, 60};
 //	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
@@ -649,7 +649,7 @@ void dca_xy_qa(int energy, mutex *mtx) {
 }
 
 void run_dca_xy_qa() {
-	vector<int> energies {7}; //, 11, 19, 27, 39, 62};
+	vector<int> energies {7, 62}; //, 11, 19, 27, 39, 62};
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();

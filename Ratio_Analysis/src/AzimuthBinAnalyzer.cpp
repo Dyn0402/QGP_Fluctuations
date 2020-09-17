@@ -798,7 +798,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 			for(auto &cent:div.second) {
 				for(auto &stat:cent.second) {
 					pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second);
-					pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second / pull_mix_stats[energy.first][div.first][cent.first]);
+					pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].push_back(stat.second / pull_mix_stats[energy.first][div.first][cent.first][stat.first]);
 				}
 			}
 		}
