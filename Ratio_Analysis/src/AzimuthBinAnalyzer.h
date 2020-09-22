@@ -41,8 +41,10 @@ public:
 	// Getters
 
 	// Setters
-	void set_in_path(string path);
-	void set_in_mix_path(string path);
+	void set_bes_in_path(string bes_in_path);
+	void set_bes_in_mix_path(string bes_in_mix_path);
+	void set_ampt_in_path(string ampt_in_path);
+	void set_ampt_in_mix_path(string ampt_in_mix_path);
 	void set_out_path(string path);
 	void set_out_root_name(string name);
 	void set_sets(map<string, vector<int>> sets);
@@ -70,8 +72,10 @@ private:
 	map<string, vector<string>> names = {{"stat",stat_names}, {"cumulant",cumulant_names}, {"raw_moment",raw_moment_names}, {"central_moment",central_moment_names}};
 	vector<int> centralities = {8, 7, 4, 1};
 	vector<int> all_centralities = {8,7,6,5,4,3,2,1,0};
-	string in_path = "/home/dylan/Research/Data/";
-	string in_mix_path = "/home/dylan/Research/Data_Mix/";
+	string bes_in_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3/";
+	string bes_in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/";
+	string ampt_in_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3/";
+	string ampt_in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/";
 	vector<int> energy_list {7,11,19,27,39,62};
 	vector<int> divs {180, 120, 90, 72, 60};
 	vector<int> orders {1,2,3,4};

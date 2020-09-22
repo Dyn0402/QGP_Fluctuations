@@ -35,12 +35,20 @@ AzimuthBinAnalyzer::~AzimuthBinAnalyzer() {
 
 // Setters
 
-void AzimuthBinAnalyzer::set_in_path(string path) {
-	in_path = path;
+void AzimuthBinAnalyzer::set_bes_in_path(string bes_in_path) {
+	this->bes_in_path = bes_in_path;
 }
 
-void AzimuthBinAnalyzer::set_in_mix_path(string path) {
-	in_mix_path = path;
+void AzimuthBinAnalyzer::set_bes_in_mix_path(string bes_in_mix_path) {
+	this->bes_in_mix_path = bes_in_mix_path;
+}
+
+void AzimuthBinAnalyzer::set_ampt_in_path(string ampt_in_path) {
+	this->ampt_in_path = ampt_in_path;
+}
+
+void AzimuthBinAnalyzer::set_ampt_in_mix_path(string ampt_in_mix_path) {
+	this->ampt_in_mix_path = ampt_in_mix_path;
 }
 
 void AzimuthBinAnalyzer::set_out_path(string path) {
@@ -734,8 +742,14 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 
 	cout << "Starting Set " + set_name + to_string(set_num) << endl << endl;
 
-	string path = in_path + set_name + to_string(set_num) + "/";
-	string path_mix = in_mix_path + set_name + to_string(set_num) + "/";
+	string path, path_mix;
+	if(in_string(set_name, "Ampt")) {
+		path = ampt_in_path + set_name + to_string(set_num) + "/";
+		path_mix = ampt_in_mix_path + set_name + to_string(set_num) + "/";
+	} else {
+		path = bes_in_path + set_name + to_string(set_num) + "/";
+		path_mix = bes_in_mix_path + set_name + to_string(set_num) + "/";
+	}
 
 	map<int, map<int, map<int, AzimuthBinData>>> data = get_data(path);
 	map<int, map<int, map<int, AzimuthBinData>>> data_mix = get_data(path_mix);

@@ -59,10 +59,10 @@ namespace plot {
 	double protons_hist_low = -0.5;
 	double protons_hist_high = 60.5;
 
-	map<int, int> div_marker_styles {{0, 8}, {360, 8}, {180, 34}, {120, 20}, {90, 21}, {72, 22}, {60, 33}};
-	map<int, int> div_marker_colors {{0, 28}, {360, 9}, {180, 6}, {120, 1}, {90, 2}, {72, kGreen+2}, {60, 4}};
-	map<int, int> div_marker_width {{0, 2}, {360, 2}, {180, 2}, {120, 2}, {90, 2}, {72, 2}, {60, 2}};
-	map<int, double> div_marker_sizes {{0, 1.5}, {360, 1.5}, {180, 1.5}, {120, 1.5}, {90, 1.5}, {72, 1.5}, {60, 1.5}};
+	map<int, int> div_marker_styles {{0, 8}, {360, 8}, {300, 20}, {240, 20}, {180, 34}, {120, 20}, {90, 21}, {72, 22}, {60, 33}};
+	map<int, int> div_marker_colors {{0, 28}, {360, 9}, {300, 1}, {240, 1}, {180, 6}, {120, 1}, {90, 2}, {72, kGreen+2}, {60, 4}};
+	map<int, int> div_marker_width {{0, 2}, {360, 2}, {300, 2}, {240, 2}, {180, 2}, {120, 2}, {90, 2}, {72, 2}, {60, 2}};
+	map<int, double> div_marker_sizes {{0, 1.5}, {360, 1.5}, {300, 1.5}, {240, 1.5}, {180, 1.5}, {120, 1.5}, {90, 1.5}, {72, 1.5}, {60, 1.5}};
 
 	map<int, int> energy_marker_styles {{7,24}, {11,25}, {19,26}, {27,27}, {39,28}, {62,30}};
 	map<int, int> energy_marker_width {{7,2}, {11,2}, {19,2}, {27,2}, {39,2}, {62,2}};
