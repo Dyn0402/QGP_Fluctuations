@@ -423,6 +423,10 @@ void TreeReader::set_ampt_particle_pid(vector<int> pid) {
 	ampt_particle_pid = pid;
 }
 
+void TreeReader::set_file_list(vector<string> *file_list) {
+	this->file_list = file_list;
+}
+
 
 // Doers
 
@@ -432,11 +436,29 @@ void TreeReader::read_trees() {
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+	random_shuffle(in_files.begin(), in_files.end());
 
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 
 	for(string path:in_files) {
+
+		if(file_list != NULL) {  // If file_list passed, check if path is being read on another thread before continuing
+			bool wait = true;
+			while(wait) {
+				if(mtx) { mtx->lock(); }
+				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {
+					file_list->push_back(path);
+					wait = false;
+				}
+				if(mtx) { mtx->unlock(); }
+				if(wait) {
+					cout << "Waiting for path: " << path << endl;
+					this_thread::sleep_for(chrono::seconds(file_wait_sleep));
+				}
+			}
+		}
+
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
@@ -453,6 +475,17 @@ void TreeReader::read_trees() {
 		file->Close();
 		delete file;
 		file_index++;
+
+		if(file_list != NULL) {  // If file_list passed, remove path before going to next
+			if(mtx) { mtx->lock(); }
+			vector<string>::iterator it = find(file_list->begin(), file_list->end(), path);
+			if(it == file_list->end()) {
+				cout << "Current file not found in list! Not removing: " << path << endl;
+			} else {
+				file_list->erase(it);
+			}
+			if(mtx) { mtx->unlock(); }
+		}
 	}
 
 	reset_out_dir();
@@ -515,6 +548,7 @@ void TreeReader::read_trees_chain() {
 		process_event(event);
 	}
 
+
 	chain->ResetBranchAddresses();
 
 	reset_out_dir();
@@ -535,25 +569,36 @@ void TreeReader::read_trees_chain() {
 void TreeReader::read_ampt_trees() {
 	define_qa();
 
-	ampt_cent = AmptCentralityMaker("/media/ucla/Research/AMPT_Trees/min_bias/" + to_string(energy) + "GeV/", "ref" + to_string(ref_num));
-	map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
-	ampt_cent.set_max_b(opt_bmax[energy]);
-	ampt_cent.set_mult_quantity("ref3");
+	ampt_cent = AmptCentralityMaker(energy, "/media/ucla/Research/AMPT_Trees/min_bias/", "/home/dylan/Research/Ampt_Centralities/", "ref" + to_string(ref_num));
 	auto edges = ampt_cent.get_ref_bin9_edges();
-	for(auto edge:edges) { cout << edge << ", " << flush; }
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
 	vector<string> in_files = get_files_in_dir(in_path + "most_central/" + to_string(energy)+"GeV/", "root", "path");
 	vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + to_string(energy)+"GeV/", "root", "path");
 	in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
-	cout << endl;
+	random_shuffle(in_files.begin(), in_files.end());
 
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 
-	cout << num_files << endl;
-
 	for(string path:in_files) {
+
+		if(file_list != NULL) {  // If file_list passed, check if path is being read on another thread before continuing
+			bool wait = true;
+			while(wait) {
+				if(mtx) { mtx->lock(); }
+				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {
+					file_list->push_back(path);
+					wait = false;
+				}
+				if(mtx) { mtx->unlock(); }
+				if(wait) {
+					cout << "Waiting for path: " << path << endl;
+					this_thread::sleep_for(chrono::seconds(file_wait_sleep));
+				}
+			}
+		}
+
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
@@ -569,6 +614,17 @@ void TreeReader::read_ampt_trees() {
 		file->Close();
 		delete file;
 		file_index++;
+
+		if(file_list != NULL) {  // If file_list passed, remove path before going to next
+			if(mtx) { mtx->lock(); }
+			vector<string>::iterator it = find(file_list->begin(), file_list->end(), path);
+			if(it == file_list->end()) {
+				cout << "Current file not found in list! Not removing: " << path << endl;
+			} else {
+				file_list->erase(it);
+			}
+			if(mtx) { mtx->unlock(); }
+		}
 	}
 
 	reset_out_dir();
@@ -794,13 +850,14 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 		for(int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
 			if(!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
 			TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
-			Track particle(track_defs);
-			particle.set_p(p.Mag());
-			particle.set_pt(p.Perp());
-			particle.set_phi(p.Phi() + M_PI);
-			particle.set_eta(p.PseudoRapidity());
-			particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
-			particles.push_back(particle);
+			Track new_particle(track_defs);
+			new_particle.set_p(p.Mag());
+			new_particle.set_pt(p.Perp());
+			new_particle.set_phi(p.Phi() + M_PI);
+			new_particle.set_eta(p.PseudoRapidity());
+			new_particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
+			new_particle.set_beta(pow((cut.max_m2 - cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+			particles.push_back(new_particle);
 		}
 		event.set_particles(particles);
 
@@ -815,13 +872,14 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 					for(int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
 						if(!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
 						TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
-						Track particle(track_defs);
-						particle.set_p(p.Mag());
-						particle.set_pt(p.Perp());
-						particle.set_phi(p.Phi() + M_PI);
-						particle.set_eta(p.PseudoRapidity());
-						particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
-						particles.push_back(particle);
+						Track new_particle(track_defs);
+						new_particle.set_p(p.Mag());
+						new_particle.set_pt(p.Perp());
+						new_particle.set_phi(p.Phi() + M_PI);
+						new_particle.set_eta(p.PseudoRapidity());
+						new_particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
+						new_particle.set_beta(pow((cut.max_m2 - cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+						particles.push_back(new_particle);
 					}
 					event2.set_particles(particles);
 

@@ -37,7 +37,7 @@ TreeCuts::~TreeCuts() {
 // Doers
 void TreeCuts::set_values() {
 	// Dca_xy Cuts
-	DcaxyQAer dca_xy_qa(energy);
+	DcaxyQABase dca_xy_qa(energy);
 	dca_xy_bad_runs = dca_xy_qa.get_bad_runs();
 	dca_xy_bad_event_ranges = dca_xy_qa.get_bad_ranges();
 

@@ -18,6 +18,7 @@ DcaxyQAer::DcaxyQAer(int energy, mutex *mtx) {
 	refmultCorrUtil = new StRefMultCorr("refmult3");
 	this->mtx = mtx;
 	cut.set_values(energy, "proton");
+
 	// Pile Up Cuts
 	PileUpQAer pile_up_qa(energy);
 	cut.pile_up_low = pile_up_qa.get_low_cut();
@@ -30,6 +31,7 @@ DcaxyQAer::DcaxyQAer(int energy) {
 	out_file = NULL;
 	refmultCorrUtil = new StRefMultCorr("refmult3");
 	cut.set_values(energy, "proton");
+
 	// Pile Up Cuts
 	PileUpQAer pile_up_qa(energy);
 	cut.pile_up_low = pile_up_qa.get_low_cut();
@@ -43,29 +45,8 @@ DcaxyQAer::~DcaxyQAer() {
 
 // Getters
 
-vector<int> DcaxyQAer::get_bad_runs() {
-	if(bad_runs.size() == 0) {
-		read_bad_dca_file();
-	}
-
-	return bad_runs;
-}
-
-
-map<int, vector<pair<int, int>>> DcaxyQAer::get_bad_ranges() {
-	if(bad_ranges.size() == 0) {
-		read_bad_dca_file();
-	}
-
-	return bad_ranges;
-}
-
 
 // Setters
-
-void DcaxyQAer::set_energy(int energy) {
-	this->energy = energy;
-}
 
 void DcaxyQAer::set_in_path(string path) {
 	in_path = path;
@@ -127,7 +108,7 @@ void DcaxyQAer::read_tree(TTree* tree) {
 		refmultCorrUtil->initEvent(branches.refmultn, branches.vz);  //leaves.ref_multn->GetValue(), (double)leaves.vz->GetValue());
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
-		if(cent9_corr < cent_min) { continue; }
+		if(cent9_corr < pars.cent_min) { continue; }
 
 		unsigned event_id = branches.event_id;  //leaves.event_id->GetValue();
 		float dca_xy_avg = branches.dca_xy_avg;  //leaves.dca_xy_avg->GetValue();
@@ -212,7 +193,7 @@ void DcaxyQAer::analyze_runs() {
 		dca_xy_run_err.push_back(run.second[2]);
 	}
 
-	out_file = new TFile((out_path+"Dca_xy_qa_"+to_string(energy)+"_cent_"+to_string(cent_min)+"-8.root").data(), "RECREATE");
+	out_file = new TFile((qa_path+"Dca_xy_qa_"+to_string(energy)+"_cent_"+to_string(pars.cent_min)+"-8.root").data(), "RECREATE");
 	out_file->cd();
 
 	plot_run(run_num, dca_xy_run_avg, dca_xy_run_err, run_indexes);
@@ -251,7 +232,7 @@ void DcaxyQAer::analyze_runs() {
 				num_7sig_events++;
 			}
 			sigmas = (event.second.first - run_avg) / set_err;
-			if(fabs(sigmas) < n_sigma_fit) {
+			if(fabs(sigmas) < pars.n_sigma_fit) {
 				event_ids_fit.push_back(event.first);
 				dca_xy_val_fit.push_back(event.second.first);
 				dca_xy_err_fit.push_back(event.second.second);
@@ -264,7 +245,7 @@ void DcaxyQAer::analyze_runs() {
 
 		TF1 lin_fit(("Run"+run_str+"lin_fit").data(), "pol1", event_ids.front(), event_ids.back());
 		lin_fit.SetLineColor(kBlue);
-		if((int)event_ids_fit.size() > min_points_fit) {
+		if((int)event_ids_fit.size() > pars.min_points_fit) {
 			TGraphErrors fit_graph((int)event_ids_fit.size(), event_ids_fit.data(), dca_xy_val_fit.data(), 0, dca_xy_err_fit.data());
 			fit_graph.Fit(&lin_fit, "NQ");
 		} else {
@@ -273,7 +254,7 @@ void DcaxyQAer::analyze_runs() {
 
 		vector<vector<pair<int, int>>> mv_avg_bad_ranges;
 
-		for(pair<int, pair<float, float>> mv_avg_num:mv_avg_pars) {
+		for(pair<int, pair<float, float>> mv_avg_num:pars.mv_avg_pars) {
 			pair<vector<float>, vector<float>> mv_avg = moving_average(event_ids, dca_xy_val, mv_avg_num.first);
 			float sigmas_thresh = -convert_sigmas(-mv_avg_num.second.first, mv_avg_num.first);
 			float sigmas_relax = -convert_sigmas(-mv_avg_num.second.second, mv_avg_num.first);
@@ -296,7 +277,7 @@ void DcaxyQAer::analyze_runs() {
 		}
 		run_dir->cd();
 
-		for(pair<int, pair<float, float>> mv_avg_num:mv_avg_pars) {  // Huge waste just to get bad run status on TDirectory name but apparently faster than available options to rename TDirectory
+		for(pair<int, pair<float, float>> mv_avg_num:pars.mv_avg_pars) {  // Huge waste just to get bad run status on TDirectory name but apparently faster than available options to rename TDirectory
 			pair<vector<float>, vector<float>> mv_avg = moving_average(event_ids, dca_xy_val, mv_avg_num.first);
 			float sigmas_thresh = -convert_sigmas(-mv_avg_num.second.first, mv_avg_num.first);
 			float sigmas_relax = -convert_sigmas(-mv_avg_num.second.second, mv_avg_num.first);
@@ -330,7 +311,7 @@ void DcaxyQAer::analyze_runs() {
 
 
 void DcaxyQAer::make_proton_plots() {
-	out_file = new TFile((out_path+"Dca_xy_qa_"+to_string(energy)+"_cent_"+to_string(cent_min)+"-8.root").data(), "UPDATE");
+	out_file = new TFile((qa_path+"Dca_xy_qa_"+to_string(energy)+"_cent_"+to_string(pars.cent_min)+"-8.root").data(), "UPDATE");
 	out_file->cd();
 
 	TDirectory *proton_dir = out_file->mkdir("Proton_Plots");
@@ -367,12 +348,12 @@ void DcaxyQAer::make_proton_plots() {
 
 	map<int, TF1> pre_slice_fits;
 	for(pair<int, TH1F> slice:pre_slices) {
-		if(slice.second.GetEntries() < min_fit_entries) { continue; }
+		if(slice.second.GetEntries() < pars.min_fit_entries) { continue; }
 		float mean = slice.second.GetMean();
 //		float sd = slice.second.GetStdDev();
 		float max_count = slice.second.GetMaximum();
-		float first_fit_bin = slice.second.GetBinCenter(slice.second.FindFirstBinAbove(min_fit_count)-2);
-		float last_fit_bin = slice.second.GetBinCenter(slice.second.FindLastBinAbove(min_fit_count)+2);
+		float first_fit_bin = slice.second.GetBinCenter(slice.second.FindFirstBinAbove(pars.min_fit_count)-2);
+		float last_fit_bin = slice.second.GetBinCenter(slice.second.FindLastBinAbove(pars.min_fit_count)+2);
 		cout << slice.first << " protons  |  First bin: " << first_fit_bin << "  |  Last bin: " << last_fit_bin << endl;
 		pre_slice_fits[slice.first] = TF1((to_string(energy)+"GeV_"+to_string(slice.first)+"_Protons_sDCAxy_Slice_Fit").data(),
 				"gaus", first_fit_bin, last_fit_bin);
@@ -416,7 +397,7 @@ void DcaxyQAer::make_proton_plots() {
 
 bool DcaxyQAer::check_bad_run(float run_avg) {
 	float sigmas = (run_avg - set_avg) / set_err;
-	if(fabs(sigmas) > bad_run_sigmas[energy]) {
+	if(fabs(sigmas) > pars.bad_run_sigmas[energy]) {
 		return true;
 	} else { return false; }
 }
@@ -435,7 +416,7 @@ vector<pair<int, int>> DcaxyQAer::get_npt_bad_ranges(const pair<vector<float>, v
 				sigmas_check = (mv_avg.second[low] - lin_fit.Eval(mv_avg.first[low])) / sigma;
 			}
 			// Check if low is the first event or within tolerance of the first event
-			if(low == 0 || mv_avg.first[low] - range_comb_tol <= 0) {
+			if(low == 0 || mv_avg.first[low] - pars.range_comb_tol <= 0) {
 				low = 0;
 			} else { low = floor(mv_avg.first[low]); }
 
@@ -446,7 +427,7 @@ vector<pair<int, int>> DcaxyQAer::get_npt_bad_ranges(const pair<vector<float>, v
 				sigmas_check = (mv_avg.second[high] - lin_fit.Eval(mv_avg.first[high])) / sigma;
 			}
 			// Check if high is the last event or within tolerance of the last event
-			if(high >= (int)mv_avg.second.size() || mv_avg.first[high] + range_comb_tol >= mv_avg.first.back()) {
+			if(high >= (int)mv_avg.second.size() || mv_avg.first[high] + pars.range_comb_tol >= mv_avg.first.back()) {
 				high = numeric_limits<int>::max();  // If last point then set to max integer.
 				i = 1 + (int)mv_avg.second.size();  // Want to break at end of loop
 			} else {
@@ -482,7 +463,7 @@ vector<pair<int, int>> DcaxyQAer::combine_ranges(const vector<vector<pair<int, i
 	int end_index = all_ranges[0].second;
 	for(pair<int, int> &range:all_ranges) {
 		if(end_index == numeric_limits<int>::max()) { break; }
-		if(range.first <= end_index + range_comb_tol) {
+		if(range.first <= end_index + pars.range_comb_tol) {
 			if(range.second > end_index) { end_index = range.second; }
 		} else {
 			combined_ranges.push_back(make_pair(start_index, end_index));
@@ -554,10 +535,10 @@ void DcaxyQAer::plot_run(vector<float> &run_num, vector<float> &dca_xy_run_avg, 
 	avg_index_dataset.SetParameter(0, set_avg);
 	avg_index_dataset.SetLineColor(kGreen+2); avg_index_dataset.Draw("Same");
 	TF1 sig_low_cut_index_dataset((energy_str + "GeV_sig_low_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
-	sig_low_cut_index_dataset.SetParameter(0, set_avg - bad_run_sigmas[energy] * set_err);
+	sig_low_cut_index_dataset.SetParameter(0, set_avg - pars.bad_run_sigmas[energy] * set_err);
 	sig_low_cut_index_dataset.SetLineColor(kOrange+7); sig_low_cut_index_dataset.Draw("Same");
 	TF1 sig_high_cut_index_dataset((energy_str + "GeV_sig_high_3_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
-	sig_high_cut_index_dataset.SetParameter(0, set_avg + bad_run_sigmas[energy] * set_err);
+	sig_high_cut_index_dataset.SetParameter(0, set_avg + pars.bad_run_sigmas[energy] * set_err);
 	sig_high_cut_index_dataset.SetLineColor(kOrange+7); sig_high_cut_index_dataset.Draw("Same");
 	TF1 sig_low_7_index_dataset((energy_str + "GeV_sig_low_7_index_dataset").data(), "[0]", can_index_dataset.GetUxmin(), can_index_dataset.GetUxmax());
 	sig_low_7_index_dataset.SetParameter(0, set_avg - 7 * set_err);
@@ -568,7 +549,7 @@ void DcaxyQAer::plot_run(vector<float> &run_num, vector<float> &dca_xy_run_avg, 
 	TLegend leg_index_dataset;
 	leg_index_dataset.SetBorderSize(0); leg_index_dataset.SetFillStyle(0);
 	leg_index_dataset.AddEntry(&avg_index_dataset, "Set Average", "l");
-	leg_index_dataset.AddEntry(&sig_low_cut_index_dataset, ("Set Avg +- " + to_string(bad_run_sigmas[energy]) + " sigma").data(), "l");
+	leg_index_dataset.AddEntry(&sig_low_cut_index_dataset, ("Set Avg +- " + to_string(pars.bad_run_sigmas[energy]) + " sigma").data(), "l");
 	leg_index_dataset.AddEntry(&sig_low_7_index_dataset, "Set Avg +- 7 sigma", "l");
 	leg_index_dataset.Draw();
 	can_index_dataset.SetGrid();
@@ -678,13 +659,13 @@ void DcaxyQAer::plot_final(const vector<float> &event_ids, const vector<float> &
 	TF1 sig_high_7((energy_str + "GeV_sig_high_7_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
 	sig_high_7.SetParameter(0, run_avg + 7 * set_err); sig_high_7.SetLineColor(kOrange+9); sig_high_7.Draw("Same");
 	TF1 sig_low_fit((energy_str + "GeV_sig_low_fit_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
-	sig_low_fit.SetParameter(0, run_avg - n_sigma_fit * set_err); sig_low_fit.SetLineColor(kOrange+7); sig_low_fit.Draw("Same");
+	sig_low_fit.SetParameter(0, run_avg - pars.n_sigma_fit * set_err); sig_low_fit.SetLineColor(kOrange+7); sig_low_fit.Draw("Same");
 	TF1 sig_high_fit((energy_str + "GeV_sig_high_fit_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
-	sig_high_fit.SetParameter(0, run_avg + n_sigma_fit * set_err); sig_high_fit.SetLineColor(kOrange+7); sig_high_fit.Draw("Same");
+	sig_high_fit.SetParameter(0, run_avg + pars.n_sigma_fit * set_err); sig_high_fit.SetLineColor(kOrange+7); sig_high_fit.Draw("Same");
 	TF1 run_cut_low((energy_str + "GeV_run_cut_low_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
-	run_cut_low.SetParameter(0, run_avg - bad_run_sigmas[energy] * set_err); run_cut_low.SetLineColor(kRed); run_cut_low.Draw("Same");
+	run_cut_low.SetParameter(0, run_avg - pars.bad_run_sigmas[energy] * set_err); run_cut_low.SetLineColor(kRed); run_cut_low.Draw("Same");
 	TF1 run_cut_high((energy_str + "GeV_run_cut_high_Run_"+run_str).data(), "[0]", can.GetUxmin(), can.GetUxmax());
-	run_cut_high.SetParameter(0, run_avg + bad_run_sigmas[energy] * set_err); run_cut_high.SetLineColor(kRed); sig_high_fit.Draw("Same");
+	run_cut_high.SetParameter(0, run_avg + pars.bad_run_sigmas[energy] * set_err); run_cut_high.SetLineColor(kRed); sig_high_fit.Draw("Same");
 
 	TLegend leg;
 	leg.SetBorderSize(0); leg.SetFillStyle(0);
@@ -692,87 +673,13 @@ void DcaxyQAer::plot_final(const vector<float> &event_ids, const vector<float> &
 	leg.AddEntry(&avg_run, "Run Average", "l");
 	leg.AddEntry(&lin_fit, "Linear Baseline", "l");
 	leg.AddEntry(&sig_low_7, "Run Avg +- 7 sigma", "l");
-	leg.AddEntry(&sig_low_fit, ("Fit Range Run Avg +-" + to_string(n_sigma_fit) + " sigma").data(), "l");
-	leg.AddEntry(&run_cut_low, ("Bad Run Boundary Run Avg +-" + to_string(bad_run_sigmas[energy]) + " sigma").data(), "l");
+	leg.AddEntry(&sig_low_fit, ("Fit Range Run Avg +-" + to_string(pars.n_sigma_fit) + " sigma").data(), "l");
+	leg.AddEntry(&run_cut_low, ("Bad Run Boundary Run Avg +-" + to_string(pars.bad_run_sigmas[energy]) + " sigma").data(), "l");
 	leg.Draw();
 	can.SetGrid();
 	can.Write();
 
 	if(mtx) mtx->unlock();
-}
-
-
-void DcaxyQAer::write_bad_dca_file() {
-	if(!check_path(out_path)) { cout << "Can't access path: " << out_path << " Skipping following read/write." << endl; return; }
-
-	string out_name = out_path + to_string(energy) + "GeV" + out_file_suf;
-	ofstream out_txt(out_name);
-	if(!out_txt.is_open()) { cout << "Could not open " << out_name << " Not writing." << endl; return; }
-	out_txt << energy << "GeV Bad DcaXY Runs (run average dca_xy greater than " << bad_run_sigmas[energy] << " sigma from set average): " << endl;
-	if(bad_runs.size() > 0) {
-		bool first = true;
-		for(int run:bad_runs) {
-			if(!first) { out_txt << " " << flush; }
-			out_txt << run;
-			first = false;
-		}
-	}
-	out_txt << endl << endl;
-
-	out_txt << "Bad Ranges:";
-	for(pair<int, vector<pair<int, int>>> run:bad_ranges) {
-		out_txt << endl << run.first << "\t" << flush;
-		bool first = true;
-		for(pair<int, int> range:run.second) {
-			if(!first) { out_txt << "\t" << flush; }
-			out_txt << "[ " << range.first << " , " << range.second << " ]" << flush;
-			first = false;
-		}
-	}
-
-	out_txt.close();
-}
-
-
-void DcaxyQAer::read_bad_dca_file() {
-	if(!check_path(out_path)) { cout << "Can't access path: " << out_path << " Skipping following read/write." << endl; return; }
-
-	string in_name = out_path + to_string(energy) + "GeV" + out_file_suf;
-	ifstream in_txt(in_name);
-	if(!in_txt.is_open()) { cout << "Could not open " << in_name << " Not reading." << endl; return; }
-
-	map<int, vector<pair<int, int>>> bad_ranges_read;
-	vector<int> bad_runs_read;
-	string line;
-	int line_num = 1;
-	while(getline(in_txt, line)) {
-		if(line_num == 2) {  // Bad runs line
-			vector<string> bad_run_strs = split(line, ' ');
-			for(string &run:bad_run_strs) {
-				bad_runs_read.push_back(stoi(run));
-			}
-		}
-
-		else if(line_num >= 5) {  // Bad event ranges
-			vector<string> bad_run_range_str = split(line, '\t');
-			if(bad_run_range_str.size() >= 2) {
-				int run = stoi(bad_run_range_str[0]);
-				for(int range_index = 1; range_index < (int)bad_run_range_str.size(); range_index++) {
-					vector<string> bad_range_str = split(bad_run_range_str[range_index], ' ');
-					if(bad_range_str.size() == 5) {
-						bad_ranges_read[run].push_back(make_pair(stoi(bad_range_str[1]), stoi(bad_range_str[3])));
-					} else { cout << "Bad range run read: " << bad_run_range_str[range_index] << endl; }
-				}
-			} else { cout << "Bad range line read" << endl; }
-		}
-
-		line_num++;
-	}
-
-	in_txt.close();
-
-	if(bad_runs_read.size() > 0) { bad_runs = bad_runs_read; }
-	if(bad_ranges_read.size() > 0) { bad_ranges = bad_ranges_read; }
 }
 
 

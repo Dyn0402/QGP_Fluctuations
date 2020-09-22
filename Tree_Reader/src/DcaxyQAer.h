@@ -37,23 +37,20 @@
 #include "file_io.h"
 #include "../StRefMultCorr/CentralityMaker.h"
 #include "../StRefMultCorr/StRefMultCorr.h"
+#include "DcaxyQABase.h"
 #include "TreeBranches.h"
 #include "Event.h"
 #include "Track.h"
-#include "TreeCutsBase.h"
+#include "TreeCuts.h"
 #include "PileUpQAer.h"
 
 using namespace std;
 
 
-// Not thread safe. Crashes when two threads run analyze_runs() method simultaneously.
-// Think it's probably to do with non-unique ROOT object names. Annoying.
-
-
 pair<vector<float>, vector<float>> moving_average(const vector<float> &x, const vector<float> &y, int n_point);
 float convert_sigmas(float old_sigma, int new_points, int old_points=1);
 
-class DcaxyQAer {
+class DcaxyQAer : public DcaxyQABase {
 public:
 	// Structors
 	DcaxyQAer(int energy);
@@ -61,11 +58,8 @@ public:
 	~DcaxyQAer();
 
 	// Getters
-	vector<int> get_bad_runs();
-	map<int, vector<pair<int, int>>> get_bad_ranges();
 
 	// Setters
-	void set_energy(int energy);
 	void set_in_path(string path);
 
 	// Doers
@@ -74,12 +68,9 @@ public:
 private:
 	// Attributes
 	mutex *mtx = NULL;  // To lock non-thread-safe graphics (TCanvas) processes
-	TreeCutsBase cut;
+	TreeCuts cut;
 
-	int energy;
 	string in_path = "/media/ucla/Research/BES1_Trees/";
-	string out_path = "/home/dylan/Research/Dca_xy_QA/";
-	string out_file_suf = "_Bad_DCA_Events_Ranges.txt";
 	TFile *out_file;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
@@ -91,18 +82,9 @@ private:
 	StRefMultCorr *refmultCorrUtil;
 	tree_branches branches;
 
-	map<int, pair<float, float>> mv_avg_pars {{1, {5.0, 0.2}}, {5, {5.5, 2.0}}, {10, {8.0, 4.0}}};//, {20, {9.5, 1.0}}, {30, {12.0, 1.5}}};
 	map<int, int> mv_avg_stats;
-	float n_sigma_fit = 2.0;
-	int cent_min = 6;
-	int range_comb_tol = 1000;
-	int min_points_fit = 4;
-	pair<float, float> y_range {-1.5, 0.3};
-	map<int, float> bad_run_sigmas {{7, 3.0}, {11, 3.0}, {14, 3.0}, {19, 4.5}, {27, 3.0}, {39, 3.0}, {54, 3.0}, {62, 4.0}, {200, 3.0}};
 
-	int min_fit_entries = 100;
-	int min_fit_count = 3;
-
+	pair<float, float> y_range = {-1.5, 0.3};
 	int n_plot_points = 5000;
 
 	// Data Containers
@@ -110,8 +92,7 @@ private:
 	map<int, vector<double>> dca_run;  // [run]{dca_xy_run_count, dca_xy_run_sum, dca_xy_run_2nd_raw_moment}  std::vector<> default value initialized to 0
 	map<int, map<int, int>> protons;  // [run][event_id]{number of protons}
 	map<int, map<int, int>> centralities;  // [run][event_id]{event centrality}
-	vector<int> bad_runs;
-	map<int, vector<pair<int, int>>> bad_ranges;
+
 	double set_avg = 0;
 	double set_err = 0;
 	int set_count = 0;
@@ -122,9 +103,6 @@ private:
 	void set_branches(TTree *tree);
 	void analyze_runs();
 	void make_proton_plots();
-
-	void write_bad_dca_file();
-	void read_bad_dca_file();
 
 	bool check_bad_run(float run_avg);
 

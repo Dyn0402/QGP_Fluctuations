@@ -130,6 +130,7 @@ public:
 	void set_particle(string particle);
 	void set_particle_dist_hist_max(int max);
 	void set_ampt_particle_pid(vector<int> pid);
+	void set_file_list(vector<string> *file_list);
 
 	// Doers
 	void read_trees();
@@ -155,6 +156,8 @@ public:
 private:
 	// Attributes
 	mutex *mtx = NULL;
+	vector<string> *file_list;
+	int file_wait_sleep = 1;  // Seconds to wait for path to clear up
 
 	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
 	StRefMultCorr *refmultCorrUtil;

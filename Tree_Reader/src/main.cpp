@@ -53,8 +53,8 @@ void res_calc();
 void res_calc_debug();
 void speed_test_class();
 void ref_mult_test();
-void ampt_cent_test();
-void ampt_cent_b_corr();
+void ampt_cent_opt();
+void ampt_cent_make();
 void dca_xy_qa(int energy, mutex *mtx);
 void run_dca_xy_qa();
 void pile_up_qa(int energy, mutex *mtx);
@@ -62,7 +62,7 @@ void run_pile_up_qa();
 void tchain_test();
 void run_tchain();
 
-void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx);
+void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -74,11 +74,11 @@ int main(int argc, char** argv) {
 //	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
 //	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
 //	read_class();
-	run_dca_xy_qa();
-//	run_pile_up_qa();
+//	run_dca_xy_qa();
+	run_pile_up_qa();
 //	tchain_test();
-//	ampt_cent_b_corr();
-//	ampt_cent_test();
+//	ampt_cent_opt();
+//	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -99,12 +99,13 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
-	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios_dca1", {0, 2}}, {"eta1_n1ratios_dca3", {0, 2}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios_dca1", {0, 2}}, {"Ampt_eta05_n1ratios_dca3", {0, 2}}};//, {"Ampt_eta1_n1ratios_dca1", {0, 2}}, {"Ampt_eta1_n1ratios_dca3", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {3, 4}}, {"eta05_n1ratios_dca3", {3, 4}}};
+	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios_dca1", {0, 4}}, {"Ampt_eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta1_n1ratios_dca1", {0, 4}}, {"Ampt_eta1_n1ratios_dca3", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"test", {0, 2}}};
 
-	vector<int> energy_list {62, 7};  // {39, 62, 27, 19, 11, 7};
+	vector<int> energy_list {62, 27, 19, 11, 7};
 
-	int set_sleep = 60;
+	int set_sleep = 5;
 	int energy_sleep = 1;
 
 	int jobs = 0;
@@ -115,36 +116,47 @@ void read_class() {
 	}
 	jobs *= energy_list.size();
 
-	mutex *mtx;
+	mutex *mtx = new mutex;
+	vector<string> *file_list = new vector<string>;
 	ROOT::EnableThreadSafety();
 	{
 		int job_num = 0;
-		ThreadPool pool(12);
+		ThreadPool pool(11);
 
-		for(pair<string, pair<int, int>> set_pair:set_pairs) {
-			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
-				string set_dir = set_pair.first + to_string(set_num) + "/";
-				for(int energy:energy_list) {
+		for(int energy:energy_list) {
+			for(pair<string, pair<int, int>> set_pair:set_pairs) {
+				for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
+					string set_dir = set_pair.first + to_string(set_num) + "/";
 					cout << endl << "Queueing " << set_dir << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs, mtx);
-					this_thread::sleep_for(chrono::seconds(energy_sleep));
+					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs, mtx, file_list);
+					this_thread::sleep_for(chrono::seconds(set_sleep));
 				}
-				this_thread::sleep_for(chrono::seconds(set_sleep));
 			}
+			this_thread::sleep_for(chrono::seconds(energy_sleep));
 		}
 	}
 }
 
 
-void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx) {
+void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
 	string base_path = "/home/dylan/Research/";
 	string in_base_path = "/media/ucla/Research/";
 	string out_base_path = base_path;
 	int ref = 3;
 
-	string in_path = in_base_path + "BES1_Trees/";  // "AMPT_Trees/";  //"BES1_Trees/";
-	string out_dir = out_base_path + "Data/";  // "Data_Ampt/";  //"Data/";
-	string mix_out_dir = out_base_path + "Data_Mix/";  // "Data_Ampt_Mix/";  //"Data_Mix/";
+	string in_path = in_base_path;
+	string out_dir = out_base_path;
+	string mix_out_dir = out_base_path;
+
+	if(in_string(set_name, "Ampt")) {
+		in_path += "AMPT_Trees/";
+		out_dir += "Data_Ampt/";
+		mix_out_dir += "Data_Ampt_Mix/";
+	} else {
+		in_path += "BES1_Trees/";
+		out_dir += "Data/";
+		mix_out_dir += "Data_Mix/";
+	}
 
 	vector<int> divs {300, 240, 180, 120, 90, 72, 60};
 //	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
@@ -163,6 +175,8 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	reader.set_qa_name("QA_");
 	reader.set_set_name(set_name + to_string(set_num));
 	reader.set_tree_name("tree");
+
+	reader.set_file_list(file_list);
 
 	if(in_string(set_name, "EP_Rotate"))  { reader.set_event_plane(true); }
 	else { reader.set_event_plane(false); }
@@ -243,12 +257,6 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	else if(in_string(set_name, {"Sim", "Flat500"}, true)) { reader.sim.set_flat_dist(500); reader.set_particle_dist_hist_max(500); }
 	else if(in_string(set_name, {"Sim", "Flat100"}, true)) { reader.sim.set_flat_dist(100); reader.set_particle_dist_hist_max(100); }
 
-	if(in_string(set_name, "Ampt")) {
-//		reader.ampt_cent = AmptCentralityMaker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref" + to_string(ref));
-//		map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
-//		reader.ampt_cent.set_max_b(opt_bmax[energy]);
-	}
-
 	if(in_string(set_name, "p+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({2212}); }
 	if(in_string(set_name, "p-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-2212}); }
 	if(in_string(set_name, "ptotal")) { reader.set_check_charge(false); }
@@ -303,55 +311,36 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 }
 
 
-void ampt_cent_test() {
-	int energy = 7;
-	AmptCentralityMaker cent_maker("/media/dylan/SSD_Storage/Research/Trees_Ampt/" + to_string(energy) + "GeV_Cent/", "ref3");
-	map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
-	cent_maker.set_max_b(opt_bmax[energy]);
-	cout << cent_maker.get_cent_bin9(200) << endl;
-	vector<int> cent_ref3_9bin_edges;
-	for(auto edge:cent_maker.get_ref_bin20_edges()) { cout << edge << ", "; }
-	cout << endl;
-	for(auto edge:cent_maker.get_ref_bin16_edges()) { cout << edge << ", "; }
+void ampt_cent_opt() {
+	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/";
+	string star_data_path = "/media/ucla/Research/BES1_Trees/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/";
+	string ref_quantity = "ref3";
+	AmptCentralityMaker cent_maker;
+
+	cent_maker.set_min_bias_path(min_bias_path);
+	cent_maker.set_star_data_path(star_data_path);
+	cent_maker.set_qa_path(qa_path);
+	cent_maker.set_mult_quantity(ref_quantity);
+
+	cent_maker.run_b_opt({7, 11, 19, 27, 39, 62});
 }
 
-
-void ampt_cent_b_corr() {
-	vector<int> energies {7, 11, 19, 27, 39, 62};
-	int cent = 8;
-	for(int energy:energies) {
-		string in_path = "/media/ucla/Research/AMPT_Trees/min_bias/" + to_string(energy) + "GeV/";
-		AmptCentralityMaker cent_maker(in_path, "ref3");
-		map<int, float> opt_bmax {{7, 14.75}, {11, 14.5312}, {19, 14.3438}, {27, 14.2969}, {39, 13.5312}, {62, 13.6094}};
-		cent_maker.set_max_b(opt_bmax[energy]);
-
-		string ampt_path = "/media/ucla/Research/AMPT_Trees/min_bias/" + to_string(energy) + ".root";
-
-		TFile *ampt_file = new TFile(ampt_path.data(), "READ");
-		TTree *ampt_tree = (TTree*)ampt_file->Get("tree");
-		TH1D *ref3_dist = new TH1D(("ref3_dist_"+to_string(energy)+"_"+to_string(cent)).data(), "Ref3 Distribution", 801, -0.5, 800.5);
-		ref3_dist->SetLineColor(kBlue);
-		TH1D *b_dist = new TH1D(("b_dist_"+to_string(energy)+"_"+to_string(cent)).data(), "Impact Parameter Distribution", 201, -0.05, 20.05);
-		b_dist->SetLineColor(kRed);
-		TLeaf *ref3_leaf = ampt_tree->GetLeaf("refmult3");
-		TLeaf *b_leaf = ampt_tree->GetLeaf("imp");
-		int event_index = 0;
-		while(ampt_tree->GetEntry(event_index)) {
-			if(cent_maker.get_cent_bin9(ref3_leaf->GetValue()) == cent) {
-				ref3_dist->Fill(ref3_leaf->GetValue());
-				b_dist->Fill(b_leaf->GetValue());
-			}
-			event_index++;
-		}
-
-		TFile *out = new TFile("/home/dylan/Research/Results/ampt_cent_b_corr.root", "UPDATE");
-		ref3_dist->Write();
-		b_dist->Write();
-		ampt_file->Close();
-		out->Close();
+void ampt_cent_make() {
+	vector<int> energy_list {7, 11, 19, 27, 39, 62};
+	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/";
+	string ref_quantity = "ref3";
+	for(int energy:energy_list) {
+		AmptCentralityMaker cent_maker(energy, min_bias_path, qa_path, ref_quantity);
+		cout << "Make energy " << energy << "GeV" << endl;
+		cent_maker.make_centrality(true);
+//		cout << "Read energy " << energy << "GeV" << endl;
+//		vector<int> edges = cent_maker.get_ref_bin9_edges();
+//		for(int edge:edges) { cout << edge << " " << flush; }
+//		cout << endl;
 	}
 }
-
 
 void res_calc() {
 	int events = 1000;
@@ -649,7 +638,7 @@ void dca_xy_qa(int energy, mutex *mtx) {
 }
 
 void run_dca_xy_qa() {
-	vector<int> energies {7, 62}; //, 11, 19, 27, 39, 62};
+	vector<int> energies {7, 11, 19, 27, 39, 62};
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();
