@@ -32,6 +32,10 @@ using namespace std;
 
 pair<double, double> rotate_xy(double x, double y, double angle);
 
+double gaus_exp_r(double *x, double *par);  // par = {amplitude, x_bar, sigma, k}
+double woods_saxon(double *x, double *par);  // par = {amplitude, width, x_bar}
+double gexp_r_plus_ws(double *x, double *par);  // par = {amplitude, x_bar, sigma, k, ws_amp, ws_width, ws_x}
+
 
 class PileUpQAer {
 public:
@@ -67,8 +71,13 @@ private:
 	string orig_btof_ref_name = "btof_ref_original_";
 	string orig_btof_ref_title = "BTof Match vs Reference Multiplicity ";
 
-	float sigmas = 3.0;
-	int min_points = 250;
+	int can_x_pix = 955;
+	int can_y_pix = 910;
+
+	float sigmas_left = 3.0;
+	float sigmas_right = 3.0;
+	int min_points = 350;
+	int min_bins = 15;
 
 	int min_btof = 6;
 
@@ -77,7 +86,7 @@ private:
 
 	int n_plot_points = 5000;
 
-	int orig_btof_bins = 301;
+	int orig_btof_bins = 326;
 	float orig_btof_low = -0.5;
 	float orig_btof_high = orig_btof_low + orig_btof_bins;
 

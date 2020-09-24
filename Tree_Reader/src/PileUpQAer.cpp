@@ -9,6 +9,24 @@
 
 #include "PileUpQAer.h"
 
+double gaus_exp_r(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k}
+	double x_prime = (x[0] - par[1]) / par[2];
+	if(x_prime <= -par[3]) {
+		return par[0] * exp(-pow(x_prime, 2) / 2);
+	} else {
+		return par[0] * exp(pow(par[3], 2) / 2 + par[3] * x_prime);
+	}
+}
+
+double woods_saxon(double *x, double *par) {  // par = {amplitude, width, x_bar}
+	return par[0] / (1 + exp(-par[1] * (x[0] - par[2])));
+}
+
+double gexp_r_plus_ws(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k, ws_amp, ws_width, ws_x}
+	double *par_ws = par + 4;
+	return gaus_exp_r(x, par) + woods_saxon(x, par_ws);
+}
+
 
 // Structors
 PileUpQAer::PileUpQAer(int energy) {
@@ -214,30 +232,72 @@ void PileUpQAer::rotate_dist() {
 	}
 
 	map<int, TF1> slice_fits;
+	map<int, TF1> slice_fits2;
 	vector<double> y_upper;
 	vector<double> y_lower;
 	vector<double> upper_points;
 	vector<double> lower_points;
 	vector<int> erase_list;
 	for(pair<int, TH1F> slice:slices) {
-		if(slice.second.GetEntries() < min_points) { erase_list.push_back(slice.first); }
+		int filled_bins = 0;
+		for(int bin = 0; bin<slice.second.GetNbinsX(); bin++) {
+			if(slice.second.GetBinContent(bin) > 0) { filled_bins++; }
+		}
+		if(slice.second.GetEntries() < min_points || filled_bins < min_bins) { erase_list.push_back(slice.first); }
 		else {
 			string title = to_string(energy) + "GeV Slice Fit " + to_string(slice.first * rot_slice_height) + " to " + to_string((slice.first + 1) *rot_slice_height);
 			double lower_bound = slice.second.GetBinCenter(slice.second.FindFirstBinAbove());
 			double upper_bound = slice.second.GetBinCenter(slice.second.FindLastBinAbove());
-			slice_fits[slice.first] = TF1(title.data(), "gaus(0)+[3]/(1+exp(-[4]*(x-[5])))", lower_bound, upper_bound);
-			slice_fits[slice.first] = TF1(title.data(), "gaus(0)+([3]*exp()+[])/(1+exp(-[4]*(x-[5])))", lower_bound, upper_bound);
-			slice_fits[slice.first].SetParameters(slice.second.GetMaximum(), slice.second.GetMean(), slice.second.GetStdDev(), 0, 1, slice.second.GetMean() + 0.2*(upper_bound - lower_bound));
-			slice_fits[slice.first].SetParLimits(3, 0, slice.second.GetMaximum() / 100);
-//			slice_fits[slice.first].SetParLimits(4, 0, 1000);
-			slice_fits[slice.first].SetParLimits(5, lower_bound, upper_bound);
+			TF1 gaus_init(("gaus_init_"+title).data(), "gaus", lower_bound, upper_bound);
+			slice.second.Fit(&gaus_init, "NQR");
+			gaus_init.SetRange(lower_bound, gaus_init.GetParameter(1));
+			slice.second.Fit(&gaus_init, "NQR");
+//			TF1 cb_init(("cb_init_"+title).data(), "crystalball", lower_bound, upper_bound);
+//			cb_init.SetParameters(gaus_init.GetParameter(0), gaus_init.GetParameter(1), gaus_init.GetParameter(2), -2, 1);
+//			slice_fits[slice.first] = TF1(title.data(), "crystalball(0)+[5]/(1+exp(-[6]*(x-[7])))", lower_bound, upper_bound);
+//			slice_fits[slice.first].SetParameters(gaus_init.GetParameter(0), gaus_init.GetParameter(1), gaus_init.GetParameter(2), -5, 0.5, gaus_init.GetParameter(0) / 1000, 5, gaus_init.GetParameter(1) + gaus_init.GetParameter(2));
+//			slice_fits[slice.first].SetParLimits(0, 0, slice.second.GetMaximum() * 2);
+//			slice_fits[slice.first].SetParLimits(1, lower_bound, upper_bound);
+//			slice_fits[slice.first].SetParLimits(3, -20, 0);  // Not sure
+//			slice_fits[slice.first].SetParLimits(4, 0, 20);  // Not sure
+//			slice_fits[slice.first].SetParLimits(5, 0.2, gaus_init.GetParameter(0) / 10);
+//			slice_fits[slice.first].SetParLimits(6, 0.1, 100);
+//			slice_fits[slice.first].SetParLimits(7, lower_bound, upper_bound);
+//			slice.second.Fit(&slice_fits[slice.first], "NQR");
+
+			TF1 gaus_exp(("gaus_exp_"+title).data(), gaus_exp_r, lower_bound, upper_bound, 4);
+			gaus_exp.SetParameters(gaus_init.GetParameter(0), gaus_init.GetParameter(1), gaus_init.GetParameter(2), -1);
+			slice.second.Fit(&gaus_exp, "NQR");
+			slice_fits[slice.first] = TF1(title.data(), gexp_r_plus_ws, lower_bound, upper_bound, 7);
+			slice_fits[slice.first].SetParameters(gaus_exp.GetParameter(0), gaus_exp.GetParameter(1), gaus_exp.GetParameter(2), gaus_exp.GetParameter(3), 0.3, 5, gaus_init.GetParameter(1) + gaus_init.GetParameter(2));
+			slice_fits[slice.first].SetParLimits(0, 0, slice.second.GetMaximum() * 2);
+			slice_fits[slice.first].SetParLimits(1, lower_bound, upper_bound);
+			slice_fits[slice.first].SetParLimits(2, gaus_init.GetParameter(2) / 4, gaus_init.GetParameter(2) * 4);
+//			slice_fits[slice.first].SetParLimits(3, -1000, -0.1);  // Not sure
+			slice_fits[slice.first].SetParLimits(4, 0.2, gaus_init.GetParameter(0) / 10);
+			slice_fits[slice.first].SetParLimits(5, 0.1, 100);
+			slice_fits[slice.first].SetParLimits(6, lower_bound, upper_bound);
 			slice.second.Fit(&slice_fits[slice.first], "NQR");
+
+			slice_fits2[slice.first] = TF1(title.data(), "gaus(0)+([6]*exp(-[7]*(x-[8]))+[3])/(1+exp(-[4]*(x-[5])))", lower_bound, upper_bound);
+			slice_fits2[slice.first].SetParameters(gaus_init.GetParameter(0), gaus_init.GetParameter(1), gaus_init.GetParameter(2), 0.21, 5, gaus_init.GetParameter(1) + gaus_init.GetParameter(2), 1, 5, gaus_init.GetParameter(1) + gaus_init.GetParameter(2));
+			slice_fits2[slice.first].SetParLimits(0, 0, slice.second.GetMaximum() * 2);
+			slice_fits2[slice.first].SetParLimits(1, lower_bound, upper_bound);
+			slice_fits2[slice.first].SetParLimits(3, 0.2, gaus_init.GetParameter(0) / 10);
+			slice_fits2[slice.first].SetParLimits(4, 0, 1000);
+			slice_fits2[slice.first].SetParLimits(5, lower_bound, upper_bound);
+			slice_fits2[slice.first].SetParLimits(6, 0, gaus_init.GetParameter(0) / 10);
+			slice_fits2[slice.first].SetParLimits(7, 0.1, 100);
+			slice_fits2[slice.first].SetParLimits(8, lower_bound, upper_bound);
+			slice.second.Fit(&slice_fits2[slice.first], "NQR");
+
 			double range = upper_bound - lower_bound;
-			slice_fits[slice.first].SetRange(lower_bound - 0.2*range, upper_bound + 0.2*range);
+			slice_fits[slice.first].SetRange(lower_bound - 0.5*range, upper_bound + 0.1*range);
+			slice_fits2[slice.first].SetRange(lower_bound - 0.5*range, upper_bound + 0.1*range);
 
 			double y_point = slice_y_sum[slice.first] / slice.second.GetEntries();
-			double up_point = slice_fits[slice.first].GetParameter(1) - sigmas * slice_fits[slice.first].GetParameter(2);
-			double low_point = slice_fits[slice.first].GetParameter(1) + sigmas * slice_fits[slice.first].GetParameter(2);
+			double up_point = slice_fits[slice.first].GetParameter(1) - sigmas_left * slice_fits[slice.first].GetParameter(2);
+			double low_point = slice_fits[slice.first].GetParameter(1) + sigmas_right * slice_fits[slice.first].GetParameter(2);
 			pair<double, double> up_rotate = rotate_xy(up_point, y_point, -rot_angle);
 			pair<double, double> low_rotate = rotate_xy(low_point, y_point, -rot_angle);
 			y_upper.push_back(up_rotate.second);
@@ -257,7 +317,7 @@ void PileUpQAer::rotate_dist() {
 		double upper_bound = slice.second.GetBinCenter(slice.second.FindLastBinAbove());
 		slice_init_gaus[slice.first] = TF1(title.data(), "gaus", lower_bound, upper_bound);
 		slice.second.Fit(&slice_init_gaus[slice.first], "NQR");
-		upper_bound = slice_init_gaus[slice.first].GetParameter(2);
+		upper_bound = slice_init_gaus[slice.first].GetParameter(1);
 		slice_init_gaus[slice.first].SetRange(lower_bound, upper_bound);
 		slice.second.Fit(&slice_init_gaus[slice.first], "NQR");
 		slice_minus_gaus[slice.first] = slice.second;
@@ -309,14 +369,14 @@ void PileUpQAer::rotate_dist() {
 
 	if(mtx) { mtx->lock(); }
 	{
-		TCanvas orig_can(("Can_"+name).data(), title.data());
+		TCanvas orig_can(("Can_"+name).data(), title.data(), can_x_pix, can_y_pix);
 		btof_ref_hist.Draw("COLZ");
 		lin_fit.Draw("same");
 		orig_can.SetLogz();
 		orig_can.Update();
 		orig_can.Write();
 
-		TCanvas cut_can(("Cut_Can_"+name).data(), title.data());
+		TCanvas cut_can(("Cut_Can_"+name).data(), title.data(), can_x_pix, can_y_pix);
 		btof_ref_hist.Draw("COLZ");
 		lin_fit.Draw("same");
 		upper.Draw("sameL");
@@ -327,7 +387,7 @@ void PileUpQAer::rotate_dist() {
 		cut_can.Update();
 		cut_can.Write();
 
-		TCanvas rot_can(("Rot_Can_"+name).data(), ("Rotated "+title).data());
+		TCanvas rot_can(("Rot_Can_"+name).data(), ("Rotated "+title).data(), can_x_pix, can_y_pix);
 		rotate_btof_ref_hist.Draw("COLZ");
 		rot_can.SetLogz();
 		rot_can.Update();
@@ -336,7 +396,7 @@ void PileUpQAer::rotate_dist() {
 		TDirectory *slice_orig_dir = out_file->mkdir("Slice Original Canvases");
 		slice_orig_dir->cd();
 		for(pair<int, TH1I> slice:orig_slices) {
-			TCanvas slice_orig_can(("Can_"+(string)slice.second.GetName()).data(), slice.second.GetTitle());
+			TCanvas slice_orig_can(("Can_"+(string)slice.second.GetName()).data(), slice.second.GetTitle(), can_x_pix, can_y_pix);
 			slice.second.SetAxisRange(0.9 * slice.second.GetBinCenter(slice.second.FindFirstBinAbove()), 1.1 * slice.second.GetBinCenter(slice.second.FindLastBinAbove()));
 			slice.second.Draw();
 			slice_orig_can.SetLogy();
@@ -344,6 +404,7 @@ void PileUpQAer::rotate_dist() {
 		}
 
 		TDirectory *slice_canvas_dir = out_file->mkdir("Slice Canvases");
+		TDirectory *slice2_canvas_dir = out_file->mkdir("Slice2 Canvases");
 		TDirectory *slice_gaus_dir = out_file->mkdir("Slice Guas Canvases");
 		TDirectory *slice_gaus_sub_dir = out_file->mkdir("Slice Gaus Sub Canvases");
 		TDirectory *slice_prob_dir = out_file->mkdir("Slice Prob Canvases");
@@ -351,58 +412,102 @@ void PileUpQAer::rotate_dist() {
 		TDirectory *slice_dcaz_sd_dir = out_file->mkdir("Dca_z_sd Slice Canvases");
 		for(pair<int, TH1F> slice:slices) {
 			slice_canvas_dir->cd();
-			TCanvas slice_can(("Can_"+(string)slice.second.GetName()).data(), slice.second.GetTitle());
+			TCanvas slice_can(("Can_"+(string)slice.second.GetName()).data(), slice.second.GetTitle(), can_x_pix, can_y_pix);
 
 			slice.second.SetAxisRange(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
 			slice_fits[slice.first].SetNpx(n_plot_points);
-			TF1 gaus("Gaussian", "gaus", slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
-			gaus.SetParameters(slice_fits[slice.first].GetParameter(0), slice_fits[slice.first].GetParameter(1), slice_fits[slice.first].GetParameter(2));
-			gaus.SetNpx(n_plot_points); gaus.SetLineColor(kGreen+2);
+//			TF1 cball("CBall", "crystalball", slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
+//			cball.SetParameters(slice_fits[slice.first].GetParameter(0), slice_fits[slice.first].GetParameter(1), slice_fits[slice.first].GetParameter(2), slice_fits[slice.first].GetParameter(3), slice_fits[slice.first].GetParameter(4));
+//			cball.SetNpx(n_plot_points); cball.SetLineColor(kGreen+2);
+			TF1 gaus_exp("gaus_exp", gaus_exp_r, slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax(), 4);
+			gaus_exp.SetParameters(slice_fits[slice.first].GetParameter(0), slice_fits[slice.first].GetParameter(1), slice_fits[slice.first].GetParameter(2), slice_fits[slice.first].GetParameter(3));
+			gaus_exp.SetNpx(n_plot_points); gaus_exp.SetLineColor(kGreen+2);
 			TF1 bkg("Background", "[0]/(1+exp(-[1]*(x-[2])))", slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
-			bkg.SetParameters(slice_fits[slice.first].GetParameter(3), slice_fits[slice.first].GetParameter(4), slice_fits[slice.first].GetParameter(5));
-//			TF1 bkg("Background", "((x>[3])?[4]:0)", slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
-//			bkg.SetParameters(slice_fits[slice.first].GetParameter(3), slice_fits[slice.first].GetParameter(4));
+			bkg.SetParameters(slice_fits[slice.first].GetParameter(4), slice_fits[slice.first].GetParameter(5), slice_fits[slice.first].GetParameter(6));
 			bkg.SetNpx(n_plot_points); bkg.SetLineColor(kViolet);
 
 			slice.second.Draw();
-//			gaus.Draw("Sames");
-//			bkg.Draw("Sames");
-//			slice_fits[slice.first].Draw("Sames");
+			gaus_exp.Draw("Sames");
+			bkg.Draw("Sames");
+			slice_fits[slice.first].Draw("Sames");
 
+			TPaveText gaus_exp_pars(0.12, 0.65, 0.34, 0.9, "NDC");
+			gaus_exp_pars.AddText("Gaus_Exp Parameters");
+			gaus_exp_pars.AddLine(.0, .8, 1., .8);
+			gaus_exp_pars.AddText(("Amplitude: " + to_string(gaus_exp.GetParameter(0))).data());
+			gaus_exp_pars.AddText(("Mean: " + to_string(gaus_exp.GetParameter(1))).data());
+			gaus_exp_pars.AddText(("Sigma: " + to_string(gaus_exp.GetParameter(2))).data());
+			gaus_exp_pars.AddText(("k: " + to_string(gaus_exp.GetParameter(3))).data());
+			gaus_exp_pars.Draw("Same");
+			TPaveText bkg_pars(0.12, 0.44, 0.34, 0.64, "NDC");
+			bkg_pars.AddText("Woods Saxon Parameters");
+			bkg_pars.AddLine(.0, .75, 1., .75);
+			bkg_pars.AddText(("Amplitude: " + to_string(bkg.GetParameter(0))).data());
+			bkg_pars.AddText(("Center: " + to_string(bkg.GetParameter(2))).data());
+			bkg_pars.AddText(("Width: " + to_string(bkg.GetParameter(1))).data());
+			bkg_pars.Draw("Same");
 			TLegend leg(0.35, 0.2);
 			leg.AddEntry(&slice.second, "Slice Distribution", "l");
 			leg.AddEntry(&slice_fits[slice.first], "Full Fit", "l");
-			leg.AddEntry(&gaus, "Gaussian Contribution", "l");
-			leg.AddEntry(&bkg, "Step Function Contribution", "l");
-//			leg.AddEntry(&bkg, "#frac{A}{1+Exp[-b*(x-x_{0})]} Contribution", "l");
+			leg.AddEntry(&gaus_exp, "Gaus_Exp Contribution", "l");
+			leg.AddEntry(&bkg, "Woods Saxon Contribution", "l");
 			leg.Draw();
-//			TPaveText gaus_pars;
-//			gaus_pars.AddText("Gaussian Parameters");
-//			gaus_pars.AddLine(.0, .5, 1., .5);
-//			gaus_pars.AddText((to_string(gaus.GetParameter(0)) + "#{e}^{-#frac{1}{2}{(#frac{x-" + to_string(gaus.GetParameter(1)) + "}{" + to_string(gaus.GetParameter(2)) + "})}^{2}").data());
-//			gaus_pars.AddText(("Amplitude: " + to_string(gaus.GetParameter(0))).data());
-//			gaus_pars.AddText(("Mean: " + to_string(gaus.GetParameter(1))).data());
-//			gaus_pars.AddText(("Sigma: " + to_string(gaus.GetParameter(2))).data());
-//			gaus_pars.Draw("Same");
-//			TPaveText erf_pars;
-//			erf_pars.AddText("Error Function Parameters");
-//			erf_pars.AddLine(.0, .25, 1., .25);
-//			erf_pars.AddText(("Amplitude: " + to_string(erf.GetParameter(0))).data());
-//			erf_pars.AddText(("Center: " + to_string(erf.GetParameter(1))).data());
-//			erf_pars.AddText(("Width: " + to_string(erf.GetParameter(2))).data());
-//			erf_pars.Draw();
+
 			slice_can.SetLogy();
 			slice_can.Write();
 
+			slice2_canvas_dir->cd();
+			TCanvas slice2_can(("Can2_"+(string)slice.second.GetName()).data(), slice.second.GetTitle(), can_x_pix, can_y_pix);
+
+			slice.second.SetAxisRange(slice_fits2[slice.first].GetXmin(), slice_fits2[slice.first].GetXmax());
+			slice_fits2[slice.first].SetNpx(n_plot_points);
+			TF1 gaus("Gaus", "gaus", slice_fits2[slice.first].GetXmin(), slice_fits2[slice.first].GetXmax());
+			gaus.SetParameters(slice_fits2[slice.first].GetParameter(0), slice_fits2[slice.first].GetParameter(1), slice_fits2[slice.first].GetParameter(2));
+			gaus.SetNpx(n_plot_points); gaus.SetLineColor(kGreen+2);
+			TF1 bkg2("Background", "([3]*exp(-[4]*(x-[5]))+[0])/(1+exp(-[1]*(x-[2])))", slice_fits2[slice.first].GetXmin(), slice_fits2[slice.first].GetXmax());
+			bkg2.SetParameters(slice_fits2[slice.first].GetParameter(3), slice_fits2[slice.first].GetParameter(4), slice_fits2[slice.first].GetParameter(5), slice_fits2[slice.first].GetParameter(6), slice_fits2[slice.first].GetParameter(7), slice_fits2[slice.first].GetParameter(8));
+			bkg2.SetNpx(n_plot_points); bkg2.SetLineColor(kViolet);
+
+			slice.second.Draw();
+			gaus.Draw("Sames");
+			bkg2.Draw("Sames");
+			slice_fits2[slice.first].Draw("Sames");
+
+			TLegend leg2(0.35, 0.2);
+			leg2.AddEntry(&slice.second, "Slice Distribution", "l");
+			leg2.AddEntry(&slice_fits2[slice.first], "Full Fit", "l");
+			leg2.AddEntry(&gaus, "Gaussian Contribution", "l");
+			leg2.AddEntry(&bkg2, "(Const+Exp)*Woods Saxon Contribution", "l");
+			leg2.Draw();
+			TPaveText gaus_pars(0.6, 0.35, 0.95, 0.5, "NDC");
+			gaus_pars.AddText("Gaus Parameters");
+			gaus_pars.AddLine(.0, .75, 1., .75);
+			gaus_pars.AddText(("Amplitude: " + to_string(gaus.GetParameter(0))).data());
+			gaus_pars.AddText(("Mean: " + to_string(gaus.GetParameter(1))).data());
+			gaus_pars.AddText(("Sigma: " + to_string(gaus.GetParameter(2))).data());
+			gaus_pars.Draw("Same");
+			TPaveText bkg2_pars(0.6, 0.5, 0.95, 0.75, "NDC");
+			bkg2_pars.AddText("(Const+Exp)*Woods Saxon Parameters");
+			bkg2_pars.AddLine(.0, .86, 1., .86);
+			bkg2_pars.AddText(("Const Amplitude: " + to_string(bkg2.GetParameter(0))).data());
+			bkg2_pars.AddText(("WS Center: " + to_string(bkg2.GetParameter(2))).data());
+			bkg2_pars.AddText(("WS Width: " + to_string(bkg2.GetParameter(1))).data());
+			bkg2_pars.AddText(("Exp Amplitude: " + to_string(bkg2.GetParameter(3))).data());
+			bkg2_pars.AddText(("Exp Width: " + to_string(bkg2.GetParameter(4))).data());
+			bkg2_pars.AddText(("Exp Center: " + to_string(bkg2.GetParameter(5))).data());
+			bkg2_pars.Draw("Same");
+			slice2_can.SetLogy();
+			slice2_can.Write();
+
 			slice_prob_dir->cd();
-			TCanvas slice_prob_can(("Can_"+(string)prob_graphs[slice.first].GetName()).data(), prob_graphs[slice.first].GetTitle());
+			TCanvas slice_prob_can(("Can_"+(string)prob_graphs[slice.first].GetName()).data(), prob_graphs[slice.first].GetTitle(), can_x_pix, can_y_pix);
 			prob_graphs[slice.first].GetXaxis()->SetRangeUser(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
 			prob_graphs[slice.first].Draw("apz");
 			slice_prob_can.SetLogy();
 			slice_prob_can.Write();
 
 			slice_gaus_dir->cd();
-			TCanvas slice_gaus_can(("Can_Gaus_"+(string)slice.second.GetName()).data(), slice.second.GetTitle());
+			TCanvas slice_gaus_can(("Can_Gaus_"+(string)slice.second.GetName()).data(), slice.second.GetTitle(), can_x_pix, can_y_pix);
 			slice.second.Draw();
 			slice_init_gaus[slice.first].SetNpx(n_plot_points);
 			slice_init_gaus[slice.first].SetRange(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
@@ -411,21 +516,21 @@ void PileUpQAer::rotate_dist() {
 			slice_gaus_can.Write();
 
 			slice_gaus_sub_dir->cd();
-			TCanvas slice_gaus_sub_can(("Can_Gaus_Sub"+(string)slice.second.GetName()).data(), slice.second.GetTitle());
+			TCanvas slice_gaus_sub_can(("Can_Gaus_Sub"+(string)slice.second.GetName()).data(), slice.second.GetTitle(), can_x_pix, can_y_pix);
 			slice_minus_gaus[slice.first].SetAxisRange(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
 			slice_minus_gaus[slice.first].Draw();
 			slice_gaus_sub_can.SetLogy();
 			slice_gaus_sub_can.Write();
 
 			slice_dcaz_dir->cd();
-			TCanvas slice_dcaz_can(("Can_"+(string)dca_z_slices[slice.first].GetName()).data(), dca_z_slices[slice.first].GetTitle());
+			TCanvas slice_dcaz_can(("Can_"+(string)dca_z_slices[slice.first].GetName()).data(), dca_z_slices[slice.first].GetTitle(), can_x_pix, can_y_pix);
 			dca_z_slices[slice.first].GetXaxis()->SetRangeUser(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
 			dca_z_slices[slice.first].Draw("Colz");
 			slice_dcaz_can.SetLogz();
 			slice_dcaz_can.Write();
 
 			slice_dcaz_sd_dir->cd();
-			TCanvas slice_dcaz_sd_can(("Can_"+(string)dca_z_slices_sd[slice.first].GetName()).data(), dca_z_slices_sd[slice.first].GetTitle());
+			TCanvas slice_dcaz_sd_can(("Can_"+(string)dca_z_slices_sd[slice.first].GetName()).data(), dca_z_slices_sd[slice.first].GetTitle(), can_x_pix, can_y_pix);
 			dca_z_slices_sd[slice.first].GetXaxis()->SetRangeUser(slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
 			dca_z_slices_sd[slice.first].Draw("Colz");
 			slice_dcaz_sd_can.SetLogz();
@@ -445,7 +550,16 @@ void PileUpQAer::write_cut_file() {
 	string out_name = out_path + to_string(energy) + "GeV" + out_file_suf;
 	ofstream out_txt(out_name);
 	if(!out_txt.is_open()) { cout << "Could not open " << out_name << " Not writing." << endl; return; }
-	out_txt << energy << "GeV Pile Up cuts with curves of gaus fit +-" << sigmas << " sigmas for each rotated slice of " << rot_slice_height << " rotated units with more than " << min_points << " points: " << endl;
+	out_txt << energy << "GeV Pile Up cuts with curves of gaus fit -" << sigmas_left << " +" << sigmas_right << " sigmas for each rotated slice of " << rot_slice_height << " rotated units with more than " << min_points << " points: " << endl;
+
+	out_txt << "sigmas_left: " << sigmas_left << endl;
+	out_txt << "sigmas_right: " << sigmas_right << endl;
+	out_txt << "min_points: " << min_points << endl;
+	out_txt << "min_bins: " << min_bins << endl;
+	out_txt << "min_btof: " << min_btof << endl;
+	out_txt << "rot_slice_height: " << rot_slice_height << endl;
+	out_txt << "orig_slice_height: " << orig_slice_height << endl;
+	out_txt << endl;
 
 	out_txt << scientific;
 	out_txt << "High cut curve (coefficients):\t";
@@ -482,21 +596,17 @@ void PileUpQAer::read_cut_file() {
 	string line;
 	int line_num = 1;
 	while(getline(in_txt, line)) {
-		if(line_num == 2) {
+		if(line_num == 10) {
 			vector<string> highs = split(split(line, '\t')[1], ',');
 			for(string coef:highs) {
 				high_cut.push_back(stof(coef));
 			}
-//			high_cut.first = stof(highs[0]);
-//			high_cut.second = stof(highs[1]);
 		}
-		if(line_num == 3) {
+		if(line_num == 11) {
 			vector<string> lows = split(split(line, '\t')[1], ',');
 			for(string coef:lows) {
 				low_cut.push_back(stof(coef));
 			}
-//			low_cut.first = stof(lows[0]);
-//			low_cut.second = stof(lows[1]);
 		}
 		line_num++;
 	}
