@@ -51,6 +51,10 @@ public:
 	// Setters
 	void set_energy(int energy);
 	void set_in_path(string path);
+	void set_out_path(string path);
+	void set_out_txt_suf(string suf);
+	void set_out_root_pre(string pre);
+	void set_write_out_txt(bool write);
 
 	// Doers
 	void run_qa();
@@ -59,10 +63,13 @@ private:
 	// Attributes
 	mutex *mtx = NULL;  // To lock non-thread-safe graphics (TCanvas) processes
 
+	bool write_out_txt = true;
+
 	int energy;
 	string in_path = "/media/ucla/Research/BES1_Trees/";
 	string out_path = "/home/dylan/Research/Pile_Up_QA/";
-	string out_file_suf = "_Pile_Up_Cuts.txt";
+	string out_txt_suf = "_Pile_Up_Cuts.txt";
+	string out_root_pre = "Pile_QA_";
 	TFile *out_file = NULL;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
@@ -72,7 +79,7 @@ private:
 	string orig_btof_ref_title = "BTof Match vs Reference Multiplicity ";
 
 	int can_x_pix = 955;
-	int can_y_pix = 910;
+	int can_y_pix = 900;
 
 	float sigmas_left = 3.0;
 	float sigmas_right = 3.0;

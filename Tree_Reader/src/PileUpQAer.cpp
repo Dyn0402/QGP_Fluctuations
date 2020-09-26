@@ -18,11 +18,11 @@ double gaus_exp_r(double *x, double *par) {  // par = {amplitude, x_bar, sigma, 
 	}
 }
 
-double woods_saxon(double *x, double *par) {  // par = {amplitude, width, x_bar}
-	return par[0] / (1 + exp(-par[1] * (x[0] - par[2])));
+double woods_saxon(double *x, double *par) {  // par = {amplitude, x_bar, width}
+	return par[0] / (1 + exp(-par[2] * (x[0] - par[1])));
 }
 
-double gexp_r_plus_ws(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k, ws_amp, ws_width, ws_x}
+double gexp_r_plus_ws(double *x, double *par) {  // par = {gexpr_amplitude, gexpr_x_bar, gexpr_sigma, gexpr_k, ws_amp, ws_x_bar, ws_width}
 	double *par_ws = par + 4;
 	return gaus_exp_r(x, par) + woods_saxon(x, par_ws);
 }
@@ -70,6 +70,22 @@ void PileUpQAer::set_energy(int energy) {
 
 void PileUpQAer::set_in_path(string path) {
 	in_path = path;
+}
+
+void PileUpQAer::set_out_path(string path) {
+	out_path = path;
+}
+
+void PileUpQAer::set_out_txt_suf(string suf) {
+	out_txt_suf = suf;
+}
+
+void PileUpQAer::set_out_root_pre(string pre) {
+	out_root_pre = pre;
+}
+
+void PileUpQAer::set_write_out_txt(bool write) {
+	write_out_txt = write;
 }
 
 
@@ -160,7 +176,7 @@ void PileUpQAer::set_branches(TTree *tree) {
 
 
 void PileUpQAer::rotate_dist() {
-	out_file = new TFile((out_path+"Pile_QA_"+to_string(energy)+"GeV.root").data(), "RECREATE");
+	out_file = new TFile((out_path+out_root_pre+to_string(energy)+"GeV.root").data(), "RECREATE");
 	out_file->cd();
 
 	string name = orig_btof_ref_name+to_string(energy)+"GeV";
@@ -269,14 +285,14 @@ void PileUpQAer::rotate_dist() {
 			gaus_exp.SetParameters(gaus_init.GetParameter(0), gaus_init.GetParameter(1), gaus_init.GetParameter(2), -1);
 			slice.second.Fit(&gaus_exp, "NQR");
 			slice_fits[slice.first] = TF1(title.data(), gexp_r_plus_ws, lower_bound, upper_bound, 7);
-			slice_fits[slice.first].SetParameters(gaus_exp.GetParameter(0), gaus_exp.GetParameter(1), gaus_exp.GetParameter(2), gaus_exp.GetParameter(3), 0.3, 5, gaus_init.GetParameter(1) + gaus_init.GetParameter(2));
+			slice_fits[slice.first].SetParameters(gaus_exp.GetParameter(0), gaus_exp.GetParameter(1), gaus_exp.GetParameter(2), gaus_exp.GetParameter(3), 0.3, gaus_init.GetParameter(1) + gaus_init.GetParameter(2), 5);
 			slice_fits[slice.first].SetParLimits(0, 0, slice.second.GetMaximum() * 2);
 			slice_fits[slice.first].SetParLimits(1, lower_bound, upper_bound);
 			slice_fits[slice.first].SetParLimits(2, gaus_init.GetParameter(2) / 4, gaus_init.GetParameter(2) * 4);
 //			slice_fits[slice.first].SetParLimits(3, -1000, -0.1);  // Not sure
 			slice_fits[slice.first].SetParLimits(4, 0.2, gaus_init.GetParameter(0) / 10);
-			slice_fits[slice.first].SetParLimits(5, 0.1, 100);
-			slice_fits[slice.first].SetParLimits(6, lower_bound, upper_bound);
+			slice_fits[slice.first].SetParLimits(5, lower_bound, upper_bound);
+			slice_fits[slice.first].SetParLimits(6, 0.1, 100);
 			slice.second.Fit(&slice_fits[slice.first], "NQR");
 
 			slice_fits2[slice.first] = TF1(title.data(), "gaus(0)+([6]*exp(-[7]*(x-[8]))+[3])/(1+exp(-[4]*(x-[5])))", lower_bound, upper_bound);
@@ -410,7 +426,11 @@ void PileUpQAer::rotate_dist() {
 		TDirectory *slice_prob_dir = out_file->mkdir("Slice Prob Canvases");
 		TDirectory *slice_dcaz_dir = out_file->mkdir("Dca_z Slice Canvases");
 		TDirectory *slice_dcaz_sd_dir = out_file->mkdir("Dca_z_sd Slice Canvases");
+		TDirectory *slice_hist_dir = out_file->mkdir("Slice Hists");
 		for(pair<int, TH1F> slice:slices) {
+			slice_hist_dir->cd();
+			slice.second.Write();
+
 			slice_canvas_dir->cd();
 			TCanvas slice_can(("Can_"+(string)slice.second.GetName()).data(), slice.second.GetTitle(), can_x_pix, can_y_pix);
 
@@ -422,7 +442,7 @@ void PileUpQAer::rotate_dist() {
 			TF1 gaus_exp("gaus_exp", gaus_exp_r, slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax(), 4);
 			gaus_exp.SetParameters(slice_fits[slice.first].GetParameter(0), slice_fits[slice.first].GetParameter(1), slice_fits[slice.first].GetParameter(2), slice_fits[slice.first].GetParameter(3));
 			gaus_exp.SetNpx(n_plot_points); gaus_exp.SetLineColor(kGreen+2);
-			TF1 bkg("Background", "[0]/(1+exp(-[1]*(x-[2])))", slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
+			TF1 bkg("Background", "[0]/(1+exp(-[2]*(x-[1])))", slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
 			bkg.SetParameters(slice_fits[slice.first].GetParameter(4), slice_fits[slice.first].GetParameter(5), slice_fits[slice.first].GetParameter(6));
 			bkg.SetNpx(n_plot_points); bkg.SetLineColor(kViolet);
 
@@ -435,7 +455,7 @@ void PileUpQAer::rotate_dist() {
 			gaus_exp_pars.AddText("Gaus_Exp Parameters");
 			gaus_exp_pars.AddLine(.0, .8, 1., .8);
 			gaus_exp_pars.AddText(("Amplitude: " + to_string(gaus_exp.GetParameter(0))).data());
-			gaus_exp_pars.AddText(("Mean: " + to_string(gaus_exp.GetParameter(1))).data());
+			gaus_exp_pars.AddText(("Center: " + to_string(gaus_exp.GetParameter(1))).data());
 			gaus_exp_pars.AddText(("Sigma: " + to_string(gaus_exp.GetParameter(2))).data());
 			gaus_exp_pars.AddText(("k: " + to_string(gaus_exp.GetParameter(3))).data());
 			gaus_exp_pars.Draw("Same");
@@ -443,8 +463,8 @@ void PileUpQAer::rotate_dist() {
 			bkg_pars.AddText("Woods Saxon Parameters");
 			bkg_pars.AddLine(.0, .75, 1., .75);
 			bkg_pars.AddText(("Amplitude: " + to_string(bkg.GetParameter(0))).data());
-			bkg_pars.AddText(("Center: " + to_string(bkg.GetParameter(2))).data());
-			bkg_pars.AddText(("Width: " + to_string(bkg.GetParameter(1))).data());
+			bkg_pars.AddText(("Center: " + to_string(bkg.GetParameter(1))).data());
+			bkg_pars.AddText(("Width: " + to_string(bkg.GetParameter(2))).data());
 			bkg_pars.Draw("Same");
 			TLegend leg(0.35, 0.2);
 			leg.AddEntry(&slice.second, "Slice Distribution", "l");
@@ -547,7 +567,7 @@ void PileUpQAer::rotate_dist() {
 void PileUpQAer::write_cut_file() {
 	if(!check_path(out_path)) { cout << "Can't access path: " << out_path << " Skipping following read/write." << endl; return; }
 
-	string out_name = out_path + to_string(energy) + "GeV" + out_file_suf;
+	string out_name = out_path + to_string(energy) + "GeV" + out_txt_suf;
 	ofstream out_txt(out_name);
 	if(!out_txt.is_open()) { cout << "Could not open " << out_name << " Not writing." << endl; return; }
 	out_txt << energy << "GeV Pile Up cuts with curves of gaus fit -" << sigmas_left << " +" << sigmas_right << " sigmas for each rotated slice of " << rot_slice_height << " rotated units with more than " << min_points << " points: " << endl;
@@ -586,7 +606,7 @@ void PileUpQAer::write_cut_file() {
 void PileUpQAer::read_cut_file() {
 	if(!check_path(out_path)) { cout << "Can't access path: " << out_path << " Skipping following read/write." << endl; return; }
 
-	string in_name = out_path + to_string(energy) + "GeV" + out_file_suf;
+	string in_name = out_path + to_string(energy) + "GeV" + out_txt_suf;
 	ifstream in_txt(in_name);
 	if(!in_txt.is_open()) { cout << "Could not open " << in_name << " Not reading." << endl; return; }
 
