@@ -61,6 +61,7 @@ void pile_up_qa(int energy, mutex *mtx);
 void run_pile_up_qa();
 void tchain_test();
 void run_tchain();
+//void AMPT_Proton_Num_Check();
 
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
 
@@ -71,8 +72,6 @@ auto start_sys = chrono::system_clock::now();
 int main(int argc, char** argv) {
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-//	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.cpp");
-//	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.cpp");
 //	read_class();
 //	run_dca_xy_qa();
 	run_pile_up_qa();
@@ -84,6 +83,7 @@ int main(int argc, char** argv) {
 //	real_event_tree_test();
 //	speed_test();
 //	speed_test_class();
+//	AMPT_Proton_Num_Check();
 
 	cout << endl << "donzo" << endl;
 	return(0);
@@ -99,13 +99,13 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {3, 4}}, {"eta05_n1ratios_dca3", {3, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios_dca1", {0, 4}}, {"Ampt_eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta1_n1ratios_dca1", {0, 4}}, {"Ampt_eta1_n1ratios_dca3", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"test", {0, 2}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}};
+	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"test_Ampt_eta05_n1ratios", {0, 0}}};
 
-	vector<int> energy_list {62, 27, 19, 11, 7};
+	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 
-	int set_sleep = 5;
+	int set_sleep = 1;
 	int energy_sleep = 1;
 
 	int jobs = 0;
@@ -262,8 +262,6 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	if(in_string(set_name, "ptotal")) { reader.set_check_charge(false); }
 
 	if(!in_string(set_name, "Ampt") && in_string(set_name, "pion")) {
-		reader.cut.min_m2 = -0.15;
-		reader.cut.max_m2 = 0.15;
 		reader.set_particle("pion");
 	}
 	if(in_string(set_name, "pion+")) { reader.cut.charge = 1; reader.set_ampt_particle_pid({211}); }
@@ -656,6 +654,7 @@ void run_dca_xy_qa() {
 void pile_up_qa(int energy, mutex *mtx) {
 	{
 		PileUpQAer qa(energy, mtx);
+		qa.set_out_path("/home/dylan/Research/Pile_Up_QA_Tests/");
 		qa.run_qa();
 	}
 	{
@@ -684,7 +683,7 @@ void pile_up_qa(int energy, mutex *mtx) {
 }
 
 void run_pile_up_qa() {
-	vector<int> energies {7, 11, 19, 27, 39, 62};
+	vector<int> energies {39}; //{7, 11, 19, 27, 39, 62};
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();

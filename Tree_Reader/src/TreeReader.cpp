@@ -570,7 +570,7 @@ void TreeReader::read_ampt_trees() {
 	define_qa();
 
 	ampt_cent = AmptCentralityMaker(energy, "/media/ucla/Research/AMPT_Trees/min_bias/", "/home/dylan/Research/Ampt_Centralities/", "ref" + to_string(ref_num));
-	auto edges = ampt_cent.get_ref_bin9_edges();
+	ampt_cent.make_centrality(false);  // Usually just reads from file unless it can't find it.
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
 	vector<string> in_files = get_files_in_dir(in_path + "most_central/" + to_string(energy)+"GeV/", "root", "path");
@@ -607,12 +607,11 @@ void TreeReader::read_ampt_trees() {
 			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 		}
 
-		TFile *file = new TFile(path.data(), "READ");
-//		add_cut_hists(file);
-		TTree *tree = (TTree*)file->Get(tree_name.data());
+		TFile file(path.data(), "READ");
+		TTree *tree = (TTree*)file.Get(tree_name.data());
 		read_ampt_tree(tree);  // Read tree from file into data
-		file->Close();
-		delete file;
+		tree->ResetBranchAddresses();
+		file.Close();
 		file_index++;
 
 		if(file_list != NULL) {  // If file_list passed, remove path before going to next
@@ -826,25 +825,27 @@ void TreeReader::set_ampt_branches(TTree* tree) {
 
 void TreeReader::read_ampt_tree(TTree* tree) {
 	set_ampt_tree_branches(tree, ampt_branches);
+	set_ampt_branches(tree);
 
-	int ref_n;
+	int *ref_n = NULL;
 	switch(ref_num) {
 	case 1 :
-		ref_n = ampt_branches.refmult; break;
+		ref_n = &ampt_branches.refmult; break;
 	case 2 :
-		ref_n = ampt_branches.refmult2; break;
+		ref_n = &ampt_branches.refmult2; break;
 	case 3 :
-		ref_n = ampt_branches.refmult3; break;
+		ref_n = &ampt_branches.refmult3; break;
 	default :
 		cout << "Unknown ref_num value!" << endl;
-		ref_n = -1;
 	}
 
 	int cent_9bin;
 	int event_index = 0;
 	while(tree->GetEvent(event_index)) {
-		cent_9bin = ampt_cent.get_cent_bin9(ref_n);
+
+		cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 		Event event(event_defs, energy, ref_num, cent_9bin);
+		event.set_qx(ampt_branches.qx); event.set_qy(ampt_branches.qy);
 
 		vector<Track> particles;
 		for(int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
@@ -856,7 +857,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 			new_particle.set_phi(p.Phi() + M_PI);
 			new_particle.set_eta(p.PseudoRapidity());
 			new_particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
-			new_particle.set_beta(pow((cut.max_m2 - cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+			new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
 			particles.push_back(new_particle);
 		}
 		event.set_particles(particles);
@@ -865,8 +866,9 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
 				event_index++;
 				if(tree->GetEntry(event_index)) {
-					cent_9bin = ampt_cent.get_cent_bin9(ref_n);
+					cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 					Event event2(event_defs, energy, ref_num, cent_9bin);
+					event2.set_qx(ampt_branches.qx); event.set_qy(ampt_branches.qy);
 
 					particles.clear();
 					for(int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
@@ -878,7 +880,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 						new_particle.set_phi(p.Phi() + M_PI);
 						new_particle.set_eta(p.PseudoRapidity());
 						new_particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
-						new_particle.set_beta(pow((cut.max_m2 - cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+						new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
 						particles.push_back(new_particle);
 					}
 					event2.set_particles(particles);
