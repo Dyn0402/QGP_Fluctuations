@@ -450,6 +450,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> divide_stats_all;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_stats_all;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> diff_stats_all;
+	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_divide_stats_all;
 
 	// Calculate standard deviations for systematics
 	for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets[set_name]) {
@@ -476,6 +477,7 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 						divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 						pull_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = pull_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 						diff_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
+						pull_divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
 					}
 				}
 			}
@@ -690,8 +692,10 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+					centralities_stat(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, {div}, "centralities_pull_divide_"+name+to_string(div));
 				}
 				centralities_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, "centralities_divide_"+name);
+				centralities_stat(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, divs, "centralities_pull_divide_"+name);
 			}
 			TDirectory *dist_means_dir = median_dir->mkdir("dist_means");
 			for(string name:stat_names) {
@@ -699,8 +703,10 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					stat_vs_mult_mean(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, {div}, "stat_vs_mult_mean_divide_"+name+to_string(div));
+					stat_vs_mult_mean(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, {div}, "stat_vs_mult_mean_pull_divide_"+name+to_string(div));
 				}
 				stat_vs_mult_mean(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, "stat_vs_mult_mean_divide_"+name);
+				stat_vs_mult_mean(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, divs, "stat_vs_mult_mean_pull_divide_"+name);
 			}
 		}
 
@@ -721,8 +727,10 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					centralities_stat(divide_stats_all, name, all_centralities, {div}, "centralities_divide_"+name+to_string(div));
+					centralities_stat(pull_divide_stats_all, name, all_centralities, {div}, "centralities_pull_divide_"+name+to_string(div));
 				}
 				centralities_stat(divide_stats_all, name, all_centralities, divs, "centralities_divide_"+name);
+				centralities_stat(pull_divide_stats_all, name, all_centralities, divs, "centralities_pull_divide_"+name);
 			}
 			TDirectory *dist_means_dir = all_dir->mkdir("dist_means");
 			for(string name:stat_names) {
@@ -730,8 +738,10 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				name_dir->cd();
 				for(int div:divs) {
 					stat_vs_mult_mean(divide_stats_all, name, all_centralities, {div}, "stat_vs_mult_mean_divide_"+name+to_string(div));
+					stat_vs_mult_mean(pull_divide_stats_all, name, all_centralities, {div}, "stat_vs_mult_mean_pull_divide_"+name+to_string(div));
 				}
 				stat_vs_mult_mean(divide_stats_all, name, all_centralities, divs, "stat_vs_mult_mean_divide_"+name);
+				stat_vs_mult_mean(pull_divide_stats_all, name, all_centralities, divs, "stat_vs_mult_mean_pull_divide_"+name);
 			}
 		}
 	}
