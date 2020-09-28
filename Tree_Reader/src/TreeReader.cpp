@@ -1411,6 +1411,7 @@ void TreeReader::define_qa() {
 	track_cut_hist.GetXaxis()->SetBinLabel(5, "Good dca");
 	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good mass*");
 
+	eta_pt_hist = TH2F(("eta_pt_"+set_name+"_"+to_string(energy)).data(), "Eta vs Pt", 1000, -1.05, 1.05, 1000, 0, 2.25);
 
 	cent16_events = TH1I(("cent16_events_"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
 	cent9_events = TH1I(("cent9_events_"+set_name+"_"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
@@ -1486,6 +1487,7 @@ void TreeReader::fill_post_track_qa(Track& particle) {
 	post_eta_hist.Fill(particle.get_eta());
 	post_nsigma_hist.Fill(particle.get_nsigma());
 	post_dca_hist.Fill(particle.get_dca());
+	eta_pt_hist.Fill(particle.get_eta(), particle.get_pt());
 }
 
 
@@ -1567,6 +1569,15 @@ void TreeReader::write_qa() {
 	beta_pq_can.Update();
 	beta_pq_can.Write();
 	beta_pq_hist.Write();
+
+	TCanvas eta_pt_can("eta_pt_can");
+	eta_pt_hist.GetXaxis()->SetTitle("eta");
+	eta_pt_hist.GetYaxis()->SetTitle("pt (GeV)");
+	eta_pt_hist.Draw("COLZ");
+	eta_pt_can.SetLogz();
+	eta_pt_can.Update();
+	eta_pt_can.Write();
+	eta_pt_hist.Write();
 
 	event_cut_tree_maker.Write();
 	track_cut_tree_maker.Write();

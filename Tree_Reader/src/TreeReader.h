@@ -249,6 +249,8 @@ private:
 	TH2F de_dx_pq_hist;
 	TH2F beta_pq_hist;
 
+	TH2F eta_pt_hist;
+
 	TH1D event_cut_tree_maker;
 	TH1D track_cut_tree_maker;
 	TH1D event_cut_hist;
