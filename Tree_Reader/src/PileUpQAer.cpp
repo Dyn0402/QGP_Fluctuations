@@ -27,7 +27,7 @@ double exp_woods_saxon(double *x, double *par) {  // par = {amplitude, x_bar, wi
 }
 
 double lin_woods_saxon(double *x, double *par) {  // par = {amplitude, x_bar, width, slope}
-	return woods_saxon(x, par) + par[4] * (x[0] - par[1]);
+	return (par[0] + par[3] * (x[0] - par[1])) / (1 + exp(-(x[0] - par[1]) / par[2]));
 }
 
 double gexp_r_plus_ws(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k, ws_amp, ws_xbar, ws_width}
@@ -347,7 +347,7 @@ void PileUpQAer::rotate_dist() {
 			slice_fits2[slice.first].SetParLimits(3, gaus_exp2.GetParameter(3) * 4, -0.001);
 			slice_fits2[slice.first].SetParLimits(4, gaus_exp2.GetParameter(0) / 1000000, gaus_exp2.GetParameter(0) / 100);
 			slice_fits2[slice.first].SetParLimits(5, gaus_exp.GetParameter(1), gaus_exp.GetParameter(1) + 5 * gaus_exp.GetParameter(2));
-			slice_fits2[slice.first].SetParLimits(6, 0.1, 100);
+			slice_fits2[slice.first].SetParLimits(6, 0, 100);
 			slice_fits2[slice.first].SetParLimits(7, -10, 0);
 			slice.second.Fit(&slice_fits2[slice.first], "NQR");
 
