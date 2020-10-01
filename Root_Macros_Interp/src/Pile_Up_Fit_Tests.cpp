@@ -30,8 +30,12 @@ double woods_saxon(double *x, double *par) {  // par = {amplitude, x_bar, width}
 	return par[0] / (1 + exp(-(x[0] - par[1]) / par[2]));
 }
 
-double exp_woods_saxon(double *x, double *par) {  // par = {amplitude, x_bar, width, decay}
-	return woods_saxon(x, par) * exp(-par[3] * (x[0] - par[1]));
+double exp_woods_saxon(double *x, double *par) {  // par = {amplitude, x_bar, width, decay_frac}
+	return woods_saxon(x, par) * exp(-par[3] / (2 * par[2]) * (x[0] - par[1]));
+}
+
+double lin_woods_saxon(double *x, double *par) {  // par = {amplitude, x_bar, width, slope}
+	return (par[0] + par[3] * (x[0] - par[1])) / (1 + exp(-(x[0] - par[1]) / par[2]));
 }
 
 double gexp_r_plus_ws(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k, ws_amp, ws_xbar, ws_width}
@@ -39,15 +43,20 @@ double gexp_r_plus_ws(double *x, double *par) {  // par = {amplitude, x_bar, sig
 	return gaus_exp_r(x, par) + woods_saxon(x, par_ws);
 }
 
-double gexp_r_plus_expws(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k, exp*ws_amp, ws_exp_xbar, ws_width, exp_decay}
+double gexp_r_plus_expws(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k, exp*ws_amp, ws_exp_xbar, ws_width, exp_decay_frac}
 	double *par_exp_ws = par + 4;
 	return gaus_exp_r(x, par) + exp_woods_saxon(x, par_exp_ws);
 }
 
+double gexp_r_plus_linws(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k, exp*ws_amp, ws_exp_xbar, ws_width, slope}
+	double *par_exp_ws = par + 4;
+	return gaus_exp_r(x, par) + lin_woods_saxon(x, par_exp_ws);
+}
+
 
 void Pile_Up_Fit_Tests() {
-	string file_path = "/home/dylan/Research/Pile_Up_QA_Tests/Pile_QA_39GeV.root";
-	string hist_name = "Slice Hists/39GeV Slice 285.000000 to 290.000000";
+	string file_path = "/home/dylan/Desktop/Pile_Up_QA_Tests/Pile_QA_62GeV.root";
+	string hist_name = "Slice Hists/62GeV Slice 35.000000 to 40.000000";
 //	string hist_name = "Slice Hists/11GeV Slice 150.000000 to 155.000000";
 	TFile *file = new TFile(file_path.data(), "READ");
 
@@ -111,16 +120,18 @@ void Pile_Up_Fit_Tests() {
 //	bkg->SetParameters(fit->GetParameter(4), fit->GetParameter(5), fit->GetParameter(6));
 //	bkg->SetLineColor(kViolet);
 
-	TF1 *fit4 = new TF1("fit4", gexp_r_plus_expws, low_bound, high_bound, 8);
+	TF1 *fit4 = new TF1("fit4", gexp_r_plus_linws, low_bound, high_bound, 8);
 	fit4->SetLineColor(kRed);
-	fit4->SetParameters(61502, -1.81, 5.27, -2.21, 4.2, 26, 0.03, 0.01);
+	fit4->SetParameters(209622, -0.57, 2.177, -1.67, 21.756, 8.982, 1.65, -0.5);
+//	fit4->SetParameters(46245, -1.87, 4.5, -1.67, 10, 20, 1.65, -0.05);
+//	fit4->SetParLimits(7, -100, -0.02);
 //	fit2->SetParameters(5964, -1, 4.7, 5, 660, 0.24, 15, 5, 0.5);
 	slice->Fit(fit4, "NR");
 
 	TF1 *gaus_exp4 = new TF1("gaus_exp4", gaus_exp_r, -30, 150, 4);
 	gaus_exp4->SetParameters(fit4->GetParameter(0), fit4->GetParameter(1), fit4->GetParameter(2), fit4->GetParameter(3));
 	gaus_exp4->SetLineColor(kGreen); gaus_exp4->SetNpx(1000);
-	TF1 *bkg_exp4 = new TF1("bkg_exp4", exp_woods_saxon, -30, 150,43);
+	TF1 *bkg_exp4 = new TF1("bkg_exp4", lin_woods_saxon, -30, 150, 4);
 	bkg_exp4->SetParameters(fit4->GetParameter(4), fit4->GetParameter(5), fit4->GetParameter(6), fit4->GetParameter(7));
 	bkg_exp4->SetLineColor(kBlue); bkg_exp4->SetNpx(1000);
 
