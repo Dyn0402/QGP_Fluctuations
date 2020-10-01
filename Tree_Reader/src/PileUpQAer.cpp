@@ -340,7 +340,7 @@ void PileUpQAer::rotate_dist() {
 			gaus_exp2.SetParLimits(3, -20, -0.001);
 			slice.second.Fit(&gaus_exp2, "NQR");
 			slice_fits2[slice.first] = TF1(title.data(), gexp_r_plus_linws, lower_bound, upper_bound, 8);
-			slice_fits2[slice.first].SetParameters(gaus_exp2.GetParameter(0), gaus_exp2.GetParameter(1), gaus_exp2.GetParameter(2), gaus_exp2.GetParameter(3), gaus_exp2.GetParameter(0) / 10000, gaus_exp2.GetParameter(1) + 1.5 * gaus_exp2.GetParameter(2), 5, -0.02);
+			slice_fits2[slice.first].SetParameters(gaus_exp2.GetParameter(0), gaus_exp2.GetParameter(1), gaus_exp2.GetParameter(2), gaus_exp2.GetParameter(3), gaus_exp2.GetParameter(0) / 5000, gaus_exp2.GetParameter(1) + 1.5 * gaus_exp2.GetParameter(2), 5, -0.5);
 			slice_fits2[slice.first].SetParLimits(0, 0, gaus_exp2.GetParameter(0) * 2);
 			slice_fits2[slice.first].SetParLimits(1, lower_bound, upper_bound);
 			slice_fits2[slice.first].SetParLimits(2, gaus_exp2.GetParameter(2) / 4, gaus_exp2.GetParameter(2) * 4);
