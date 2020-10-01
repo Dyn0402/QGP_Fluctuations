@@ -100,8 +100,8 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"test_Ampt_eta05_n1ratios", {0, 0}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}};
+	map<string, pair<int, int>> set_pairs = {{"test_eta1_n1ratios", {0, 0}}};
 
 	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 
@@ -659,16 +659,21 @@ void pile_up_qa(int energy, mutex *mtx) {
 	}
 	{
 		PileUpQAer qa(energy, mtx);
+		qa.set_out_path("/home/dylan/Research/Pile_Up_QA_Tests/");
 		auto low = qa.get_low_cut();
 		auto high = qa.get_high_cut();
-		cout << "low: ";
-		for(unsigned coef=0; coef < low.size(); coef++) {
-			cout << low[coef] << ", ";
+		cout << "low: " << endl << "poly coefs: ";
+		for(unsigned coef=0; coef < low.pol_fit_coefs.size(); coef++) {
+			cout << low.pol_fit_coefs[coef] << ", ";
 		}
-		cout << endl << "high: ";
-		for(unsigned coef=0; coef < high.size(); coef++) {
-			cout << high[coef] << ", ";
+		cout << endl << "max_ref: " << low.max_fit_ref << endl;
+		cout << "lin_extrap: " << low.lin_extrap.first << " + " << low.lin_extrap.second << " * x" << endl;
+		cout << endl << "high: " << endl << "poly coefs: ";
+		for(unsigned coef=0; coef < high.pol_fit_coefs.size(); coef++) {
+			cout << high.pol_fit_coefs[coef] << ", ";
 		}
+		cout << endl << "max_ref: " << high.max_fit_ref << endl;
+		cout << "lin_extrap: " << high.lin_extrap.first << " + " << high.lin_extrap.second << " * x" << endl;
 		cout << endl << endl;
 	}
 //	DcaxyQAer qa(energy);
@@ -683,7 +688,7 @@ void pile_up_qa(int energy, mutex *mtx) {
 }
 
 void run_pile_up_qa() {
-	vector<int> energies {39}; //{7, 11, 19, 27, 39, 62};
+	vector<int> energies {7, 11, 19, 27, 39, 62};
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();

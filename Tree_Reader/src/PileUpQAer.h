@@ -33,8 +33,19 @@ using namespace std;
 pair<double, double> rotate_xy(double x, double y, double angle);
 
 double gaus_exp_r(double *x, double *par);  // par = {amplitude, x_bar, sigma, k}
-double woods_saxon(double *x, double *par);  // par = {amplitude, width, x_bar}
-double gexp_r_plus_ws(double *x, double *par);  // par = {amplitude, x_bar, sigma, k, ws_amp, ws_width, ws_x}
+double woods_saxon(double *x, double *par);  // par = {amplitude, x_bar, width}
+double exp_woods_saxon(double *x, double *par);  // par = {amplitude, x_bar, width, decay}
+double lin_woods_saxon(double *x, double *par);  // par = {amplitude, x_bar, width, slope}
+double gexp_r_plus_ws(double *x, double *par);  // par = {amplitude, x_bar, sigma, k, ws_amp, ws_xbar, ws_width}
+double gexp_r_plus_expws(double *x, double *par);  // par = {amplitude, x_bar, sigma, k, exp*ws_amp, ws_exp_xbar, ws_width, exp_decay}
+double gexp_r_plus_linws(double *x, double *par);  // par = {amplitude, x_bar, sigma, k, exp*ws_amp, ws_exp_xbar, ws_width, slope}
+
+
+struct pu_cut {
+	vector<float> pol_fit_coefs;  // Coefficients of polynomial fit
+	float max_fit_ref;  // Maximum refmult value of fitted points
+	pair<float, float> lin_extrap;  // Coefficients of linear extrapolation past the max_fit_ref
+};
 
 
 class PileUpQAer {
@@ -45,8 +56,8 @@ public:
 	~PileUpQAer();
 
 	// Getters
-	vector<float> get_low_cut();
-	vector<float> get_high_cut();
+	pu_cut get_low_cut();
+	pu_cut get_high_cut();
 
 	// Setters
 	void set_energy(int energy);
@@ -81,8 +92,8 @@ private:
 	int can_x_pix = 955;
 	int can_y_pix = 900;
 
-	float sigmas_left = 3.0;
-	float sigmas_right = 3.0;
+	float sigmas_left = 4.0;
+	float sigmas_right = 4.0;
 	int min_points = 350;
 	int min_bins = 15;
 
@@ -111,8 +122,8 @@ private:
 	};
 	vector<PUEvent> pu_events;
 
-	vector<float> low_cut;
-	vector<float> high_cut;
+	pu_cut low_cut;
+	pu_cut high_cut;
 
 
 	// Doers
