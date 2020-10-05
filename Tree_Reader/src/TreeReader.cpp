@@ -1183,11 +1183,16 @@ void TreeReader::write_info_file() {
 		out << "efficiency: " << boolalpha << efficiency << endl;
 		out << "single_ratio: " << boolalpha << single_ratio << endl;
 		out << "n1_ratios: " << boolalpha << n1_ratios << endl;
+		out << "sim_eff: " << boolalpha << sim_eff << endl;
+		out << "sim_flow: " << boolalpha << sim_flow << endl;
 		out << "check_charge: " << boolalpha << check_charge << endl;
+
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;
+
 		out << "cent_binning: " << cent_binning << endl;
 		out << "ref_num: " << ref_num << endl;
+
 
 		out << "min_beta: " << to_string(cut.min_beta) << endl;
 		out << "max_beta: " << to_string(cut.max_beta) << endl;
@@ -1291,14 +1296,24 @@ bool TreeReader::check_pile_up(int btof_multi, int btof_match, int ref_mult) {
 	btof_multi_ref_hist.Fill(ref_mult, btof_multi);
 	btof_match_ref_hist.Fill(ref_mult, btof_match);
 
-	float max_btof = 0; float min_btof = 0;
-	for(unsigned coef=0; coef < cut.pile_up_high.size(); coef++) {
-		max_btof += cut.pile_up_high[coef] * pow(ref_mult, coef);
-		min_btof += cut.pile_up_low[coef] * pow(ref_mult, coef);
+	float min_btof = 0;
+	if(ref_mult <= cut.pile_up_low.max_fit_ref) {
+		for(unsigned coef=0; coef < cut.pile_up_low.pol_fit_coefs.size(); coef++) {
+			min_btof += cut.pile_up_low.pol_fit_coefs[coef] * pow(ref_mult, coef);
+		}
+	} else {
+		min_btof = cut.pile_up_low.lin_extrap.first + cut.pile_up_low.lin_extrap.second * ref_mult;
 	}
 
-//	float max_btof = cut.pile_up_high.first + cut.pile_up_high.second * ref_mult;
-//	float min_btof = cut.pile_up_low.first + cut.pile_up_low.second * ref_mult;
+	float max_btof = 0;
+	if(ref_mult <= cut.pile_up_high.max_fit_ref) {
+		for(unsigned coef=0; coef < cut.pile_up_high.pol_fit_coefs.size(); coef++) {
+			max_btof += cut.pile_up_high.pol_fit_coefs[coef] * pow(ref_mult, coef);
+		}
+	} else {
+		max_btof = cut.pile_up_high.lin_extrap.first + cut.pile_up_high.lin_extrap.second * ref_mult;
+	}
+
 	if(btof_match > max_btof || btof_match < min_btof) {
 		return false;
 	}
@@ -1411,7 +1426,7 @@ void TreeReader::define_qa() {
 	track_cut_hist.GetXaxis()->SetBinLabel(5, "Good dca");
 	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good mass*");
 
-	eta_pt_hist = TH2F(("eta_pt_"+set_name+"_"+to_string(energy)).data(), "Eta vs Pt", 1000, -1.05, 1.05, 1000, 0, 2.25);
+	eta_pt_hist = TH2F(("eta_pt_"+set_name+"_"+to_string(energy)).data(), "Pt vs Eta", 1000, -1.05, 1.05, 1000, 0, 2.25);
 
 	cent16_events = TH1I(("cent16_events_"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
 	cent9_events = TH1I(("cent9_events_"+set_name+"_"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
@@ -1542,13 +1557,19 @@ void TreeReader::write_qa() {
 	btof_match_ref_hist.GetYaxis()->SetTitle("Btof Match");
 	btof_match_ref_hist.Draw("COLZ");
 	btof_match_pile_can.Update();
-	TF1 up_cut("btof_match_pile_up_cut", "pol4", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
-	up_cut.SetParameters(cut.pile_up_high[0], cut.pile_up_high[1], cut.pile_up_high[2], cut.pile_up_high[3], cut.pile_up_high[4]);
-	up_cut.SetLineColor(kRed);
-	TF1 low_cut("btof_match_pile_low_cut", "pol4", btof_match_pile_can.GetUxmin(), btof_match_pile_can.GetUxmax());
-	low_cut.SetParameters(cut.pile_up_low[0], cut.pile_up_low[1], cut.pile_up_low[2], cut.pile_up_low[3], cut.pile_up_low[4]);
-	low_cut.SetLineColor(kRed);
-	up_cut.Draw("same"); low_cut.Draw("same");
+	TF1 up_cut("btof_match_pile_up_cut", "pol4", btof_match_pile_can.GetUxmin(), cut.pile_up_high.max_fit_ref);
+	vector<float> high_pars = cut.pile_up_high.pol_fit_coefs;
+	up_cut.SetParameters(high_pars[0], high_pars[1], high_pars[2], high_pars[3], high_pars[4]);
+	TF1 up_extrap("btof_match_pile_up_extrap", "pol1", cut.pile_up_high.max_fit_ref, btof_match_pile_can.GetUxmax());
+	up_extrap.SetParameters(cut.pile_up_high.lin_extrap.first, cut.pile_up_high.lin_extrap.second);
+	up_cut.SetLineColor(kRed); up_extrap.SetLineColor(kRed);
+	TF1 low_cut("btof_match_pile_low_cut", "pol4", btof_match_pile_can.GetUxmin(), cut.pile_up_low.max_fit_ref);
+	vector<float> low_pars = cut.pile_up_low.pol_fit_coefs;
+	low_cut.SetParameters(low_pars[0], low_pars[1], low_pars[2], low_pars[3], low_pars[4]);
+	TF1 low_extrap("btof_match_pile_low_extrap", "pol1", cut.pile_up_low.max_fit_ref, btof_match_pile_can.GetUxmax());
+	low_extrap.SetParameters(cut.pile_up_low.lin_extrap.first, cut.pile_up_low.lin_extrap.second);
+	low_cut.SetLineColor(kRed); low_extrap.SetLineColor(kRed);
+	up_cut.Draw("same"); low_cut.Draw("same"); up_extrap.Draw("same"); low_extrap.Draw("same");
 	btof_match_pile_can.Write();
 	btof_match_ref_hist.Write();
 

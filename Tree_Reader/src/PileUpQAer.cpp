@@ -339,8 +339,8 @@ void PileUpQAer::rotate_dist() {
 			gaus_exp2.SetParLimits(2, gaus_exp.GetParameter(2) / 4, gaus_exp.GetParameter(2) * 4);
 			gaus_exp2.SetParLimits(3, -20, -0.001);
 			slice.second.Fit(&gaus_exp2, "NQR");
-			slice_fits2[slice.first] = TF1(title.data(), gexp_r_plus_linws, lower_bound, upper_bound, 8);
-			slice_fits2[slice.first].SetParameters(gaus_exp2.GetParameter(0), gaus_exp2.GetParameter(1), gaus_exp2.GetParameter(2), gaus_exp2.GetParameter(3), gaus_exp2.GetParameter(0) / 5000, gaus_exp2.GetParameter(1) + 1.5 * gaus_exp2.GetParameter(2), 5, -0.5);
+			slice_fits2[slice.first] = TF1(title.data(), gexp_r_plus_ws, lower_bound, upper_bound, 7);
+			slice_fits2[slice.first].SetParameters(gaus_exp2.GetParameter(0), gaus_exp2.GetParameter(1), gaus_exp2.GetParameter(2), gaus_exp2.GetParameter(3), gaus_exp2.GetParameter(0) / 5000, gaus_exp2.GetParameter(1) + 1.5 * gaus_exp2.GetParameter(2), 5);
 			slice_fits2[slice.first].SetParLimits(0, 0, gaus_exp2.GetParameter(0) * 2);
 			slice_fits2[slice.first].SetParLimits(1, lower_bound, upper_bound);
 			slice_fits2[slice.first].SetParLimits(2, gaus_exp2.GetParameter(2) / 4, gaus_exp2.GetParameter(2) * 4);
@@ -348,7 +348,6 @@ void PileUpQAer::rotate_dist() {
 			slice_fits2[slice.first].SetParLimits(4, gaus_exp2.GetParameter(0) / 1000000, gaus_exp2.GetParameter(0) / 100);
 			slice_fits2[slice.first].SetParLimits(5, gaus_exp.GetParameter(1), gaus_exp.GetParameter(1) + 5 * gaus_exp.GetParameter(2));
 			slice_fits2[slice.first].SetParLimits(6, 0, 100);
-			slice_fits2[slice.first].SetParLimits(7, -10, 0);
 			slice.second.Fit(&slice_fits2[slice.first], "NQR");
 
 			double range = upper_bound - lower_bound;
@@ -491,6 +490,9 @@ void PileUpQAer::rotate_dist() {
 		TDirectory *slice_dcaz_dir = out_file->mkdir("Dca_z Slice Canvases");
 		TDirectory *slice_dcaz_sd_dir = out_file->mkdir("Dca_z_sd Slice Canvases");
 		TDirectory *slice_hist_dir = out_file->mkdir("Slice Hists");
+		string pdf1_path = out_path + "Slices1/" + to_string(energy) + "GeV_Slices.pdf";
+		string pdf2_path = out_path + "Slices2/" + to_string(energy) + "GeV_Slices.pdf";
+		unsigned slice_num = 0;
 		for(pair<int, TH1F> slice:slices) {
 			slice_hist_dir->cd();
 			slice.second.Write();
@@ -559,6 +561,14 @@ void PileUpQAer::rotate_dist() {
 			slice_can.SetLogy();
 			slice_can.Write();
 
+			if(++slice_num == 1) {
+				slice_can.Print((pdf1_path + "(").data(), ("Title:"+(string)slice.second.GetName()).data());
+			} else if(slice_num == slices.size()) {
+				slice_can.Print((pdf1_path + ")").data(), ("Title:"+(string)slice.second.GetName()).data());
+			} else {
+				slice_can.Print(pdf1_path.data(), ("Title:"+(string)slice.second.GetName()).data());
+			}
+
 			slice2_canvas_dir->cd();
 			TCanvas slice2_can(("Can2_"+(string)slice.second.GetName()).data(), slice.second.GetTitle(), can_x_pix, can_y_pix);
 
@@ -567,8 +577,8 @@ void PileUpQAer::rotate_dist() {
 			TF1 gaus_exp2("Gaus_exp2", gaus_exp_r, slice_fits2[slice.first].GetXmin(), slice_fits2[slice.first].GetXmax(), 4);
 			gaus_exp2.SetParameters(slice_fits2[slice.first].GetParameter(0), slice_fits2[slice.first].GetParameter(1), slice_fits2[slice.first].GetParameter(2), slice_fits2[slice.first].GetParameter(3));
 			gaus_exp2.SetNpx(n_plot_points); gaus_exp2.SetLineColor(kGreen+2);
-			TF1 bkg2("Background2", lin_woods_saxon, slice_fits2[slice.first].GetXmin(), slice_fits2[slice.first].GetXmax(), 4);
-			bkg2.SetParameters(slice_fits2[slice.first].GetParameter(4), slice_fits2[slice.first].GetParameter(5), slice_fits2[slice.first].GetParameter(6), slice_fits2[slice.first].GetParameter(7));
+			TF1 bkg2("Background2", woods_saxon, slice_fits2[slice.first].GetXmin(), slice_fits2[slice.first].GetXmax(), 3);
+			bkg2.SetParameters(slice_fits2[slice.first].GetParameter(4), slice_fits2[slice.first].GetParameter(5), slice_fits2[slice.first].GetParameter(6));
 			bkg2.SetNpx(n_plot_points); bkg2.SetLineColor(kViolet);
 
 			slice.second.Draw();
@@ -592,14 +602,20 @@ void PileUpQAer::rotate_dist() {
 			gaus_pars2.Draw("Same");
 			TPaveText bkg2_pars(0.12, 0.41, 0.34, 0.65, "NDC");
 			bkg2_pars.AddText("Woods Saxon with Slope Parameters");
-			bkg2_pars.AddLine(.0, .8, 1., .8);
+			bkg2_pars.AddLine(.0, .75, 1., .75);
 			bkg2_pars.AddText(("Amplitude: " + to_string(slice_fits2[slice.first].GetParameter(4)) + " #pm " + to_string(slice_fits2[slice.first].GetParError(4))).data());
 			bkg2_pars.AddText(("Center: " + to_string(slice_fits2[slice.first].GetParameter(5)) + " #pm " + to_string(slice_fits2[slice.first].GetParError(5))).data());
 			bkg2_pars.AddText(("WS Width: " + to_string(slice_fits2[slice.first].GetParameter(6)) + " #pm " + to_string(slice_fits2[slice.first].GetParError(6))).data());
-			bkg2_pars.AddText(("Slope: " + to_string(slice_fits2[slice.first].GetParameter(7)) + " #pm " + to_string(slice_fits2[slice.first].GetParError(7))).data());
 			bkg2_pars.Draw("Same");
 			slice2_can.SetLogy();
 			slice2_can.Write();
+			if(slice_num == 1) {
+				slice2_can.Print((pdf2_path + "(").data(), ("Title:"+(string)slice.second.GetName()).data());
+			} else if(slice_num == slices.size()) {
+				slice2_can.Print((pdf2_path + ")").data(), ("Title:"+(string)slice.second.GetName()).data());
+			} else {
+				slice2_can.Print(pdf2_path.data(), ("Title:"+(string)slice.second.GetName()).data());
+			}
 
 			slice_prob_dir->cd();
 			TCanvas slice_prob_can(("Can_"+(string)prob_graphs[slice.first].GetName()).data(), prob_graphs[slice.first].GetTitle(), can_x_pix, can_y_pix);

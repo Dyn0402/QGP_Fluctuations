@@ -38,8 +38,8 @@ public:
 	// Event Cuts
 	int min_multi = 2; //Need this many particles or more to be a good event.
 	vector<int> bad_runs;
-	vector<float> pile_up_low;
-	vector<float> pile_up_high;
+	pu_cut pile_up_low;
+	pu_cut pile_up_high;
 	vector<int> dca_xy_bad_runs;
 	map<int, vector<pair<int, int>>> dca_xy_bad_event_ranges;
 

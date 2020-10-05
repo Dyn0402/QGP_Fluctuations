@@ -716,10 +716,22 @@ bool DcaxyQAer::check_enough_particles(Event& event) {
 
 // Check slope of event. If within cuts, return true for good event, else false.
 bool DcaxyQAer::check_pile_up(int btof_multi, int btof_match, int ref_mult) {
-	float max_btof = 0; float min_btof = 0;
-	for(unsigned coef=0; coef < cut.pile_up_high.size(); coef++) {
-		max_btof += cut.pile_up_high[coef] * pow(ref_mult, coef);
-		min_btof += cut.pile_up_low[coef] * pow(ref_mult, coef);
+	float min_btof = 0;
+	if(ref_mult <= cut.pile_up_low.max_fit_ref) {
+		for(unsigned coef=0; coef < cut.pile_up_low.pol_fit_coefs.size(); coef++) {
+			min_btof += cut.pile_up_low.pol_fit_coefs[coef] * pow(ref_mult, coef);
+		}
+	} else {
+		min_btof = cut.pile_up_low.lin_extrap.first + cut.pile_up_low.lin_extrap.second * ref_mult;
+	}
+
+	float max_btof = 0;
+	if(ref_mult <= cut.pile_up_high.max_fit_ref) {
+		for(unsigned coef=0; coef < cut.pile_up_high.pol_fit_coefs.size(); coef++) {
+			max_btof += cut.pile_up_high.pol_fit_coefs[coef] * pow(ref_mult, coef);
+		}
+	} else {
+		max_btof = cut.pile_up_high.lin_extrap.first + cut.pile_up_high.lin_extrap.second * ref_mult;
 	}
 
 	if(btof_match > max_btof || btof_match < min_btof) {
