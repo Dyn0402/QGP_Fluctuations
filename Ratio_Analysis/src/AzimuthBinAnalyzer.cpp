@@ -51,6 +51,14 @@ void AzimuthBinAnalyzer::set_ampt_in_mix_path(string ampt_in_mix_path) {
 	this->ampt_in_mix_path = ampt_in_mix_path;
 }
 
+void AzimuthBinAnalyzer::set_sim_in_path(string sim_in_path) {
+	this->sim_in_path = sim_in_path;
+}
+
+void AzimuthBinAnalyzer::set_sim_in_mix_path(string sim_in_mix_path) {
+	this->sim_in_mix_path = sim_in_mix_path;
+}
+
 void AzimuthBinAnalyzer::set_out_path(string path) {
 	out_path = path;
 }
@@ -314,6 +322,17 @@ void AzimuthBinAnalyzer::combine_sets() {
 						stat_vs_mult_mean_cor(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, {div}, "stat_vs_mult_mean_cor_divide_"+name+to_string(div));
 					}
 					stat_vs_mult_mean(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "stat_vs_mult_mean_divide_"+name);
+				}
+			}
+			TDirectory *divs_dir = mix_div_dir->mkdir("divs");
+			for(pair<string, vector<string>> stat_type:names) {
+				TDirectory *name_dir = divs_dir->mkdir(stat_type.first.data());
+				name_dir->cd();
+				for(string name:stat_type.second) {
+					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
+					stat_name_dir->cd();
+					division_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, "divs_divide_"+name);
+					division_stat(set_pair.second["pull_divide"], set_pairs_sd[set_pair.first]["pull_divide"], name, all_centralities, divs, "divs_pull_divide_"+name);
 				}
 			}
 		}
@@ -708,6 +727,13 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				stat_vs_mult_mean(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, "stat_vs_mult_mean_divide_"+name);
 				stat_vs_mult_mean(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, divs, "stat_vs_mult_mean_pull_divide_"+name);
 			}
+			TDirectory *divs_dir = median_dir->mkdir("divs");
+			for(string name:stat_names) {
+				TDirectory *name_dir = divs_dir->mkdir(name.data());
+				name_dir->cd();
+				division_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, "divs_divide_"+name);
+				division_stat(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, divs, "divs_pull_divide_"+name);
+			}
 		}
 
 		TDirectory *all_dir = mix_div_dir->mkdir("All");
@@ -743,6 +769,13 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				stat_vs_mult_mean(divide_stats_all, name, all_centralities, divs, "stat_vs_mult_mean_divide_"+name);
 				stat_vs_mult_mean(pull_divide_stats_all, name, all_centralities, divs, "stat_vs_mult_mean_pull_divide_"+name);
 			}
+			TDirectory *divs_dir = all_dir->mkdir("divs");
+			for(string name:stat_names) {
+				TDirectory *name_dir = divs_dir->mkdir(name.data());
+				name_dir->cd();
+				division_stat(divide_stats_all, name, all_centralities, divs, "divs_divide_"+name);
+				division_stat(pull_divide_stats_all, name, all_centralities, divs, "divs_pull_divide_"+name);
+			}
 		}
 	}
 }
@@ -756,6 +789,9 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	if(in_string(set_name, "Ampt")) {
 		path = ampt_in_path + set_name + to_string(set_num) + "/";
 		path_mix = ampt_in_mix_path + set_name + to_string(set_num) + "/";
+	} else if(in_string(set_name, "Sim")) {
+		path = sim_in_path + set_name + to_string(set_num) + "/";
+		path_mix = sim_in_mix_path + set_name + to_string(set_num) + "/";
 	} else {
 		path = bes_in_path + set_name + to_string(set_num) + "/";
 		path_mix = bes_in_mix_path + set_name + to_string(set_num) + "/";

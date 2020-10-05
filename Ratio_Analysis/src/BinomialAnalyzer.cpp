@@ -64,6 +64,14 @@ void BinomialAnalyzer::set_ampt_in_mix_path(string ampt_in_mix_path) {
 	this->ampt_in_mix_path = ampt_in_mix_path;
 }
 
+void BinomialAnalyzer::set_sim_in_path(string sim_in_path) {
+	this->sim_in_path = sim_in_path;
+}
+
+void BinomialAnalyzer::set_sim_in_mix_path(string sim_in_mix_path) {
+	this->sim_in_mix_path = sim_in_mix_path;
+}
+
 void BinomialAnalyzer::set_out_path(string out_path) {
 	this->out_path = out_path;
 }
@@ -200,6 +208,9 @@ void BinomialAnalyzer::analyze_subset(string set_name, int set_num, TDirectory *
 	if(in_string(set_name, "Ampt")) {
 		path = ampt_in_path + set_name + to_string(set_num) + "/";
 		path_mix = ampt_in_mix_path + set_name + to_string(set_num) + "/";
+	} else if(in_string(set_name, "Sim")) {
+		path = sim_in_path + set_name + to_string(set_num) + "/";
+		path_mix = sim_in_mix_path + set_name + to_string(set_num) + "/";
 	} else {
 		path = bes_in_path + set_name + to_string(set_num) + "/";
 		path_mix = bes_in_mix_path + set_name + to_string(set_num) + "/";

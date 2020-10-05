@@ -46,6 +46,8 @@ public:
 	void set_bes_in_mix_path(string bes_in_mix_path);
 	void set_ampt_in_path(string ampt_in_path);
 	void set_ampt_in_mix_path(string ampt_in_mix_path);
+	void set_sim_in_path(string sim_in_path);
+	void set_sim_in_mix_path(string sim_in_mix_path);
 	void set_out_path(string out_path);
 	void set_out_root_name(string name);
 	void set_energies(vector<int> energies);
@@ -62,10 +64,12 @@ public:
 
 private:
 	// Parameters
-	string bes_in_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3/";  // "/home/dylan/Research/Data/";
-	string bes_in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/";  // "/home/dylan/Research/Data_Mix/";
-	string ampt_in_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3/";  // "/home/dylan/Research/Data/";
-	string ampt_in_mix_path = "/media/dylan/SSD_Storage/Research/Data_Old_Ref3_Mix/";  // "/home/dylan/Research/Data_Mix/";
+	string bes_in_path = "/home/dylan/Research/Data/";
+	string bes_in_mix_path = "/home/dylan/Research/Data_Mix/";
+	string ampt_in_path = "/home/dylan/Research/Data_Ampt/";
+	string ampt_in_mix_path = "/home/dylan/Research/Data_Ampt_Mix/";
+	string sim_in_path = "/home/dylan/Research/Data_Sim/";
+	string sim_in_mix_path = "/home/dylan/Research/Data_Sim_Mix/";
 	string out_path = "/home/dylan/Research/Results/Azimuth_Analysis/";
 	string out_root_name = "3-05-20_Binomial_Ref3_partial.root";
 
