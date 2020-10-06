@@ -998,11 +998,13 @@ void TreeReader::process_event(Event& event) {
 			post_n_particles[cent].Fill((int)good_particle_angles.size());
 
 			TVector2 q(event.get_qx(), event.get_qy());
+			pre_ep_hist.Fill(0.5 * q.Phi());
 			for(double &angle:good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
 				TVector2 q_new(cos(2*angle), sin(2*angle));
 				q -= q_new;
 			}
 			event.set_event_plane(0.5 * q.Phi());
+			post_ep_hist.Fill(event.get_event_plane());
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if(mixed) { mix.append_event(good_particle_angles, cent, event.get_event_plane(), event.get_vz()); }
@@ -1439,7 +1441,7 @@ void TreeReader::define_qa() {
 	pre_refn_hist = TH1I(("pre_refn_"+set_name+"_"+to_string(energy)).data(), "pre_refn", 801, -0.5, 800.5);
 	pre_btof_multi_hist = TH1I(("pre_btof_multi_"+set_name+"_"+to_string(energy)).data(), "pre_btof_multi", 2001, -0.5, 2000.5);
 	pre_btof_match_hist = TH1I(("pre_btof_match_"+set_name+"_"+to_string(energy)).data(), "pre_btof_match", 501, -0.5, 500.5);
-//	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
+	pre_ep_hist = TH1I(("pre_ep_"+set_name+"_"+to_string(energy)).data(), "pre_ep", 100, -0.5, 3.5);
 
 	post_run_hist = TH1I(("post_run_"+set_name+"_"+to_string(energy)).data(), "post_run", 1000, 1000000, 100000000);
 	post_vx_hist = TH1I(("post_vx_"+set_name+"_"+to_string(energy)).data(), "post_vx", 100, -2.5, 2.5);
@@ -1529,7 +1531,7 @@ void TreeReader::fill_post_event_qa(Event& event) {
 	post_refn_hist.Fill(event.get_refn());
 	post_btof_multi_hist.Fill(event.get_btof_multi());
 	post_btof_match_hist.Fill(event.get_btof_match());
-	post_ep_hist.Fill(event.get_event_plane());
+//	post_ep_hist.Fill(event.get_event_plane());
 }
 
 
@@ -1615,7 +1617,7 @@ void TreeReader::write_qa() {
 	pre_refn_hist.Write();
 	pre_btof_multi_hist.Write();
 	pre_btof_match_hist.Write();
-//	pre_ep_hist.Write();
+	pre_ep_hist.Write();
 
 	post_run_hist.Write();
 	post_vx_hist.Write();
@@ -1735,7 +1737,7 @@ void TreeReader::write_qa() {
 	post_ep_hist.SetLineColor(kRed);
 	post_ep_hist.Draw();
 //	pre_run_hist.GetYaxis()->SetRangeUser(0, pre_run_hist.GetMaximum()*1.05);
-//	pre_ep_hist.Draw("sames");
+	pre_ep_hist.Draw("sames");
 	ep_can.Write();
 	TCanvas phi_can("phi_can");
 	pre_phi_hist.GetYaxis()->SetRangeUser(0, pre_phi_hist.GetMaximum()*1.05);

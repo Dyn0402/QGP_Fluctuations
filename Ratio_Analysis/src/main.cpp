@@ -55,7 +55,7 @@ void azimuth_bin_analyze() {
 	analyzer.set_sim_in_mix_path("/home/dylan/Research/Data_Sim_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 //	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
-	analyzer.set_out_root_name("10-2-20_Sim_test.root");
+	analyzer.set_out_root_name("10-5-20_Sim_test2.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8});
@@ -135,7 +135,7 @@ void binomial_analyze() {
 	analyzer.set_sim_in_path("/home/dylan/Research/Data_Sim/");
 	analyzer.set_sim_in_mix_path("/home/dylan/Research/Data_Sim_Mix/");
 //	analyzer.set_out_root_name("10-2-20_binom_BES1_eta_05_1_dca_1_3.root");
-	analyzer.set_out_root_name("10-2-20_binom_Sim_test.root");
+	analyzer.set_out_root_name("10-5-20_binom_Sim_test2.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 	analyzer.set_divs({300, 240, 180, 120, 90, 72, 60});
 	analyzer.set_centralities({8});

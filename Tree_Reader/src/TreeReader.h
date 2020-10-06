@@ -266,7 +266,7 @@ private:
 	TH1I pre_refn_hist;
 	TH1I pre_btof_multi_hist;
 	TH1I pre_btof_match_hist;
-//	TH1I pre_ep_hist;
+	TH1I pre_ep_hist;
 
 	TH1I post_run_hist;
 	TH1I post_vx_hist;
