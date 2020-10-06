@@ -28,8 +28,8 @@ struct event_defaults {
 	float vx = 0.;
 	float vy = 0.;
 	float vz = 0.;
-	float qx = 0.;
-	float qy = 0.;
+	float qx = numeric_limits<float>::max() / 2;  // Aim for an event plane not sensitive to changes in qx, qy
+	float qy = numeric_limits<float>::max() / 2000;  // Aim for an event plane just larger than 0.0 --> 0.001
 	float event_plane = 0.;
 	float dca_xy_avg = 0.;
 	float dca_xy_err = 0.;
