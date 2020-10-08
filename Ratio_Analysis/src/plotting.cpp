@@ -1297,7 +1297,7 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 }
 
 
-void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name) {
+void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, vector<int> energies, string name) {
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 //	gStyle->SetTitleFontSize(0.09);
 //	gStyle->SetTitleOffset(1.2);
@@ -1312,7 +1312,7 @@ void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>
 		double y_max = numeric_limits<double>::min();
 		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-		for(int energy:analysis::energy_list) {
+		for(int energy:energies) {
 			int set_num = 0;
 			for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
 				vector<double> stat_vals, div_val, stat_err, div_err, stat_sys;
@@ -1373,12 +1373,12 @@ void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>
 }
 
 
-void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name) {
+void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, string stat_name, vector<int> cents, vector<int> divs, vector<int> energies, string name) {
 	double y_max = numeric_limits<double>::min(); //---
 	double y_min = numeric_limits<double>::max(); //---
 	for(auto stat:stats) {
 		for(int cent:cents) {
-			for(int energy:analysis::energy_list) {
+			for(int energy:energies) {
 				vector<double> stat_vals, stat_err;
 				Measure stat_meas;
 				for(int div:divs) {
@@ -1408,7 +1408,7 @@ void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-		for(int energy:analysis::energy_list) {
+		for(int energy:energies) {
 			int set_num = 0;
 			for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
 				vector<double> stat_vals, div_val, stat_err, div_err;
@@ -1460,11 +1460,11 @@ void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>
 
 
 
-void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name) {
+void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, map<int, map<int, map<int, map<string, double>>>> sys, string stat_name, vector<int> cents, vector<int> divs, vector<int> energies, string name) {
 	double y_max = numeric_limits<double>::min(); //---
 	double y_min = numeric_limits<double>::max(); //---
 	for(int cent:cents) {
-		for(int energy:analysis::energy_list) {
+		for(int energy:energies) {
 //			if(divs.size() > 1 && div == 2 && stat_name == "skewness") { continue; }
 			vector<double> stat_vals, stat_err, stat_sys;
 			Measure stat_meas;
@@ -1495,7 +1495,7 @@ void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, map
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-		for(int energy:analysis::energy_list) {
+		for(int energy:energies) {
 //			if(divs.size() > 1 && div == 180 && stat_name == "skewness") { continue; }
 			vector<double> stat_vals, div_val, stat_err, div_err, stat_sys;
 			Measure stat_meas;
@@ -1550,11 +1550,11 @@ void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, map
 }
 
 
-void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat_name, vector<int> cents, vector<int> divs, string name) {
+void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, string stat_name, vector<int> cents, vector<int> divs, vector<int> energies, string name) {
 	double y_max = numeric_limits<double>::min(); //---
 	double y_min = numeric_limits<double>::max(); //---
 	for(int cent:cents) {
-		for(int energy:analysis::energy_list) {
+		for(int energy:energies) {
 			vector<double> stat_vals, stat_err;
 			Measure stat_meas;
 			for(int div:divs) {
@@ -1582,7 +1582,7 @@ void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, str
 //		double y_max = numeric_limits<double>::min();
 //		double y_min = numeric_limits<double>::max();
 		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-		for(int energy:analysis::energy_list) {
+		for(int energy:energies) {
 			vector<double> stat_vals, div_val, stat_err, div_err;
 			Measure stat_meas;
 			for(int div:divs) {
