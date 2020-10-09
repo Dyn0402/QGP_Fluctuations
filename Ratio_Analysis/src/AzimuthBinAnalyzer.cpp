@@ -860,8 +860,8 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				TDirectory *name_dir = divs_dir->mkdir(name.data());
 				name_dir->cd();
 				for(int energy:energy_list) {
-					division_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, {energy}, "divs_divide_"+name);
-					division_stat(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, divs, {energy}, "divs_pull_divide_"+name);
+					division_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, {energy}, "divs_divide_"+name+to_string(energy)+"GeV");
+					division_stat(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, divs, {energy}, "divs_pull_divide_"+name+to_string(energy)+"GeV");
 				}
 				division_stat(divide_stats_median[set_name], divide_stats_sd[set_name], name, all_centralities, divs, energy_list, "divs_divide_"+name);
 				division_stat(pull_divide_stats_median[set_name], pull_divide_stats_sd[set_name], name, all_centralities, divs, energy_list, "divs_pull_divide_"+name);
@@ -907,8 +907,8 @@ void AzimuthBinAnalyzer::combine_set(string set_name, TDirectory *set_dir) {
 				TDirectory *name_dir = divs_dir->mkdir(name.data());
 				name_dir->cd();
 				for(int energy:energy_list) {
-					division_stat(divide_stats_all, name, all_centralities, divs, {energy}, "divs_divide_"+name);
-					division_stat(pull_divide_stats_all, name, all_centralities, divs, {energy}, "divs_pull_divide_"+name);
+					division_stat(divide_stats_all, name, all_centralities, divs, {energy}, "divs_divide_"+name+to_string(energy)+"GeV");
+					division_stat(pull_divide_stats_all, name, all_centralities, divs, {energy}, "divs_pull_divide_"+name+to_string(energy)+"GeV");
 				}
 				division_stat(divide_stats_all, name, all_centralities, divs, energy_list, "divs_divide_"+name);
 				division_stat(pull_divide_stats_all, name, all_centralities, divs, energy_list, "divs_pull_divide_"+name);
@@ -967,7 +967,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 		for(auto &div:energy.second) {
 			for(auto &cent:div.second) {
 				for(auto &particles:cent.second.get_bin_data()) {
-					float p = 1 / (float)div.first;  // FIX!
+					float p = (float)div.first / 360;
 					cent.second.set_diff_slice_divisor(particles.first, sqrt(particles.first * p * (1 - p)));
 				}
 			}
@@ -978,7 +978,7 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 		for(auto &div:energy.second) {
 			for(auto &cent:div.second) {
 				for(auto &particles:cent.second.get_bin_data()) {
-					float p = 1 / (float)div.first;  // FIX!
+					float p = (float)div.first / 360;
 					cent.second.set_diff_slice_divisor(particles.first, sqrt(particles.first * p * (1 - p)));
 				}
 			}
