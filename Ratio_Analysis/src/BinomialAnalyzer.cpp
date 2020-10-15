@@ -360,8 +360,18 @@ map<int, map<int, map<int, map<int, map<string, Measure>>>>> BinomialAnalyzer::d
 							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / ( q - p );
 						} else if(stat.first == "kurtosis") {
 							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / ( (1 - 6*p*q) / (n*p*q) );
+						} else if(stat.first == "non_excess_kurtosis") {
+							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / (3 + (1 - 6*p*q) / (n*p*q) );
 						} else if(stat.first == "kurtosis_variance") {
 							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / (1 - 6*p*q);
+						} else if(stat.first == "C1") {
+							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / (n*p);
+						} else if(stat.first == "C2") {
+							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / (n*p*q);
+						} else if(stat.first == "C3") {
+							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / (n*p*q*(1 - 2*p));
+						} else if(stat.first == "C4") {
+							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / (n*p*q*(6*pow(p, 2) - 6*p + 1));
 						} else if(stat.first == "variance/mean") {
 							result[energy.first][div.first][cent.first][total_particle.first][stat.first] = stat.second / q;
 						} else if(stat.first == "sd/mean") {
@@ -432,6 +442,11 @@ void BinomialAnalyzer::calc_stat(map<int, int> &slice_data, int particles, int e
 	(*stats)[energy][div][cent][particles]["kurtosis"] = stat.get_kurtosis();
 	(*stats)[energy][div][cent][particles]["kurtosis_variance"] = stat.get_kurt_var();
 	(*stats)[energy][div][cent][particles]["non_excess_kurtosis"] = stat.get_non_excess_kurtosis();
+	(*stats)[energy][div][cent][particles]["C1"] = stat.get_cumulant(1);
+	(*stats)[energy][div][cent][particles]["C2"] = stat.get_cumulant(2);
+	(*stats)[energy][div][cent][particles]["C3"] = stat.get_cumulant(3);
+	(*stats)[energy][div][cent][particles]["C4"] = stat.get_cumulant(4);
+	(*stats)[energy][div][cent][particles]["N"] = stat.get_dist_num();
 }
 
 
@@ -670,7 +685,12 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 		else if(stat_name == "skewness") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 2*[0]) / TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else if(stat_name == "skewness_sd") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1 - 2*[0]", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else if(stat_name == "kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "non_excess_kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "3 + (1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else if(stat_name == "kurtosis_variance") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0]))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C1") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C2") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*(1-[0])*x", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C3") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*(1-[0])*x*(1-2*[0])", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C4") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*(1-[0])*x*(6*[0]^2-6*[0]+1)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else { binoms.push_back(new TF1()); }
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err;
@@ -716,7 +736,12 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			else if(stat_name == "skewness") { mgs.back()->GetYaxis()->SetTitle("Skewness"); }
 			else if(stat_name == "skewness_sd") { mgs.back()->GetYaxis()->SetTitle("Skewness*Standard Deviation"); }
 			else if(stat_name == "kurtosis") { mgs.back()->GetYaxis()->SetTitle("Kurtosis"); }
+			else if(stat_name == "non_excess_kurtosis") { mgs.back()->GetYaxis()->SetTitle("Non-Excess Kurtosis"); }
 			else if(stat_name == "kurtosis_variance") { mgs.back()->GetYaxis()->SetTitle("Kurtosis*Variance"); }
+			else if(stat_name == "C1") { mgs.back()->GetYaxis()->SetTitle("C1"); }
+			else if(stat_name == "C2") { mgs.back()->GetYaxis()->SetTitle("C2"); }
+			else if(stat_name == "C3") { mgs.back()->GetYaxis()->SetTitle("C3"); }
+			else if(stat_name == "C4") { mgs.back()->GetYaxis()->SetTitle("C4"); }
 			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.12); }
 		gPad->SetTopMargin(0.09);
 		gPad->SetRightMargin(0.03);
@@ -785,7 +810,12 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 		else if(stat_name == "skewness") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 2*[0]) / TMath::Sqrt([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else if(stat_name == "skewness_sd") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "1 - 2*[0]", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else if(stat_name == "kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "non_excess_kurtosis") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "3 + (1 - 6*[0]*(1-[0])) / ([0]*(1-[0])*x)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else if(stat_name == "kurtosis_variance") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "(1 - 6*[0]*(1-[0]))", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C1") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*x", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C2") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*(1-[0])*x", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C3") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*(1-[0])*x*(1-2*[0])", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
+		else if(stat_name == "C4") { binoms.push_back(new TF1((to_string(energy) + "GeV Binomial").data(), "[0]*(1-[0])*x*(6*[0]^2-6*[0]+1)", plot_x_range.first, x_max)); binoms.back()->SetParameter(0, p); }
 		else { binoms.push_back(new TF1()); }
 		for(auto &data_set:slice_stats) {
 			vector<double> stat_vals, particle_val, stat_err, particle_err, stat_sys;
@@ -834,7 +864,12 @@ void BinomialAnalyzer::slice_stats_plot(map<string, map<int, map<int, map<int, m
 			else if(stat_name == "skewness") { mgs.back()->GetYaxis()->SetTitle("Skewness"); }
 			else if(stat_name == "skewness_sd") { mgs.back()->GetYaxis()->SetTitle("Skewness*Standard Deviation"); }
 			else if(stat_name == "kurtosis") { mgs.back()->GetYaxis()->SetTitle("Kurtosis"); }
+			else if(stat_name == "non_excess_kurtosis") { mgs.back()->GetYaxis()->SetTitle("Non-Excess Kurtosis"); }
 			else if(stat_name == "kurtosis_variance") { mgs.back()->GetYaxis()->SetTitle("Kurtosis*Variance"); }
+			else if(stat_name == "C1") { mgs.back()->GetYaxis()->SetTitle("C1"); }
+			else if(stat_name == "C2") { mgs.back()->GetYaxis()->SetTitle("C2"); }
+			else if(stat_name == "C3") { mgs.back()->GetYaxis()->SetTitle("C3"); }
+			else if(stat_name == "C4") { mgs.back()->GetYaxis()->SetTitle("C4"); }
 			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(0.95); gPad->SetLeftMargin(0.12); }
 		gPad->SetTopMargin(0.09);
 		gPad->SetRightMargin(0.03);
@@ -1171,7 +1206,12 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			else if(stat_name == "skewness") { mgs.back()->GetYaxis()->SetTitle("skewness_{data} / skewness_{binomial}                     "); }
 			else if(stat_name == "skewness_sd") { mgs.back()->GetYaxis()->SetTitle("skewness*sd_{data} / skewness*sd_{binomial}                     "); }
 			else if(stat_name == "kurtosis") { mgs.back()->GetYaxis()->SetTitle("kurtosis_{data} / kurtosis_{binomial}                     "); }
+			else if(stat_name == "non_excess_kurtosis") { mgs.back()->GetYaxis()->SetTitle("non_excess_kurtosis_{data} / kurtosis_{binomial}         "); }
 			else if(stat_name == "kurtosis_variance") { mgs.back()->GetYaxis()->SetTitle("kurtosis*variance_{data} / kurtosis*variance_{binomial}                     "); }
+			else if(stat_name == "C1") { mgs.back()->GetYaxis()->SetTitle("C1_{data} / C1_{binomial}                         "); }
+			else if(stat_name == "C2") { mgs.back()->GetYaxis()->SetTitle("C2_{data} / C2_{binomial}                         "); }
+			else if(stat_name == "C3") { mgs.back()->GetYaxis()->SetTitle("C3_{data} / C3_{binomial}                         "); }
+			else if(stat_name == "C4") { mgs.back()->GetYaxis()->SetTitle("C4_{data} / C4_{binomial}                         "); }
 			else if(stat_name == "variance/mean") { mgs.back()->GetYaxis()->SetTitle("#sigma^2_{data}/#mu{data} / #sigma^2_{binomial}/mu{binomial}    "); }
 			else if(stat_name == "sd/mean") { mgs.back()->GetYaxis()->SetTitle("#sigma_{data}/#mu{data} / #sigma_{binomial}/mu{binomial}    "); }
 			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(1.5); gPad->SetLeftMargin(left_margin); }
@@ -1310,7 +1350,12 @@ map<string, map<int, TF1*>> BinomialAnalyzer::slice_stats_divided_plot(map<strin
 			else if(stat_name == "skewness") { mgs.back()->GetYaxis()->SetTitle("skewness_{data} / skewness_{binomial}                     "); }
 			else if(stat_name == "skewness_sd") { mgs.back()->GetYaxis()->SetTitle("skewness*sd_{data} / skewness*sd_{binomial}                     "); }
 			else if(stat_name == "kurtosis") { mgs.back()->GetYaxis()->SetTitle("kurtosis_{data} / kurtosis_{binomial}                     "); }
+			else if(stat_name == "non_excess_kurtosis") { mgs.back()->GetYaxis()->SetTitle("non_excess_kurtosis_{data} / kurtosis_{binomial}         "); }
 			else if(stat_name == "kurtosis_variance") { mgs.back()->GetYaxis()->SetTitle("kurtosis*variance_{data} / kurtosis*variance_{binomial}                     "); }
+			else if(stat_name == "C1") { mgs.back()->GetYaxis()->SetTitle("C1_{data} / C1_{binomial}                         "); }
+			else if(stat_name == "C2") { mgs.back()->GetYaxis()->SetTitle("C2_{data} / C2_{binomial}                         "); }
+			else if(stat_name == "C3") { mgs.back()->GetYaxis()->SetTitle("C3_{data} / C3_{binomial}                         "); }
+			else if(stat_name == "C4") { mgs.back()->GetYaxis()->SetTitle("C4_{data} / C4_{binomial}                         "); }
 			else if(stat_name == "variance/mean") { mgs.back()->GetYaxis()->SetTitle("#sigma^2_{data}/#mu{data} / #sigma^2_{binomial}/mu{binomial}    "); }
 			else if(stat_name == "sd/mean") { mgs.back()->GetYaxis()->SetTitle("#sigma_{data}/#mu{data} / #sigma_{binomial}/mu{binomial}    "); }
 			mgs.back()->GetYaxis()->SetTitleSize(0.06); mgs.back()->GetYaxis()->SetTitleOffset(1.5); gPad->SetLeftMargin(left_margin); }

@@ -1005,6 +1005,13 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				graph->SetMarkerColor(plot::div_marker_colors[div]);
 				graph->SetMarkerSize(plot::div_marker_sizes[div]);
 				graph->SetLineColor(plot::div_marker_colors[div]);
+				if(in_string(name, "_comp_")) {
+					if(in_string(data_set.first, "raw")) {
+						graph->SetMarkerColor(kBlue); graph->SetLineColor(kBlue); graph->SetMarkerStyle(20);
+					} else if(in_string(data_set.first, "mix")) {
+						graph->SetMarkerColor(kGreen+2); graph->SetLineColor(kGreen+2); graph->SetMarkerStyle(21);
+					}
+				}
 				mg->Add(graph, "APLZ");
 				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
 				sys_graph->SetLineColor(plot::div_marker_colors[div]);

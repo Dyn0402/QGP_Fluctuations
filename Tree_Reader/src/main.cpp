@@ -101,7 +101,8 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
+	map<string, pair<int, int>> set_pairs = {{"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
 
 	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 
@@ -164,7 +165,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 
 	vector<int> divs {356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60};
 //	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
-	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 20000000}};
+	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000000}};
 //	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 200000}};
 
 	string set_dir = set_name + to_string(set_num) + "/";
@@ -208,7 +209,8 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 //	}
 
 	if(in_string(set_name, "_n1ratios")) { reader.set_n1_ratios(true); reader.set_single_ratio(false); }
-	else { reader.set_single_ratio(true); }
+	if(in_string(set_name, "_allratios")) { reader.set_n1_ratios(false); reader.set_single_ratio(false); }
+	else { reader.set_n1_ratios(false); reader.set_single_ratio(true); }
 
 	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
 	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }

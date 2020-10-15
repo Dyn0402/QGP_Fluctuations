@@ -79,7 +79,7 @@ private:
 	vector<int> energy_list {7,11,19,27,39,62};
 	vector<int> divs {180, 120, 90, 72, 60};
 	vector<int> centralities {8,7,6,5,4,3,2,1,0};
-	vector<string> stats {"mean", "standard_deviation", "skewness", "skewness_sd", "kurtosis", "kurtosis_variance"};
+	vector<string> stats {"mean", "standard_deviation", "skewness", "skewness_sd", "kurtosis", "non_excess_kurtosis", "kurtosis_variance", "C1", "C2", "C3", "C4"};
 	vector<string> stat_ratios {"variance/mean", "sd/mean"};
 
 	int stat_threads = 1;

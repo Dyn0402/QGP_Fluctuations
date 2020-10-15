@@ -249,8 +249,8 @@ void AzimuthBinAnalyzer::combine_sets() {
 					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
 					stat_name_dir->cd();
 					for(int energy:energy_list) {
-						division_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, {energy}, "divs_raw_"+name);
-						division_stat(set_pair.second["pull_raw"], set_pairs_sd[set_pair.first]["pull_raw"], name, all_centralities, divs, {energy}, "divs_pull_raw_"+name);
+						division_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, {energy}, "divs_raw_"+name+to_string(energy)+"GeV");
+						division_stat(set_pair.second["pull_raw"], set_pairs_sd[set_pair.first]["pull_raw"], name, all_centralities, divs, {energy}, "divs_pull_raw_"+name+to_string(energy)+"GeV");
 					}
 					division_stat(set_pair.second["raw"], set_pairs_sd[set_pair.first]["raw"], name, all_centralities, divs, energy_list, "divs_raw_"+name);
 					division_stat(set_pair.second["pull_raw"], set_pairs_sd[set_pair.first]["pull_raw"], name, all_centralities, divs, energy_list, "divs_pull_raw_"+name);
@@ -309,8 +309,8 @@ void AzimuthBinAnalyzer::combine_sets() {
 					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
 					stat_name_dir->cd();
 					for(int energy:energy_list) {
-						division_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, {energy}, "divs_mix_"+name);
-						division_stat(set_pair.second["pull_mix"], set_pairs_sd[set_pair.first]["pull_mix"], name, all_centralities, divs, {energy}, "divs_pull_mix_"+name);
+						division_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, {energy}, "divs_mix_"+name+to_string(energy)+"GeV");
+						division_stat(set_pair.second["pull_mix"], set_pairs_sd[set_pair.first]["pull_mix"], name, all_centralities, divs, {energy}, "divs_pull_mix_"+name+to_string(energy)+"GeV");
 					}
 					division_stat(set_pair.second["mix"], set_pairs_sd[set_pair.first]["mix"], name, all_centralities, divs, energy_list, "divs_mix_"+name);
 					division_stat(set_pair.second["pull_mix"], set_pairs_sd[set_pair.first]["pull_mix"], name, all_centralities, divs, energy_list, "divs_pull_mix_"+name);
@@ -372,8 +372,8 @@ void AzimuthBinAnalyzer::combine_sets() {
 					TDirectory *stat_name_dir = name_dir->mkdir(name.data());
 					stat_name_dir->cd();
 					for(int energy:energy_list) {
-						division_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, {energy}, "divs_divide_"+name);
-						division_stat(set_pair.second["pull_divide"], set_pairs_sd[set_pair.first]["pull_divide"], name, all_centralities, divs, {energy}, "divs_pull_divide_"+name);
+						division_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, {energy}, "divs_divide_"+name+to_string(energy)+"GeV");
+						division_stat(set_pair.second["pull_divide"], set_pairs_sd[set_pair.first]["pull_divide"], name, all_centralities, divs, {energy}, "divs_pull_divide_"+name+to_string(energy)+"GeV");
 					}
 					division_stat(set_pair.second["divide"], set_pairs_sd[set_pair.first]["divide"], name, all_centralities, divs, energy_list, "divs_divide_"+name);
 					division_stat(set_pair.second["pull_divide"], set_pairs_sd[set_pair.first]["pull_divide"], name, all_centralities, divs, energy_list, "divs_pull_divide_"+name);
