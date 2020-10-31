@@ -55,12 +55,13 @@ void azimuth_bin_analyze() {
 	analyzer.set_sim_in_mix_path("/home/dylan/Research/Data_Sim_Mix/");
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 //	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
-	analyzer.set_out_root_name("10-14-20_Sim_Stats.root");
+	analyzer.set_out_root_name("10-22-20_DNP_Ampt3.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8});
 	analyzer.set_centralities({8});
-	analyzer.set_divs({356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60});
+	analyzer.set_divs({180, 120, 90, 72, 60});
+//	analyzer.set_divs({60});
 	analyzer.set_plot_cents({8});
 	analyzer.set_plot_dists(true);
 	analyzer.set_plot_dist_canvases(true);
@@ -122,12 +123,15 @@ void azimuth_bin_analyze() {
 //	analyzer.set_sets({{{"Sim_n1ratios_0p0s_No_Rotate_test", {0,0}}}});
 //	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}});
 //	analyzer.set_set_combos({{"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}}});
-	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05", {0, 4}},
-		{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta05_allratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0,4}}});
-	analyzer.set_set_combos({{"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}},
-		{"Ampt_Eta05_n1_single", {"Ampt_eta05_n1ratios", "Ampt_eta05"}}, {"Ampt_Eta05_n1_all", {"Ampt_eta05_n1ratios", "Ampt_eta05_allratios"}},
-		{"Ampt_Eta05_dca1", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca1"}}, {"Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca3"}},
-		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
+//	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05", {0, 4}},
+//		{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta05_allratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0,4}}});
+//	analyzer.set_set_combos({{"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}},
+//		{"Ampt_Eta05_n1_single", {"Ampt_eta05_n1ratios", "Ampt_eta05"}}, {"Ampt_Eta05_n1_all", {"Ampt_eta05_n1ratios", "Ampt_eta05_allratios"}},
+//		{"Ampt_Eta05_dca1", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca1"}}, {"Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca3"}},
+//		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
+//	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05", {0, 4}},
+//			{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta05_allratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0,4}}});
+	analyzer.set_sets({{"Ampt_eta05_n1ratios", {0, 4}}});
 	analyzer.analyze();
 }
 

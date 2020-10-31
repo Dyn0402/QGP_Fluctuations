@@ -1037,6 +1037,12 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+			TLine *one_line =  new TLine(0, 1, 80, 1);
+			one_line->SetLineStyle(2);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}
@@ -1123,6 +1129,12 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+			TLine *one_line =  new TLine(0, 1, 80, 1);
+			one_line->SetLineStyle(2);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}
@@ -1214,6 +1226,12 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+			TLine *one_line =  new TLine(0, 1, 80, 1);
+			one_line->SetLineStyle(2);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}
@@ -1294,6 +1312,12 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+			TLine *one_line =  new TLine(0, 1, 80, 1);
+			one_line->SetLineStyle(2);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}
@@ -1371,6 +1395,14 @@ void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+//			cout << "Draw line" << endl;
+			TLine *one_line =  new TLine(0, 1, 360, 1);
+			one_line->SetLineStyle(2);
+//			one_line->SetLineColor(kBlack);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}
@@ -1457,6 +1489,14 @@ void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+//			cout << "Draw line" << endl;
+			TLine *one_line =  new TLine(0, 1, 360, 1);
+			one_line->SetLineStyle(2);
+//			one_line->SetLineColor(kBlack);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}
@@ -1547,6 +1587,14 @@ void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, map
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+//			cout << "Draw line" << endl;
+			TLine *one_line =  new TLine(0, 1, 360, 1);
+			one_line->SetLineStyle(2);
+//			one_line->SetLineColor(kBlack);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}
@@ -1627,6 +1675,14 @@ void division_stat(map<int, map<int, map<int, map<string, Measure>>>> stats, str
 		gPad->SetRightMargin(0.04);
 		gPad->SetLeftMargin(0.1);
 		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+//			cout << "Draw line" << endl;
+			TLine *one_line =  new TLine(0, 1, 360, 1);
+			one_line->SetLineStyle(2);
+//			one_line->SetLineColor(kBlack);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
 		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
 		can_index++;
 	}

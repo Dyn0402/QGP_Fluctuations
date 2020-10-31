@@ -16,6 +16,8 @@
 
 #include <TFile.h>
 #include <TGraphErrors.h>
+#include <TLegend.h>
+#include <TLine.h>
 
 #include "ratio_methods.h"
 #include "Stats.h"
