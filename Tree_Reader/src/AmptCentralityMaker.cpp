@@ -167,6 +167,8 @@ void AmptCentralityMaker::run_b_opt(vector<int> energy_vec) {
 	TLegend leg;
 	float chi_max = 0;
 
+	TFile out_file((qa_path+"Ampt_Cent_B_Opt.root").data(), "RECREATE");
+
 	for(int energy:energy_vec) {
 		float b_cut_step = b_cut_step_init;
 		vector<float> chi_diff;
@@ -206,6 +208,9 @@ void AmptCentralityMaker::run_b_opt(vector<int> energy_vec) {
 		}
 		cout << endl;
 
+		out_file.cd();
+		plot_ref_dist_comp(opt_b_max[energy], energy);
+
 		TGraph *graph = new TGraph((int)b.size(), b.data(), chi_diff.data());
 		graph->SetMarkerColor(energy_color[energy]);
 		graph->SetLineColor(energy_color[energy]);
@@ -214,8 +219,6 @@ void AmptCentralityMaker::run_b_opt(vector<int> energy_vec) {
 		mg.Add(graph, "l");
 		leg.AddEntry(graph, (to_string(energy) + "GeV").data(), "l");
 	}
-
-	TFile out_file((qa_path+"Ampt_Cent_B_Opt.root").data(), "RECREATE");
 
 	TCanvas can("Opt_can", "B Optimization Canvas");
 
@@ -229,7 +232,6 @@ void AmptCentralityMaker::run_b_opt(vector<int> energy_vec) {
 
 	for(pair<int, float> opt_pars:opt_b_max) {
 		cout << "Energy " << opt_pars.first << "GeV optimal b = " << opt_pars.second << "fm" << endl;
-		plot_ref_dist_comp(opt_pars.second, opt_pars.first);
 		auto *line = new TLine(opt_pars.second, 0.0, opt_pars.second, chi_max);
 		line->SetLineColor(energy_color[opt_pars.first]);
 		can.cd();

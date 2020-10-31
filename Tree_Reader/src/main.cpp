@@ -72,12 +72,12 @@ auto start_sys = chrono::system_clock::now();
 int main(int argc, char** argv) {
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-	read_class();
+//	read_class();
 //	run_dca_xy_qa();
 //	run_pile_up_qa();
 //	tchain_test();
-//	ampt_cent_opt();
-//	ampt_cent_make();
+	ampt_cent_opt();
+	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -319,7 +319,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 void ampt_cent_opt() {
 	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/";
 	string star_data_path = "/media/ucla/Research/BES1_Trees/";
-	string qa_path = "/home/dylan/Research/Ampt_Centralities/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities2/";
 	string ref_quantity = "ref3";
 	AmptCentralityMaker cent_maker;
 
@@ -334,7 +334,7 @@ void ampt_cent_opt() {
 void ampt_cent_make() {
 	vector<int> energy_list {7, 11, 19, 27, 39, 62};
 	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/";
-	string qa_path = "/home/dylan/Research/Ampt_Centralities/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities2/";
 	string ref_quantity = "ref3";
 	for(int energy:energy_list) {
 		AmptCentralityMaker cent_maker(energy, min_bias_path, qa_path, ref_quantity);
