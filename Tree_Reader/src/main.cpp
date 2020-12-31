@@ -72,12 +72,12 @@ auto start_sys = chrono::system_clock::now();
 int main(int argc, char** argv) {
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
 	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-//	read_class();
+	read_class();
 //	run_dca_xy_qa();
 //	run_pile_up_qa();
 //	tchain_test();
-	ampt_cent_opt();
-	ampt_cent_make();
+//	ampt_cent_opt();
+//	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -100,9 +100,10 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_default_eta05_n1ratios", {0, 4}}, {"Ampt_default_eta1_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
+	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {0, 1}}, {"rapid1_n1ratios_dca1", {0, 1}}};
 
 	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 
@@ -150,7 +151,8 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	string mix_out_dir = out_base_path;
 
 	if(in_string(set_name, "Ampt")) {
-		in_path += "AMPT_Trees/";
+		in_base_path = "/media/ssd/Research/";
+		in_path = in_base_path + "AMPT_Trees/";
 		out_dir += "Data_Ampt/";
 		mix_out_dir += "Data_Ampt_Mix/";
 	} else if(in_string(set_name, "Sim")) {
@@ -214,6 +216,8 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 
 	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
 	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }
+	else if(in_string(set_name, "rapid1")) { reader.set_rapidity(true); reader.cut.min_rapid = -1.0; reader.cut.max_rapid = 1.0; }
+	else if(in_string(set_name, "rapid05")) { reader.set_rapidity(true); reader.cut.min_rapid = -0.5; reader.cut.max_rapid = 0.5; }
 
 	if(in_string(set_name,  "Efficiency8")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.8); }
 	else if(in_string(set_name,  "Efficiency7")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.7); }
@@ -263,6 +267,15 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	if(in_string(set_name, {"Sim", "Flat1000"}, true)) { reader.sim.set_flat_dist(1000); reader.set_particle_dist_hist_max(1000); }
 	else if(in_string(set_name, {"Sim", "Flat500"}, true)) { reader.sim.set_flat_dist(500); reader.set_particle_dist_hist_max(500); }
 	else if(in_string(set_name, {"Sim", "Flat100"}, true)) { reader.sim.set_flat_dist(100); reader.set_particle_dist_hist_max(100); }
+
+	if(in_string(set_name, "Ampt")) {
+		if(in_string(set_name, "_default_")) {
+			reader.set_ampt_type("default");
+		} else {
+			reader.set_ampt_type("string_melting");
+		}
+		reader.set_ampt_cent_path("/home/dylan/Research/Ampt_Centralities/");
+	}
 
 	if(in_string(set_name, "p+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({2212}); }
 	if(in_string(set_name, "p-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-2212}); }
@@ -317,9 +330,9 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 
 
 void ampt_cent_opt() {
-	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/";
+	string min_bias_path = "/media/ssd/Research/AMPT_Trees/min_bias/default/";
 	string star_data_path = "/media/ucla/Research/BES1_Trees/";
-	string qa_path = "/home/dylan/Research/Ampt_Centralities2/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/default/";
 	string ref_quantity = "ref3";
 	AmptCentralityMaker cent_maker;
 
@@ -328,13 +341,13 @@ void ampt_cent_opt() {
 	cent_maker.set_qa_path(qa_path);
 	cent_maker.set_mult_quantity(ref_quantity);
 
-	cent_maker.run_b_opt({7, 11, 19, 27, 39, 62});
+	cent_maker.run_b_opt({7, 11});
 }
 
 void ampt_cent_make() {
-	vector<int> energy_list {7, 11, 19, 27, 39, 62};
-	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/";
-	string qa_path = "/home/dylan/Research/Ampt_Centralities2/";
+	vector<int> energy_list {7, 11};
+	string min_bias_path = "/media/ssd/Research/AMPT_Trees/min_bias/default/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/default/";
 	string ref_quantity = "ref3";
 	for(int energy:energy_list) {
 		AmptCentralityMaker cent_maker(energy, min_bias_path, qa_path, ref_quantity);

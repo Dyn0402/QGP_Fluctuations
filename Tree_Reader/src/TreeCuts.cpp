@@ -55,6 +55,8 @@ void TreeCuts::set_values() {
 	charge = charge_by_energy[particle][energy];
 	max_eta = max_eta_by_energy[particle][energy];
 	min_eta = min_eta_by_energy[particle][energy];
+	max_rapid = max_rapid_by_energy[particle][energy];
+	min_rapid = min_rapid_by_energy[particle][energy];
 	max_nsigma = max_nsigma_by_energy[particle][energy];
 	min_nsigma = min_nsigma_by_energy[particle][energy];
 	max_dca = max_dca_by_energy[particle][energy];

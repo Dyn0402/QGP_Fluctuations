@@ -103,6 +103,8 @@ public:
 	void set_in_path(string path);
 	void set_out_path(string path);
 	void set_qa_path(string path);
+	void set_ampt_cent_path(string path);
+	void set_ampt_type(string type);
 	void set_qa_name(string name);
 	void set_set_name(string set_name);
 	void set_tree_name(string tree_name);
@@ -123,6 +125,7 @@ public:
 	void set_check_charge(bool check);
 	void set_sim_eff(bool sim_eff);
 	void set_sim_flow(bool sim_flow);
+	void set_rapidity(bool rapidity);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
@@ -178,6 +181,8 @@ private:
 	string in_path = "/home/dylan/Research/Trees/";
 	string out_path = "/home/dylan/local_server/dyn0402/Research/Data3/";
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
+	string ampt_cent_path = "/home/dylan/Research/Ampt_Centralities/";
+	string ampt_type = "string_melting";
 
 	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
 	vector<string> sim_eff_dist_path {};
@@ -201,6 +206,7 @@ private:
 	bool sim_eff;
 	bool sim_flow;
 	bool check_charge;
+	bool rapidity;
 
 	double pile_up_prob;
 	double efficiency_prob;

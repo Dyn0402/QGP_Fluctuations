@@ -56,6 +56,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
+	rapidity = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -90,6 +91,7 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
+	rapidity = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -121,6 +123,7 @@ TreeReader::TreeReader(int energy) {
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
+	rapidity = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -155,6 +158,7 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
+	rapidity = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -186,6 +190,7 @@ TreeReader::TreeReader() {
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
+	rapidity = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -306,6 +311,14 @@ void TreeReader::set_qa_path(string path) {
 	qa_path = path;
 }
 
+void TreeReader::set_ampt_cent_path(string path) {
+	ampt_cent_path = path;
+}
+
+void TreeReader::set_ampt_type(string type) {
+	ampt_type = type;
+}
+
 void TreeReader::set_qa_name(string name) {
 	qa_name = name;
 }
@@ -390,6 +403,10 @@ void TreeReader::set_sim_eff(bool sim_eff) {
 
 void TreeReader::set_sim_flow(bool sim_flow) {
 	this->sim_flow = sim_flow;
+}
+
+void TreeReader::set_rapidity(bool rapidity) {
+	this->rapidity = rapidity;
 }
 
 void TreeReader::set_pile_up_prob(double pile_up_prob) {
@@ -569,12 +586,12 @@ void TreeReader::read_trees_chain() {
 void TreeReader::read_ampt_trees() {
 	define_qa();
 
-	ampt_cent = AmptCentralityMaker(energy, "/media/ucla/Research/AMPT_Trees/min_bias/", "/home/dylan/Research/Ampt_Centralities/", "ref" + to_string(ref_num));
+	ampt_cent = AmptCentralityMaker(energy, in_path + "min_bias/" + ampt_type + "/", ampt_cent_path + ampt_type + "/", "ref" + to_string(ref_num));
 	ampt_cent.make_centrality(false);  // Usually just reads from file unless it can't find it.
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
-	vector<string> in_files = get_files_in_dir(in_path + "most_central/" + to_string(energy)+"GeV/", "root", "path");
-	vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + to_string(energy)+"GeV/", "root", "path");
+	vector<string> in_files = get_files_in_dir(in_path + "most_central/" + ampt_type + "/" + to_string(energy)+"GeV/", "root", "path");
+	vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + ampt_type + "/" + to_string(energy)+"GeV/", "root", "path");
 	in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
 	random_shuffle(in_files.begin(), in_files.end());
 
@@ -1334,8 +1351,15 @@ bool TreeReader::check_particle_good(Track& particle) {
 	if(check_charge && !(particle.get_charge() == cut.charge)) { return false; }
 	track_cut_hist.Fill("Good charge", 1);
 
+	double pt = particle.get_pt();
 	double eta = particle.get_eta();
-	if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return false; }
+	if(rapidity) {
+		float m = cut.particle_mass[this->particle];
+		float rapid = log((sqrt(pow(m, 2) + pow(pt, 2) * pow(cosh(eta), 2)) + pt * sinh(eta)) / sqrt(pow(m, 2) + pow(pt, 2)));
+		if(!(rapid >= cut.min_rapid && rapid <= cut.max_rapid)) { return false; }
+	} else {
+		if(!(eta >= cut.min_eta && eta <= cut.max_eta)) { return false; }
+	}
 	track_cut_hist.Fill("Good eta", 1);
 
 	double nsigma = particle.get_nsigma();
@@ -1347,7 +1371,6 @@ bool TreeReader::check_particle_good(Track& particle) {
 	track_cut_hist.Fill("Good dca", 1);
 
 	double p = particle.get_p();
-	double pt = particle.get_pt();
 
 	if(pt >= cut.min_pt_no_tof && pt <= cut.max_pt_no_tof && p <= cut.max_p_no_tof) {
 		good_particle = true;
@@ -1428,7 +1451,7 @@ void TreeReader::define_qa() {
 	track_cut_hist.GetXaxis()->SetBinLabel(5, "Good dca");
 	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good mass*");
 
-	eta_pt_hist = TH2F(("eta_pt_"+set_name+"_"+to_string(energy)).data(), "Pt vs Eta", 1000, -1.05, 1.05, 1000, 0, 2.25);
+	eta_pt_hist = TH2F(("eta_pt_"+set_name+"_"+to_string(energy)).data(), "Pt vs Eta", 1000, -2.2, 2.2, 1000, 0, 2.25);
 
 	cent16_events = TH1I(("cent16_events_"+set_name+"_"+to_string(energy)).data(), "Cent16 Events", 18, -1.5, 16.5);
 	cent9_events = TH1I(("cent9_events_"+set_name+"_"+to_string(energy)).data(), "Cent9 Events", 11, -1.5, 9.5);
@@ -1458,7 +1481,7 @@ void TreeReader::define_qa() {
 	pre_pt_hist = TH1I(("pre_pt_"+set_name+"_"+to_string(energy)).data(), "pre_pt", 100, 0.0, 3.0);
 	pre_beta_hist = TH1I(("pre_beta_"+set_name+"_"+to_string(energy)).data(), "pre_beta", 100, -0.5, 2.0);
 	pre_charge_hist = TH1I(("pre_charge_"+set_name+"_"+to_string(energy)).data(), "pre_charge", 100, -2.5, 2.5);
-	pre_eta_hist = TH1I(("pre_eta_"+set_name+"_"+to_string(energy)).data(), "pre_eta", 100, -1.0, 1.0);
+	pre_eta_hist = TH1I(("pre_eta_"+set_name+"_"+to_string(energy)).data(), "pre_eta", 100, -2.2, 2.2);
 	pre_nsigma_hist = TH1I(("pre_nsigma_"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
 	pre_dca_hist = TH1I(("pre_dca_"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 3.1);
 
@@ -1467,7 +1490,7 @@ void TreeReader::define_qa() {
 	post_pt_hist = TH1I(("post_pt_"+set_name+"_"+to_string(energy)).data(), "post_pt", 100, 0.0, 3.0);
 	post_beta_hist = TH1I(("post_beta_"+set_name+"_"+to_string(energy)).data(), "post_beta", 100, -0.5, 2.0);
 	post_charge_hist = TH1I(("post_charge_"+set_name+"_"+to_string(energy)).data(), "post_charge", 100, -2.5, 2.5);
-	post_eta_hist = TH1I(("post_eta_"+set_name+"_"+to_string(energy)).data(), "post_eta", 100, -1.0, 1.0);
+	post_eta_hist = TH1I(("post_eta_"+set_name+"_"+to_string(energy)).data(), "post_eta", 100, -2.2, 2.2);
 	post_nsigma_hist = TH1I(("post_nsigma_"+set_name+"_"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
 	post_dca_hist = TH1I(("post_dca_"+set_name+"_"+to_string(energy)).data(), "post_dca", 100, 0.0, 3.1);
 
