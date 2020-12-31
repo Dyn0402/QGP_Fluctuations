@@ -1001,10 +1001,17 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
 				graph->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
-				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[div]);
-				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[div]);
+				if(divs.size() > 1) {
+					graph->SetMarkerStyle(plot::div_marker_styles[div]);
+					graph->SetMarkerColor(plot::div_marker_colors[div]);
+					graph->SetLineColor(plot::div_marker_colors[div]);
+					graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				} else {
+					graph->SetMarkerStyle(plot::set_marker_styles[set_num]);
+					graph->SetMarkerColor(plot::set_marker_colors[set_num]);
+					graph->SetLineColor(plot::set_marker_colors[set_num]);
+					graph->SetMarkerSize(plot::set_marker_sizes[set_num]);
+				}
 				if(in_string(name, "_comp_")) {
 					if(in_string(data_set.first, "raw")) {
 						graph->SetMarkerColor(kBlue); graph->SetLineColor(kBlue); graph->SetMarkerStyle(20);
@@ -1103,10 +1110,17 @@ void centralities_stat(map<string, map<int, map<int, map<int, map<string, Measur
 				}
 				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
 				graph->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
-				graph->SetMarkerStyle(plot::div_marker_styles[div]);
-				graph->SetMarkerColor(plot::div_marker_colors[div]);
-				graph->SetMarkerSize(plot::div_marker_sizes[div]);
-				graph->SetLineColor(plot::div_marker_colors[div]);
+				if(divs.size() > 1) {
+					graph->SetMarkerStyle(plot::div_marker_styles[div]);
+					graph->SetMarkerColor(plot::div_marker_colors[div]);
+					graph->SetLineColor(plot::div_marker_colors[div]);
+					graph->SetMarkerSize(plot::div_marker_sizes[div]);
+				} else {
+					graph->SetMarkerStyle(plot::set_marker_styles[set_num]);
+					graph->SetMarkerColor(plot::set_marker_colors[set_num]);
+					graph->SetLineColor(plot::set_marker_colors[set_num]);
+					graph->SetMarkerSize(plot::set_marker_sizes[set_num]);
+				}
 				mg->Add(graph, "AP");
 				set_num++;
 				if(can_index == 1) {

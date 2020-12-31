@@ -67,7 +67,12 @@ namespace plot {
 	map<int, int> energy_marker_styles {{7,24}, {11,25}, {19,26}, {27,27}, {39,28}, {62,30}};
 	map<int, int> energy_marker_width {{7,2}, {11,2}, {19,2}, {27,2}, {39,2}, {62,2}};
 	map<int, int> energy_marker_colors {{7,1}, {11,2}, {19,8}, {27,4}, {39,6}, {62,9}};
-	map<int, int> energy_marker_sizes {{7,1}, {11,1}, {19,1}, {27,1}, {39,1}, {62,1}};;
+	map<int, int> energy_marker_sizes {{7,1}, {11,1}, {19,1}, {27,1}, {39,1}, {62,1}};
+
+	map<int, int> set_marker_styles {{0, 8}, {1, 20}, {2, 20}, {3, 34}, {4, 20}, {5, 21}, {6, 22}, {7, 33}};
+	map<int, int> set_marker_colors {{0, 9}, {1, 1}, {2, 1}, {3, 6}, {4, 1}, {5, 2}, {6, kGreen+2}, {7, 4}};
+	map<int, int> set_marker_width {{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}, {5, 2}, {6, 2}, {7, 2}};
+	map<int, double> set_marker_sizes {{0, 1.5}, {1, 1.5}, {2, 1.5}, {3, 1.5}, {4, 1.5}, {5, 1.5}, {6, 1.5}, {7, 1.5}};
 
 //	map<int, int> cent_marker_styles {{15,24}, {14,25}, {13,26}, {12,27}, {11,28}, {10,30}};
 //	map<int, int> cent_marker_width {{15,2}, {14,2}, {13,2}, {12,2}, {11,2}, {10,2}};

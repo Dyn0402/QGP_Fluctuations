@@ -13,6 +13,8 @@
 #include <fstream>
 #include <sstream>
 #include <thread>
+#include <vector>
+#include <map>
 
 #include <TROOT.h>
 #include <TFile.h>
