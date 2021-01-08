@@ -103,9 +103,12 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_default_eta05_n1ratios", {0, 4}}, {"Ampt_default_eta1_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {0, 1}}, {"rapid1_n1ratios_dca1", {0, 1}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {2, 4}}, {"rapid1_n1ratios_dca1", {2, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {0, 1}}, {"rapid1_n1ratios_dca1", {0, 1}}, {"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}};
+	map<string, pair<int, int>> set_pairs = {{"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
 
-	vector<int> energy_list {39, 62, 27, 19, 11, 7};
+//	vector<int> energy_list {39, 62, 27, 19, 11, 7};
+	vector<int> energy_list {11, 7};
 
 	int set_sleep = 1;
 	int energy_sleep = 1;

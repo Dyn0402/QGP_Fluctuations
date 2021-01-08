@@ -37,8 +37,8 @@ void binomial_analyze();
 int main() {
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 	azimuth_bin_analyze();
-//	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
-//	binomial_analyze();
+	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
+	binomial_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -113,13 +113,13 @@ void azimuth_bin_analyze() {
 //	analyzer.set_set_combos({{"Bes1_Ampt", {"eta05_n1ratios", "Ampt_p+_n1ratios"}}});
 //	analyzer.set_sets({{"pion-_n1ratios", {0, 2}}, {"pion+_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}, {"Ampt_pion-_n1ratios", {0, 2}}, {"Ampt_pion+_n1ratios", {0, 2}}, {"Ampt_piontotal_n1ratios", {0, 2}}});
 //	analyzer.set_set_combos({{"Bes1_Ampt_Pion-", {"pion-_n1ratios", "Ampt_pion-_n1ratios"}}, {"Bes1_Ampt_Pion+", {"pion+_n1ratios", "Ampt_pion+_n1ratios"}},{"Bes1_Ampt_PionTotal", {"piontotal_n1ratios", "Ampt_piontotal_n1ratios"}}, {"Bes1_Pions", {"pion-_n1ratios", "pion+_n1ratios", "piontotal_n1ratios"}}, {"Ampt_Pions", {"Ampt_pion-_n1ratios", "Ampt_pion+_n1ratios", "Ampt_piontotal_n1ratios"}}});
-	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}},
-		{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0,4}}});
-	analyzer.set_set_combos({{"Eta1_05_dca1", {"eta05_n1ratios_dca1", "eta1_n1ratios_dca1"}}, {"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}},
-		{"Eta1_05_dca3", {"eta05_n1ratios_dca3", "eta1_n1ratios_dca3"}}, {"Eta1_dca1_3", {"eta1_n1ratios_dca1", "eta1_n1ratios_dca3"}},
-		{"Ampt_Eta1_dca1", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca1"}}, {"Ampt_Eta05_dca1", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca1"}},
-		{"Ampt_Eta1_dca3", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca3"}}, {"Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca3"}},
-		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
+//	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}},
+//		{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0,4}}});
+//	analyzer.set_set_combos({{"Eta1_05_dca1", {"eta05_n1ratios_dca1", "eta1_n1ratios_dca1"}}, {"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}},
+//		{"Eta1_05_dca3", {"eta05_n1ratios_dca3", "eta1_n1ratios_dca3"}}, {"Eta1_dca1_3", {"eta1_n1ratios_dca1", "eta1_n1ratios_dca3"}},
+//		{"Ampt_Eta1_dca1", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca1"}}, {"Ampt_Eta05_dca1", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca1"}},
+//		{"Ampt_Eta1_dca3", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca3"}}, {"Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca3"}},
+//		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
 //	analyzer.set_sets({{{"Sim_n1ratios_0p0s_No_Rotate_test", {0,0}}}});
 //	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}});
 //	analyzer.set_set_combos({{"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}}});
@@ -131,6 +131,13 @@ void azimuth_bin_analyze() {
 //		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
 //	analyzer.set_sets({{"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}});
 //	analyzer.set_sets({{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_default_eta05_n1ratios", {0, 4}}});
+	analyzer.set_sets({{"rapid05_n1ratios_dca1", {0, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca1", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}},
+		{"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}});
+	analyzer.set_set_combos({{"rapid1_05_dca1", {"rapid05_n1ratios_dca1", "rapid1_n1ratios_dca1"}}, {"rapid05_dca1_3", {"rapid05_n1ratios_dca1", "rapid05_n1ratios_dca3"}},
+		{"rapid1_05_dca3", {"rapid05_n1ratios_dca3", "rapid1_n1ratios_dca3"}}, {"rapid1_dca1_3", {"rapid1_n1ratios_dca1", "rapid1_n1ratios_dca3"}},
+		{"Ampt_rapid1_dca1", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca1"}}, {"Ampt_rapid05_dca1", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca1"}},
+		{"Ampt_rapid1_dca3", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca3"}}, {"Ampt_rapid05_dca3", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca3"}},
+		{"Ampt_rapid05_1", {"Ampt_rapid05_n1ratios", "Ampt_rapid1_n1ratios"}}});
 	analyzer.analyze();
 }
 
@@ -203,13 +210,20 @@ void binomial_analyze() {
 //		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
 //	analyzer.set_sets({{"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}});
 //	analyzer.set_set_combos({{"Bes_Ampt", {"eta05_n1ratios_dca3", "Ampt_eta05_n1ratios"}}});
-	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}},
-		{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0,4}}});
-	analyzer.set_set_combos({{"Eta1_05_dca1", {"eta05_n1ratios_dca1", "eta1_n1ratios_dca1"}}, {"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}},
-		{"Eta1_05_dca3", {"eta05_n1ratios_dca3", "eta1_n1ratios_dca3"}}, {"Eta1_dca1_3", {"eta1_n1ratios_dca1", "eta1_n1ratios_dca3"}},
-		{"Ampt_Eta1_dca1", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca1"}}, {"Ampt_Eta05_dca1", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca1"}},
-		{"Ampt_Eta1_dca3", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca3"}}, {"Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca3"}},
-		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
+//	analyzer.set_sets({{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}},
+//		{"Ampt_eta05_n1ratios", {0, 4}}, {"Ampt_eta1_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0,4}}});
+//	analyzer.set_set_combos({{"Eta1_05_dca1", {"eta05_n1ratios_dca1", "eta1_n1ratios_dca1"}}, {"Eta05_dca1_3", {"eta05_n1ratios_dca1", "eta05_n1ratios_dca3"}},
+//		{"Eta1_05_dca3", {"eta05_n1ratios_dca3", "eta1_n1ratios_dca3"}}, {"Eta1_dca1_3", {"eta1_n1ratios_dca1", "eta1_n1ratios_dca3"}},
+//		{"Ampt_Eta1_dca1", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca1"}}, {"Ampt_Eta05_dca1", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca1"}},
+//		{"Ampt_Eta1_dca3", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca3"}}, {"Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca3"}},
+//		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
+	analyzer.set_sets({{"rapid05_n1ratios_dca1", {0, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca1", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}},
+		{"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}});
+	analyzer.set_set_combos({{"rapid1_05_dca1", {"rapid05_n1ratios_dca1", "rapid1_n1ratios_dca1"}}, {"rapid05_dca1_3", {"rapid05_n1ratios_dca1", "rapid05_n1ratios_dca3"}},
+		{"rapid1_05_dca3", {"rapid05_n1ratios_dca3", "rapid1_n1ratios_dca3"}}, {"rapid1_dca1_3", {"rapid1_n1ratios_dca1", "rapid1_n1ratios_dca3"}},
+		{"Ampt_rapid1_dca1", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca1"}}, {"Ampt_rapid05_dca1", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca1"}},
+		{"Ampt_rapid1_dca3", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca3"}}, {"Ampt_rapid05_dca3", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca3"}},
+		{"Ampt_rapid05_1", {"Ampt_rapid05_n1ratios", "Ampt_rapid1_n1ratios"}}});
 
 	analyzer.analyze();
 }
