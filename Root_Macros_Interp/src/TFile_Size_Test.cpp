@@ -6,15 +6,11 @@
  */
 
 
-
+#define HAVE_STRUCT_TIMESPEC
 #include <iostream>
-//#include <conio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
+//#include <sys/stat.h>
 #include <vector>
+#include <numeric>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -27,29 +23,29 @@ void make_files(string path, int nvecs, int nvals, TRandom3 rand, bool junk=fals
 
 
 void TFile_Size_Test() {
-	string test_path = "/home/dylan/Research/TFile_Size_Test/";
+	string test_path = "/home/dylan/Research/TFile_Size_Test3/";
 	string dir_pre = "nvecs_";
 	TRandom3 rand(0);
-	int nvals = 40;
-	vector<int> nvecs {1, 2, 3};
 	bool junk = true;
+	int nvals = 40;
+	vector<int> nvecs;
+	for(int i=1; i<100; i++) {
+		nvecs.push_back(i * 1000);
+	}
 
 	for(int nvec:nvecs) {
-		string new_dir_path = test_path + dir_pre + to_string(nvec);
-		mkdir(new_dir_path.data(), 0777);
-		make_files(new_dir_path, nvec, nvals, rand, junk);
+		make_files(test_path, nvec, nvals, rand, junk);
 	}
-	mkdir((test_path+"test").data(), 0777);
 
 	cout << "donzo" << endl;
 }
 
 
 void make_files(string path, int nvecs, int nvals, TRandom3 rand, bool junk) {
-	TFile *f_vec = new TFile((path + "/vectors_" + to_string(nvecs) + ".root").data(), "RECREATE");
-	TFile *f_arr = new TFile((path + "/arrays_" + to_string(nvecs) + ".root").data(), "RECREATE");
+	TFile *f_vec = new TFile((path + "/vectors_" + to_string(nvecs) + "_" + to_string(nvals) + ".root").data(), "RECREATE");
+	TFile *f_arr = new TFile((path + "/arrays_" + to_string(nvecs) + "_" + to_string(nvals) + ".root").data(), "RECREATE");
 	TFile *f_junk;
-	if(junk) { f_junk = new TFile((path + "/junk_" + to_string(nvecs) + ".root").data(), "RECREATE"); }
+	if(junk) { f_junk = new TFile((path + "/junk_" + to_string(nvecs) + "_" + to_string(nvals) + ".root").data(), "RECREATE"); }
 
 	f_vec->cd();
 	vector<float> vec;
@@ -62,18 +58,21 @@ void make_files(string path, int nvecs, int nvals, TRandom3 rand, bool junk) {
 		}
 		vec_tree->Fill();
 	}
+	f_vec->Write();
 
 
 	f_arr->cd();
-	TTree *arr_tree = new TTree("arr_tree", "arr_tree");
 	float arr[nvals];
-	arr_tree->Branch("arr", &arr, "arr/F");
+	TTree *arr_tree = new TTree("arr_tree", "arr_tree");
+	string arr_type = "arr[" + to_string(nvals) + "]/F";
+	arr_tree->Branch("arr", &arr, arr_type.data());
 	for(int nvec = 0; nvec<nvecs; nvec++) {
 		for(int i=0; i<nvals; i++) {
 			arr[i] = rand.Rndm();
 		}
 		arr_tree->Fill();
 	}
+	f_arr->Write();
 
 
 	f_vec->Close();
