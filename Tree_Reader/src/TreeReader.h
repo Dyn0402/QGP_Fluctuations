@@ -193,7 +193,7 @@ private:
 	string particle = "proton";
 	vector<int> ampt_particle_pid {2212};
 
-	bool cbwc; // MixerSets/randomizers aren't prepared for this to be false.
+	bool cbwc;
 	bool rotate_random;
 	bool event_plane;
 	bool mixed_sets;

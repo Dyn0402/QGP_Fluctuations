@@ -1023,6 +1023,8 @@ void TreeReader::process_event(Event& event) {
 			event.set_event_plane(0.5 * q.Phi());
 			post_ep_hist.Fill(event.get_event_plane());
 
+			if(cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmunt n in place of centrality from here on.
+
 			// If mixed/rand flagged append event to mix/rand object.
 			if(mixed) { mix.append_event(good_particle_angles, cent, event.get_event_plane(), event.get_vz()); }
 			if(mixed_sets) { mix_sets.append_event(good_particle_angles, event.get_refn()); }
@@ -1048,11 +1050,7 @@ void TreeReader::process_event(Event& event) {
 
 				// Save ratio values to data
 				for(int particles_in_bin:event_ratios) {
-					if(cbwc) { // If centrality bin width correction flagged, save refmult2 value in place of centrality bin
-						data[div][event.get_refn()][good_particle_angles.size()][particles_in_bin]++;
-					} else {
-						data[div][cent][good_particle_angles.size()][particles_in_bin]++;
-					}
+					data[div][cent][good_particle_angles.size()][particles_in_bin]++;
 				}
 			}
 		}
