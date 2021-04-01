@@ -6,7 +6,8 @@
  */
 
 
-
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "PileUpQAer.h"
 
 double gaus_exp_r(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k}

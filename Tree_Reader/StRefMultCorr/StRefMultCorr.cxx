@@ -559,7 +559,7 @@ void StRefMultCorr::readScaleForWeight(const Char_t* input)
 	
 	while(fin) 
 	{
-		Double_t scale[mnVzBinForWeight] ;
+		vector<Double_t> scale(mnVzBinForWeight) ;
 		for(Int_t i=0; i<mnVzBinForWeight; i++) 
 		{
 			fin >> scale[i] ;

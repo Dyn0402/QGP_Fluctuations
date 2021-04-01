@@ -5,11 +5,11 @@
  *      Author: dylan
  */
 
-
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <cmath>
 
 #include <TRandom3.h>
 #include <TCanvas.h>

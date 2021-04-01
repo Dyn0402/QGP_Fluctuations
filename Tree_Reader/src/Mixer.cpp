@@ -6,9 +6,10 @@
  */
 
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <algorithm>
 #include <iostream>
-#include <math.h>
 
 #include "ratio_methods.h"
 #include "file_io.h"

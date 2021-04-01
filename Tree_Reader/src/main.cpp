@@ -5,7 +5,8 @@
  *      Author: Dylan Neff
  */
 
-
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -13,7 +14,7 @@
 #include <thread>
 #include <ctime>
 #include <chrono>
-#include <unistd.h>
+//#include <unistd.h>
 #include <cstdlib>
 #include <mutex>
 
