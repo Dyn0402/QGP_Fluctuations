@@ -71,9 +71,11 @@ auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
-	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-	read_class();
+	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
+	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
+	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	//read_class();
 //	run_dca_xy_qa();
 //	run_pile_up_qa();
 //	tchain_test();
