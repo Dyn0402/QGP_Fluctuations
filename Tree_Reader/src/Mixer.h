@@ -53,6 +53,7 @@ public:
 	void set_ep_range(double ep_lower, double ep_upper);
 	void set_out_path(string path);
 	void set_divs(vector<int>);
+	void set_rand_seed(int seed=0);
 
 	// Doers
 	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);

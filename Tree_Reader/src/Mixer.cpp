@@ -195,6 +195,10 @@ void Mixer::set_divs(vector<int> divs) {
 	this->divs = divs;
 }
 
+void Mixer::set_rand_seed(int seed) {
+	trand = new TRandom3(seed);
+}
+
 
 // Doers
 

@@ -55,8 +55,8 @@ public:
 	float max_nsigma = 2.0;
 	float min_dca = 0.0;
 	float max_dca = 1.0;
-	float min_m2 = 0.8;
-	float max_m2 = 1.0;
+	float min_m2 = 0.6;
+	float max_m2 = 1.2;
 	float min_pt_tof = 0.8;
 	float max_pt_tof = 2.0;
 	float min_pt_no_tof = 0.4;

@@ -135,6 +135,11 @@ public:
 	void set_ampt_particle_pid(vector<int> pid);
 	void set_file_list(vector<string> *file_list);
 
+	void set_tree_reader_rand_seed(int seed=0);
+	void set_mixer_rand_seed(int seed=0);
+	void set_file_shuffle_rand_seed(int seed=0);
+	void set_stref_rand_seed(int seed=0);
+
 	// Doers
 	void read_trees();
 	void read_trees_chain();
@@ -192,6 +197,11 @@ private:
 
 	string particle = "proton";
 	vector<int> ampt_particle_pid {2212};
+
+	int tree_reader_seed = 0;
+	int mixer_seed = 0;
+	int file_shuffle_seed = 0;
+	int stref_seed = 0;
 
 	bool cbwc;
 	bool rotate_random;
