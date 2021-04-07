@@ -73,11 +73,11 @@ auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
-	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
-	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
-	//read_class();
+	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
+	gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
+//	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
+//	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	read_class();
 //	for(pair<string, pair<int, int>> set:get_rand_set_pairs(10)) {
 //		cout << set.first << ": {" << set.second.first << ", " << set.second.second << "}" << endl;
 //	}
@@ -130,9 +130,12 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = get_rand_set_pairs(55);
 //	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {17,40}}, {"Ampt_rapid05_n1ratios", {17,40}}};
 //	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixseed_", {3,20}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {3,20}}};
-	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_", {0,16}},
-			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
-			};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_", {0,16}},
+//			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
+//			};
+
+	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_test", {0, 1}}};
+
 //	map<string, pair<int, int>> set_pairs = {};
 //	float val_min = 0.5;
 //	float val_max = 1.5;
@@ -153,7 +156,7 @@ void read_class() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 11;
 
 	int jobs = 0;
 	for(pair<string, pair<int, int>> set_pair:set_pairs) {
