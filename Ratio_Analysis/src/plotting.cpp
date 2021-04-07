@@ -1342,6 +1342,119 @@ void centralities_stat(map<int, map<int, map<int, map<string, Measure>>>> stats,
 }
 
 
+void centralities_stat2(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, string name) {
+	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
+//	gStyle->SetTitleFontSize(0.09);
+//	gStyle->SetTitleOffset(1.2);
+	pair<int, int> can_div = get_canvas_div(cents.size());
+	can->Divide(can_div.first, can_div.second, plot::can_div_x, plot::can_div_y);
+	int can_index = 1;
+	for(int cent:cents) {
+		can->cd(can_index);
+		auto *mg = new TMultiGraph();
+		pair<int, int> range = get_cent9_range(cent);
+		mg->SetName((to_string(range.first)+"-"+to_string(range.second)+"%").data());  //, (to_string(range.first)+"-"+to_string(range.second)+"% Centrality").data());
+		double y_max = numeric_limits<double>::min();
+		double y_min = numeric_limits<double>::max();
+		TLegend *leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+		for(int div:divs) {
+			int set_num = 0;
+			for(pair<string, map<int, map<int, map<int, map<string, Measure>>>>> data_set:stats) {
+				vector<double> stat_vals, energy_val, stat_err, energy_err, stat_sys;
+				Measure stat_meas;
+				for(int energy:analysis::energy_list) {
+					energy_val.push_back(plot::energy_match[energy] + set_num*0.7);  // Offset sets on x (Energy) axis.
+					energy_err.push_back(0.0);
+					stat_meas = data_set.second[energy][div][cent][stat_name];
+					if(in_string(name, "_cor") && stat_name == "standard_deviation") {
+						Measure dmean_meas = data_set.second[energy][div][cent]["particle_dist_mean"];
+						stat_meas = (stat_meas - 1) / dmean_meas * 50 + 1;
+					}
+					stat_vals.push_back(stat_meas.get_val());
+					stat_err.push_back(stat_meas.get_err());
+					stat_sys.push_back(sys[data_set.first][energy][div][cent][stat_name]);
+					if(stat_meas.get_val() + stat_meas.get_err() > y_max) { y_max = stat_meas.get_val() + stat_meas.get_err(); }
+					if(stat_meas.get_val() - stat_meas.get_err() < y_min) { y_min = stat_meas.get_val() - stat_meas.get_err(); }
+					if(stat_meas.get_val() + stat_sys.back() > y_max) { y_max = stat_meas.get_val() + stat_sys.back(); }
+					if(stat_meas.get_val() - stat_sys.back() < y_min) { y_min = stat_meas.get_val() - stat_sys.back(); }
+				}
+				TGraphErrors *graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_err);
+				graph->SetNameTitle((data_set.first + " " + to_string(div) + " degree bins").data());
+				TGraphErrors *sys_graph = graph_x_vs_y_err(energy_val, stat_vals, energy_err, stat_sys);
+				if(divs.size() > 1) {
+					graph->SetMarkerStyle(plot::div_marker_styles[div]);
+					graph->SetMarkerColor(plot::div_marker_colors[div]);
+					graph->SetLineColor(plot::div_marker_colors[div]);
+					graph->SetMarkerSize(plot::div_marker_sizes[div]);
+					sys_graph->SetLineColor(plot::div_marker_colors[div]);
+				} else {
+					graph->SetMarkerStyle(plot::set_marker_styles[set_num]);
+					graph->SetMarkerColor(plot::set_marker_colors[set_num]);
+					graph->SetLineColor(plot::set_marker_colors[set_num]);
+					graph->SetMarkerSize(plot::set_marker_sizes[set_num]);
+					sys_graph->SetLineColor(plot::set_marker_colors[set_num]);
+				}
+				if(in_string(name, "_comp_")) {
+					if(in_string(data_set.first, "raw")) {
+						graph->SetMarkerColor(kBlue); graph->SetLineColor(kBlue); graph->SetMarkerStyle(20);
+						sys_graph->SetLineColor(kBlue);
+					} else if(in_string(data_set.first, "mix")) {
+						graph->SetMarkerColor(kGreen+2); graph->SetLineColor(kGreen+2); graph->SetMarkerStyle(21);
+						sys_graph->SetLineColor(kGreen+2);
+					}
+				} else {
+					if(in_string(data_set.first, "BES1")) {
+						graph->SetMarkerColor(kBlack); graph->SetLineColor(kBlack);
+						sys_graph->SetLineColor(kBlack);
+					} else if(in_string(data_set.first, "AMPT")) {
+						graph->SetMarkerColor(kRed); graph->SetLineColor(kRed);
+						sys_graph->SetLineColor(kRed);
+					}
+				}
+				if(in_string(data_set.first, "BES1")) {
+					graph->SetMarkerStyle(29); graph->SetMarkerSize(2.0);
+				} else if(in_string(data_set.first, "AMPT")) {
+					graph->SetMarkerStyle(22); graph->SetMarkerSize(1.8);
+				}
+				mg->Add(graph, "APLZ");
+				mg->Add(sys_graph, "[]");
+				set_num++;
+				if(can_index == 1) {
+					leg->SetBorderSize(plot::legend_border_width);
+					leg->SetFillStyle(0);
+					leg->AddEntry(graph, (data_set.first + " " + stat_name + " " + to_string(div) + "#circ bins").data(), "lp");
+				}
+			}
+		}
+		double y_range = y_max - y_min;
+		mg->GetXaxis()->SetLimits(0, 80);
+		mg->GetXaxis()->SetRangeUser(0, 80);
+//		mg->GetXaxis()->SetLabelSize(0.06);
+		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+//		mg->GetYaxis()->SetLabelSize(0.06);
+		if(can_index > can_div.first*(can_div.second-1)) { mg->GetXaxis()->SetTitle("Energy (GeV)"); }// mg->GetXaxis()->SetTitleSize(0.06); mg->GetXaxis()->SetTitleOffset(0.85); gPad->SetBottomMargin(0.12); }
+		if(can_index % can_div.first == 0) { mg->GetYaxis()->SetTitle(stat_name.data()); gPad->SetLeftMargin(0.12); }
+//		else { gPad->SetBottomMargin(0.07); }
+		gPad->SetTopMargin(0.02);
+		gPad->SetRightMargin(0.02);
+//		gPad->SetLeftMargin(0.1);
+		mg->Draw("AP"); // Multigraph memory leak, fix.
+		if(in_string(name, "_divide_")) {
+			TLine *one_line =  new TLine(0, 1, 80, 1);
+			one_line->SetLineStyle(2);
+			one_line->Draw();
+//			mg->Draw("SAME");
+		}
+		if(can_index == 1) { leg->SetMargin(0.1); leg->Draw(); }
+		can_index++;
+	}
+	can->Update();
+	can->Write(name.data());
+	delete can;
+}
+
+
 void division_stat(map<string, map<int, map<int, map<int, map<string, Measure>>>>> stats, map<string, map<int, map<int, map<int, map<string, double>>>>> sys, string stat_name, vector<int> cents, vector<int> divs, vector<int> energies, string name) {
 	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
 //	gStyle->SetTitleFontSize(0.09);
