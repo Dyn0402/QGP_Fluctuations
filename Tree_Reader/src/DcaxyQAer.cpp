@@ -8,6 +8,8 @@
 
 #include "DcaxyQAer.h"
 
+using namespace std;
+
 
 // Structors
 
@@ -17,12 +19,6 @@ DcaxyQAer::DcaxyQAer(int energy, mutex *mtx) {
 	out_file = NULL;
 	refmultCorrUtil = new StRefMultCorr("refmult3");
 	this->mtx = mtx;
-	cut.set_values(energy, "proton");
-
-	// Pile Up Cuts
-	PileUpQAer pile_up_qa(energy);
-	cut.pile_up_low = pile_up_qa.get_low_cut();
-	cut.pile_up_high = pile_up_qa.get_high_cut();
 }
 
 DcaxyQAer::DcaxyQAer(int energy) {
@@ -30,12 +26,6 @@ DcaxyQAer::DcaxyQAer(int energy) {
 	this->energy = energy;
 	out_file = NULL;
 	refmultCorrUtil = new StRefMultCorr("refmult3");
-	cut.set_values(energy, "proton");
-
-	// Pile Up Cuts
-	PileUpQAer pile_up_qa(energy);
-	cut.pile_up_low = pile_up_qa.get_low_cut();
-	cut.pile_up_high = pile_up_qa.get_high_cut();
 }
 
 DcaxyQAer::~DcaxyQAer() {
@@ -52,16 +42,33 @@ void DcaxyQAer::set_in_path(string path) {
 	in_path = path;
 }
 
+void DcaxyQAer::set_pile_up_qa_path(string path) {
+	pile_up_qa_path = path;
+}
+
 
 // Doers
 
 void DcaxyQAer::run_qa() {
+	prep_run();
 	read_trees();
 	analyze_runs();
 	make_proton_plots();
 	write_bad_dca_file();
 }
 
+
+void DcaxyQAer::prep_run() {
+	cut.set_dcaqa_path(qa_path);
+	if (pile_up_qa_path != "") { cut.set_pileupqa_path(pile_up_qa_path); }
+	cut.set_values(energy, "proton");
+
+	// Pile Up Cuts
+	PileUpQAer pile_up_qa(energy);
+	pile_up_qa.set_out_path(pile_up_qa_path);
+	cut.pile_up_low = pile_up_qa.get_low_cut();
+	cut.pile_up_high = pile_up_qa.get_high_cut();
+}
 
 void DcaxyQAer::read_trees() {
 	cout << "Reading " + to_string(energy) + "GeV trees." << endl << endl;

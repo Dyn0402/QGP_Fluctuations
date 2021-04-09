@@ -51,6 +51,10 @@ void DcaxyQABase::set_energy(int energy) {
 	this->energy = energy;
 }
 
+void DcaxyQABase::set_qa_path(string path) {
+	qa_path = path;
+}
+
 
 // Doers
 

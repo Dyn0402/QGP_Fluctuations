@@ -44,6 +44,7 @@ public:
 
 	// Setters
 	void set_energy(int energy);
+	void set_qa_path(string path);
 
 	// Attributes
 	DcaxyQAPars pars;

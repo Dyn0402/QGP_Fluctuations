@@ -67,13 +67,10 @@ TreeReader::TreeReader(int energy, int ref_num) {
 
 	cent_binning = 9;
 	this->ref_num = ref_num;
+	this->energy = energy;
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
-
-	set_energy(energy);
-
-	mix = Mixer(energy, single_ratio, rotate_random);
-//	sim = Simulator();
+	mix = Mixer(energy);
 }
 
 TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
@@ -102,13 +99,10 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 
 	cent_binning = 9;
 	this->ref_num = ref_num;
+	this->energy = energy;
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
-
-	set_energy(energy);
-
-	mix = Mixer(energy, single_ratio, rotate_random);
-//	sim = Simulator();
+	mix = Mixer(energy);
 }
 
 TreeReader::TreeReader(int energy) {
@@ -134,13 +128,10 @@ TreeReader::TreeReader(int energy) {
 
 	cent_binning = 9;
 	ref_num = 2;
+	this->energy = energy;
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
-
-	set_energy(energy);
-
-	mix = Mixer(energy, single_ratio, rotate_random);
-//	sim = Simulator();
+	mix = Mixer(energy);
 }
 
 TreeReader::TreeReader(int energy, mutex *mtx) {
@@ -169,13 +160,10 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 
 	cent_binning = 9;
 	ref_num = 2;
+	this->energy = energy;
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
-
-	set_energy(energy);
-
-	mix = Mixer(energy, single_ratio, rotate_random);
-//	sim = Simulator();
+	mix = Mixer(energy);
 }
 
 TreeReader::TreeReader() {
@@ -201,13 +189,11 @@ TreeReader::TreeReader() {
 
 	cent_binning = 9;
 	ref_num = 2;
+	energy = 7;
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
-	set_energy(7);
-
-	mix = Mixer(energy, single_ratio, rotate_random);
-//	sim = Simulator();
+	mix = Mixer(energy);
 }
 
 
@@ -344,7 +330,6 @@ void TreeReader::set_sim_eff_dist_path(string root_path, string hist_name) {
 
 void TreeReader::set_energy(int energy) {
 	this->energy = energy;
-	cut.set_values(energy, particle);
 }
 
 void TreeReader::set_divs(vector<int> list) {
@@ -357,7 +342,6 @@ void TreeReader::set_cbwc(bool cbwc) {
 
 void TreeReader::set_rotate_random(bool rotate_random) {
 	this->rotate_random = rotate_random;
-	mix.set_rand_rotate(rotate_random);
 }
 
 void TreeReader::set_event_plane(bool event_plane) {
@@ -386,12 +370,10 @@ void TreeReader::set_efficiency(bool efficiency) {
 
 void TreeReader::set_single_ratio(bool single_ratio) {
 	this->single_ratio = single_ratio;
-	mix.set_single_ratio(single_ratio);
 }
 
 void TreeReader::set_n1_ratios(bool n1_ratios) {
 	this->n1_ratios = n1_ratios;
-	mix.set_n1_ratios(n1_ratios);
 }
 
 void TreeReader::set_check_charge(bool check) {
@@ -430,7 +412,6 @@ void TreeReader::set_ref_num(int ref_num) {
 
 void TreeReader::set_particle(string particle) {
 	this->particle = particle;
-	cut.set_values(energy, particle);
 }
 
 void TreeReader::set_particle_dist_hist_max(int max) {
@@ -448,8 +429,19 @@ void TreeReader::set_file_list(vector<string> *file_list) {
 
 // Doers
 
+// Set everything necessary for read just in time (construction too early to set). 
+void TreeReader::prep_read() {
+	cut.set_values(energy, particle);
+	set_energy(energy);
+	mix.set_single_ratio(single_ratio);
+	mix.set_rand_rotate(rotate_random);
+	mix.set_n1_ratios(n1_ratios);
+}
+
+
 // Read files for single energy and write results to text files.
 void TreeReader::read_trees() {
+	prep_read();
 	define_qa();
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
@@ -522,6 +514,7 @@ void TreeReader::read_trees() {
 
 // Read files for single energy and write results to text files.
 void TreeReader::read_trees_chain() {
+	prep_read();
 	define_qa();
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
@@ -585,6 +578,7 @@ void TreeReader::read_trees_chain() {
 
 // Read files for single energy and write results to text files.
 void TreeReader::read_ampt_trees() {
+	prep_read();
 	define_qa();
 
 	ampt_cent = AmptCentralityMaker(energy, in_path + "min_bias/" + ampt_type + "/", ampt_cent_path + ampt_type + "/", "ref" + to_string(ref_num));
@@ -660,6 +654,7 @@ void TreeReader::read_ampt_trees() {
 
 // Read files for single energy and write results to text files.
 void TreeReader::read_nsm_ampt_trees() {
+	prep_read();
 	define_qa();
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
@@ -702,6 +697,7 @@ void TreeReader::read_nsm_ampt_trees() {
 
 
 void TreeReader::sim_events(map<int, int> cent_num_events) {
+	prep_read();
 	define_qa();
 
 	if(sim_eff) {
@@ -1825,11 +1821,16 @@ void TreeReader::write_qa() {
 // Remove out_path directory for energy if it exists and recreate it.
 // Create out_path directory if it does not exist.
 void TreeReader::reset_out_dir() {
-	if(system(("test -d "+out_path).data())) {
-		if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
-	}
+	// Worked on Linux but not on Windows
+	//if(system(("test -d "+out_path).data())) {
+	//	if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
+	//}
 
-	string energy_path = out_path+to_string(energy)+"GeV/";
-	if(!system(("test -d "+energy_path).data())) { int i = system(("rm -r " + energy_path).data()); if(i) {}}
-	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
+	//string energy_path = out_path+to_string(energy)+"GeV/";
+	//if(!system(("test -d "+energy_path).data())) { int i = system(("rm -r " + energy_path).data()); if(i) {}}
+	//if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
+
+	// Written for Windows, hopefully will also work on Linux
+	mkdir(out_path);
+	mkdir(out_path + to_string(energy) + "GeV/", true);
 }

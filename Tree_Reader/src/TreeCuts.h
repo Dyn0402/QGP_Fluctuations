@@ -25,6 +25,10 @@ public:
 	TreeCuts(int energy, string particle);
 	~TreeCuts();
 
+	// Setters
+	void set_pileupqa_path(string path);
+	void set_dcaqa_path(string path);
+
 	// Doers
 	void set_values();
 	void set_values(int energy);
@@ -74,6 +78,8 @@ public:
 
 protected:
 	// Attributes
+	string pileupqa_path;
+	string dcaqa_path;
 
 	// Event Cuts
 	map<int, vector<int>> bad_runs_by_energy {

@@ -28,6 +28,8 @@
 #include <TLine.h>
 #include <TLegend.h>
 #include <TSystem.h>
+#include <TF1.h>
+#include <TH2.h>
 
 #include "ThreadPool.h"
 #include "TreeReader.h"
@@ -56,13 +58,14 @@ void speed_test_class();
 void ref_mult_test();
 void ampt_cent_opt();
 void ampt_cent_make();
-void dca_xy_qa(int energy, mutex *mtx);
+void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pile_up_qa_path);
 void run_dca_xy_qa();
-void pile_up_qa(int energy, mutex *mtx);
+void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path);
 void run_pile_up_qa();
 void tchain_test();
 void run_tchain();
 //void AMPT_Proton_Num_Check();
+void tree_read_speed();
 
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
 
@@ -73,13 +76,24 @@ auto start_sys = chrono::system_clock::now();
 int main(int argc, char** argv) {
 	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
 	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
-	gROOT->ProcessLine(".L C:/Users/Dyn04/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
+	gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
+
+	tree_read_speed();
+
+	//TH2F btof_ref_hist("test", "test", 10, 0, 10, 10, 0, 10);
+	//btof_ref_hist.Fill(5, 5, 10);
+	//btof_ref_hist.Fill(3, 7, 3);
+	//btof_ref_hist.Fill(1, 5, 6);
+	//TF1 lin_fit("lin_fit_", "[0]*x", 0, 10);
+	//btof_ref_hist.Fit(&lin_fit, "NQ");
+	//double rot_angle = M_PI / 2 - atan(lin_fit.GetParameter(0));
+	//cout << rot_angle << endl;
 	//read_class();
-//	run_dca_xy_qa();
-//	run_pile_up_qa();
+	//run_dca_xy_qa();
+	//run_pile_up_qa();
 //	tchain_test();
-//	ampt_cent_opt();
+	//ampt_cent_opt();
 //	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
@@ -109,10 +123,10 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {2, 4}}, {"rapid1_n1ratios_dca1", {2, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {0, 1}}, {"rapid1_n1ratios_dca1", {0, 1}}, {"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
-	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_cbwc_dca1", {0, 1}}};
+	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_test", {0, 1}}};
 
-	vector<int> energy_list {39, 62, 27, 19, 11, 7};
-//	vector<int> energy_list {11, 7};
+	//vector<int> energy_list {39, 62, 27, 19, 11, 7};
+	vector<int> energy_list {7, 11};
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -130,7 +144,7 @@ void read_class() {
 	ROOT::EnableThreadSafety();
 	{
 		int job_num = 0;
-		ThreadPool pool(thread::hardware_concurrency() - 2);
+		ThreadPool pool(1);//thread::hardware_concurrency() - 2);
 
 		for(int energy:energy_list) {
 			for(pair<string, pair<int, int>> set_pair:set_pairs) {
@@ -148,8 +162,9 @@ void read_class() {
 
 
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
-	string base_path = "/home/dylan/Research/";
-	string in_base_path = "/media/ucla/Research/";
+	string base_path = "C:/Users/Dylan/Desktop/Research/"; //"/home/dylan/Research/";
+	string in_base_path = "C:/Users/Dylan/Desktop/Research/"; //"/media/ucla/Research/";
+	string in_base_ampt_path = "E:/Research/";  //"/media/ssd/Research/";
 	string out_base_path = base_path;
 	int ref = 3;
 
@@ -158,8 +173,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	string mix_out_dir = out_base_path;
 
 	if(in_string(set_name, "Ampt")) {
-		in_base_path = "/media/ssd/Research/";
-		in_path = in_base_path + "AMPT_Trees/";
+		in_path = in_base_ampt_path + "AMPT_Trees/";
 		out_dir += "Data_Ampt/";
 		mix_out_dir += "Data_Ampt_Mix/";
 	} else if(in_string(set_name, "Sim")) {
@@ -180,6 +194,11 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	string set_dir = set_name + to_string(set_num) + "/";
 
 	TreeReader reader(energy, ref, mtx);
+
+	reader.cut.set_dcaqa_path(base_path + "Dca_xy_QA/");
+	reader.cut.set_pileupqa_path(base_path + "Pile_Up_QA/");
+
+
 	reader.set_divs(divs);
 
 	if(in_string(set_name, "cbwc")) { reader.set_cbwc(true); }
@@ -283,7 +302,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 		} else {
 			reader.set_ampt_type("string_melting");
 		}
-		reader.set_ampt_cent_path("/home/dylan/Research/Ampt_Centralities/");
+		reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
 	}
 
 	if(in_string(set_name, "p+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({2212}); }
@@ -648,9 +667,12 @@ void ref_mult_test() {
 }
 
 
-void dca_xy_qa(int energy, mutex *mtx) {
+void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pile_up_qa_path) {
 	{
 		DcaxyQAer qa(energy, mtx);
+		qa.set_in_path(in_path);
+		qa.set_qa_path(qa_path);
+		qa.set_pile_up_qa_path(pile_up_qa_path);
 		qa.run_qa();
 	}
 //	DcaxyQAer qa(energy);
@@ -665,14 +687,17 @@ void dca_xy_qa(int energy, mutex *mtx) {
 }
 
 void run_dca_xy_qa() {
-	vector<int> energies {7, 11, 19, 27, 39, 62};
+	vector<int> energies{ 7, 11 };//, 19, 27, 39, 62};
+	string in_path = "C:/Users/Dylan/Desktop/Research/BES1_Trees/";
+	string qa_path = "C:/Users/Dylan/Desktop/Research/Dca_xy_QA/";
+	string pile_up_qa_path = "C:/Users/Dylan/Desktop/Research/Pile_Up_QA/";
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();
 	{
 		ThreadPool pool(thread::hardware_concurrency());
 		for(int energy:energies) {
-			pool.enqueue(dca_xy_qa, energy, mtx);
+			pool.enqueue(dca_xy_qa, energy, mtx, in_path, qa_path, pile_up_qa_path);
 			this_thread::sleep_for(chrono::seconds(1));
 		}
 	}
@@ -680,15 +705,17 @@ void run_dca_xy_qa() {
 
 
 
-void pile_up_qa(int energy, mutex *mtx) {
+void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path) {
 	{
 		PileUpQAer qa(energy, mtx);
-		qa.set_out_path("/home/dylan/Research/Pile_Up_QA_Tests/");
+		qa.set_in_path(in_path);
+		qa.set_out_path(qa_path);
 		qa.run_qa();
 	}
 	{
 		PileUpQAer qa(energy, mtx);
-		qa.set_out_path("/home/dylan/Research/Pile_Up_QA_Tests/");
+		qa.set_in_path(in_path);
+		qa.set_out_path(qa_path);
 		auto low = qa.get_low_cut();
 		auto high = qa.get_high_cut();
 		cout << "low: " << endl << "poly coefs: ";
@@ -717,14 +744,16 @@ void pile_up_qa(int energy, mutex *mtx) {
 }
 
 void run_pile_up_qa() {
-	vector<int> energies {7, 11, 19, 27, 39, 62};
+	vector<int> energies{ 7, 11 };//, 19, 27, 39, 62};
+	string in_path = "C:/Users/Dylan/Desktop/Research/BES1_Trees/";
+	string qa_path = "C:/Users/Dylan/Desktop/Research/Pile_Up_QA/";
 	mutex *mtx = new mutex;
 
 	ROOT::EnableThreadSafety();
 	{
 		ThreadPool pool(thread::hardware_concurrency());
 		for(int energy:energies) {
-			pool.enqueue(pile_up_qa, energy, mtx);
+			pool.enqueue(pile_up_qa, energy, mtx, in_path, qa_path);
 			this_thread::sleep_for(chrono::seconds(1));
 		}
 	}

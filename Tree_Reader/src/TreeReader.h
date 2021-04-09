@@ -217,6 +217,7 @@ private:
 	int particle_dist_hist_max = 100;
 
 	// Doers
+	void prep_read();
 	void read_tree(TTree* tree);
 	void read_ampt_tree(TTree* tree);
 	void read_nsm_ampt_tree(TTree* tree);

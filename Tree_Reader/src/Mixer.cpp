@@ -290,12 +290,16 @@ void Mixer::write_mixed_data() {
 // Remove out_path directory for energy if it exists and recreate it.
 // Create out_path if it does not exist.
 void Mixer::reset_out_dir() {
-	if(system(("test -d "+out_path).data())) {
-		if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
-	}
+	//if(system(("test -d "+out_path).data())) {
+	//	if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
+	//}
 
-	string energy_path = out_path+to_string(energy)+"GeV/";
-	if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
-	if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
+	//string energy_path = out_path+to_string(energy)+"GeV/";
+	//if(!system(("test -d "+energy_path).data())) { system(("rm -r " + energy_path).data()); }
+	//if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
+
+	// Written for Windows, hopefully will also work on Linux
+	mkdir(out_path);
+	mkdir(out_path + to_string(energy) + "GeV/", true);
 }
 

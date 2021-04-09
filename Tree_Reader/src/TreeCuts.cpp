@@ -34,15 +34,27 @@ TreeCuts::~TreeCuts() {
 }
 
 
+// Setters
+void TreeCuts::set_pileupqa_path(string path) {
+	pileupqa_path = path;
+}
+
+void TreeCuts::set_dcaqa_path(string path) {
+	dcaqa_path = path;
+}
+
+
 // Doers
 void TreeCuts::set_values() {
 	// Dca_xy Cuts
 	DcaxyQABase dca_xy_qa(energy);
+	if (dcaqa_path != "") { dca_xy_qa.set_qa_path(dcaqa_path);  }
 	dca_xy_bad_runs = dca_xy_qa.get_bad_runs();
 	dca_xy_bad_event_ranges = dca_xy_qa.get_bad_ranges();
 
 	// Pile Up Cuts
 	PileUpQAer pile_up_qa(energy);
+	if (pileupqa_path != "") { pile_up_qa.set_out_path(pileupqa_path); }
 	pile_up_low = pile_up_qa.get_low_cut();
 	pile_up_high = pile_up_qa.get_high_cut();
 

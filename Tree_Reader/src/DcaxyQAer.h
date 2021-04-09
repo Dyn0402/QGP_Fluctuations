@@ -61,6 +61,7 @@ public:
 
 	// Setters
 	void set_in_path(string path);
+	void set_pile_up_qa_path(string path);
 
 	// Doers
 	void run_qa();
@@ -71,6 +72,8 @@ private:
 	TreeCuts cut;
 
 	string in_path = "/media/ucla/Research/BES1_Trees/";
+	string pile_up_qa_path = "";
+	
 	TFile *out_file;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
@@ -98,6 +101,7 @@ private:
 	int set_count = 0;
 
 	// Doers
+	void prep_run();
 	void read_trees();
 	void read_tree(TTree *tree);
 	void set_branches(TTree *tree);

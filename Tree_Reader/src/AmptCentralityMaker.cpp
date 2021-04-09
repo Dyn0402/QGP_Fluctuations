@@ -87,10 +87,9 @@ vector<int> AmptCentralityMaker::get_ref_bin16_edges() {
 
 int AmptCentralityMaker::get_cent_bin20(int mult) {
 	int cent_bin = -1;
-
 	if(in_string(mult_quantity, "ref")) {
 
-		if((int)ref_bin_edges.size() == 0) { make_centrality(); }
+		if ((int)ref_bin_edges.size() == 0) { make_centrality(); }
 
 		for(int edge:ref_bin_edges) {
 			cent_bin++;
