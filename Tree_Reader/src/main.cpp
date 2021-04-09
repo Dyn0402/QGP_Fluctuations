@@ -44,6 +44,12 @@
 #include "../StRefMultCorr/StRefMultCorr.h"
 #include "TreeBranches.h"
 
+#ifdef _WIN32
+static const std::string platform = "win";
+#else
+static const std::string platform = "lin";
+#endif
+
 using namespace std;
 
 
@@ -68,6 +74,8 @@ void run_tchain();
 void get_flag_trail_test();
 map<string, pair<int, int>> get_rand_set_pairs(int num_pairs);
 
+void tree_read_speed();
+
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
 
 clock_t start = clock();
@@ -75,10 +83,13 @@ auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
-	//gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-	gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
-	gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	if (platform == "lin") {
+		gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
+		gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	} else if (platform == "win") {
+		gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
+		gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
+	}
 
 	tree_read_speed();
 

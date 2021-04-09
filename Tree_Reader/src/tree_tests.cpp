@@ -15,6 +15,13 @@
 #include "TreeBranches.h"
 #include "file_io.h"
 
+#ifdef _WIN32
+static const std::string platform = "win";
+#else
+static const std::string platform = "lin";
+#endif
+
+using namespace std;
 
 
 void read_test_tree(TTree* tree, ampt_tree_branches &branches);
@@ -22,7 +29,9 @@ void set_test_ampt_branches(TTree* tree, int ref_num);
 
 
 void tree_read_speed() {
-	string file_dir = "E:/Research/ampt_tree_read_compare/test_set/";
+	string file_dir;
+	if (platform == "lin") { file_dir = "/media/ssd/Research/ampt_tree_read_compare/test_set/"; }
+	else if (platform == "win") { file_dir = "E:/Research/ampt_tree_read_compare/test_set/"; }
 
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys = chrono::system_clock::now();
