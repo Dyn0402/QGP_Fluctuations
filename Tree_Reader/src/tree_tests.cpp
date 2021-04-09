@@ -1,254 +1,126 @@
 ///*
 // * tree_tests.cpp
 // *
-// *  Created on: Aug 21, 2019
+// *  Re-Created on: Apr 8, 2021
 // *      Author: Dylan Neff
 // */
 //
-//#include <iostream>
-//#include <vector>
-//
-//#include <TFile.h>
-//#include <TTree.h>
-//#include <TRandom3.h>
-//#include <TInterpreter.h>
-//#include <TSystem.h>
-//#include <TROOT.h>
-//
-//#include "Track.h"
-//#include "Event.h"
-//
-//using namespace std;
-//
-//
-//class Track_Test {
-//public:
-//	Track_Test();
-//	vector<double> track_size;
-//};
-//
-//Track_Test::Track_Test() {};
-//
-//
-//void vec_tree_test() {
-//	TFile *file = new TFile("/home/dylan/Desktop/vec_tree_test.root", "RECREATE");
-//
-//	if(!file) { cout << "Could not open file" << endl; return; }
-//
-//	vector<double> track_vec;
-//
-//	TTree *tree = new TTree("vec_test_tree", "Test Tree");
-//	tree->Branch("test_vec", &track_vec);
-//
-//	TRandom3 *rand = new TRandom3(0);
-//
-//	for(int i=0; i<10000; i++) {
-//		track_vec.clear();
-//		for(int j=0; j<rand->Gaus(15, 0.5); j++) {
-//			track_vec.push_back(rand->Gaus(10, 0.2));
-//		}
-//		tree->Fill();
-//	}
-//	file->Write();
-//	delete file;
-//}
-//
-//
-////void obj_tree_test() {
-////	TFile *file = new TFile("/home/dylan/Desktop/obj_tree_test.root", "RECREATE");
-////
-//////	gSystem->Load()
-//////	gROOT->ProcessLine(".L ./test_class.h+");
-//////	gInterpreter->GenerateDictionary("Track", "test_class.h");
-////
-////	if(!file) { cout << "Could not open file" << endl; return; }
-////
-////	Track tracks;
-////
-////	TTree *tree = new TTree("obj_test_tree", "Test Tree");
-////	tree->Branch("test_obj", "Track", &tracks);
-////
-////	TRandom3 *rand = new TRandom3(0);
-////
-////	for(int i=0; i<10000; i++) {
-////		tracks.clear();
-////		for(int j=0; j<rand->Gaus(15, 0.5); j++) {
-////			tracks.track_size.push_back(rand->Gaus(10, 0.2));
-////		}
-////		tree->Fill();
-////	}
-////	file->Write();
-////	delete file;
-////}
-//
-//
-//void real_tree_test() {
-//	// Write
-//	TFile *file = new TFile("/home/dylan/Desktop/real_tree_test.root", "RECREATE");
-//
-//	if(!file) { cout << "Could not open file" << endl; return; }
-//
-//	Event event;
-//	vector<Track> tracks;
-//
-//	TTree *tree = new TTree("test_tree", "Test Tree");
-//	tree->Branch("event", &event);
-//	tree->Branch("track_vec", &tracks);
-//
-//	int ntracks = 0;
-//
-//	TRandom3 *r = new TRandom3(0);
-//
-//	for(int i=0; i<10000; i++) {
-//		tracks.clear();
-////		event.set_event(r->Gaus(0,5), r->Gaus(0,4), r->Gaus(1, 6), (unsigned) r->Gaus(20,2), (unsigned) r->Gaus(40,3), (unsigned) r->Gaus(60,5), (unsigned) r->Gaus(80,7), (unsigned) r->Gaus(0, 3));
-//		for(int j=0; j<r->Gaus(15, 0.5); j++) {
-//			Track track;
-//			track.set_track(r->Gaus(10, 2), r->Gaus(15, 3), r->Gaus(3, 2), r->Gaus(0, 3), r->Gaus(0, 3), r->Gaus(2, 0.5), r->Gaus(0.5, 0.1), (short)r->Gaus(0, 0.5));
-//			tracks.push_back(track);
-//			ntracks++;
-//		}
-//		tree->Fill();
-//	}
-//	file->Write();
-//	delete file;
-//
-//	cout << ntracks << endl;
-//
-//
-//	// Read
-//	TFile *rfile = new TFile("/home/dylan/Desktop/real_tree_test.root", "READ");
-//
-//	if(!rfile) { cout << "Could not open file" << endl; return; }
-//
-//	TTree *rtree = (TTree*) rfile->Get("test_tree");
-//
-////	Event *revent;
-////	vector<Track> *rtracks;
-//
-//	Event *revent = new Event;
-//	vector<Track> *rtracks = new vector<Track>;
-//
-//	auto bevent = rtree->GetBranch("event");
-//	auto btrack_vec = rtree->GetBranch("track_vec");
-//
-//	bevent->SetAddress(&revent);
-//	btrack_vec->SetAddress(&rtracks);
-//
-//	auto nevent = rtree->GetEntries();
-//	cout << nevent << endl;
-//
-////	rtree->GetEvent(100);
-////	cout << revent.get_vtx_x() << endl;
-////	cout << rtracks.size() << endl;
-//
-//	rtree->GetEvent(100);
-//	cout << revent->get_vx() << endl;
-//	cout << rtracks->size() << endl;
-//	for(unsigned i=0; i<rtracks->size(); i++) {
-//		cout << (*rtracks)[i].get_pt() << endl;
-//	}
-//
-//	cout << endl << endl;
-//
-//	rtree->GetEvent(103);
-//	cout << revent->get_vx() << endl;
-//	cout << rtracks->size() << endl;
-//	for(unsigned i=0; i<rtracks->size(); i++) {
-//		cout << (*rtracks)[i].get_pt() << endl;
-//	}
-//
-//	delete rfile;
-//}
-//
-//
-//void real_event_tree_test() {
-//	// Write
-//	TFile *file = new TFile("/home/dylan/Desktop/real_tree_test.root", "RECREATE");
-//
-//	if(!file) { cout << "Could not open file" << endl; return; }
-//
-//	Event event;
-//
-//	TTree *tree = new TTree("test_tree", "Test Tree");
-//	tree->Branch("event", &event);
-//
-//	int ntracks = 0;
-//
-//	TRandom3 *r = new TRandom3(0);
-//
-//	for(int i=0; i<10000; i++) {
-//		event.set_event(r->Gaus(0,5), r->Gaus(0,4), r->Gaus(1, 6), (unsigned) r->Gaus(20,2), (unsigned) r->Gaus(40,3), (unsigned) r->Gaus(60,5), (unsigned) r->Gaus(80,7), r->Gaus(0,3));
-//		vector<Track> tracks;
-//		for(int j=0; j<r->Gaus(15, 0.5); j++) {
-//			Track track;
-//			track.set_track(r->Gaus(10, 2), r->Gaus(15, 3), r->Gaus(3, 2), r->Gaus(0, 3), r->Gaus(0, 3), r->Gaus(2, 0.5), r->Gaus(0.5, 0.1), (short)r->Gaus(0, 0.5));
-//			tracks.push_back(track);
-//			ntracks++;
-//		}
-//		if(i == 100) {
-//			cout << endl << "Event 100: " << endl;
-//			for(auto t:tracks) { cout << t.get_pt() << endl; }
-//		}
-//		if(i == 101) {
-//			cout << endl << "Event 101: " << endl;
-//			for(auto t:tracks) { cout << t.get_pt() << endl; }
-//		}
-//		event.set_particles(tracks);
-//		tree->Fill();
-//	}
-//
-//	file->Write();
-//	delete file;
-//
-//	cout << ntracks << endl;
-//
-//
-//	// Read
-//	TFile *rfile = new TFile("/home/dylan/Desktop/real_tree_test.root", "READ");
-//
-//	if(!rfile) { cout << "Could not open file" << endl; return; }
-//
-//	TTree *rtree = (TTree*) rfile->Get("test_tree");
-//
-////	Event *revent;
-////	vector<Track> *rtracks;
-//
-//	Event *revent = new Event;
-//
-//	auto bevent = rtree->GetBranch("event");
-//
-//	bevent->SetAddress(&revent);
-//
-//	auto nevent = rtree->GetEntries();
-//	cout << nevent << endl;
-//
-////	rtree->GetEvent(100);
-////	cout << revent.get_vtx_x() << endl;
-////	cout << rtracks.size() << endl;
-//
-//	rtree->GetEvent(100);
-//	Event local_event = *revent;
-//	cout << endl << "Event 100" << endl;
-//	vector<Track> protons = local_event.get_particles();
-//	cout << "vx: " << local_event.get_vx() << endl;
-//	local_event.set_vx(1 + local_event.get_vx());
-//	cout << "Num Protons: " << protons.size() << endl;
-//	for(unsigned i=0; i<protons.size(); i++) {
-//		cout << "Proton " << i << ": " << protons[i].get_pt() << endl;
-//		protons[i].set_pt(protons[i].get_pt() + 1);
-//	}
-//
-//	cout << endl << endl;
-//
-//	rtree->GetEvent(100);
-//	cout << endl << "Event 100" << endl;
-//	protons = revent->get_particles();
-//	cout << "vx: " << revent->get_vx() << endl;
-//	cout << "Num Protons: " << protons.size() << endl;
-//	for(unsigned i=0; i<protons.size(); i++) {
-//		cout << "Proton " << i << ": " << protons[i].get_pt() << endl;
-//	}
-//
-//	delete rfile;
-//}
+
+
+#include <TFile.h>
+#include <TTree.h>
+#include <TBranch.h>
+
+#include "Event.h"
+#include "TreeBranches.h"
+#include "file_io.h"
+
+
+
+void read_test_tree(TTree* tree, ampt_tree_branches &branches);
+void set_test_ampt_branches(TTree* tree, int ref_num);
+
+
+void tree_read_speed() {
+	string file_dir = "E:/Research/ampt_tree_read_compare/test_set/";
+
+	clock_t start = clock();
+	chrono::system_clock::time_point start_sys = chrono::system_clock::now();
+
+	ampt_tree_branches ampt_branches;
+
+	vector<string> in_files = get_files_in_dir(file_dir, "root", "path");
+
+	unsigned num_files = in_files.size();
+	unsigned file_index = 1;
+	for (string path : in_files) {
+		cout << path << endl;
+		// Display progress and time while running.
+		if (!(file_index % (unsigned)(num_files / 10.0 + 0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
+			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+			cout << (int)(100.0 * file_index / num_files + 0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+		}
+
+		TFile file(path.data(), "READ");
+		TTree* tree = (TTree*)file.Get("tree");
+		read_test_tree(tree, ampt_branches);  // Read tree from file into data
+		tree->ResetBranchAddresses();
+		file.Close();
+		file_index++;
+	}
+
+	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << endl << " 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+}
+
+
+void read_test_tree(TTree* tree, ampt_tree_branches& ampt_branches) {
+	int ref_num = 3;
+	set_ampt_tree_branches(tree, ampt_branches);
+	set_test_ampt_branches(tree, ref_num);
+
+	int* ref_n = NULL;
+	switch (ref_num) {
+	case 1:
+		ref_n = &ampt_branches.refmult; break;
+	case 2:
+		ref_n = &ampt_branches.refmult2; break;
+	case 3:
+		ref_n = &ampt_branches.refmult3; break;
+	default:
+		cout << "Unknown ref_num value!" << endl;
+	}
+
+	int cent_9bin;
+	int event_index = 0;
+	while (tree->GetEvent(event_index)) {
+
+		//cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
+		//Event event(event_defs, energy, ref_num, cent_9bin);
+		//event.set_qx(ampt_branches.qx); event.set_qy(ampt_branches.qy);
+
+		//vector<Track> particles;
+		//for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
+		//	if (!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
+		//	TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
+		//	Track new_particle(track_defs);
+		//	new_particle.set_p(p.Mag());
+		//	new_particle.set_pt(p.Perp());
+		//	new_particle.set_phi(p.Phi() + M_PI);
+		//	new_particle.set_eta(p.PseudoRapidity());
+		//	new_particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
+		//	new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+		//	particles.push_back(new_particle);
+		//}
+		//event.set_particles(particles);
+
+
+		event_index++;
+	}
+}
+
+
+void set_test_ampt_branches(TTree* tree, int ref_num) {
+	tree->SetBranchStatus("*", 0);
+	tree->SetBranchStatus("qx", 1);
+	tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus("pid", 1);
+	tree->SetBranchStatus("px", 1);
+	tree->SetBranchStatus("py", 1);
+	tree->SetBranchStatus("pz", 1);
+
+	switch (ref_num) {
+	case 1:
+		tree->SetBranchStatus("refmult", 1); break;
+	case 2:
+		tree->SetBranchStatus("refmult2", 1); break;
+	case 3:
+		tree->SetBranchStatus("refmult3", 1); break;
+	default:
+		cout << "Unknown ref_num value!" << endl;
+	}
+}
