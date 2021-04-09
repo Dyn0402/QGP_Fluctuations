@@ -80,6 +80,7 @@
 #include <vector>
 #include <map>
 #include "TString.h"
+#include "TRandom3.h"
 
 #include "../StRefMultCorr/BadRun.h"
 
@@ -99,7 +100,7 @@ class StRefMultCorr
 		// "VpdMB5"
 		// "VpdMB30"
 		// "VpdMBnoVtx"
-		StRefMultCorr(const TString name="refmult", const TString subname="Def", const TString libname="Def");
+		StRefMultCorr(const TString name="refmult", const TString subname="Def", const TString libname="Def", int rand_seed=0);
 		virtual ~StRefMultCorr(); /// Default destructor
 
 		// Bad run rejection
@@ -141,6 +142,8 @@ class StRefMultCorr
 		// Print all parameters
 		void print(const Option_t* option="") const ;
 
+		void set_rand_seed(int seed=0);
+
 	private:
 		const TString mName ; // refmult, refmult2, refmult3 or toftray (case insensitive)
 		const TString mSubName ; // specify triggers, in case there are multiple parameters/definitions in the same runs 
@@ -174,6 +177,8 @@ class StRefMultCorr
 		Double_t mVz ;          /// Current primary z-vertex
 		Double_t mZdcCoincidenceRate ; /// Current ZDC coincidence rate
 		Double_t mRefMult_corr; /// Corrected refmult
+
+		TRandom3 *trand;  /// Random generator to be used.
 
 		std::vector<Int_t> mYear              ; /// Year
 		std::vector<Int_t> mStart_runId       ; /// Start run id

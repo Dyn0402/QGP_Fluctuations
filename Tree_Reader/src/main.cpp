@@ -65,7 +65,8 @@ void run_pile_up_qa();
 void tchain_test();
 void run_tchain();
 //void AMPT_Proton_Num_Check();
-void tree_read_speed();
+void get_flag_trail_test();
+map<string, pair<int, int>> get_rand_set_pairs(int num_pairs);
 
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
 
@@ -123,13 +124,49 @@ void read_class() {
 //	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {2, 4}}, {"rapid1_n1ratios_dca1", {2, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {0, 1}}, {"rapid1_n1ratios_dca1", {0, 1}}, {"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}};
 //	map<string, pair<int, int>> set_pairs = {{"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_test", {0, 0}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Efficiency1", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency2", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency3", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency4", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency5", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency6", {0, 6}}};
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency1", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency2", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency3", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency4", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency5", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency6", {0, 4}}, {"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid04_n1ratios_dca1", {0, 4}}, {"rapid045_n1ratios_dca1", {0, 4}}, {"rapid055_n1ratios_dca1", {0, 4}}, {"rapid06_n1ratios_dca1", {0, 4}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_seed_", {0,0}}, {"rapid04_n1ratios_dca1_seed_", {0,0}}, {"rapid045_n1ratios_dca1_seed_", {0,0}}, {"rapid055_n1ratios_dca1_seed_", {0,0}}, {"rapid06_n1ratios_dca1_seed_", {0,0}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_", {0,6}}, {"rapid05_n1ratios_dca1_Efficiency1_", {0,6}}, {"rapid05_n1ratios_dca1_Efficiency2_", {0,6}}, {"rapid05_n1ratios_dca09_", {0,6}}, {"rapid05_n1ratios_dca095_", {0,6}}, {"rapid05_n1ratios_dca105_", {0,6}}, {"rapid05_n1ratios_dca11_", {0,6}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0,6}},
+//			{"rapid05_n1ratios_dca08_nsprx1_m2r6_m2s0_sys_", {0,6}}, {"rapid05_n1ratios_dca12_nsprx1_m2r6_m2s0_sys_", {0,6}},
+//			{"rapid05_n1ratios_dca1_nsprx09_m2r6_m2s0_sys_", {0,6}}, {"rapid05_n1ratios_dca1_nsprx11_m2r6_m2s0_sys_", {0,6}},
+//			{"rapid05_n1ratios_dca1_nsprx1_m2r2_m2s0_sys_", {0,6}},
+//			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_sys_", {0,6}}};
+
+
+//	map<string, pair<int, int>> set_pairs = get_rand_set_pairs(55);
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {17,40}}, {"Ampt_rapid05_n1ratios", {17,40}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixseed_", {3,20}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {3,20}}};
+//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_", {0,16}},
+//			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
+//			};
+
 	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_test", {0, 1}}};
 
-	//vector<int> energy_list {39, 62, 27, 19, 11, 7};
+//	map<string, pair<int, int>> set_pairs = {};
+//	float val_min = 0.5;
+//	float val_max = 1.5;
+//	float val_step = 0.05;
+//	int mult_scale = 100;
+//	unsigned chars = 3;
+//	string name_pre = "rapid05_n1ratios_dca";
+//	string name_post = "_seed_";
+//	pair<int, int> set_nums = {0,0};
+//	for(float val = val_min; val <= val_max; val+=val_step) {
+//		string num = to_string(int(val * mult_scale + 0.5));
+//		while(num.size() < chars) { num = "0" + num; }
+//		set_pairs[name_pre + num + name_post] = set_nums;
+//	}
+
+//	vector<int> energy_list {39, 62, 27, 19, 11, 7};
 	vector<int> energy_list {7, 11};
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
+	int free_threads = 11;
 
 	int jobs = 0;
 	for(pair<string, pair<int, int>> set_pair:set_pairs) {
@@ -144,7 +181,7 @@ void read_class() {
 	ROOT::EnableThreadSafety();
 	{
 		int job_num = 0;
-		ThreadPool pool(1);//thread::hardware_concurrency() - 2);
+		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 
 		for(int energy:energy_list) {
 			for(pair<string, pair<int, int>> set_pair:set_pairs) {
@@ -212,6 +249,28 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	reader.set_set_name(set_name + to_string(set_num));
 	reader.set_tree_name("tree");
 
+	if(in_string(set_name, "_seed")) {
+		reader.set_tree_reader_rand_seed(42);
+		reader.set_mixer_rand_seed(42);
+		reader.set_file_shuffle_rand_seed(42);
+		reader.set_stref_rand_seed(42);
+	} else if(in_string(set_name, "_mixseed")) {
+		reader.set_tree_reader_rand_seed(0);
+		reader.set_mixer_rand_seed(42);
+		reader.set_file_shuffle_rand_seed(time(NULL));
+		reader.set_stref_rand_seed(0);
+	} else if(in_string(set_name, "_mixnoseed")) {
+		reader.set_tree_reader_rand_seed(42);
+		reader.set_mixer_rand_seed(0);
+		reader.set_file_shuffle_rand_seed(42);
+		reader.set_stref_rand_seed(42);
+	} else {
+		reader.set_tree_reader_rand_seed(0);
+		reader.set_mixer_rand_seed(0);
+		reader.set_file_shuffle_rand_seed(time(NULL));
+		reader.set_stref_rand_seed(0);
+	}
+
 	reader.set_file_list(file_list);
 
 	if(in_string(set_name, "EP_Rotate"))  { reader.set_event_plane(true); }
@@ -220,8 +279,9 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	if(in_string(set_name, {"No_Rotate", "EP_Rotate"}, false)) { reader.set_rotate_random(false); }
 	else{ reader.set_rotate_random(true); }
 
-	if(in_string(set_name, "dca1")) { reader.cut.max_dca = 1.0; }
-	if(in_string(set_name, "dca3")) { reader.cut.max_dca = 3.0; }
+	if(in_string(set_name, "dca")) {
+		reader.cut.max_dca = str_num_dec(get_flag_trail(set_name, "dca", "_")[0], 1);
+	}
 
 	if(in_string(set_name, "Pile_Up_01_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
 	else if(in_string(set_name, "Pile_Up_008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
@@ -242,24 +302,59 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	if(in_string(set_name, "_allratios")) { reader.set_n1_ratios(false); reader.set_single_ratio(false); }
 	else { reader.set_n1_ratios(false); reader.set_single_ratio(true); }
 
+	if(in_string(set_name, "dca")) {
+		reader.cut.max_dca = str_num_dec(get_flag_trail(set_name, "dca", "_")[0], 1);
+		cout << "max dca: " << reader.cut.max_dca << endl;
+	}
+
+	if(in_string(set_name, "nsprx")) {  // Multiplier for nsigmaproton cuts. Because of 27GeV can't do values, need scale factor.
+		float nsigmaprx = str_num_dec(get_flag_trail(set_name, "nsprx", "_")[0], 1);
+		reader.cut.min_nsigma *= nsigmaprx;
+		reader.cut.max_nsigma *= nsigmaprx;
+		cout << "nsigma_cuts: " << reader.cut.min_nsigma << " " << reader.cut.max_nsigma << endl;
+	}
+
+	if(in_string(set_name, {"m2r", "m2s"}, false)) {  // Set m^2 cut range
+		float m2_mid = (reader.cut.max_m2 + reader.cut.min_m2) / 2;
+		float m2_range = reader.cut.max_m2 - reader.cut.min_m2;
+
+		if(in_string(set_name, "m2s")) {  // m^2 shift to the mid point
+			m2_mid += str_num_dec(get_flag_trail(set_name, "m2s", "_")[0], 0);
+		}
+		if(in_string(set_name, "m2r")) { m2_range = str_num_dec(get_flag_trail(set_name, "m2r", "_")[0], 0); }
+		reader.cut.min_m2 = m2_mid - m2_range / 2;
+		reader.cut.max_m2 = m2_mid + m2_range / 2;
+		cout << "m^2_cuts: " << reader.cut.min_m2 << " " << reader.cut.max_m2 << endl;
+	}
+
 	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
 	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }
-	else if(in_string(set_name, "rapid1")) { reader.set_rapidity(true); reader.cut.min_rapid = -1.0; reader.cut.max_rapid = 1.0; }
-	else if(in_string(set_name, "rapid05")) { reader.set_rapidity(true); reader.cut.min_rapid = -0.5; reader.cut.max_rapid = 0.5; }
+//	else if(in_string(set_name, "rapid1")) { reader.set_rapidity(true); reader.cut.min_rapid = -1.0; reader.cut.max_rapid = 1.0; }
+//	else if(in_string(set_name, "rapid05")) { reader.set_rapidity(true); reader.cut.min_rapid = -0.5; reader.cut.max_rapid = 0.5; }
+	else if(in_string(set_name, "rapid")) {
+		float rap_cut = str_num_dec(get_flag_trail(set_name, "rapid", "_")[0], 1);
+		reader.cut.min_rapid = -rap_cut;
+		reader.cut.max_rapid = rap_cut;
+	}
 
-	if(in_string(set_name,  "Efficiency8")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.8); }
-	else if(in_string(set_name,  "Efficiency7")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.7); }
-	else if(in_string(set_name,  "Efficiency6")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.6); }
-	else if(in_string(set_name,  "Efficiency5")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.5); }
-	else if(in_string(set_name,  "Efficiency4")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.4); }
-	else if(in_string(set_name,  "Efficiency3")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.3); }
-	else if(in_string(set_name,  "Efficiency2")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.2); }
-	else if(in_string(set_name,  "Efficiency1")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.1); }
-	else if(in_string(set_name,  "Efficiency08")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
-	else if(in_string(set_name,  "Efficiency05")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
-	else if(in_string(set_name,  "Efficiency025")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
-	else if(in_string(set_name,  "Efficiency01")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
-	else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
+	if(in_string(set_name, "Efficiency")) {
+		reader.set_efficiency(true);
+		reader.set_efficiency_prob(str_num_dec(get_flag_trail(set_name, "Efficiency", "_")[0], 0));
+	} else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
+
+//	if(in_string(set_name,  "Efficiency8")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.8); }
+//	else if(in_string(set_name,  "Efficiency7")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.7); }
+//	else if(in_string(set_name,  "Efficiency6")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.6); }
+//	else if(in_string(set_name,  "Efficiency5")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.5); }
+//	else if(in_string(set_name,  "Efficiency4")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.4); }
+//	else if(in_string(set_name,  "Efficiency3")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.3); }
+//	else if(in_string(set_name,  "Efficiency2")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.2); }
+//	else if(in_string(set_name,  "Efficiency1")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.1); }
+//	else if(in_string(set_name,  "Efficiency08")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
+//	else if(in_string(set_name,  "Efficiency05")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
+//	else if(in_string(set_name,  "Efficiency025")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
+//	else if(in_string(set_name,  "Efficiency01")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
+//	else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
 
 	if(in_string(set_name, {"Sim", "0p0s"}, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
 	else if(in_string(set_name, {"Sim", "05p002s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
@@ -786,4 +881,36 @@ void run_tchain() {
 	while(chain.GetEntry(++event_index)) {
 		cout << event_index << ": " << event_id << endl;
 	}
+}
+
+void get_flag_trail_test() {
+	string a = "rapid05_dca13214_hero45545";
+	string b = "dca";
+	for(string c:get_flag_trail(a,b,"_")) { cout << str_num_dec(c, 2) << endl; }
+}
+
+map<string, pair<int, int>> get_rand_set_pairs(int num_pairs) {
+	TRandom3 *rand = new TRandom3(0);
+	map<string, pair<int, int>> set_pairs = {};
+
+	map<string, pair<pair<int, unsigned>, pair<float, float>>> set_ranges;  // flag: {multiplier, num_dec}: {min_val, max_val}
+	set_ranges["dca"] = make_pair(make_pair(100, 3), make_pair(0.8, 1.2));
+	set_ranges["m2r"] = make_pair(make_pair(100, 3), make_pair(2.0, 6.0));
+	set_ranges["nsprx"] = make_pair(make_pair(100, 3), make_pair(0.9, 1.1));
+
+	string name_post = "m2s0_sys2_";
+	pair<int, int> set_nums = {0,0};
+
+	for(int i; i < num_pairs; i++) {
+		string name = "rapid05_n1ratios_";
+		for(pair<string, pair<pair<int, unsigned>, pair<float, float>>> var:set_ranges) {
+			float val = rand->Rndm() * (var.second.second.second - var.second.second.first) + var.second.second.first;
+			string num = to_string(int(val * var.second.first.first + 0.5));
+			while(num.size() < var.second.first.second) { num = "0" + num; }
+			name += var.first + num + "_";
+		}
+		set_pairs[name + name_post] = set_nums;
+	}
+
+	return set_pairs;
 }

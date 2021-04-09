@@ -426,6 +426,27 @@ void TreeReader::set_file_list(vector<string> *file_list) {
 	this->file_list = file_list;
 }
 
+void TreeReader::set_tree_reader_rand_seed(int seed) {
+	tree_reader_seed = seed;
+	trand = new TRandom3(seed);
+}
+
+void TreeReader::set_mixer_rand_seed(int seed) {
+	mixer_seed = seed;
+	mix.set_rand_seed(seed);
+}
+
+void TreeReader::set_file_shuffle_rand_seed(int seed) {
+	file_shuffle_seed = seed;
+	srand(seed);
+}
+
+void TreeReader::set_stref_rand_seed(int seed) {
+	stref_seed = seed;
+	refmultCorrUtil->set_rand_seed(seed);
+}
+
+
 
 // Doers
 
@@ -1207,6 +1228,10 @@ void TreeReader::write_info_file() {
 		out << "cent_binning: " << cent_binning << endl;
 		out << "ref_num: " << ref_num << endl;
 
+		out << "tree_reader_seed: " << tree_reader_seed << endl;
+		out << "mixer_seed: " << mixer_seed << endl;
+		out << "file_shuffle_seed: " << file_shuffle_seed << endl;
+		out << "stref_seed: " << stref_seed << endl;
 
 		out << "min_beta: " << to_string(cut.min_beta) << endl;
 		out << "max_beta: " << to_string(cut.max_beta) << endl;

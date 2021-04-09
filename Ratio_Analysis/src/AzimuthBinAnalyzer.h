@@ -51,6 +51,7 @@ public:
 	void set_sim_in_mix_path(string sim_in_mix_path);
 	void set_out_path(string path);
 	void set_out_root_name(string name);
+//	void set_def_set(string set);
 	void set_sets(map<string, vector<int>> sets);
 	void set_energies(vector<int> energies);
 	void set_all_centralities(vector<int> centralities);
@@ -58,15 +59,18 @@ public:
 	void set_plot_cents(vector<int> centralities);
 	void set_can_wh(int can_width, int can_height);
 	void set_set_combos(map<string, vector<string>> set_combos);
+	void set_sys_combos(map<string, pair<string, vector<string>>> sys_combos);
 	void set_plot_dists(bool plot);
 	void set_plot_dist_canvases(bool plot);
+	void set_sys_calc(bool calc);
 	void set_divs(vector<int> divisions);
 
 	// Doers
 	void analyze();
+	void analyze_lite();
 
 private:
-	// Parameters
+	// Attributes
 	vector<string> stat_names = {"standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"};
 	vector<string> stat_names_rows = {"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"};
 	vector<string> cumulant_names = {"cumulant 2", "cumulant 3", "cumulant 4"};
@@ -92,12 +96,16 @@ private:
 
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
+	bool sys_calc = false;
+	int free_threads = 0;
 //	map<string, vector<int>> sets {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
 //	map<string, vector<int>> sets {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
 //	map<string, vector<int>> sets {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
 	map<string, vector<int>> sets {{"Single_Ratio", {0,0}}};
 	map<string, vector<string>> set_combos;
+	map<string, pair<string, vector<string>>> sys_combos;  // sys_combos[combo_name]{first.default.set_name, second.systematics[set_names]}
+//	string def_set;
 
 
 	// Data Containers
@@ -127,15 +135,25 @@ private:
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_mix_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_divide_stats_median;
 
+	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> def_medians;
+	map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>> def_systematics;
+
 
 	// Doers
 	void analyze_sets();
 	void analyze_set(string set_name, vector<int> set_nums);
 	void analyze_subset(string set_name, int set_num, TDirectory *set_dir);
+	void analyze_sets_lite();
+	void analyze_set_lite(string set_name, vector<int> set_nums, mutex *mtx);
+	void analyze_subset_lite(string set_name, int set_num, mutex *mtx);
 	map<int, map<int, map<int, AzimuthBinData>>> get_data(string path, int min_num_events = 1);
 
 	void combine_sets();
+	void combine_systematics();
 	void combine_set(string set_name, TDirectory *set_dir);
+	void combine_set_lite(string set_name);
+
+	void plot_systematics();
 
 	map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders);
 	void calc_stat(AzimuthBinData *data, string type, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats);
@@ -143,6 +161,8 @@ private:
 	void calc_mix_diff_sd(AzimuthBinData *data, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats);
 	double sample_sd(vector<double> data);
 	double sample_sd(vector<Measure> data);
+	double sample_sd_weight(vector<double> data, vector<double> weight);
+	double sample_sd_errweight(vector<Measure> data);
 	Measure median(vector<Measure> data);
 };
 

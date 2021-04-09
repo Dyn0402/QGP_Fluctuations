@@ -70,7 +70,7 @@
 #include <sstream>
 
 #include "TError.h"
-#include "TRandom.h"
+#include "TRandom3.h"
 #include "TMath.h"
 
 #include "../StRefMultCorr/Param.h"
@@ -84,12 +84,15 @@
 
 //______________________________________________________________________________
 // Default constructor
-	StRefMultCorr::StRefMultCorr(const TString name, const TString subname, const TString libname)
+	StRefMultCorr::StRefMultCorr(const TString name, const TString subname, const TString libname, int rand_seed)
 : mName(name), mSubName(subname), mLibName(libname)
 {
 	mRefMult = 0 ;
 	mVz = -9999. ;
 	mRefMult_corr = -1.0 ;
+
+	trand = new TRandom3(rand_seed);
+
 
 //	cout << mSubName.Data() <<"  "<< mLibName.Data() << endl;
 
@@ -505,11 +508,11 @@ Double_t StRefMultCorr::getRefMultCorr(
 	Double_t RefMult_d     = -9999.;
 	if( mParameterIndex>=30 && mParameterIndex<=35 )
 	{
-		RefMult_d = (Double_t)(RefMult)+gRandom->Rndm()-0.5;
+		RefMult_d = (Double_t)(RefMult)+trand->Rndm()-0.5;
 	}
 	else
 	{
-		RefMult_d = (Double_t)(RefMult)+gRandom->Rndm();
+		RefMult_d = (Double_t)(RefMult)+trand->Rndm();
 	}
 	
 	Double_t RefMult_corr  = -9999. ;
@@ -1178,3 +1181,6 @@ vector<string> StRefMultCorr::StringSplit( const string str, const char sep )
 	return vstr;
 }
 
+void StRefMultCorr::set_rand_seed(int seed) {
+	trand = new TRandom3(seed);
+}
