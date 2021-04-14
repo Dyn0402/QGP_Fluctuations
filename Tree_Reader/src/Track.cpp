@@ -22,9 +22,10 @@ Track::Track() {
 	nsigma = 0;
 	beta = 0;
 	charge = 0;
+	nhits_fit = 0;
 }
 
-Track::Track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge) {
+Track::Track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge, short nhits_fit) {
 	this->pt = pt;
 	this->p = p;
 	this->phi = phi;
@@ -33,6 +34,7 @@ Track::Track(float pt, float p, float phi, float eta, float dca, float nsigma, f
 	this->nsigma = nsigma;
 	this->beta = beta;
 	this->charge = charge;
+	this->nhits_fit = nhits_fit;
 }
 
 Track::Track(const track_defaults& defaults) {
@@ -44,6 +46,7 @@ Track::Track(const track_defaults& defaults) {
 	nsigma = defaults.nsigma;
 	beta = defaults.beta;
 	charge = defaults.charge;
+	nhits_fit = defaults.nhits_fit;
 }
 
 Track::~Track() {}
@@ -83,6 +86,10 @@ short Track::get_charge() {
 	return(charge);
 }
 
+short Track::get_nhits_fit() {
+	return(nhits_fit);
+}
+
 
 // Setters
 
@@ -118,10 +125,14 @@ void Track::set_charge(short charge) {
 	this->charge = charge;
 }
 
+void Track::set_nhits_fit(short nhits_fit) {
+	this->nhits_fit = nhits_fit;
+}
+
 
 // Doers
 
-void Track::set_track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge) {
+void Track::set_track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge, short nhits_fit) {
 	this->pt = pt;
 	this->p = p;
 	this->phi = phi;
@@ -130,6 +141,7 @@ void Track::set_track(float pt, float p, float phi, float eta, float dca, float 
 	this->nsigma = nsigma;
 	this->beta = beta;
 	this->charge = charge;
+	this->nhits_fit = nhits_fit;
 }
 
 void Track::clear() {
@@ -141,4 +153,5 @@ void Track::clear() {
 	nsigma = 0;
 	beta = 0;
 	charge = 0;
+	nhits_fit = 0;
 }

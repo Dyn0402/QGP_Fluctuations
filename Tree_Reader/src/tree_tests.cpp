@@ -6,6 +6,7 @@
 // */
 //
 
+#include <iostream>
 
 #include <TFile.h>
 #include <TTree.h>
@@ -33,15 +34,16 @@ void tree_read_speed() {
 	if (platform == "lin") { file_dir = "/media/ssd/Research/ampt_tree_read_compare/test_set/"; }
 	else if (platform == "win") { file_dir = "E:/Research/ampt_tree_read_compare/test_set/"; }
 
-	clock_t start = clock();
-	chrono::system_clock::time_point start_sys = chrono::system_clock::now();
-
 	ampt_tree_branches ampt_branches;
 
 	vector<string> in_files = get_files_in_dir(file_dir, "root", "path");
 
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
+
+	clock_t start = clock();
+	chrono::system_clock::time_point start_sys = chrono::system_clock::now();
+
 	for (string path : in_files) {
 		cout << path << endl;
 		// Display progress and time while running.
@@ -64,6 +66,10 @@ void tree_read_speed() {
 	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
 	cout << endl << " 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+
+	cout << endl << "Enter 1 to quit: " << flush;
+	//int x;
+	//cin >> x;
 }
 
 
@@ -84,7 +90,6 @@ void read_test_tree(TTree* tree, ampt_tree_branches& ampt_branches) {
 		cout << "Unknown ref_num value!" << endl;
 	}
 
-	int cent_9bin;
 	int event_index = 0;
 	while (tree->GetEvent(event_index)) {
 

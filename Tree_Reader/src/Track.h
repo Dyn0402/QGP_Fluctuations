@@ -15,15 +15,16 @@
 
 
 struct track_defaults {
-	float pt = 0.7;
-	float p = 0.7;
+	float pt = 0.7F;
+	float p = 0.7F;
 	float phi = 0.0;
 	float eta = 0.0;
 
-	float dca = 0.1;
+	float dca = 0.1F;
 	float nsigma = 1.0;
 	float beta = -999;
 	short charge = 1;
+	short nhits_fit = 20;
 };
 
 
@@ -43,6 +44,7 @@ public:
 	float get_nsigma();
 	float get_beta();
 	short get_charge();
+	short get_nhits_fit();
 
 	void set_pt(float pt);
 	void set_p(float p);
@@ -52,8 +54,9 @@ public:
 	void set_nsigma(float nsigma);
 	void set_beta(float beta);
 	void set_charge(short charge);
+	void set_nhits_fit(short nhits_fit);
 
-	void set_track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge);
+	void set_track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge, short nhits_fit);
 	void clear();
 
 //	ClassDef(Track, 1);
@@ -67,6 +70,7 @@ private:
 	float nsigma;
 	float beta;
 	short charge;
+	short nhits_fit;
 };
 
 
