@@ -32,6 +32,7 @@ tree_leaves get_tree_leaves(TTree* tree, string particle, int ref) {
 	leaves.dca = tree->GetLeaf((particle+".dca").data());
 	leaves.nsigma = tree->GetLeaf((particle+".nsigma").data());
 	leaves.eta = tree->GetLeaf((particle+".eta").data());
+	leaves.nhits_fit = tree->GetLeaf((particle + ".nhits_fit").data());
 
 	return leaves;
 }
@@ -65,6 +66,7 @@ void set_tree_branches(TTree* tree, tree_branches &branches, string particle, in
 	tree->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	tree->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	tree->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
+	tree->SetBranchAddress((particle + ".nhits_fit").data(), &branches.eta, &branches.branch_eta);
 }
 
 // Set tree branch addresses and return them in a tree_branches struct.
@@ -95,6 +97,7 @@ void set_tree_branches(TChain* chain, tree_branches &branches, string particle, 
 	chain->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	chain->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	chain->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
+	chain->SetBranchAddress((particle + ".nhits_fit").data(), &branches.eta, &branches.branch_eta);
 }
 
 
@@ -108,6 +111,7 @@ void set_particle_branches(TTree* tree, tree_branches &branches, string particle
 	tree->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	tree->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	tree->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
+	tree->SetBranchAddress((particle + ".nhits_fit").data(), &branches.eta, &branches.branch_eta);
 }
 
 

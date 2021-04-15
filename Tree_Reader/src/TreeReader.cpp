@@ -1390,6 +1390,9 @@ bool TreeReader::check_particle_good(Track& particle) {
 	if(!(dca >= cut.min_dca && dca <= cut.max_dca)) { return false; }
 	track_cut_hist.Fill("Good dca", 1);
 
+	if (particle.get_nhits_fit() <= cut.min_dca) { return false; }
+	track_cut_hist.Fill("Good nhitsfit", 1);
+
 	double p = particle.get_p();
 
 	if(pt >= cut.min_pt_no_tof && pt <= cut.max_pt_no_tof && p <= cut.max_p_no_tof) {
@@ -1463,13 +1466,14 @@ void TreeReader::define_qa() {
 	event_cut_hist.GetXaxis()->SetBinLabel(5, "Pile Up Rejected");
 	event_cut_hist.GetXaxis()->SetBinLabel(6, "Enough Good Particles");
 
-	track_cut_hist = TH1D(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 6, -0.5, 5.5);
+	track_cut_hist = TH1D(("track_cut"+set_name+"_"+to_string(energy)).data(), "Track Cuts", 7, -0.5, 6.5);
 	track_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
 	track_cut_hist.GetXaxis()->SetBinLabel(2, "Good charge");
 	track_cut_hist.GetXaxis()->SetBinLabel(3, "Good eta");
 	track_cut_hist.GetXaxis()->SetBinLabel(4, "Good nsigma");
 	track_cut_hist.GetXaxis()->SetBinLabel(5, "Good dca");
-	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good mass*");
+	track_cut_hist.GetXaxis()->SetBinLabel(6, "Good nhitsfit");
+	track_cut_hist.GetXaxis()->SetBinLabel(7, "Good mass*");
 
 	eta_pt_hist = TH2F(("eta_pt_"+set_name+"_"+to_string(energy)).data(), "Pt vs Eta", 1000, -2.2, 2.2, 1000, 0, 2.25);
 
@@ -1504,6 +1508,7 @@ void TreeReader::define_qa() {
 	pre_eta_hist = TH1I(("pre_eta_"+set_name+"_"+to_string(energy)).data(), "pre_eta", 100, -2.2, 2.2);
 	pre_nsigma_hist = TH1I(("pre_nsigma_"+set_name+"_"+to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
 	pre_dca_hist = TH1I(("pre_dca_"+set_name+"_"+to_string(energy)).data(), "pre_dca", 100, 0.0, 3.1);
+	pre_nhits_fit_hist = TH1I(("pre_nhits_fit_" + set_name + "_" + to_string(energy)).data(), "pre_nhits_fit", 101, -0.5, 100.5);
 
 	post_phi_hist = TH1D(("post_phi_"+set_name+"_"+to_string(energy)).data(), "post_phi", 1000, 0.0, 2*TMath::Pi());
 	post_p_hist = TH1I(("post_p_"+set_name+"_"+to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
@@ -1513,6 +1518,7 @@ void TreeReader::define_qa() {
 	post_eta_hist = TH1I(("post_eta_"+set_name+"_"+to_string(energy)).data(), "post_eta", 100, -2.2, 2.2);
 	post_nsigma_hist = TH1I(("post_nsigma_"+set_name+"_"+to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
 	post_dca_hist = TH1I(("post_dca_"+set_name+"_"+to_string(energy)).data(), "post_dca", 100, 0.0, 3.1);
+	post_nhits_fit_hist = TH1I(("post_nhits_fit_" + set_name + "_" + to_string(energy)).data(), "post_nhits_fit", 101, -0.5, 100.5);
 
 	pre_m2_hist = TH1I(("pre_m2_"+set_name+"_"+to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
 	post_m2_hist = TH1I(("post_m2_"+set_name+"_"+to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
@@ -1534,6 +1540,7 @@ void TreeReader::fill_pre_track_qa(Track&particle) {
 	pre_eta_hist.Fill(particle.get_eta());
 	pre_nsigma_hist.Fill(particle.get_nsigma());
 	pre_dca_hist.Fill(particle.get_dca());
+	pre_nhits_fit_hist.Fill(particle.get_nhits_fit());
 }
 
 
@@ -1547,6 +1554,7 @@ void TreeReader::fill_post_track_qa(Track& particle) {
 	post_eta_hist.Fill(particle.get_eta());
 	post_nsigma_hist.Fill(particle.get_nsigma());
 	post_dca_hist.Fill(particle.get_dca());
+	post_nhits_fit_hist.Fill(particle.get_nhits_fit());
 	eta_pt_hist.Fill(particle.get_eta(), particle.get_pt());
 }
 
@@ -1680,6 +1688,7 @@ void TreeReader::write_qa() {
 	pre_eta_hist.Write();
 	pre_nsigma_hist.Write();
 	pre_dca_hist.Write();
+	pre_nhits_fit_hist.Write();
 	post_phi_hist.Write();
 	post_p_hist.Write();
 	post_pt_hist.Write();
@@ -1688,6 +1697,7 @@ void TreeReader::write_qa() {
 	post_eta_hist.Write();
 	post_nsigma_hist.Write();
 	post_dca_hist.Write();
+	post_nhits_fit_hist.Write();
 
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
@@ -1830,6 +1840,12 @@ void TreeReader::write_qa() {
 	post_dca_hist.SetLineColor(kRed);
 	post_dca_hist.Draw("sames");
 	dca_can.Write();
+	TCanvas nhits_fit_can("nhits_fit_can");
+	pre_nhits_fit_hist.GetYaxis()->SetRangeUser(0, pre_nhits_fit_hist.GetMaximum() * 1.05);
+	pre_nhits_fit_hist.Draw();
+	post_nhits_fit_hist.SetLineColor(kRed);
+	post_nhits_fit_hist.Draw("sames");
+	nhits_fit_can.Write();
 	TCanvas m2_can("m2_can");
 	pre_m2_hist.GetYaxis()->SetRangeUser(0, pre_m2_hist.GetMaximum()*1.05);
 	pre_m2_hist.Draw();

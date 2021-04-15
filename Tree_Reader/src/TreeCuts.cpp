@@ -81,6 +81,7 @@ void TreeCuts::set_values() {
 	max_pt_no_tof = max_pt_no_tof_by_energy[particle][energy];
 	max_p_tof = max_p_tof_by_energy[particle][energy];
 	max_p_no_tof = max_p_no_tof_by_energy[particle][energy];
+	min_nhits_fit = min_nhits_fit_by_energy[particle][energy];
 
 	// Other
 	expected_events = expected_events_by_energy[energy];

@@ -303,6 +303,7 @@ private:
 	TH1I pre_eta_hist;
 	TH1I pre_nsigma_hist;
 	TH1I pre_dca_hist;
+	TH1I pre_nhits_fit_hist;
 
 	TH1D post_phi_hist;
 	TH1I post_p_hist;
@@ -312,6 +313,7 @@ private:
 	TH1I post_eta_hist;
 	TH1I post_nsigma_hist;
 	TH1I post_dca_hist;
+	TH1I post_nhits_fit_hist;
 
 	TH1I pre_m2_hist;
 	TH1I post_m2_hist;

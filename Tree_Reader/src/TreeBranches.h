@@ -41,6 +41,7 @@ struct tree_leaves {
 	TLeaf *dca;
 	TLeaf *nsigma;
 	TLeaf *eta;
+	TLeaf* nhits_fit;
 };
 
 
@@ -84,6 +85,7 @@ struct tree_branches {
 	vector<float> *nsigma = 0;
 	vector<float> *eta = 0;
 	vector<short> *charge = 0;
+	vector<short>* nhits_fit = 0;
 
 	TBranch *branch_pt = 0;
 	TBranch *branch_phi = 0;
