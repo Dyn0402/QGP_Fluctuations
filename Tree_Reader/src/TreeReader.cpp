@@ -877,7 +877,10 @@ void TreeReader::process_event(Event& event) {
 				double rand_angle = trand->Rndm() * 2 * M_PI;
 				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
 				if (ampt_reaction_plane) { event.set_event_plane(0); }  // Ampt reaction plane is at zero.
-				event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));  // Might need to worry about 
+				double ep_rotate = rotate_angle(event.get_event_plane(), rand_angle);
+				while (ep_rotate >= M_PI) { ep_rotate -= M_PI; }  // Force into range of [0, pi)
+				while (ep_rotate < 0) { ep_rotate += M_PI;  }
+				event.set_event_plane(ep_rotate);
 			}
 
 			// If mixed/rand flagged append event to mix/rand object.

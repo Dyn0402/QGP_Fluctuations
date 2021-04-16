@@ -87,13 +87,13 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib;C:\Users\Dyn04\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib\Debug;C:\Users\Dyn04\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>C:\root_v6.22.08\lib\*.lib;Fluctuation_Lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -103,7 +103,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib;C:\Users\Dyn04\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -111,7 +111,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\Dylan\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib\Release;C:\Users\Dyn04\source\repos\Dyn0402\Research_Libs\Fluctuation_Lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>C:\root_v6.22.08\lib\*.lib;Fluctuation_Lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
