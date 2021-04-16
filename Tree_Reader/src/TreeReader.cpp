@@ -533,7 +533,7 @@ void TreeReader::read_trees() {
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
-		add_cut_hists(file);
+		if (!ampt) { add_cut_hists(file); }
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		if (ampt) { read_ampt_tree(tree); }  // Read tree from file into data
 		else { read_tree(tree); }  // Read tree from file into data

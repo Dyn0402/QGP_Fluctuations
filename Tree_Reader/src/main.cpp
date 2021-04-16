@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 		gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
 	}
 
-	tree_read_speed();
+//	tree_read_speed();
 
 	//TH2F btof_ref_hist("test", "test", 10, 0, 10, 10, 0, 10);
 	//btof_ref_hist.Fill(5, 5, 10);
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 	//btof_ref_hist.Fit(&lin_fit, "NQ");
 	//double rot_angle = M_PI / 2 - atan(lin_fit.GetParameter(0));
 	//cout << rot_angle << endl;
-	//read_class();
+	read_class();
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
@@ -155,7 +155,7 @@ void read_class() {
 //			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
 //			};
 
-	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_test", {0, 1}}};
+	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 8}}};
 
 //	map<string, pair<int, int>> set_pairs = {};
 //	float val_min = 0.5;
@@ -172,12 +172,12 @@ void read_class() {
 //		set_pairs[name_pre + num + name_post] = set_nums;
 //	}
 
-//	vector<int> energy_list {39, 62, 27, 19, 11, 7};
-	vector<int> energy_list {7, 11};
+	vector<int> energy_list {39, 62, 27, 19, 11, 7};
+//	vector<int> energy_list {7, 11};
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 11;
+	int free_threads = 0;
 
 	int jobs = 0;
 	for(pair<string, pair<int, int>> set_pair:set_pairs) {
@@ -210,9 +210,16 @@ void read_class() {
 
 
 void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
-	string base_path = "C:/Users/Dylan/Desktop/Research/"; //"/home/dylan/Research/";
-	string in_base_path = "C:/Users/Dylan/Desktop/Research/"; //"/media/ucla/Research/";
-	string in_base_ampt_path = "E:/Research/";  //"/media/ssd/Research/";
+	string base_path, in_base_path, in_base_ampt_path;
+	if (platform == "lin") {
+		base_path = "/home/dylan/Research/";
+		in_base_path = "/media/ucla/Research/";
+		in_base_ampt_path = "/media/ssd/Research/";
+	} else if (platform == "win") {
+		base_path = "C:/Users/Dylan/Desktop/Research/";
+		in_base_path = "C:/Users/Dylan/Desktop/Research/";
+		in_base_ampt_path = "E:/Research/";
+	}
 	string out_base_path = base_path;
 	int ref = 3;
 
@@ -246,8 +253,9 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	reader.cut.set_dcaqa_path(base_path + "Dca_xy_QA/");
 	reader.cut.set_pileupqa_path(base_path + "Pile_Up_QA/");
 
-
 	reader.set_divs(divs);
+
+	if(in_string(set_name, "Ampt")) { reader.set_ampt(true); }
 
 	if(in_string(set_name, "cbwc")) { reader.set_cbwc(true); }
 	else { reader.set_cbwc(false); }
@@ -289,6 +297,8 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 
 	if(in_string(set_name, {"No_Rotate", "EP_Rotate"}, false)) { reader.set_rotate_random(false); }
 	else{ reader.set_rotate_random(true); }
+
+	if(in_string(set_name, {"Ampt", "ReactionPlane"}, true)) { reader.set_ampt_reaction_plane(true); }
 
 	if(in_string(set_name, "dca")) {
 		reader.cut.max_dca = str_num_dec(get_flag_trail(set_name, "dca", "_")[0], 1);
@@ -453,9 +463,6 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 
 	if(in_string(set_name, "Sim")) {
 		reader.sim_events(sim_cent_events);
-	} else if(in_string(set_name, "Ampt")) {
-		
-		reader.read_ampt_trees();
 	} else{
 		reader.read_trees();
 	}

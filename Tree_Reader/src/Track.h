@@ -32,7 +32,7 @@ struct track_defaults {
 class Track {
 public:
 	Track();
-	Track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge);
+	Track(float pt, float p, float phi, float eta, float dca, float nsigma, float beta, short charge, short nhits_fit);
 	Track(const track_defaults& defaults);
 	~Track();
 
