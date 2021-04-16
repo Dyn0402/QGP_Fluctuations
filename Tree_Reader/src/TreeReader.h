@@ -113,6 +113,7 @@ public:
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_ampt(bool ampt);
+	void set_ampt_reaction_plane(bool rp);
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
@@ -202,6 +203,7 @@ private:
 	int stref_seed = 0;
 
 	bool ampt;
+	bool ampt_reaction_plane;
 	bool cbwc;
 	bool rotate_random;
 	bool event_plane;

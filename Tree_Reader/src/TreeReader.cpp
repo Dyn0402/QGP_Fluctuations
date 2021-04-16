@@ -48,6 +48,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
+	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -81,6 +82,7 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 	this->mtx = mtx;
 
 	ampt = false;
+	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -112,6 +114,7 @@ TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
+	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -145,6 +148,7 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 	this->mtx = mtx;
 
 	ampt = false;
+	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -176,6 +180,7 @@ TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
+	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -346,6 +351,10 @@ void TreeReader::set_divs(vector<int> list) {
 
 void TreeReader::set_ampt(bool ampt) {
 	this->ampt = ampt;
+}
+
+void TreeReader::set_ampt_reaction_plane(bool rp) {
+	this->ampt_reaction_plane = rp;
 }
 
 void TreeReader::set_cbwc(bool cbwc) {
@@ -863,6 +872,13 @@ void TreeReader::process_event(Event& event) {
 			post_ep_hist.Fill(event.get_event_plane());
 
 			if(cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmunt n in place of centrality from here on.
+
+			if (ampt) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
+				double rand_angle = trand->Rndm() * 2 * M_PI;
+				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
+				if (ampt_reaction_plane) { event.set_event_plane(0); }  // Ampt reaction plane is at zero.
+				event.set_event_plane(rotate_angle(event.get_event_plane(), rand_angle));  // Might need to worry about 
+			}
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if(mixed) { mix.append_event(good_particle_angles, cent, event.get_event_plane(), event.get_vz()); }
