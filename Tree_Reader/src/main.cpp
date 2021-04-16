@@ -454,6 +454,7 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	if(in_string(set_name, "Sim")) {
 		reader.sim_events(sim_cent_events);
 	} else if(in_string(set_name, "Ampt")) {
+		
 		reader.read_ampt_trees();
 	} else{
 		reader.read_trees();

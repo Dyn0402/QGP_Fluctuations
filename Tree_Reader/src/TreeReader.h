@@ -112,6 +112,7 @@ public:
 	void set_sim_eff_dist_path(string root_path, string hist_name);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
+	void set_ampt(bool ampt);
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
@@ -142,9 +143,6 @@ public:
 
 	// Doers
 	void read_trees();
-	void read_trees_chain();
-	void read_ampt_trees();
-	void read_nsm_ampt_trees();
 	void sim_events(map<int, int> cent_num_events);
 	void write_info_file();
 
@@ -203,6 +201,7 @@ private:
 	int file_shuffle_seed = 0;
 	int stref_seed = 0;
 
+	bool ampt;
 	bool cbwc;
 	bool rotate_random;
 	bool event_plane;
@@ -235,7 +234,6 @@ private:
 	void process_event(Event& event);
 
 	void set_branches(TTree* tree);
-	void set_branches(TChain* chain);
 	void set_ampt_branches(TTree* tree);
 
 	TH1D* get_sim_proton_dist(int cent);

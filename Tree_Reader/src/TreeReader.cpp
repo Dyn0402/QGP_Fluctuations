@@ -46,6 +46,8 @@ using namespace std;
 
 TreeReader::TreeReader(int energy, int ref_num) {
 	start_sys = chrono::system_clock::now();
+
+	ampt = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -78,6 +80,7 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 
 	this->mtx = mtx;
 
+	ampt = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -107,6 +110,8 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 
 TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
+
+	ampt = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -139,6 +144,7 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 
 	this->mtx = mtx;
 
+	ampt = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -168,6 +174,8 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 
 TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
+
+	ampt = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
@@ -336,6 +344,10 @@ void TreeReader::set_divs(vector<int> list) {
 	divs = list;
 }
 
+void TreeReader::set_ampt(bool ampt) {
+	this->ampt = ampt;
+}
+
 void TreeReader::set_cbwc(bool cbwc) {
 	this->cbwc = cbwc;
 }
@@ -466,7 +478,20 @@ void TreeReader::read_trees() {
 	define_qa();
 
 	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
-	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
+
+	vector<string> in_files;
+	if (ampt) {
+		ampt_cent = AmptCentralityMaker(energy, in_path + "min_bias/" + ampt_type + "/", ampt_cent_path + ampt_type + "/", "ref" + to_string(ref_num));
+		ampt_cent.make_centrality(false);  // Usually just reads from file unless it can't find it.
+
+		in_files = get_files_in_dir(in_path + "most_central/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
+		vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
+		in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
+	}
+	else {
+		in_files = get_files_in_dir(in_path + to_string(energy) + "GeV/", "root", "path");
+	}
+	
 	random_shuffle(in_files.begin(), in_files.end());
 
 	unsigned num_files = in_files.size();
@@ -501,7 +526,8 @@ void TreeReader::read_trees() {
 		TFile *file = new TFile(path.data(), "READ");
 		add_cut_hists(file);
 		TTree *tree = (TTree*)file->Get(tree_name.data());
-		read_tree(tree);  // Read tree from file into data
+		if (ampt) { read_ampt_tree(tree); }  // Read tree from file into data
+		else { read_tree(tree); }  // Read tree from file into data
 		tree->ResetBranchAddresses();
 		file->Close();
 		delete file;
@@ -517,190 +543,6 @@ void TreeReader::read_trees() {
 			}
 			if(mtx) { mtx->unlock(); }
 		}
-	}
-
-	reset_out_dir();
-	write_info_file();
-	write_qa();
-	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
-	if(mixed) { mix.write_mixed_data(); }
-	if(mixed_sets) { mix_sets.write_mixed_data(); }
-	if(rand_data) {random.write_random_data(); }
-}
-
-
-// Read files for single energy and write results to text files.
-void TreeReader::read_trees_chain() {
-	prep_read();
-	define_qa();
-
-	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
-	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
-	TChain *chain = new TChain(tree_name.data());
-
-	for(string path:in_files) {
-		TFile *file = new TFile(path.data(), "READ");
-		add_cut_hists(file);
-		file->Close();
-		delete file;
-		chain->AddFile(path.data());
-	}
-
-	set_tree_branches(chain, branches, particle, ref_num);
-	set_branches(chain);
-
-	int num_events = chain->GetEntries();
-	for(int event_index = 0; event_index < num_events; event_index++) {
-
-		// Display progress and time while running.
-		if(!(event_index % (unsigned)(num_events/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
-			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*event_index/num_events+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-		}
-
-		chain->GetEntry(event_index);
-		Event event(branches);
-
-		if(pile_up) {
-			if(trand->Rndm() < pile_up_prob) {  // Pile up next two events
-				event_index++;
-				if(chain->GetEntry(event_index)) {
-					Event event2(branches);
-					event.pile_up(event2);
-				}
-			}
-		}
-
-		process_event(event);
-	}
-
-
-	chain->ResetBranchAddresses();
-
-	reset_out_dir();
-	write_info_file();
-	write_qa();
-	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
-	if(mixed) { mix.write_mixed_data(); }
-	if(mixed_sets) { mix_sets.write_mixed_data(); }
-	if(rand_data) {random.write_random_data(); }
-}
-
-
-// Read files for single energy and write results to text files.
-void TreeReader::read_ampt_trees() {
-	prep_read();
-	define_qa();
-
-	ampt_cent = AmptCentralityMaker(energy, in_path + "min_bias/" + ampt_type + "/", ampt_cent_path + ampt_type + "/", "ref" + to_string(ref_num));
-	ampt_cent.make_centrality(false);  // Usually just reads from file unless it can't find it.
-
-	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
-	vector<string> in_files = get_files_in_dir(in_path + "most_central/" + ampt_type + "/" + to_string(energy)+"GeV/", "root", "path");
-	vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + ampt_type + "/" + to_string(energy)+"GeV/", "root", "path");
-	in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
-	random_shuffle(in_files.begin(), in_files.end());
-
-	unsigned num_files = in_files.size();
-	unsigned file_index = 1;
-
-	for(string path:in_files) {
-
-		if(file_list != NULL) {  // If file_list passed, check if path is being read on another thread before continuing
-			bool wait = true;
-			while(wait) {
-				if(mtx) { mtx->lock(); }
-				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {
-					file_list->push_back(path);
-					wait = false;
-				}
-				if(mtx) { mtx->unlock(); }
-				if(wait) {
-					cout << "Waiting for path: " << path << endl;
-					this_thread::sleep_for(chrono::seconds(file_wait_sleep));
-				}
-			}
-		}
-
-		// Display progress and time while running.
-		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
-			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-		}
-
-		TFile file(path.data(), "READ");
-		TTree *tree = (TTree*)file.Get(tree_name.data());
-		read_ampt_tree(tree);  // Read tree from file into data
-		tree->ResetBranchAddresses();
-		file.Close();
-		file_index++;
-
-		if(file_list != NULL) {  // If file_list passed, remove path before going to next
-			if(mtx) { mtx->lock(); }
-			vector<string>::iterator it = find(file_list->begin(), file_list->end(), path);
-			if(it == file_list->end()) {
-				cout << "Current file not found in list! Not removing: " << path << endl;
-			} else {
-				file_list->erase(it);
-			}
-			if(mtx) { mtx->unlock(); }
-		}
-	}
-
-	reset_out_dir();
-	write_info_file();
-	write_qa();
-	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
-	if(mixed) { mix.write_mixed_data(); }
-	if(mixed_sets) { mix_sets.write_mixed_data(); }
-	if(rand_data) {random.write_random_data(); }
-}
-
-
-// Read files for single energy and write results to text files.
-void TreeReader::read_nsm_ampt_trees() {
-	prep_read();
-	define_qa();
-
-	cout << "Reading " + set_name + " " + to_string(energy) + "GeV trees." << endl << endl;
-	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
-
-	unsigned num_files = in_files.size();
-	unsigned file_index = 1;
-
-	for(string path:in_files) {
-
-		// Display progress and time while running.
-		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
-			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-			cout << " " << set_name << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-		}
-
-		TFile *file = new TFile(path.data(), "READ");
-//		add_cut_hists(file);
-		TTree *tree = (TTree*)file->Get(tree_name.data());
-		read_nsm_ampt_tree(tree);  // Read tree from file into data
-		file->Close();
-		delete file;
-		file_index++;
 	}
 
 	reset_out_dir();
@@ -812,27 +654,6 @@ void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus((particle+".dca").data(), 1);
 	tree->SetBranchStatus((particle+".nsigma").data(), 1);
 	tree->SetBranchStatus((particle+".eta").data(), 1);
-}
-
-
-void TreeReader::set_branches(TChain* chain) {
-	chain->SetBranchStatus("*", 0);
-	chain->SetBranchStatus("run_num", 1);
-	chain->SetBranchStatus("event_id", 1);
-	chain->SetBranchStatus("refmult", 1);
-	chain->SetBranchStatus(("refmult"+to_string(ref_num)).data(), 1);
-	chain->SetBranchStatus("btof_multi", 1);
-	chain->SetBranchStatus("btof_match", 1);
-	chain->SetBranchStatus("vz", 1);
-	chain->SetBranchStatus("qx", 1);
-	chain->SetBranchStatus("qy", 1);
-	chain->SetBranchStatus((particle+".pt").data(), 1);
-	chain->SetBranchStatus((particle+".phi").data(), 1);
-	chain->SetBranchStatus((particle+".beta").data(), 1);
-	chain->SetBranchStatus((particle+".charge").data(), 1);
-	chain->SetBranchStatus((particle+".dca").data(), 1);
-	chain->SetBranchStatus((particle+".nsigma").data(), 1);
-	chain->SetBranchStatus((particle+".eta").data(), 1);
 }
 
 
