@@ -155,7 +155,7 @@ void read_class() {
 //			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
 //			};
 
-	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 8}}};
+	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}};
 
 //	map<string, pair<int, int>> set_pairs = {};
 //	float val_min = 0.5;
@@ -457,6 +457,8 @@ void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mu
 	reader.mix.set_out_path(mix_out_dir+set_dir);
 	reader.mix.set_max_events(250);
 	reader.mix.set_min_events(150);
+	reader.mix.set_vz_bins(1);
+	reader.mix.set_ep_bins(180);
 	if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
 	else { reader.mix.set_mixes_per_event(10); }
 	if(in_string(set_name, "Sim") || in_string(set_name, "Ampt")) { reader.mix.set_mixes_per_event(10); }

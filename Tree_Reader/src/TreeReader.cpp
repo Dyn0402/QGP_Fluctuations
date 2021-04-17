@@ -1030,79 +1030,6 @@ void TreeReader::read_tree_debug(TTree* tree) {
 }
 
 
-// Write file to outpath containing information about TreeReader variables used.
-void TreeReader::write_info_file() {
-	ofstream out(out_path+to_string(energy)+"GeV/"+info_file_name);
-	if(!out) { cerr << "Couldn't open info_file path" << endl; }
-	else {
-		out << "Information file for TreeReader run." << endl;
-		out << "in_path: " << in_path << endl;
-		out << "out_path: " << out_path << endl;
-		out << "qa_path: " << qa_path << endl;
-		out << "qa_name: " << qa_name << endl;
-
-		out << "energy: " << to_string(energy) << endl;
-		out << "divs: { ";
-		for(auto &div:divs) { out << to_string(div) << " "; }
-		out << "}" << endl;
-
-		out << "particle: " << particle << endl;
-
-		out << "cbwc: " << boolalpha << cbwc << endl;
-		out << "rotate_random: " << boolalpha << rotate_random << endl;
-		out << "event_plane: " << boolalpha << event_plane << endl;
-		out << "mixed_sets: " << boolalpha << mixed_sets << endl;
-		out << "mixed: " << boolalpha << mixed << endl;
-		out << "rand_data: " << boolalpha << rand_data << endl;
-		out << "pile_up: " << boolalpha << pile_up << endl;
-		out << "efficiency: " << boolalpha << efficiency << endl;
-		out << "single_ratio: " << boolalpha << single_ratio << endl;
-		out << "n1_ratios: " << boolalpha << n1_ratios << endl;
-		out << "sim_eff: " << boolalpha << sim_eff << endl;
-		out << "sim_flow: " << boolalpha << sim_flow << endl;
-		out << "check_charge: " << boolalpha << check_charge << endl;
-
-		out << "pile_up_prob: " << pile_up_prob << endl;
-		out << "efficiency_prob: " << efficiency_prob << endl;
-
-		out << "cent_binning: " << cent_binning << endl;
-		out << "ref_num: " << ref_num << endl;
-
-		out << "tree_reader_seed: " << tree_reader_seed << endl;
-		out << "mixer_seed: " << mixer_seed << endl;
-		out << "file_shuffle_seed: " << file_shuffle_seed << endl;
-		out << "stref_seed: " << stref_seed << endl;
-
-		out << "min_beta: " << to_string(cut.min_beta) << endl;
-		out << "max_beta: " << to_string(cut.max_beta) << endl;
-		out << "charge: " << to_string(cut.charge) << endl;
-		out << "min_eta: " << to_string(cut.min_eta) << endl;
-		out << "max_eta: " << to_string(cut.max_eta) << endl;
-		out << "min_nsigma: " << to_string(cut.min_nsigma) << endl;
-		out << "max_nsigma: " << to_string(cut.max_nsigma) << endl;
-		out << "min_dca: " << to_string(cut.min_dca) << endl;
-		out << "max_dca: " << to_string(cut.max_dca) << endl;
-		out << "min_m2: " << to_string(cut.min_m2) << endl;
-		out << "max_m2: " << to_string(cut.max_m2) << endl;
-		out << "min_pt_tof: " << to_string(cut.min_pt_tof) << endl;
-		out << "max_pt_tof: " << to_string(cut.max_pt_tof) << endl;
-		out << "min_pt_no_tof: " << to_string(cut.min_pt_no_tof) << endl;
-		out << "max_pt_no_tof: " << to_string(cut.max_pt_no_tof) << endl;
-		out << "max_p_tof: " << to_string(cut.max_p_tof) << endl;
-		out << "max_p_no_tof: " << to_string(cut.max_p_no_tof) << endl;
-
-		out << "min_multi: " << to_string(cut.min_multi) << endl;
-
-		out << "sim p_group: " << to_string(sim.get_p_group()) << endl;
-		out << "sim spread_sigma: " << to_string(sim.get_spread_sigma()) << endl;
-
-		out << "Ampt Particle PIDs: ";
-		for(auto &pid:ampt_particle_pid) { out << to_string(pid) << " "; }
-		out << endl;
-	}
-}
-
-
 // Add file's event/track cut hists to corresponding collected histogram for energy.
 void TreeReader::add_cut_hists(TFile *file) {
 	TH1D *event_hist = (TH1D*)file->Get(event_cut_hist_name.data());
@@ -1426,6 +1353,94 @@ void TreeReader::fill_post_event_qa(Event& event) {
 }
 
 
+// Write file to outpath containing information about TreeReader variables used.
+void TreeReader::write_info_file() {
+	ofstream out(out_path+to_string(energy)+"GeV/"+info_file_name);
+	if(!out) { cerr << "Couldn't open info_file path" << endl; }
+	else {
+		out << "Information file for TreeReader run." << endl;
+		out << "in_path: " << in_path << endl;
+		out << "out_path: " << out_path << endl;
+		out << "qa_path: " << qa_path << endl;
+		out << "qa_name: " << qa_name << endl;
+
+		out << "energy: " << to_string(energy) << endl;
+		out << "divs: { ";
+		for(auto &div:divs) { out << to_string(div) << " "; }
+		out << "}" << endl;
+
+		out << "particle: " << particle << endl;
+
+		out << "ampt: " << boolalpha << ampt << endl;
+		out << "ampt_reaction_plane: " << boolalpha << ampt_reaction_plane << endl;
+		out << "cbwc: " << boolalpha << cbwc << endl;
+		out << "rotate_random: " << boolalpha << rotate_random << endl;
+		out << "event_plane: " << boolalpha << event_plane << endl;
+		out << "mixed_sets: " << boolalpha << mixed_sets << endl;
+		out << "mixed: " << boolalpha << mixed << endl;
+		out << "rand_data: " << boolalpha << rand_data << endl;
+		out << "pile_up: " << boolalpha << pile_up << endl;
+		out << "efficiency: " << boolalpha << efficiency << endl;
+		out << "single_ratio: " << boolalpha << single_ratio << endl;
+		out << "n1_ratios: " << boolalpha << n1_ratios << endl;
+		out << "sim_eff: " << boolalpha << sim_eff << endl;
+		out << "sim_flow: " << boolalpha << sim_flow << endl;
+		out << "check_charge: " << boolalpha << check_charge << endl;
+		out << "rapidity" << boolalpha << rapidity << endl;
+
+		out << "pile_up_prob: " << pile_up_prob << endl;
+		out << "efficiency_prob: " << efficiency_prob << endl;
+
+		out << "cent_binning: " << cent_binning << endl;
+		out << "ref_num: " << ref_num << endl;
+
+		out << "tree_reader_seed: " << tree_reader_seed << endl;
+		out << "mixer_seed: " << mixer_seed << endl;
+		out << "file_shuffle_seed: " << file_shuffle_seed << endl;
+		out << "stref_seed: " << stref_seed << endl;
+
+		out << "min_beta: " << to_string(cut.min_beta) << endl;
+		out << "max_beta: " << to_string(cut.max_beta) << endl;
+		out << "charge: " << to_string(cut.charge) << endl;
+		out << "min_eta: " << to_string(cut.min_eta) << endl;
+		out << "max_eta: " << to_string(cut.max_eta) << endl;
+		out << "min_nsigma: " << to_string(cut.min_nsigma) << endl;
+		out << "max_nsigma: " << to_string(cut.max_nsigma) << endl;
+		out << "min_dca: " << to_string(cut.min_dca) << endl;
+		out << "max_dca: " << to_string(cut.max_dca) << endl;
+		out << "min_m2: " << to_string(cut.min_m2) << endl;
+		out << "max_m2: " << to_string(cut.max_m2) << endl;
+		out << "min_pt_tof: " << to_string(cut.min_pt_tof) << endl;
+		out << "max_pt_tof: " << to_string(cut.max_pt_tof) << endl;
+		out << "min_pt_no_tof: " << to_string(cut.min_pt_no_tof) << endl;
+		out << "max_pt_no_tof: " << to_string(cut.max_pt_no_tof) << endl;
+		out << "max_p_tof: " << to_string(cut.max_p_tof) << endl;
+		out << "max_p_no_tof: " << to_string(cut.max_p_no_tof) << endl;
+
+		out << "min_multi: " << to_string(cut.min_multi) << endl;
+
+		out << "sim p_group: " << to_string(sim.get_p_group()) << endl;
+		out << "sim spread_sigma: " << to_string(sim.get_spread_sigma()) << endl;
+
+		out << "mix single_ratio" << boolalpha << mix.get_single_ratio() << endl;
+		out << "mix n1_ratios" << boolalpha << mix.get_n1_ratios() << endl;
+		out << "mix rand_rotate" << boolalpha << mix.get_rand_rotate() << endl;
+		out << "mix event_plane_rotate" << boolalpha << mix.get_event_plane_rotate() << endl;
+		out << "mix max_events" << to_string(mix.get_max_events()) << endl;
+		out << "mix min_events" << to_string(mix.get_min_events()) << endl;
+		out << "mix mixes_per_event" << to_string(mix.get_mixes_per_event()) << endl;
+		out << "mix vz_bins" << to_string(mix.get_vz_bins()) << endl;
+		out << "mix ep_bins" << to_string(mix.get_ep_bins()) << endl;
+		out << "mix vz_range" << to_string(mix.get_vz_range().first) << "-" << to_string(mix.get_vz_range().second) << endl;
+		out << "mix ep_range" << to_string(mix.get_ep_range().first) << "-" << to_string(mix.get_ep_range().second) << endl;
+
+		out << "Ampt Particle PIDs: ";
+		for(auto &pid:ampt_particle_pid) { out << to_string(pid) << " "; }
+		out << endl;
+	}
+}
+
+
 // Write all qa plots into TFile.
 void TreeReader::write_qa() {
 	if(mtx) mtx->lock();
@@ -1702,16 +1717,7 @@ void TreeReader::write_qa() {
 // Remove out_path directory for energy if it exists and recreate it.
 // Create out_path directory if it does not exist.
 void TreeReader::reset_out_dir() {
-	// Worked on Linux but not on Windows
-	//if(system(("test -d "+out_path).data())) {
-	//	if(system(("mkdir " + out_path).data())) { cout << "Could not create output directory " + out_path << endl; }
-	//}
-
-	//string energy_path = out_path+to_string(energy)+"GeV/";
-	//if(!system(("test -d "+energy_path).data())) { int i = system(("rm -r " + energy_path).data()); if(i) {}}
-	//if(system(("mkdir " + energy_path).data())) { cout << "Could not create output directory " + energy_path << endl; }
-
-	// Written for Windows, hopefully will also work on Linux
+	// Seems to work on both Linux and Windows, need to double check Windows after changes
 	mkdir(out_path);
 	mkdir(out_path + to_string(energy) + "GeV/", true);
 }

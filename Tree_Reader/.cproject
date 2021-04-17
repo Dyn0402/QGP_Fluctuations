@@ -194,7 +194,10 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
+			<resource resourceType="FOLDER" workspacePath="/Tree_Reader/Release"/>
 			<resource resourceType="PROJECT" workspacePath="/HelloRoot"/>
+			<resource resourceType="PROJECT" workspacePath="/Tree_Reader"/>
+			<resource resourceType="FOLDER" workspacePath="/Tree_Reader/Debug"/>
 		</configuration>
 		<configuration configurationName="Release">
 			<resource resourceType="FOLDER" workspacePath="/Tree_Reader/Release"/>

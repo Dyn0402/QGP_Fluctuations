@@ -86,6 +86,10 @@ bool Mixer::get_single_ratio() {
 	return(single_ratio);
 }
 
+bool Mixer::get_n1_ratios() {
+	return(n1_ratios);
+}
+
 bool Mixer::get_rand_rotate() {
 	return(rand_rotate);
 }

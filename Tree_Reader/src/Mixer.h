@@ -25,6 +25,7 @@ public:
 
 	// Getters
 	bool get_single_ratio();
+	bool get_n1_ratios();
 	bool get_rand_rotate();
 	bool get_event_plane_rotate();
 	int get_energy();
@@ -67,7 +68,7 @@ private:
 	bool single_ratio;
 	bool n1_ratios;
 	bool rand_rotate;
-	bool event_plane_rotate;
+	bool event_plane_rotate;  // It doesn't look like this does anything
 	int energy;
 	int min_events;
 	int max_events;
