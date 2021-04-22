@@ -1422,17 +1422,17 @@ void TreeReader::write_info_file() {
 		out << "sim p_group: " << to_string(sim.get_p_group()) << endl;
 		out << "sim spread_sigma: " << to_string(sim.get_spread_sigma()) << endl;
 
-		out << "mix single_ratio" << boolalpha << mix.get_single_ratio() << endl;
-		out << "mix n1_ratios" << boolalpha << mix.get_n1_ratios() << endl;
-		out << "mix rand_rotate" << boolalpha << mix.get_rand_rotate() << endl;
-		out << "mix event_plane_rotate" << boolalpha << mix.get_event_plane_rotate() << endl;
-		out << "mix max_events" << to_string(mix.get_max_events()) << endl;
-		out << "mix min_events" << to_string(mix.get_min_events()) << endl;
-		out << "mix mixes_per_event" << to_string(mix.get_mixes_per_event()) << endl;
-		out << "mix vz_bins" << to_string(mix.get_vz_bins()) << endl;
-		out << "mix ep_bins" << to_string(mix.get_ep_bins()) << endl;
-		out << "mix vz_range" << to_string(mix.get_vz_range().first) << "-" << to_string(mix.get_vz_range().second) << endl;
-		out << "mix ep_range" << to_string(mix.get_ep_range().first) << "-" << to_string(mix.get_ep_range().second) << endl;
+		out << "mix single_ratio: " << boolalpha << mix.get_single_ratio() << endl;
+		out << "mix n1_ratios: " << boolalpha << mix.get_n1_ratios() << endl;
+		out << "mix rand_rotate: " << boolalpha << mix.get_rand_rotate() << endl;
+		out << "mix event_plane_rotate: " << boolalpha << mix.get_event_plane_rotate() << endl;
+		out << "mix max_events: " << to_string(mix.get_max_events()) << endl;
+		out << "mix min_events: " << to_string(mix.get_min_events()) << endl;
+		out << "mix mixes_per_event: " << to_string(mix.get_mixes_per_event()) << endl;
+		out << "mix vz_bins: " << to_string(mix.get_vz_bins()) << endl;
+		out << "mix ep_bins: " << to_string(mix.get_ep_bins()) << endl;
+		out << "mix vz_range: " << to_string(mix.get_vz_range().first) << ", " << to_string(mix.get_vz_range().second) << endl;
+		out << "mix ep_range: " << to_string(mix.get_ep_range().first) << ", " << to_string(mix.get_ep_range().second) << endl;
 
 		out << "Ampt Particle PIDs: ";
 		for(auto &pid:ampt_particle_pid) { out << to_string(pid) << " "; }

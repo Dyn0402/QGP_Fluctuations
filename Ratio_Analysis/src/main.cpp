@@ -66,7 +66,7 @@ void azimuth_bin_analyze() {
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 //	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 //	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("4-16-21_bes_ampt_reactionplane.root");
+	analyzer.set_out_root_name("4-19-21_bes_ampt_reactionplane.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8}); // ,7,6,5,4,3,2,1
@@ -100,10 +100,10 @@ void azimuth_bin_analyze() {
 //	map<string, vector<int>> bes1_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
 	map<string, vector<int>> ampt_def {{"Ampt_rapid05_n1ratios", {0, 54}}};
 	map<string, vector<int>> ampt_sys = ampt_def;
-	map<string, vector<int>> ampt_rp_def {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}};
+	map<string, vector<int>> ampt_rp_def {{"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {0, 16}}};
 	map<string, vector<int>> ampt_rp_sys = ampt_def;
 	analyzer.set_sets(combine_sets({ampt_rp_def, ampt_def}));
-	analyzer.set_sys_combos({{"BES1", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
+	analyzer.set_sys_combos({{"AMPT_RP", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
 
 //	map<string, vector<int>> full_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
 //	map<string, vector<int>> full_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
