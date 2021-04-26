@@ -36,12 +36,12 @@ Simulator::Simulator() {
 
 
 Simulator::~Simulator() {
-	if(flow_res_n > 0) { cout << "Target res: " << pars.ep_res << " Actual res: " << flow_res / flow_res_n << endl; }
-	delete sim_rand;
-	delete proton_dist_hist;
-	delete efficiency_dist;
-	delete norm_eff_dist;
-	delete ep_dist;
+	//if(flow_res_n > 0) { cout << "Target res: " << pars.ep_res << " Actual res: " << flow_res / flow_res_n << endl; }
+	//delete sim_rand;
+	//delete proton_dist_hist;
+	//delete efficiency_dist;
+	//delete norm_eff_dist;
+	//delete ep_dist;
 }
 
 

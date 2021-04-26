@@ -48,10 +48,12 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
+	file_list = NULL;
 
 	//sim_eff = false;
 	//sim_flow = false;
 
+	pile_up = false;
 	pile_up_prob = 0;
 
 	this->ref_num = ref_num;
@@ -64,10 +66,12 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 	this->mtx = mtx;
 
 	ampt = false;
+	file_list = NULL;
 
 	//sim_eff = false;
 	//sim_flow = false;
 
+	pile_up = false;
 	pile_up_prob = 0;
 	
 	this->ref_num = ref_num;
@@ -78,11 +82,12 @@ TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
-	pile_up = false;
+	file_list = NULL;
 
 	//sim_eff = false;
 	//sim_flow = false;
 
+	pile_up = false;
 	pile_up_prob = 0;
 	
 	ref_num = 2;
@@ -95,11 +100,12 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 	this->mtx = mtx;
 
 	ampt = false;
-	pile_up = false;
+	file_list = NULL;
 
 	//sim_eff = false;
 	//sim_flow = false;
 
+	pile_up = false;
 	pile_up_prob = 0;
 
 	ref_num = 2;
@@ -110,11 +116,12 @@ TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
-	pile_up = false;
+	file_list = NULL;
 
 	//sim_eff = false;
 	//sim_flow = false;
 
+	pile_up = false;
 	pile_up_prob = 0;
 	
 	ref_num = 2;
@@ -238,7 +245,7 @@ void TreeReader::set_file_shuffle_rand_seed(int seed) {
 
 // Create new binner with TreeReader energy and ref_num and return reference to new AzBinner
 AzBinner& TreeReader::add_binner() {
-	binners.push_back(AzBinner(energy, ref_num));
+	binners.emplace_back(AzBinner(energy, ref_num));
 	return binners.back();
 }
 
