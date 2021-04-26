@@ -54,39 +54,39 @@ Track::~Track() {}
 
 // Getters
 
-float Track::get_pt() {
+float Track::get_pt() const {
 	return(pt);
 }
 
-float Track::get_p() {
+float Track::get_p() const {
 	return(p);
 }
 
-float Track::get_phi() {
+float Track::get_phi() const {
 	return(phi);
 }
 
-float Track::get_eta() {
+float Track::get_eta() const {
 	return(eta);
 }
 
-float Track::get_dca() {
+float Track::get_dca() const {
 	return(dca);
 }
 
-float Track::get_nsigma() {
+float Track::get_nsigma() const {
 	return(nsigma);
 }
 
-float Track::get_beta() {
+float Track::get_beta() const {
 	return(beta);
 }
 
-short Track::get_charge() {
+short Track::get_charge() const {
 	return(charge);
 }
 
-short Track::get_nhits_fit() {
+short Track::get_nhits_fit() const {
 	return(nhits_fit);
 }
 

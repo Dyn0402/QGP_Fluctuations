@@ -36,15 +36,15 @@ public:
 	Track(const track_defaults& defaults);
 	~Track();
 
-	float get_pt();
-	float get_p();
-	float get_phi();
-	float get_eta();
-	float get_dca();
-	float get_nsigma();
-	float get_beta();
-	short get_charge();
-	short get_nhits_fit();
+	float get_pt() const;
+	float get_p() const;
+	float get_phi() const;
+	float get_eta() const;
+	float get_dca() const;
+	float get_nsigma() const;
+	float get_beta() const;
+	short get_charge() const;
+	short get_nhits_fit() const;
 
 	void set_pt(float pt);
 	void set_p(float p);

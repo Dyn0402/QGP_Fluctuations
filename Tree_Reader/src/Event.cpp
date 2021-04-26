@@ -64,67 +64,67 @@ Event::~Event() {}
 
 // Getters
 
-float Event::get_vx() {
+float Event::get_vx() const {
 	return vx;
 }
 
-float Event::get_vy() {
+float Event::get_vy() const {
 	return vy;
 }
 
-float Event::get_vz() {
+float Event::get_vz() const {
 	return vz;
 }
 
-float Event::get_qx() {
+float Event::get_qx() const {
 	return qx;
 }
 
-float Event::get_qy() {
+float Event::get_qy() const {
 	return qy;
 }
 
-float Event::get_event_plane() {
+float Event::get_event_plane() const {
 	return event_plane;
 }
 
-float Event::get_dca_xy_avg() {
+float Event::get_dca_xy_avg() const {
 	return dca_xy_avg;
 }
 
-float Event::get_dca_xy_err() {
+float Event::get_dca_xy_err() const {
 	return dca_xy_err;
 }
 
-short Event::get_ref() {
+short Event::get_ref() const {
 	return ref;
 }
 
-int Event::get_run() {
+int Event::get_run() const {
 	return run;
 }
 
-int Event::get_event_id() {
+int Event::get_event_id() const {
 	return event_id;
 }
 
-short Event::get_refn() {
+short Event::get_refn() const {
 	return refn;
 }
 
-short Event::get_btof_multi() {
+short Event::get_btof_multi() const {
 	return btof_multi;
 }
 
-short Event::get_btof_match() {
+short Event::get_btof_match() const {
 	return btof_match;
 }
 
-vector<Track> Event::get_particles() {
+const vector<Track>& Event::get_particles() const {
 	return particles;  // Can I return reference to speed up?
 }
 
-int Event::get_num_particles() {
+int Event::get_num_particles() const {
 	return (int)particles.size();
 }
 

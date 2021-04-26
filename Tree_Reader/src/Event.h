@@ -70,22 +70,22 @@ public:
 	~Event();
 
 	// Getters
-	float get_vx();
-	float get_vy();
-	float get_vz();
-	float get_qx();
-	float get_qy();
-	float get_event_plane();
-	float get_dca_xy_avg();
-	float get_dca_xy_err();
-	short get_ref();
-	int get_run();
-	int get_event_id();
-	short get_refn();
-	short get_btof_multi();
-	short get_btof_match();
-	vector<Track> get_particles();
-	int get_num_particles();
+	float get_vx() const;
+	float get_vy() const;
+	float get_vz() const;
+	float get_qx() const;
+	float get_qy() const;
+	float get_event_plane() const;
+	float get_dca_xy_avg() const;
+	float get_dca_xy_err() const;
+	short get_ref() const;
+	int get_run() const;
+	int get_event_id() const;
+	short get_refn() const;
+	short get_btof_multi() const;
+	short get_btof_match() const;
+	const vector<Track>& get_particles() const;
+	int get_num_particles() const;
 
 	// Setters
 	void set_vx(float vx);
