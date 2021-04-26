@@ -979,7 +979,7 @@ void AzBinner::write_info_file() {
 		out << "sim_eff: " << boolalpha << sim_eff << endl;
 		out << "sim_flow: " << boolalpha << sim_flow << endl;
 		out << "check_charge: " << boolalpha << check_charge << endl;
-		out << "rapidity" << boolalpha << rapidity << endl;
+		out << "rapidity: " << boolalpha << rapidity << endl;
 
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;
