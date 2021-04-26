@@ -45,8 +45,6 @@ using namespace std;
 // Structors
 
 AzBinner::AzBinner(int energy, int ref_num) {
-	start_sys = chrono::system_clock::now();
-
 	ampt = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
@@ -76,43 +74,8 @@ AzBinner::AzBinner(int energy, int ref_num) {
 	mix = Mixer(energy);
 }
 
-AzBinner::AzBinner(int energy, int ref_num, mutex* mtx) {
-	start_sys = chrono::system_clock::now();
-
-	this->mtx = mtx;
-
-	ampt = false;
-	ampt_reaction_plane = false;
-	cbwc = false;
-	rotate_random = false;
-	event_plane = false;
-	mixed_sets = false;
-	mixed = false;
-	rand_data = false;
-	pile_up = false;
-	efficiency = false;
-	single_ratio = false;
-	n1_ratios = false;
-	check_charge = true;
-	rapidity = false;
-
-	sim_eff = false;
-	sim_flow = false;
-
-	pile_up_prob = 0;
-	efficiency_prob = 0;
-
-	cent_binning = 9;
-	this->ref_num = ref_num;
-	this->energy = energy;
-
-	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
-	mix = Mixer(energy);
-}
 
 AzBinner::AzBinner(int energy) {
-	start_sys = chrono::system_clock::now();
-
 	ampt = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
@@ -142,43 +105,8 @@ AzBinner::AzBinner(int energy) {
 	mix = Mixer(energy);
 }
 
-AzBinner::AzBinner(int energy, mutex* mtx) {
-	start_sys = chrono::system_clock::now();
-
-	this->mtx = mtx;
-
-	ampt = false;
-	ampt_reaction_plane = false;
-	cbwc = false;
-	rotate_random = false;
-	event_plane = false;
-	mixed_sets = false;
-	mixed = false;
-	rand_data = false;
-	pile_up = false;
-	efficiency = false;
-	single_ratio = false;
-	n1_ratios = false;
-	check_charge = true;
-	rapidity = false;
-
-	sim_eff = false;
-	sim_flow = false;
-
-	pile_up_prob = 0;
-	efficiency_prob = 0;
-
-	cent_binning = 9;
-	ref_num = 2;
-	this->energy = energy;
-
-	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
-	mix = Mixer(energy);
-}
 
 AzBinner::AzBinner() {
-	start_sys = chrono::system_clock::now();
-
 	ampt = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
@@ -231,10 +159,6 @@ string AzBinner::get_qa_path() {
 
 string AzBinner::get_set_name() {
 	return(set_name);
-}
-
-string AzBinner::get_tree_name() {
-	return(tree_name);
 }
 
 string AzBinner::get_event_cut_hist_name() {
@@ -325,10 +249,6 @@ void AzBinner::set_qa_name(string name) {
 
 void AzBinner::set_set_name(string set_name) {
 	this->set_name = set_name;
-}
-
-void AzBinner::set_tree_name(string tree_name) {
-	this->tree_name = tree_name;
 }
 
 void AzBinner::set_sim_proton_dist_dataset(string path) {

@@ -53,7 +53,7 @@ static const std::string platform = "lin";
 using namespace std;
 
 
-void read_class();
+//void read_class();
 void read_new();
 void read_comb_sys();
 //void real_event_tree_test();
@@ -77,7 +77,7 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs);
 
 void tree_read_speed();
 
-void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
+//void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
 void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, int jobs, mutex* mtx, vector<string>* file_list);
 
 clock_t start = clock();
@@ -103,7 +103,8 @@ int main(int argc, char** argv) {
 	//btof_ref_hist.Fit(&lin_fit, "NQ");
 	//double rot_angle = M_PI / 2 - atan(lin_fit.GetParameter(0));
 	//cout << rot_angle << endl;
-	read_class();
+	//read_class();
+	read_new();
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
@@ -153,91 +154,91 @@ void read_new() {
 }
 
 
-void read_class() {
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {1, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_default_eta05_n1ratios", {0, 4}}, {"Ampt_default_eta1_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {2, 4}}, {"rapid1_n1ratios_dca1", {2, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {0, 1}}, {"rapid1_n1ratios_dca1", {0, 1}}, {"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_test", {0, 0}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Efficiency1", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency2", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency3", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency4", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency5", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency6", {0, 6}}};
-//	map<string, pair<int, int>> set_pairs = {{"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency1", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency2", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency3", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency4", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency5", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency6", {0, 4}}, {"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid04_n1ratios_dca1", {0, 4}}, {"rapid045_n1ratios_dca1", {0, 4}}, {"rapid055_n1ratios_dca1", {0, 4}}, {"rapid06_n1ratios_dca1", {0, 4}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_seed_", {0,0}}, {"rapid04_n1ratios_dca1_seed_", {0,0}}, {"rapid045_n1ratios_dca1_seed_", {0,0}}, {"rapid055_n1ratios_dca1_seed_", {0,0}}, {"rapid06_n1ratios_dca1_seed_", {0,0}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_", {0,6}}, {"rapid05_n1ratios_dca1_Efficiency1_", {0,6}}, {"rapid05_n1ratios_dca1_Efficiency2_", {0,6}}, {"rapid05_n1ratios_dca09_", {0,6}}, {"rapid05_n1ratios_dca095_", {0,6}}, {"rapid05_n1ratios_dca105_", {0,6}}, {"rapid05_n1ratios_dca11_", {0,6}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0,6}},
-//			{"rapid05_n1ratios_dca08_nsprx1_m2r6_m2s0_sys_", {0,6}}, {"rapid05_n1ratios_dca12_nsprx1_m2r6_m2s0_sys_", {0,6}},
-//			{"rapid05_n1ratios_dca1_nsprx09_m2r6_m2s0_sys_", {0,6}}, {"rapid05_n1ratios_dca1_nsprx11_m2r6_m2s0_sys_", {0,6}},
-//			{"rapid05_n1ratios_dca1_nsprx1_m2r2_m2s0_sys_", {0,6}},
-//			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_sys_", {0,6}}};
-
-
-//	map<string, pair<int, int>> set_pairs = get_rand_set_pairs(55);
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {17,40}}, {"Ampt_rapid05_n1ratios", {17,40}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixseed_", {3,20}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {3,20}}};
-//	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_", {0,16}},
-//			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
-//			};
-
-	map<string, pair<int, int>> set_pairs = {{"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {13, 16}}};
-
-//	map<string, pair<int, int>> set_pairs = {};
-//	float val_min = 0.5;
-//	float val_max = 1.5;
-//	float val_step = 0.05;
-//	int mult_scale = 100;
-//	unsigned chars = 3;
-//	string name_pre = "rapid05_n1ratios_dca";
-//	string name_post = "_seed_";
-//	pair<int, int> set_nums = {0,0};
-//	for(float val = val_min; val <= val_max; val+=val_step) {
-//		string num = to_string(int(val * mult_scale + 0.5));
-//		while(num.size() < chars) { num = "0" + num; }
-//		set_pairs[name_pre + num + name_post] = set_nums;
+//void read_class() {
+////	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
+////	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {1, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"pion+_n1ratios", {0, 2}}, {"pion-_n1ratios", {0, 2}}, {"piontotal_n1ratios", {0, 2}}};
+////	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_Efficiency8", {0, 2}}, {"eta05_n1ratios_Efficiency5", {0, 2}}, {"eta05_n1ratios_Efficiency3", {0, 2}}, {"eta05_n1ratios_Efficiency1", {0, 2}}, {"eta05_n1ratios", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 2}}, {"eta05_n1ratios_dca3", {0, 2}}}; //, {"eta1_n1ratios", {3, 3}}};
+////	map<string, pair<int, int>> set_pairs = {{"eta1_n1ratios_dca1", {0, 4}}, {"eta1_n1ratios_dca3", {0, 4}}, {"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"Ampt_default_eta05_n1ratios", {0, 4}}, {"Ampt_default_eta1_n1ratios", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"eta05_n1ratios_dca1", {0, 4}}, {"eta05_n1ratios_dca3", {0, 4}}, {"Ampt_eta05_n1ratios", {0, 4}}, {"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"Sim_n1ratios_0p0s_eta05_dca3", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {2, 4}}, {"rapid1_n1ratios_dca1", {2, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1", {0, 1}}, {"rapid1_n1ratios_dca1", {0, 1}}, {"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_test", {0, 0}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Efficiency1", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency2", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency3", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency4", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency5", {0, 6}}, {"rapid05_n1ratios_dca1_Efficiency6", {0, 6}}};
+////	map<string, pair<int, int>> set_pairs = {{"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency1", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency2", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency3", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency4", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency5", {0, 4}}, {"Ampt_rapid05_n1ratios_Efficiency6", {0, 4}}, {"Ampt_default_rapid05_n1ratios", {0, 4}}, {"Ampt_default_rapid1_n1ratios", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid04_n1ratios_dca1", {0, 4}}, {"rapid045_n1ratios_dca1", {0, 4}}, {"rapid055_n1ratios_dca1", {0, 4}}, {"rapid06_n1ratios_dca1", {0, 4}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_seed_", {0,0}}, {"rapid04_n1ratios_dca1_seed_", {0,0}}, {"rapid045_n1ratios_dca1_seed_", {0,0}}, {"rapid055_n1ratios_dca1_seed_", {0,0}}, {"rapid06_n1ratios_dca1_seed_", {0,0}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_", {0,6}}, {"rapid05_n1ratios_dca1_Efficiency1_", {0,6}}, {"rapid05_n1ratios_dca1_Efficiency2_", {0,6}}, {"rapid05_n1ratios_dca09_", {0,6}}, {"rapid05_n1ratios_dca095_", {0,6}}, {"rapid05_n1ratios_dca105_", {0,6}}, {"rapid05_n1ratios_dca11_", {0,6}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0,6}},
+////			{"rapid05_n1ratios_dca08_nsprx1_m2r6_m2s0_sys_", {0,6}}, {"rapid05_n1ratios_dca12_nsprx1_m2r6_m2s0_sys_", {0,6}},
+////			{"rapid05_n1ratios_dca1_nsprx09_m2r6_m2s0_sys_", {0,6}}, {"rapid05_n1ratios_dca1_nsprx11_m2r6_m2s0_sys_", {0,6}},
+////			{"rapid05_n1ratios_dca1_nsprx1_m2r2_m2s0_sys_", {0,6}},
+////			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_sys_", {0,6}}};
+//
+//
+////	map<string, pair<int, int>> set_pairs = get_rand_set_pairs(55);
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {17,40}}, {"Ampt_rapid05_n1ratios", {17,40}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixseed_", {3,20}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {3,20}}};
+////	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_", {0,16}},
+////			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
+////			};
+//
+//	map<string, pair<int, int>> set_pairs = {{"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {13, 16}}};
+//
+////	map<string, pair<int, int>> set_pairs = {};
+////	float val_min = 0.5;
+////	float val_max = 1.5;
+////	float val_step = 0.05;
+////	int mult_scale = 100;
+////	unsigned chars = 3;
+////	string name_pre = "rapid05_n1ratios_dca";
+////	string name_post = "_seed_";
+////	pair<int, int> set_nums = {0,0};
+////	for(float val = val_min; val <= val_max; val+=val_step) {
+////		string num = to_string(int(val * mult_scale + 0.5));
+////		while(num.size() < chars) { num = "0" + num; }
+////		set_pairs[name_pre + num + name_post] = set_nums;
+////	}
+//
+//	vector<int> energy_list {39, 62, 27, 19, 11, 7};
+////	vector<int> energy_list {7, 11};
+//
+//	int set_sleep = 1;
+//	int energy_sleep = 1;
+//	int free_threads = 0;
+//
+//	int jobs = 0;
+//	for(pair<string, pair<int, int>> set_pair:set_pairs) {
+//		for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
+//			jobs++;
+//		}
 //	}
-
-	vector<int> energy_list {39, 62, 27, 19, 11, 7};
-//	vector<int> energy_list {7, 11};
-
-	int set_sleep = 1;
-	int energy_sleep = 1;
-	int free_threads = 0;
-
-	int jobs = 0;
-	for(pair<string, pair<int, int>> set_pair:set_pairs) {
-		for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
-			jobs++;
-		}
-	}
-	jobs *= energy_list.size();
-
-	mutex *mtx = new mutex;
-	vector<string> *file_list = new vector<string>;
-	ROOT::EnableThreadSafety();
-	{
-		int job_num = 0;
-		ThreadPool pool(thread::hardware_concurrency() - free_threads);
-
-		for(int energy:energy_list) {
-			for(pair<string, pair<int, int>> set_pair:set_pairs) {
-				for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
-					string set_dir = set_pair.first + to_string(set_num) + "/";
-					cout << endl << "Queueing " << set_dir << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs, mtx, file_list);
-					this_thread::sleep_for(chrono::seconds(set_sleep));
-				}
-			}
-			this_thread::sleep_for(chrono::seconds(energy_sleep));
-		}
-	}
-}
+//	jobs *= energy_list.size();
+//
+//	mutex *mtx = new mutex;
+//	vector<string> *file_list = new vector<string>;
+//	ROOT::EnableThreadSafety();
+//	{
+//		int job_num = 0;
+//		ThreadPool pool(thread::hardware_concurrency() - free_threads);
+//
+//		for(int energy:energy_list) {
+//			for(pair<string, pair<int, int>> set_pair:set_pairs) {
+//				for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
+//					string set_dir = set_pair.first + to_string(set_num) + "/";
+//					cout << endl << "Queueing " << set_dir << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+//					pool.enqueue(run_set, energy, set_num, set_pair.first, job_num, jobs, mtx, file_list);
+//					this_thread::sleep_for(chrono::seconds(set_sleep));
+//				}
+//			}
+//			this_thread::sleep_for(chrono::seconds(energy_sleep));
+//		}
+//	}
+//}
 
 
 void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, int jobs, mutex* mtx, vector<string>* file_list) {
@@ -509,268 +510,268 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 }
 
 
-void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
-	string base_path, in_base_path, in_base_ampt_path;
-	if (platform == "lin") {
-		base_path = "/home/dylan/Research/";
-		in_base_path = "/media/ucla/Research/";
-		in_base_ampt_path = "/media/ssd/Research/";
-	} else if (platform == "win") {
-		base_path = "C:/Users/Dylan/Desktop/Research/";
-		in_base_path = "C:/Users/Dylan/Desktop/Research/";
-		in_base_ampt_path = "E:/Research/";
-	}
-	string out_base_path = base_path;
-	int ref = 3;
-
-	string in_path = in_base_path;
-	string out_dir = out_base_path;
-	string mix_out_dir = out_base_path;
-
-	if(in_string(set_name, "Ampt")) {
-		in_path = in_base_ampt_path + "AMPT_Trees/";
-		out_dir += "Data_Ampt/";
-		mix_out_dir += "Data_Ampt_Mix/";
-	} else if(in_string(set_name, "Sim")) {
-		in_path += "BES1_Trees/";
-		out_dir += "Data_Sim/";
-		mix_out_dir += "Data_Sim_Mix/";
-	} else {
-		in_path += "BES1_Trees/";
-		out_dir += "Data/";
-		mix_out_dir += "Data_Mix/";
-	}
-
-	vector<int> divs {356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60};
-//	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
-	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000000}};
-//	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 200000}};
-
-	string set_dir = set_name + to_string(set_num) + "/";
-
-	TreeReader reader(energy, ref, mtx);
-
-	reader.cut.set_dcaqa_path(base_path + "Dca_xy_QA/");
-	reader.cut.set_pileupqa_path(base_path + "Pile_Up_QA/");
-
-	reader.set_divs(divs);
-
-	if(in_string(set_name, "Ampt")) { reader.set_ampt(true); }
-
-	if(in_string(set_name, "cbwc")) { reader.set_cbwc(true); }
-	else { reader.set_cbwc(false); }
-	reader.set_cent_binning(9);
-
-	reader.set_in_path(in_path);
-	reader.set_out_path(out_dir+set_dir);
-	reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
-	reader.set_qa_name("QA_");
-	reader.set_set_name(set_name + to_string(set_num));
-	reader.set_tree_name("tree");
-
-	if(in_string(set_name, "_seed")) {
-		reader.set_tree_reader_rand_seed(42);
-		reader.set_mixer_rand_seed(42);
-		reader.set_file_shuffle_rand_seed(42);
-		reader.set_stref_rand_seed(42);
-	} else if(in_string(set_name, "_mixseed")) {
-		reader.set_tree_reader_rand_seed(0);
-		reader.set_mixer_rand_seed(42);
-		reader.set_file_shuffle_rand_seed(time(NULL));
-		reader.set_stref_rand_seed(0);
-	} else if(in_string(set_name, "_mixnoseed")) {
-		reader.set_tree_reader_rand_seed(42);
-		reader.set_mixer_rand_seed(0);
-		reader.set_file_shuffle_rand_seed(42);
-		reader.set_stref_rand_seed(42);
-	} else {
-		reader.set_tree_reader_rand_seed(0);
-		reader.set_mixer_rand_seed(0);
-		reader.set_file_shuffle_rand_seed(time(NULL));
-		reader.set_stref_rand_seed(0);
-	}
-
-	reader.set_file_list(file_list);
-
-	if(in_string(set_name, "EP_Rotate"))  { reader.set_event_plane(true); }
-	else { reader.set_event_plane(false); }
-
-	if(in_string(set_name, {"No_Rotate", "EP_Rotate"}, false)) { reader.set_rotate_random(false); }
-	else{ reader.set_rotate_random(true); }
-
-	if(in_string(set_name, {"Ampt", "ReactionPlane"}, true)) { reader.set_ampt_reaction_plane(true); }
-
-	//if(in_string(set_name, "dca")) {
-	//	reader.cut.max_dca = str_num_dec(get_flag_trail(set_name, "dca", "_")[0], 1);
-	//}
-
-	if(in_string(set_name, "Pile_Up_01_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
-	else if(in_string(set_name, "Pile_Up_008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
-	else if(in_string(set_name, "Pile_Up_005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
-	else if(in_string(set_name, "Pile_Up_002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
-	else if(in_string(set_name, "Pile_Up_001_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
-	else if(in_string(set_name, "Pile_Up_0008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0008); }
-	else if(in_string(set_name, "Pile_Up_0005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0005); }
-	else if(in_string(set_name, "Pile_Up_0002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0002); }
-	else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
-
-//	if(in_string(set_name,  "No_BTof_Rej")) {
-//		reader.cut.max_slope = {{7, 999}, {11, 999}, {14, 999}, {19, 999}, {27, 999}, {39, 999}, {62, 999}, {200, 999}};
-//		reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
+//void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
+//	string base_path, in_base_path, in_base_ampt_path;
+//	if (platform == "lin") {
+//		base_path = "/home/dylan/Research/";
+//		in_base_path = "/media/ucla/Research/";
+//		in_base_ampt_path = "/media/ssd/Research/";
+//	} else if (platform == "win") {
+//		base_path = "C:/Users/Dylan/Desktop/Research/";
+//		in_base_path = "C:/Users/Dylan/Desktop/Research/";
+//		in_base_ampt_path = "E:/Research/";
 //	}
-
-	if(in_string(set_name, "_n1ratios")) { reader.set_n1_ratios(true); reader.set_single_ratio(false); }
-	if(in_string(set_name, "_allratios")) { reader.set_n1_ratios(false); reader.set_single_ratio(false); }
-	else { reader.set_n1_ratios(false); reader.set_single_ratio(true); }
-
-	if(in_string(set_name, "dca")) {
-		reader.cut.max_dca = str_num_dec(get_flag_trail(set_name, "dca", "_")[0], 1);
-		cout << "max dca: " << reader.cut.max_dca << endl;
-	}
-
-	if(in_string(set_name, "nsprx")) {  // Multiplier for nsigmaproton cuts. Because of 27GeV can't do values, need scale factor.
-		float nsigmaprx = str_num_dec(get_flag_trail(set_name, "nsprx", "_")[0], 1);
-		reader.cut.min_nsigma *= nsigmaprx;
-		reader.cut.max_nsigma *= nsigmaprx;
-		cout << "nsigma_cuts: " << reader.cut.min_nsigma << " " << reader.cut.max_nsigma << endl;
-	}
-
-	if(in_string(set_name, {"m2r", "m2s"}, false)) {  // Set m^2 cut range
-		float m2_mid = (reader.cut.max_m2 + reader.cut.min_m2) / 2;
-		float m2_range = reader.cut.max_m2 - reader.cut.min_m2;
-
-		if(in_string(set_name, "m2s")) {  // m^2 shift to the mid point
-			m2_mid += str_num_dec(get_flag_trail(set_name, "m2s", "_")[0], 0);
-		}
-		if(in_string(set_name, "m2r")) { m2_range = str_num_dec(get_flag_trail(set_name, "m2r", "_")[0], 0); }
-		reader.cut.min_m2 = m2_mid - m2_range / 2;
-		reader.cut.max_m2 = m2_mid + m2_range / 2;
-		cout << "m^2_cuts: " << reader.cut.min_m2 << " " << reader.cut.max_m2 << endl;
-	}
-
-	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
-	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }
-//	else if(in_string(set_name, "rapid1")) { reader.set_rapidity(true); reader.cut.min_rapid = -1.0; reader.cut.max_rapid = 1.0; }
-//	else if(in_string(set_name, "rapid05")) { reader.set_rapidity(true); reader.cut.min_rapid = -0.5; reader.cut.max_rapid = 0.5; }
-	else if(in_string(set_name, "rapid")) {
-		float rap_cut = str_num_dec(get_flag_trail(set_name, "rapid", "_")[0], 1);
-		reader.cut.min_rapid = -rap_cut;
-		reader.cut.max_rapid = rap_cut;
-	}
-
-	if(in_string(set_name, "Efficiency")) {
-		reader.set_efficiency(true);
-		reader.set_efficiency_prob(str_num_dec(get_flag_trail(set_name, "Efficiency", "_")[0], 0));
-	} else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
-
-//	if(in_string(set_name,  "Efficiency8")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.8); }
-//	else if(in_string(set_name,  "Efficiency7")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.7); }
-//	else if(in_string(set_name,  "Efficiency6")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.6); }
-//	else if(in_string(set_name,  "Efficiency5")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.5); }
-//	else if(in_string(set_name,  "Efficiency4")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.4); }
-//	else if(in_string(set_name,  "Efficiency3")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.3); }
-//	else if(in_string(set_name,  "Efficiency2")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.2); }
-//	else if(in_string(set_name,  "Efficiency1")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.1); }
-//	else if(in_string(set_name,  "Efficiency08")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
-//	else if(in_string(set_name,  "Efficiency05")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
-//	else if(in_string(set_name,  "Efficiency025")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
-//	else if(in_string(set_name,  "Efficiency01")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
-//	else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
-
-	if(in_string(set_name, {"Sim", "0p0s"}, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
-	else if(in_string(set_name, {"Sim", "05p002s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
-	else if(in_string(set_name, {"Sim", "05p05s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
-	else if(in_string(set_name, {"Sim", "01p002s"}, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.002); }
-	else if(in_string(set_name, {"Sim", "01p05s"}, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.5); }
-	else if(in_string(set_name, {"Sim", "002p002s"}, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.002); }
-	else if(in_string(set_name, {"Sim", "002p05s"}, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.5); }
-	else if(in_string(set_name, {"Sim", "15p002s"}, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
-	else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
-
-	if(in_string(set_name, {"Sim", "Eff"}, true)) {
-		reader.set_sim_eff(true);
-	} else {
-		reader.set_sim_eff(false);
-	}
-	if(in_string(set_name, {"Sim", "Eff", "Hole3-4"}, true)) {
-		reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
-	}
-	if(in_string(set_name, "Sim")) {
-		reader.sim.set_hom_eff(1.0);
-		reader.set_sim_proton_dist_dataset(in_base_path + "Data/eta05_n1ratios_dca30/");
-	}
-	if(in_string(set_name, {"Sim", "Flow"}, true)) {
-		reader.set_sim_flow(true);
-		if(in_string(set_name, {"08res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
-		else if(in_string(set_name, {"05res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
-		else if(in_string(set_name, {"099res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
-		else if(in_string(set_name, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
-	} else {
-		reader.set_sim_flow(false);
-	}
-	if(in_string(set_name, {"Sim", "Flat1000"}, true)) { reader.sim.set_flat_dist(1000); reader.set_particle_dist_hist_max(1000); }
-	else if(in_string(set_name, {"Sim", "Flat500"}, true)) { reader.sim.set_flat_dist(500); reader.set_particle_dist_hist_max(500); }
-	else if(in_string(set_name, {"Sim", "Flat100"}, true)) { reader.sim.set_flat_dist(100); reader.set_particle_dist_hist_max(100); }
-
-	if(in_string(set_name, "Ampt")) {
-		if(in_string(set_name, "_default_")) {
-			reader.set_ampt_type("default");
-		} else {
-			reader.set_ampt_type("string_melting");
-		}
-		reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
-	}
-
-	if(in_string(set_name, "p+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({2212}); }
-	if(in_string(set_name, "p-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-2212}); }
-	if(in_string(set_name, "ptotal")) { reader.set_check_charge(false); }
-
-	if(!in_string(set_name, "Ampt") && in_string(set_name, "pion")) {
-		reader.set_particle("pion");
-	}
-	if(in_string(set_name, "pion+")) { reader.cut.charge = 1; reader.set_ampt_particle_pid({211}); }
-	if(in_string(set_name, "pion-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-211}); }
-	if(in_string(set_name, "pion0")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({111}); }
-	if(in_string(set_name, "piontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, -211}); }
-	if(in_string(set_name, "pionall")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, 111, -211}); }
-
-	if(in_string(set_name, "e+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({-11}); }
-	else if(in_string(set_name, "e-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({11}); }
-	else if(in_string(set_name, "etotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({11, -11}); }
-
-	if(in_string(set_name, "neutron")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2112}); }
-	if(in_string(set_name, "neutronbar")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({-2112}); }
-	if(in_string(set_name, "neutrontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2112, -2112}); }
-
-	if(in_string(set_name, "gamma")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({22}); }
-
-	if(in_string(set_name, "baryontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 2112, -2212, -2112}); }
-	if(in_string(set_name, "mesontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, 111, -211}); }
-	if(in_string(set_name, "hadrontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 2112, 211, 111, -211, -2212, -2112}); }
-	if(in_string(set_name, "hadronobs")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 211, -211, -2212}); }
-
-	reader.set_mixed_sets(false);
-	reader.set_rand_data(false);
-
-	reader.set_mixed(true);
-	reader.mix.set_divs(divs);
-	reader.mix.set_out_path(mix_out_dir+set_dir);
-	reader.mix.set_max_events(250);
-	reader.mix.set_min_events(150);
-	reader.mix.set_vz_bins(1);
-	reader.mix.set_ep_bins(180);
-	if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
-	else { reader.mix.set_mixes_per_event(10); }
-	if(in_string(set_name, "Sim") || in_string(set_name, "Ampt")) { reader.mix.set_mixes_per_event(10); }
-
-	if(in_string(set_name, "Sim")) {
-		reader.sim_events(sim_cent_events);
-	} else{
-		reader.read_trees();
-	}
-
-	cout << "Finished " << set_name << " set " << set_num << " " << energy <<  "GeV, job " << job_num << " of " << jobs << endl << endl;
-}
+//	string out_base_path = base_path;
+//	int ref = 3;
+//
+//	string in_path = in_base_path;
+//	string out_dir = out_base_path;
+//	string mix_out_dir = out_base_path;
+//
+//	if(in_string(set_name, "Ampt")) {
+//		in_path = in_base_ampt_path + "AMPT_Trees/";
+//		out_dir += "Data_Ampt/";
+//		mix_out_dir += "Data_Ampt_Mix/";
+//	} else if(in_string(set_name, "Sim")) {
+//		in_path += "BES1_Trees/";
+//		out_dir += "Data_Sim/";
+//		mix_out_dir += "Data_Sim_Mix/";
+//	} else {
+//		in_path += "BES1_Trees/";
+//		out_dir += "Data/";
+//		mix_out_dir += "Data_Mix/";
+//	}
+//
+//	vector<int> divs {356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60};
+////	map<int, int> sim_cent_events = {{0, 500000}, {1, 500000}, {2, 500000}, {3, 500000}, {4, 500000}, {5, 500000}, {6, 500000}, {7, 500000}, {8, 20000000}};
+//	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000000}};
+////	map<int, int> sim_cent_events = {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 200000}};
+//
+//	string set_dir = set_name + to_string(set_num) + "/";
+//
+//	TreeReader reader(energy, ref, mtx);
+//
+//	reader.cut.set_dcaqa_path(base_path + "Dca_xy_QA/");
+//	reader.cut.set_pileupqa_path(base_path + "Pile_Up_QA/");
+//
+//	reader.set_divs(divs);
+//
+//	if(in_string(set_name, "Ampt")) { reader.set_ampt(true); }
+//
+//	if(in_string(set_name, "cbwc")) { reader.set_cbwc(true); }
+//	else { reader.set_cbwc(false); }
+//	reader.set_cent_binning(9);
+//
+//	reader.set_in_path(in_path);
+//	reader.set_out_path(out_dir+set_dir);
+//	reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
+//	reader.set_qa_name("QA_");
+//	reader.set_set_name(set_name + to_string(set_num));
+//	reader.set_tree_name("tree");
+//
+//	if(in_string(set_name, "_seed")) {
+//		reader.set_tree_reader_rand_seed(42);
+//		reader.set_mixer_rand_seed(42);
+//		reader.set_file_shuffle_rand_seed(42);
+//		reader.set_stref_rand_seed(42);
+//	} else if(in_string(set_name, "_mixseed")) {
+//		reader.set_tree_reader_rand_seed(0);
+//		reader.set_mixer_rand_seed(42);
+//		reader.set_file_shuffle_rand_seed(time(NULL));
+//		reader.set_stref_rand_seed(0);
+//	} else if(in_string(set_name, "_mixnoseed")) {
+//		reader.set_tree_reader_rand_seed(42);
+//		reader.set_mixer_rand_seed(0);
+//		reader.set_file_shuffle_rand_seed(42);
+//		reader.set_stref_rand_seed(42);
+//	} else {
+//		reader.set_tree_reader_rand_seed(0);
+//		reader.set_mixer_rand_seed(0);
+//		reader.set_file_shuffle_rand_seed(time(NULL));
+//		reader.set_stref_rand_seed(0);
+//	}
+//
+//	reader.set_file_list(file_list);
+//
+//	if(in_string(set_name, "EP_Rotate"))  { reader.set_event_plane(true); }
+//	else { reader.set_event_plane(false); }
+//
+//	if(in_string(set_name, {"No_Rotate", "EP_Rotate"}, false)) { reader.set_rotate_random(false); }
+//	else{ reader.set_rotate_random(true); }
+//
+//	if(in_string(set_name, {"Ampt", "ReactionPlane"}, true)) { reader.set_ampt_reaction_plane(true); }
+//
+//	//if(in_string(set_name, "dca")) {
+//	//	reader.cut.max_dca = str_num_dec(get_flag_trail(set_name, "dca", "_")[0], 1);
+//	//}
+//
+//	if(in_string(set_name, "Pile_Up_01_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.01); }
+//	else if(in_string(set_name, "Pile_Up_008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.008); }
+//	else if(in_string(set_name, "Pile_Up_005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.005); }
+//	else if(in_string(set_name, "Pile_Up_002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.002); }
+//	else if(in_string(set_name, "Pile_Up_001_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.001); }
+//	else if(in_string(set_name, "Pile_Up_0008_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0008); }
+//	else if(in_string(set_name, "Pile_Up_0005_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0005); }
+//	else if(in_string(set_name, "Pile_Up_0002_")) { reader.set_pile_up(true); reader.set_pile_up_prob(0.0002); }
+//	else { reader.set_pile_up(false); reader.set_pile_up_prob(0); }
+//
+////	if(in_string(set_name,  "No_BTof_Rej")) {
+////		reader.cut.max_slope = {{7, 999}, {11, 999}, {14, 999}, {19, 999}, {27, 999}, {39, 999}, {62, 999}, {200, 999}};
+////		reader.cut.min_slope = {{7, -999}, {11, -999}, {14, -999}, {19, -999}, {27, -999}, {39, -999}, {62, -999}, {200, -999}};
+////	}
+//
+//	if(in_string(set_name, "_n1ratios")) { reader.set_n1_ratios(true); reader.set_single_ratio(false); }
+//	if(in_string(set_name, "_allratios")) { reader.set_n1_ratios(false); reader.set_single_ratio(false); }
+//	else { reader.set_n1_ratios(false); reader.set_single_ratio(true); }
+//
+//	if(in_string(set_name, "dca")) {
+//		reader.cut.max_dca = str_num_dec(get_flag_trail(set_name, "dca", "_")[0], 1);
+//		cout << "max dca: " << reader.cut.max_dca << endl;
+//	}
+//
+//	if(in_string(set_name, "nsprx")) {  // Multiplier for nsigmaproton cuts. Because of 27GeV can't do values, need scale factor.
+//		float nsigmaprx = str_num_dec(get_flag_trail(set_name, "nsprx", "_")[0], 1);
+//		reader.cut.min_nsigma *= nsigmaprx;
+//		reader.cut.max_nsigma *= nsigmaprx;
+//		cout << "nsigma_cuts: " << reader.cut.min_nsigma << " " << reader.cut.max_nsigma << endl;
+//	}
+//
+//	if(in_string(set_name, {"m2r", "m2s"}, false)) {  // Set m^2 cut range
+//		float m2_mid = (reader.cut.max_m2 + reader.cut.min_m2) / 2;
+//		float m2_range = reader.cut.max_m2 - reader.cut.min_m2;
+//
+//		if(in_string(set_name, "m2s")) {  // m^2 shift to the mid point
+//			m2_mid += str_num_dec(get_flag_trail(set_name, "m2s", "_")[0], 0);
+//		}
+//		if(in_string(set_name, "m2r")) { m2_range = str_num_dec(get_flag_trail(set_name, "m2r", "_")[0], 0); }
+//		reader.cut.min_m2 = m2_mid - m2_range / 2;
+//		reader.cut.max_m2 = m2_mid + m2_range / 2;
+//		cout << "m^2_cuts: " << reader.cut.min_m2 << " " << reader.cut.max_m2 << endl;
+//	}
+//
+//	if(in_string(set_name, "eta1")) { reader.cut.min_eta = -1.0, reader.cut.max_eta = 1.0; }
+//	else if(in_string(set_name, "eta05")) { reader.cut.min_eta = -0.5, reader.cut.max_eta = 0.5; }
+////	else if(in_string(set_name, "rapid1")) { reader.set_rapidity(true); reader.cut.min_rapid = -1.0; reader.cut.max_rapid = 1.0; }
+////	else if(in_string(set_name, "rapid05")) { reader.set_rapidity(true); reader.cut.min_rapid = -0.5; reader.cut.max_rapid = 0.5; }
+//	else if(in_string(set_name, "rapid")) {
+//		float rap_cut = str_num_dec(get_flag_trail(set_name, "rapid", "_")[0], 1);
+//		reader.cut.min_rapid = -rap_cut;
+//		reader.cut.max_rapid = rap_cut;
+//	}
+//
+//	if(in_string(set_name, "Efficiency")) {
+//		reader.set_efficiency(true);
+//		reader.set_efficiency_prob(str_num_dec(get_flag_trail(set_name, "Efficiency", "_")[0], 0));
+//	} else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
+//
+////	if(in_string(set_name,  "Efficiency8")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.8); }
+////	else if(in_string(set_name,  "Efficiency7")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.7); }
+////	else if(in_string(set_name,  "Efficiency6")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.6); }
+////	else if(in_string(set_name,  "Efficiency5")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.5); }
+////	else if(in_string(set_name,  "Efficiency4")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.4); }
+////	else if(in_string(set_name,  "Efficiency3")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.3); }
+////	else if(in_string(set_name,  "Efficiency2")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.2); }
+////	else if(in_string(set_name,  "Efficiency1")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.1); }
+////	else if(in_string(set_name,  "Efficiency08")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.08); }
+////	else if(in_string(set_name,  "Efficiency05")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.05); }
+////	else if(in_string(set_name,  "Efficiency025")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.025); }
+////	else if(in_string(set_name,  "Efficiency01")) { reader.set_efficiency(true); reader.set_efficiency_prob(0.01); }
+////	else { reader.set_efficiency(false); reader.set_efficiency_prob(0); }
+//
+//	if(in_string(set_name, {"Sim", "0p0s"}, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
+//	else if(in_string(set_name, {"Sim", "05p002s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
+//	else if(in_string(set_name, {"Sim", "05p05s"}, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
+//	else if(in_string(set_name, {"Sim", "01p002s"}, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.002); }
+//	else if(in_string(set_name, {"Sim", "01p05s"}, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.5); }
+//	else if(in_string(set_name, {"Sim", "002p002s"}, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.002); }
+//	else if(in_string(set_name, {"Sim", "002p05s"}, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.5); }
+//	else if(in_string(set_name, {"Sim", "15p002s"}, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
+//	else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
+//
+//	if(in_string(set_name, {"Sim", "Eff"}, true)) {
+//		reader.set_sim_eff(true);
+//	} else {
+//		reader.set_sim_eff(false);
+//	}
+//	if(in_string(set_name, {"Sim", "Eff", "Hole3-4"}, true)) {
+//		reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
+//	}
+//	if(in_string(set_name, "Sim")) {
+//		reader.sim.set_hom_eff(1.0);
+//		reader.set_sim_proton_dist_dataset(in_base_path + "Data/eta05_n1ratios_dca30/");
+//	}
+//	if(in_string(set_name, {"Sim", "Flow"}, true)) {
+//		reader.set_sim_flow(true);
+//		if(in_string(set_name, {"08res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
+//		else if(in_string(set_name, {"05res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
+//		else if(in_string(set_name, {"099res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
+//		else if(in_string(set_name, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
+//	} else {
+//		reader.set_sim_flow(false);
+//	}
+//	if(in_string(set_name, {"Sim", "Flat1000"}, true)) { reader.sim.set_flat_dist(1000); reader.set_particle_dist_hist_max(1000); }
+//	else if(in_string(set_name, {"Sim", "Flat500"}, true)) { reader.sim.set_flat_dist(500); reader.set_particle_dist_hist_max(500); }
+//	else if(in_string(set_name, {"Sim", "Flat100"}, true)) { reader.sim.set_flat_dist(100); reader.set_particle_dist_hist_max(100); }
+//
+//	if(in_string(set_name, "Ampt")) {
+//		if(in_string(set_name, "_default_")) {
+//			reader.set_ampt_type("default");
+//		} else {
+//			reader.set_ampt_type("string_melting");
+//		}
+//		reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
+//	}
+//
+//	if(in_string(set_name, "p+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({2212}); }
+//	if(in_string(set_name, "p-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-2212}); }
+//	if(in_string(set_name, "ptotal")) { reader.set_check_charge(false); }
+//
+//	if(!in_string(set_name, "Ampt") && in_string(set_name, "pion")) {
+//		reader.set_particle("pion");
+//	}
+//	if(in_string(set_name, "pion+")) { reader.cut.charge = 1; reader.set_ampt_particle_pid({211}); }
+//	if(in_string(set_name, "pion-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({-211}); }
+//	if(in_string(set_name, "pion0")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({111}); }
+//	if(in_string(set_name, "piontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, -211}); }
+//	if(in_string(set_name, "pionall")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, 111, -211}); }
+//
+//	if(in_string(set_name, "e+")) { reader.cut.charge = +1; reader.set_ampt_particle_pid({-11}); }
+//	else if(in_string(set_name, "e-")) { reader.cut.charge = -1; reader.set_ampt_particle_pid({11}); }
+//	else if(in_string(set_name, "etotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({11, -11}); }
+//
+//	if(in_string(set_name, "neutron")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2112}); }
+//	if(in_string(set_name, "neutronbar")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({-2112}); }
+//	if(in_string(set_name, "neutrontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2112, -2112}); }
+//
+//	if(in_string(set_name, "gamma")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({22}); }
+//
+//	if(in_string(set_name, "baryontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 2112, -2212, -2112}); }
+//	if(in_string(set_name, "mesontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({211, 111, -211}); }
+//	if(in_string(set_name, "hadrontotal")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 2112, 211, 111, -211, -2212, -2112}); }
+//	if(in_string(set_name, "hadronobs")) { reader.set_check_charge(false); reader.set_ampt_particle_pid({2212, 211, -211, -2212}); }
+//
+//	reader.set_mixed_sets(false);
+//	reader.set_rand_data(false);
+//
+//	reader.set_mixed(true);
+//	reader.mix.set_divs(divs);
+//	reader.mix.set_out_path(mix_out_dir+set_dir);
+//	reader.mix.set_max_events(250);
+//	reader.mix.set_min_events(150);
+//	reader.mix.set_vz_bins(1);
+//	reader.mix.set_ep_bins(180);
+//	if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
+//	else { reader.mix.set_mixes_per_event(10); }
+//	if(in_string(set_name, "Sim") || in_string(set_name, "Ampt")) { reader.mix.set_mixes_per_event(10); }
+//
+//	if(in_string(set_name, "Sim")) {
+//		reader.sim_events(sim_cent_events);
+//	} else{
+//		reader.read_trees();
+//	}
+//
+//	cout << "Finished " << set_name << " set " << set_num << " " << energy <<  "GeV, job " << job_num << " of " << jobs << endl << endl;
+//}
 
 
 void ampt_cent_opt() {
@@ -1012,65 +1013,65 @@ void speed_test_class() {
 }
 
 
-void read_comb_sys() {
-	string out_dir = "/home/dylan/Research/Data/";
-	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
-	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
-	string random_out_dir = "/home/dylan/Research/Data_Random/";
-
-	map<string, pair<int, int>> set_pairs = {{"Final_Set",{0,100}}};
-	pair<float, float> pile_up_range = {0.0, 0.01};
-	pair<float, float> efficiency_range = {0.0, 0.05};
-	TRandom3 sys_rand(0);
-	int sleep = 60;
-
-	ROOT::EnableThreadSafety();
-	{
-		ThreadPool pool(thread::hardware_concurrency());
-		for(pair<string, pair<int, int>> set_pair:set_pairs) {
-			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
-				string set_dir = set_pair.first + to_string(set_num) + "/";
-				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
-				vector<int> energy_list = {39, 27, 62, 19, 11, 7};
-				vector<int> divs = {2, 3, 4, 5, 6};
-				for(int energy:energy_list) {
-					TreeReader reader(energy);
-					reader.set_divs(divs);
-					reader.set_cbwc(false);
-					reader.set_cent_binning(9);
-
-					reader.set_in_path("/home/dylan/Research/Trees/");
-					reader.set_out_path(out_dir+set_dir);
-					reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
-					reader.set_qa_name("QA_");
-					reader.set_set_name(set_pair.first + to_string(set_num));
-
-					reader.set_event_plane(false);
-					reader.set_rotate_random(true);
-
-					reader.set_pile_up(true);
-					reader.set_pile_up_prob(sys_rand.Rndm() * (pile_up_range.second - pile_up_range.first) + pile_up_range.second);
-
-					reader.set_efficiency(true);
-					reader.set_efficiency_prob(sys_rand.Rndm() * (efficiency_range.second - efficiency_range.first) + efficiency_range.second);
-
-					reader.set_mixed_sets(false);
-					reader.set_rand_data(false);
-
-					reader.set_mixed(true);
-					reader.mix.set_divs(divs);
-					reader.mix.set_out_path(mix_out_dir+set_dir);
-					reader.mix.set_max_events(250);
-					reader.mix.set_min_events(150);
-					if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
-					else { reader.mix.set_mixes_per_event(10); }
-					pool.enqueue(&TreeReader::read_trees, reader);
-				}
-				this_thread::sleep_for(chrono::seconds(sleep));
-			}
-		}
-	}
-}
+//void read_comb_sys() {
+//	string out_dir = "/home/dylan/Research/Data/";
+//	string mix_sets_out_dir = "/home/dylan/Research/Data_Mix_Sets/";
+//	string mix_out_dir = "/home/dylan/Research/Data_Mix/";
+//	string random_out_dir = "/home/dylan/Research/Data_Random/";
+//
+//	map<string, pair<int, int>> set_pairs = {{"Final_Set",{0,100}}};
+//	pair<float, float> pile_up_range = {0.0, 0.01};
+//	pair<float, float> efficiency_range = {0.0, 0.05};
+//	TRandom3 sys_rand(0);
+//	int sleep = 60;
+//
+//	ROOT::EnableThreadSafety();
+//	{
+//		ThreadPool pool(thread::hardware_concurrency());
+//		for(pair<string, pair<int, int>> set_pair:set_pairs) {
+//			for(int set_num = set_pair.second.first; set_num <= set_pair.second.second; set_num++) {
+//				string set_dir = set_pair.first + to_string(set_num) + "/";
+//				cout << endl << "Queueing " + set_dir <<  "  set_num: " << set_num << endl << endl;
+//				vector<int> energy_list = {39, 27, 62, 19, 11, 7};
+//				vector<int> divs = {2, 3, 4, 5, 6};
+//				for(int energy:energy_list) {
+//					TreeReader reader(energy);
+//					reader.set_divs(divs);
+//					reader.set_cbwc(false);
+//					reader.set_cent_binning(9);
+//
+//					reader.set_in_path("/home/dylan/Research/Trees/");
+//					reader.set_out_path(out_dir+set_dir);
+//					reader.set_qa_path(out_dir+set_dir+to_string(energy)+"GeV/");
+//					reader.set_qa_name("QA_");
+//					reader.set_set_name(set_pair.first + to_string(set_num));
+//
+//					reader.set_event_plane(false);
+//					reader.set_rotate_random(true);
+//
+//					reader.set_pile_up(true);
+//					reader.set_pile_up_prob(sys_rand.Rndm() * (pile_up_range.second - pile_up_range.first) + pile_up_range.second);
+//
+//					reader.set_efficiency(true);
+//					reader.set_efficiency_prob(sys_rand.Rndm() * (efficiency_range.second - efficiency_range.first) + efficiency_range.second);
+//
+//					reader.set_mixed_sets(false);
+//					reader.set_rand_data(false);
+//
+//					reader.set_mixed(true);
+//					reader.mix.set_divs(divs);
+//					reader.mix.set_out_path(mix_out_dir+set_dir);
+//					reader.mix.set_max_events(250);
+//					reader.mix.set_min_events(150);
+//					if(energy <= 11) { reader.mix.set_mixes_per_event(50); }
+//					else { reader.mix.set_mixes_per_event(10); }
+//					pool.enqueue(&TreeReader::read_trees, reader);
+//				}
+//				this_thread::sleep_for(chrono::seconds(sleep));
+//			}
+//		}
+//	}
+//}
 
 
 void ref_mult_test() {

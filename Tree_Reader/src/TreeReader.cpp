@@ -550,23 +550,23 @@ void TreeReader::set_binner(AzBinner& binner) {
 }
 
 // Get proton distribution for simulation from real data QA plots.
-TH1D* TreeReader::get_sim_proton_dist(int cent) {
-	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + qa_name + to_string(energy) + "GeV.root";
-	TFile *file = new TFile(file_path.data(), "READ");
-	string dataset_path = sim_proton_dist_dataset;
-	dataset_path.pop_back();
-	string dataset = get_name_from_path(dataset_path);
-	string hist_name = ("Proton_Dist_"+dataset+"_"+to_string(energy)+"_"+to_string(cent)).data();
-
-	TH1D *hist = (TH1D*)file->Get(hist_name.data());
-	TH1D *proton_dist = (TH1D*)hist->Clone();
-	proton_dist->SetDirectory(0);
-
-	file->Close();
-	delete file;
-
-	return proton_dist;
-}
+//TH1D* TreeReader::get_sim_proton_dist(int cent) {
+//	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + qa_name + to_string(energy) + "GeV.root";
+//	TFile *file = new TFile(file_path.data(), "READ");
+//	string dataset_path = sim_proton_dist_dataset;
+//	dataset_path.pop_back();
+//	string dataset = get_name_from_path(dataset_path);
+//	string hist_name = ("Proton_Dist_"+dataset+"_"+to_string(energy)+"_"+to_string(cent)).data();
+//
+//	TH1D *hist = (TH1D*)file->Get(hist_name.data());
+//	TH1D *proton_dist = (TH1D*)hist->Clone();
+//	proton_dist->SetDirectory(0);
+//
+//	file->Close();
+//	delete file;
+//
+//	return proton_dist;
+//}
 
 
 // Get efficiency distribution for simulation from real data QA plots.

@@ -139,7 +139,7 @@ void DcaxyQAer::read_tree(TTree* tree) {
 			vector<double> good_particle_angles = {};
 
 			// Iterate over particles in event and add corresponding phi to good_particle_angles if particle good.
-			for(Track& particle:event.get_particles()) {
+			for(const Track& particle:event.get_particles()) {
 				if(check_particle_good(particle)) {
 					good_particle_angles.push_back(particle.get_phi());
 				}
@@ -693,7 +693,7 @@ void DcaxyQAer::plot_final(const vector<float> &event_ids, const vector<float> &
 // Doers ripped from TreeReader
 
 //Returns true if event is good, false if it is bad.
-bool DcaxyQAer::check_event(Event& event) {
+bool DcaxyQAer::check_event(const Event& event) {
 	if(!check_good_run(event.get_run())) return false;
 
 	if(!check_enough_particles(event)) return false;
@@ -715,7 +715,7 @@ bool DcaxyQAer::check_good_run(int run) {
 
 // Checks if there are enough good particles in the event.
 // If more particles than minimum, return true, else false.
-bool DcaxyQAer::check_enough_particles(Event& event) {
+bool DcaxyQAer::check_enough_particles(const Event& event) {
 	if(event.get_num_particles() >=  cut.min_multi) { return(true);	}
 	else { return false; }
 }
@@ -750,7 +750,7 @@ bool DcaxyQAer::check_pile_up(int btof_multi, int btof_match, int ref_mult) {
 
 
 // Returns true if particle is good and false if particle is bad.
-bool DcaxyQAer::check_particle_good(Track& particle) {
+bool DcaxyQAer::check_particle_good(const Track& particle) {
 	bool good_particle = false;
 
 	bool check_charge = true;  // Hack to keep same form as TreeReader

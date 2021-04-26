@@ -118,11 +118,11 @@ private:
 	void plot_final(const vector<float> &event_ids, const vector<float> &dca_xy_val, const vector<float> &dca_xy_err, const vector<pair<int, int>> &bad_ranges, TF1 &lin_fit, float run_avg, int run_num);
 
 	// Doers ripped from TreeReader
-	bool check_event(Event& event);
-	bool check_enough_particles(Event& event);
+	bool check_event(const Event& event);
+	bool check_enough_particles(const Event& event);
 	bool check_good_run(int run);
 	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
-	bool check_particle_good(Track& particle);
+	bool check_particle_good(const Track& particle);
 };
 
 
