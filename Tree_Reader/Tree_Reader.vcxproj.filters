@@ -78,6 +78,9 @@
     <ClCompile Include="strefmultcorr\StRefMultCorr.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\AzBinner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AmptCentralityMaker.h">
@@ -132,6 +135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="strefmultcorr\StRefMultCorr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AzBinner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

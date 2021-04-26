@@ -186,7 +186,7 @@ void read_class() {
 //			{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0,16}}, {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0,16}}
 //			};
 
-	map<string, pair<int, int>> set_pairs = {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}};
+	map<string, pair<int, int>> set_pairs = {{"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {13, 16}}};
 
 //	map<string, pair<int, int>> set_pairs = {};
 //	float val_min = 0.5;

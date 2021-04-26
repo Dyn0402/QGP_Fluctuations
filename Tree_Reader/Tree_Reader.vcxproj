@@ -137,6 +137,7 @@
     <ClCompile Include="src\AmptCentralityMaker.cpp" />
     <ClCompile Include="src\AmptConverter.cpp" />
     <ClCompile Include="src\Ampt_Proton_Ref3_Check.cpp" />
+    <ClCompile Include="src\AzBinner.cpp" />
     <ClCompile Include="src\DcaxyQABase.cpp" />
     <ClCompile Include="src\DcaxyQAer.cpp" />
     <ClCompile Include="src\Event.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="src\AmptCentralityMaker.h" />
     <ClInclude Include="src\AmptConverter.h" />
+    <ClInclude Include="src\AzBinner.h" />
     <ClInclude Include="src\DcaxyQABase.h" />
     <ClInclude Include="src\DcaxyQAer.h" />
     <ClInclude Include="src\Event.h" />
