@@ -55,7 +55,7 @@ using namespace std;
 
 //void read_class();
 void read_new();
-void read_comb_sys();
+//void read_comb_sys();
 //void real_event_tree_test();
 //void speed_test();
 void res_plot();
@@ -78,7 +78,7 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs);
 void tree_read_speed();
 
 //void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
-void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, int jobs, mutex* mtx, vector<string>* file_list);
+void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list);
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -124,8 +124,8 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	vector<map<string, map<string, pair<int, int>>>> sets = { { {"test", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}} }, 
-		{ {"test2", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}} } };
+	map<string, map<string, map<string, pair<int, int>>>> sets = { {"Ampt", {{"test", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}}}},
+		{"Ampt", {{"test2", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}}}} };
 
 	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 
@@ -143,9 +143,9 @@ void read_new() {
 		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 
 		for (int energy : energy_list) {
-			for (map<string, map<string, pair<int, int>>> job : sets) {
+			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
 				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-				pool.enqueue(run_job, energy, job, job_num, jobs, mtx, file_list);
+				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
 				this_thread::sleep_for(chrono::seconds(set_sleep));
 			}
 			this_thread::sleep_for(chrono::seconds(energy_sleep));
@@ -241,7 +241,7 @@ void read_new() {
 //}
 
 
-void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, int jobs, mutex* mtx, vector<string>* file_list) {
+void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
 	int ref = 3;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
@@ -259,6 +259,24 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	}
 	string out_base_path = base_path;
 	string in_path = in_base_path;
+	string out_job_dir = out_base_path;
+	string mix_out_job_dir = out_base_path;
+
+	if (in_string(job_type, "Ampt")) {
+		in_path = in_base_ampt_path + "AMPT_Trees/";
+		out_job_dir += "Data_Ampt/";
+		mix_out_job_dir += "Data_Ampt_Mix/";
+	}
+	else if (in_string(job_type, "Sim")) {
+		in_path += "BES1_Trees/";
+		out_job_dir += "Data_Sim/";
+		mix_out_job_dir += "Data_Sim_Mix/";
+	}
+	else {
+		in_path += "BES1_Trees/";
+		out_job_dir += "Data/";
+		mix_out_job_dir += "Data_Mix/";
+	}
 
 	reader.set_in_path(in_path);
 	reader.set_tree_name("tree");
@@ -274,24 +292,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {
-			string out_dir = out_base_path;
-			string mix_out_dir = out_base_path;
-
-			if (in_string(set.first, "Ampt")) {
-				in_path = in_base_ampt_path + "AMPT_Trees/";
-				out_dir += "Data_Ampt/";
-				mix_out_dir += "Data_Ampt_Mix/";
-			}
-			else if (in_string(set.first, "Sim")) {
-				in_path += "BES1_Trees/";
-				out_dir += "Data_Sim/";
-				mix_out_dir += "Data_Sim_Mix/";
-			}
-			else {
-				in_path += "BES1_Trees/";
-				out_dir += "Data/";
-				mix_out_dir += "Data_Mix/";
-			}
+			string out_dir = out_job_dir;
+			string mix_out_dir = mix_out_job_dir;
 
 			out_dir += set_group.first + "/";  // Add set-group directory to end of path
 			mix_out_dir += set_group.first + "/";
