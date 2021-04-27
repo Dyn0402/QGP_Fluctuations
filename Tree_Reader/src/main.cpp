@@ -124,14 +124,15 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	map<string, map<string, map<string, pair<int, int>>>> sets = { {"Ampt", {{"test", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}}}},
-		{"Ampt", {{"test2", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}}}} };
+	map<string, map<string, map<string, pair<int, int>>>> sets = { {"Ampt1", {{"test", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 1}}}}}},
+		{"Ampt2", {{"test2", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}}}} };
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7, 11 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 11;
 
 	int jobs = sets.size() * energy_list.size();
 

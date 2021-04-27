@@ -47,8 +47,8 @@ int main() {
 //	}
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 	azimuth_bin_analyze();
-//	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
-//	binomial_analyze();
+	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
+	binomial_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -66,12 +66,12 @@ void azimuth_bin_analyze() {
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 //	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 //	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("4-19-21_bes_ampt_reactionplane.root");
+	analyzer.set_out_root_name("4-23-21_bes_ampt_reactionplane.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8}); // ,7,6,5,4,3,2,1
 	analyzer.set_centralities({8});
-	analyzer.set_divs({180, 120, 90, 72, 60});
+	analyzer.set_divs({300, 270, 240, 180, 120, 90, 72, 60});
 //	analyzer.set_divs({60});
 	analyzer.set_plot_cents({8});
 	analyzer.set_plot_dists(true);
@@ -96,14 +96,14 @@ void azimuth_bin_analyze() {
 //	analyzer.set_sets(combine_sets({bes1_sys, bes1_def, ampt_def}));
 //	analyzer.set_sys_combos({{"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
 
-//	map<string, vector<int>> bes1_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-//	map<string, vector<int>> bes1_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
+	map<string, vector<int>> bes1_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
+	map<string, vector<int>> bes1_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
 	map<string, vector<int>> ampt_def {{"Ampt_rapid05_n1ratios", {0, 54}}};
 	map<string, vector<int>> ampt_sys = ampt_def;
 	map<string, vector<int>> ampt_rp_def {{"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {0, 16}}};
 	map<string, vector<int>> ampt_rp_sys = ampt_def;
-	analyzer.set_sets(combine_sets({ampt_rp_def, ampt_def}));
-	analyzer.set_sys_combos({{"AMPT_RP", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
+	analyzer.set_sets(combine_sets({bes1_def, bes1_sys, ampt_rp_def, ampt_def}));
+	analyzer.set_sys_combos({{"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}}, {"AMPT_RP", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
 
 //	map<string, vector<int>> full_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
 //	map<string, vector<int>> full_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
@@ -160,7 +160,7 @@ void binomial_analyze() {
 	analyzer.set_sim_in_path("/home/dylan/Research/Data_Sim/");
 	analyzer.set_sim_in_mix_path("/home/dylan/Research/Data_Sim_Mix/");
 //	analyzer.set_out_root_name("10-2-20_binom_BES1_eta_05_1_dca_1_3.root");
-	analyzer.set_out_root_name("1-28-21_binom_27fix_rap.root");
+	analyzer.set_out_root_name("4-23-21_binom_bes1_ampt.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 	analyzer.set_divs({300, 240, 180, 120, 90, 72, 60});
 	analyzer.set_centralities({8});
@@ -225,13 +225,15 @@ void binomial_analyze() {
 //		{"Ampt_Eta1_dca1", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca1"}}, {"Ampt_Eta05_dca1", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca1"}},
 //		{"Ampt_Eta1_dca3", {"Ampt_eta1_n1ratios", "eta1_n1ratios_dca3"}}, {"Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "eta05_n1ratios_dca3"}},
 //		{"Sim_Ampt_Eta05_dca3", {"Ampt_eta05_n1ratios", "Sim_n1ratios_0p0s_eta05_dca3"}}, {"Sim_BES1_Eta05_dca3", {"eta05_n1ratios_dca3", "Sim_n1ratios_0p0s_eta05_dca3"}}});
-	analyzer.set_sets({{"rapid05_n1ratios_dca1", {0, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca1", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}},
-		{"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}});
-	analyzer.set_set_combos({{"rapid1_05_dca1", {"rapid05_n1ratios_dca1", "rapid1_n1ratios_dca1"}}, {"rapid05_dca1_3", {"rapid05_n1ratios_dca1", "rapid05_n1ratios_dca3"}},
-		{"rapid1_05_dca3", {"rapid05_n1ratios_dca3", "rapid1_n1ratios_dca3"}}, {"rapid1_dca1_3", {"rapid1_n1ratios_dca1", "rapid1_n1ratios_dca3"}},
-		{"Ampt_rapid1_dca1", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca1"}}, {"Ampt_rapid05_dca1", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca1"}},
-		{"Ampt_rapid1_dca3", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca3"}}, {"Ampt_rapid05_dca3", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca3"}},
-		{"Ampt_rapid05_1", {"Ampt_rapid05_n1ratios", "Ampt_rapid1_n1ratios"}}});
+//	analyzer.set_sets({{"rapid05_n1ratios_dca1", {0, 4}}, {"rapid05_n1ratios_dca3", {0, 4}}, {"rapid1_n1ratios_dca1", {0, 4}}, {"rapid1_n1ratios_dca3", {0, 4}},
+//		{"Ampt_rapid05_n1ratios", {0, 4}}, {"Ampt_rapid1_n1ratios", {0, 4}}});
+//	analyzer.set_set_combos({{"rapid1_05_dca1", {"rapid05_n1ratios_dca1", "rapid1_n1ratios_dca1"}}, {"rapid05_dca1_3", {"rapid05_n1ratios_dca1", "rapid05_n1ratios_dca3"}},
+//		{"rapid1_05_dca3", {"rapid05_n1ratios_dca3", "rapid1_n1ratios_dca3"}}, {"rapid1_dca1_3", {"rapid1_n1ratios_dca1", "rapid1_n1ratios_dca3"}},
+//		{"Ampt_rapid1_dca1", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca1"}}, {"Ampt_rapid05_dca1", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca1"}},
+//		{"Ampt_rapid1_dca3", {"Ampt_rapid1_n1ratios", "rapid1_n1ratios_dca3"}}, {"Ampt_rapid05_dca3", {"Ampt_rapid05_n1ratios", "rapid05_n1ratios_dca3"}},
+//		{"Ampt_rapid05_1", {"Ampt_rapid05_n1ratios", "Ampt_rapid1_n1ratios"}}});
+	analyzer.set_sets({{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}, {"Ampt_rapid05_n1ratios", {0, 54}}, {"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {0, 16}}});
+	analyzer.set_set_combos({{"bes_ampt", {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", "Ampt_rapid05_n1ratios"}}, {"ampt_rp", {"Ampt_rapid05_n1ratios", "Ampt_rapid05_n1ratios_dca1_ReactionPlane_"}}});
 
 	analyzer.analyze();
 }
