@@ -124,15 +124,21 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	map<string, map<string, map<string, pair<int, int>>>> sets = { {"Ampt1", {{"test1", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0,4}}}}}},
-		{"Ampt2", {{"test2", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {2, 3}}}}}} };
+	map<string, map<string, map<string, pair<int, int>>>> sets = { 
+		{"BES1_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {0, 9}}}}}},
+		{"BES1_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {10, 19}}}}}},
+		{"BES1_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {20, 29}}}}}},
+		{"BES1_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {30, 39}}}}}},
+		{"BES1_4", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {40, 49}}}}}},
+		{"BES1_5", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {50, 59}}}}}},
+	};
 
-//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 7, 11 };
+	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	//vector<int> energy_list{ 7, 11 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 11;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
