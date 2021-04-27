@@ -501,8 +501,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.mix.set_out_path(mix_out_dir + set_dir);
 				binner.mix.set_max_events(250);
 				binner.mix.set_min_events(150);
-				binner.mix.set_vz_bins(1);
-				binner.mix.set_ep_bins(180);
+				binner.mix.set_vz_bins(5);
+				binner.mix.set_ep_bins(20);
 				if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
 				else { binner.mix.set_mixes_per_event(10); }
 				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
