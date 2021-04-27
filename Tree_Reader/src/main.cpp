@@ -124,8 +124,8 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	map<string, map<string, map<string, pair<int, int>>>> sets = { {"Ampt1", {{"test", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 1}}}}}},
-		{"Ampt2", {{"test2", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0, 2}}}}}} };
+	map<string, map<string, map<string, pair<int, int>>>> sets = { {"Ampt1", {{"test1", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {0,4}}}}}},
+		{"Ampt2", {{"test2", {{"rapid05_n1ratios_dca1_Ampt_ReactionPlane_", {2, 3}}}}}} };
 
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	vector<int> energy_list{ 7, 11 };
