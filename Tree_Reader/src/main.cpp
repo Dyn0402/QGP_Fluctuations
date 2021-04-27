@@ -281,6 +281,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	reader.set_in_path(in_path);
 	reader.set_tree_name("tree");
+	reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
 
 	// Pile up not implemented, need to think about it
 	//if (in_string(set_name, "PileUp")) {
@@ -321,6 +322,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.set_qa_path(out_dir + set_dir + to_string(energy) + "GeV/");
 				binner.set_qa_name("QA_");
 				binner.set_set_name(set.first + to_string(set_num));
+
+				binner.cut.set_dcaqa_path(base_path + "Dca_xy_QA/");
+				binner.cut.set_pileupqa_path(base_path + "Pile_Up_QA/");
 
 				if (in_string(set.first, "_seed")) {
 					binner.set_tree_reader_rand_seed(42);
@@ -1226,7 +1230,7 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs) {
 	string name_post = "m2s0_sys2_";
 	pair<int, int> set_nums = {0,0};
 
-	for(int i; i < num_pairs; i++) {
+	for(int i = 0; i < num_pairs; i++) {
 		string name = "rapid05_n1ratios_";
 		for(pair<string, pair<pair<int, unsigned>, pair<float, float>>> var:set_ranges) {
 			float val = rand->Rndm() * (var.second.second.second - var.second.second.first) + var.second.second.first;
