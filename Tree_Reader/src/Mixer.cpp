@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include <TCanvas.h>
+
 #include "ratio_methods.h"
 #include "file_io.h"
 
@@ -206,11 +208,13 @@ void Mixer::set_rand_seed(int seed) {
 
 // Doers
 
-
 // Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::append_event(const vector<double>& angles, int cent, double event_plane, double vz) {
 	int ep_bin = get_ep_bin(event_plane);
 	int vz_bin = get_vz_bin(vz);
+
+	if (vz_ep_appended_hists.count(cent) == 0) { define_hists(cent); }
+	vz_ep_appended_hists[cent].Fill(event_plane, vz);
 
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
 		int index = trand->Rndm() * max_events;
@@ -220,6 +224,7 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 	}
 
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
+		vz_ep_generated_hists[cent].Fill(event_plane, vz, mixes_per_event);
 		for(int i=0; i<mixes_per_event; i++) {
 			get_mixed(cent, (int)angles.size(), ep_bin, vz_bin);
 		}
@@ -288,10 +293,42 @@ int Mixer::get_vz_bin(double vz) {
 	return(bin);
 }
 
+// Initialize all QA histograms
+void Mixer::define_hists(int cent) {
+	string set_name = split_string_by_char(out_path, '/').back() + +"_" + to_string(energy) + "GeV_" + to_string(cent);
+	vz_ep_appended_hists.emplace(cent, TH2I(("mix_vz_ep_append_hist_" + set_name).data(), "mix_vz_ep_append_hist", ep_bins, ep_range.first, ep_range.second, vz_bins, vz_range.first, vz_range.second));
+	vz_ep_generated_hists.emplace(cent, TH2I(("mix_vz_ep_gen_hist_" + set_name).data(), "mix_vz_ep_gen_hist", ep_bins, ep_range.first, ep_range.second, vz_bins, vz_range.first, vz_range.second));
+}
+
 // Write data to output directory
 void Mixer::write_mixed_data() {
 	reset_out_dir();
 	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+}
+
+// Write QA plots to open TFile
+void Mixer::write_qa() {
+	for (pair<const int, TH2I>& hist : vz_ep_appended_hists) {
+		TCanvas can(("mix_vz_ep_append_hist_" + to_string(hist.first)).data());
+		hist.second.GetXaxis()->SetTitle("event_plane");
+		hist.second.GetYaxis()->SetTitle("vz");
+		hist.second.Draw("COLZ");
+		can.SetLogz();
+		can.Update();
+		can.Write();
+		hist.second.Write();
+	}
+
+	for (pair<const int, TH2I>& hist : vz_ep_generated_hists) {
+		TCanvas can(("mix_vz_ep_gen_hist_" + to_string(hist.first)).data());
+		hist.second.GetXaxis()->SetTitle("event_plane");
+		hist.second.GetYaxis()->SetTitle("vz");
+		hist.second.Draw("COLZ");
+		can.SetLogz();
+		can.Update();
+		can.Write();
+		hist.second.Write();
+	}
 }
 
 

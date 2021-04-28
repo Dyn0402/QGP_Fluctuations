@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <TRandom3.h>
+#include <TH2.h>
 
 using namespace std;
 
@@ -53,13 +54,14 @@ public:
 	void set_vz_range(double vz_lower, double vz_upper);
 	void set_ep_range(double ep_lower, double ep_upper);
 	void set_out_path(string path);
-	void set_divs(vector<int>);
+	void set_divs(vector<int> divs);
 	void set_rand_seed(int seed=0);
 
 	// Doers
 	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);
 	void reset_out_dir();
 	void write_mixed_data();
+	void write_qa();
 
 	// Attributes
 
@@ -88,6 +90,12 @@ private:
 	int get_ep_bin(double event_plane);
 	int get_vz_bin(double vz);
 	pair<int, int> generate_index(const vector<pair<int, int>>& used_angles, int cent, int ep_bin, int vz_bin);
+	void define_hists(int cent);
+
+
+	// QA Plots
+	map<int, TH2I> vz_ep_appended_hists;  // Number of appended events, key is centrality
+	map<int, TH2I> vz_ep_generated_hists;  // Number of generated events, key is centrality
 };
 
 

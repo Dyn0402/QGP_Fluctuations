@@ -519,6 +519,7 @@ void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus((particle+".dca").data(), 1);
 	tree->SetBranchStatus((particle+".nsigma").data(), 1);
 	tree->SetBranchStatus((particle+".eta").data(), 1);
+	tree->SetBranchStatus((particle + ".nhits_fit").data(), 1);
 }
 
 
