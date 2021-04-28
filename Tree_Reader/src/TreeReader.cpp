@@ -314,7 +314,7 @@ void TreeReader::read_trees() {
 		else { read_tree(tree); }  // Read tree from file into data
 		tree->ResetBranchAddresses();
 		file->Close();
-		delete file;
+		//delete file;
 		file_index++;
 
 		if(file_list != NULL) {  // If file_list passed, remove path before going to next
