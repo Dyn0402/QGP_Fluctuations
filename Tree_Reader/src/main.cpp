@@ -73,7 +73,7 @@ void tchain_test();
 void run_tchain();
 //void AMPT_Proton_Num_Check();
 void get_flag_trail_test();
-map<string, pair<int, int>> get_rand_set_pairs(int num_pairs);
+map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid="rapid05");
 
 void tree_read_speed();
 
@@ -124,16 +124,17 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	//map<string, pair<int, int>> set_pairs = get_rand_set_pairs(55);
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+			{"BES1_rapid05", {{"test", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 0}}}}}} };
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = { 
-		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 19}}}}}},
-		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 39}}}}}},
-		{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {40, 59}}}}}},
-		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(20)}}},
-		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(20)}}},
-		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(20)}}}
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
+	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 19}}}}}},
+	//	{"BES1_rapid08", {{"default", {{"rapid08_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 39}}}}}},
+	//	{"BES1_rapid02", {{"default", {{"rapid02_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {40, 59}}}}}},
+	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(20, "rapid1")}}},
+	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(20, "rapid08")}}},
+	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(20, "rapid02")}}}
+	//};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Ampt_test0", {{"test0", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
@@ -144,8 +145,8 @@ void read_new() {
 	//	{"Ampt_test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
 	//};
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	//vector<int> energy_list{ 7 };
+	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -1240,7 +1241,7 @@ void get_flag_trail_test() {
 	for(string c:get_flag_trail(a,b,"_")) { cout << str_num_dec(c, 2) << endl; }
 }
 
-map<string, pair<int, int>> get_rand_set_pairs(int num_pairs) {
+map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid) {
 	TRandom3 *rand = new TRandom3(0);
 	map<string, pair<int, int>> set_pairs = {};
 
@@ -1254,7 +1255,7 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs) {
 	pair<int, int> set_nums = {0,0};
 
 	for(int i = 0; i < num_pairs; i++) {
-		string name = "rapid05_n1ratios_";
+		string name = rapid + "_n1ratios_";
 		for(pair<string, pair<pair<int, unsigned>, pair<float, float>>> var:set_ranges) {
 			float val = rand->Rndm() * (var.second.second.second - var.second.second.first) + var.second.second.first;
 			string num = to_string(int(val * var.second.first.first + 0.5));

@@ -645,7 +645,10 @@ bool AzBinner::check_particle_good(const Track& particle) {
 	if (rapidity) {
 		float m = cut.particle_mass[this->particle];
 		float rapid = log((sqrt(pow(m, 2) + pow(pt, 2) * pow(cosh(eta), 2)) + pt * sinh(eta)) / sqrt(pow(m, 2) + pow(pt, 2)));
+		cout << "Rapidity: " << rapid << " pt: " << pt << " eta: " << eta << " m: " << m << " min_rapid: " << cut.min_rapid << " max_rapid: " << cut.max_rapid << endl;
+		pre_rapid_hist.Fill(rapid);
 		if (!(rapid >= cut.min_rapid && rapid <= cut.max_rapid)) { return false; }
+		post_rapid_hist.Fill(rapid);
 	}
 	else {
 		if (!(eta >= cut.min_eta && eta <= cut.max_eta)) { return false; }
@@ -780,6 +783,7 @@ void AzBinner::define_qa() {
 	pre_nsigma_hist = TH1I(("pre_nsigma_" + set_name + "_" + to_string(energy)).data(), "pre_nsigma", 100, -2.5, 2.5);
 	pre_dca_hist = TH1I(("pre_dca_" + set_name + "_" + to_string(energy)).data(), "pre_dca", 100, 0.0, 3.1);
 	pre_nhits_fit_hist = TH1I(("pre_nhits_fit_" + set_name + "_" + to_string(energy)).data(), "pre_nhits_fit", 101, -0.5, 100.5);
+	pre_rapid_hist = TH1I(("pre_rapid_" + set_name + "_" + to_string(energy)).data(), "pre_rapid", 100, -2.2, 2.2);
 
 	post_phi_hist = TH1D(("post_phi_" + set_name + "_" + to_string(energy)).data(), "post_phi", 1000, 0.0, 2 * TMath::Pi());
 	post_p_hist = TH1I(("post_p_" + set_name + "_" + to_string(energy)).data(), "post_p", 100, 0.0, 3.5);
@@ -790,6 +794,7 @@ void AzBinner::define_qa() {
 	post_nsigma_hist = TH1I(("post_nsigma_" + set_name + "_" + to_string(energy)).data(), "post_nsigma", 100, -2.5, 2.5);
 	post_dca_hist = TH1I(("post_dca_" + set_name + "_" + to_string(energy)).data(), "post_dca", 100, 0.0, 3.1);
 	post_nhits_fit_hist = TH1I(("post_nhits_fit_" + set_name + "_" + to_string(energy)).data(), "post_nhits_fit", 101, -0.5, 100.5);
+	post_rapid_hist = TH1I(("post_rapid_" + set_name + "_" + to_string(energy)).data(), "post_rapid", 100, -2.2, 2.2);
 
 	pre_m2_hist = TH1I(("pre_m2_" + set_name + "_" + to_string(energy)).data(), "pre_m^2", 100, -0.5, 2.0);
 	post_m2_hist = TH1I(("post_m2_" + set_name + "_" + to_string(energy)).data(), "post_m^2", 100, -0.5, 2.0);
@@ -917,6 +922,8 @@ void AzBinner::write_info_file() {
 		out << "charge: " << to_string(cut.charge) << endl;
 		out << "min_eta: " << to_string(cut.min_eta) << endl;
 		out << "max_eta: " << to_string(cut.max_eta) << endl;
+		out << "min_rapid: " << to_string(cut.min_rapid) << endl;
+		out << "max_rapid: " << to_string(cut.max_rapid) << endl;
 		out << "min_nsigma: " << to_string(cut.min_nsigma) << endl;
 		out << "max_nsigma: " << to_string(cut.max_nsigma) << endl;
 		out << "min_dca: " << to_string(cut.min_dca) << endl;
@@ -1056,6 +1063,7 @@ void AzBinner::write_qa() {
 	pre_nsigma_hist.Write();
 	pre_dca_hist.Write();
 	pre_nhits_fit_hist.Write();
+	pre_rapid_hist.Write();
 	post_phi_hist.Write();
 	post_p_hist.Write();
 	post_pt_hist.Write();
@@ -1065,6 +1073,7 @@ void AzBinner::write_qa() {
 	post_nsigma_hist.Write();
 	post_dca_hist.Write();
 	post_nhits_fit_hist.Write();
+	post_rapid_hist.Write();
 
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
@@ -1213,6 +1222,12 @@ void AzBinner::write_qa() {
 	post_nhits_fit_hist.SetLineColor(kRed);
 	post_nhits_fit_hist.Draw("sames");
 	nhits_fit_can.Write();
+	TCanvas rapid_can("rapid_can");
+	pre_rapid_hist.GetYaxis()->SetRangeUser(0, pre_rapid_hist.GetMaximum() * 1.05);
+	pre_rapid_hist.Draw();
+	post_rapid_hist.SetLineColor(kRed);
+	post_rapid_hist.Draw("sames");
+	rapid_can.Write();
 	TCanvas m2_can("m2_can");
 	pre_m2_hist.GetYaxis()->SetRangeUser(0, pre_m2_hist.GetMaximum() * 1.05);
 	pre_m2_hist.Draw();
