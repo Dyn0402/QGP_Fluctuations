@@ -324,7 +324,6 @@ void Mixer::write_qa() {
 		hist.second.GetXaxis()->SetTitle("event_plane");
 		hist.second.GetYaxis()->SetTitle("vz");
 		hist.second.Draw("COLZ");
-		can.SetLogz();
 		can.Update();
 		can.Write();
 		hist.second.Write();
