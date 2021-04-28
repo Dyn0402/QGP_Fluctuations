@@ -136,12 +136,12 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"test0", {{"test0", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
-		{"test1", {{"test1", {{"Ampt_rapid05_n1ratios_test1_", {0, 1}}}}}},
-		{"test2", {{"test2", {{"Ampt_rapid05_n1ratios_test2_", {0, 2}}}}}},
-		{"test3", {{"test3", {{"Ampt_rapid05_n1ratios_test3_", {0, 3}}}}}},
-		{"test4", {{"test4", {{"Ampt_rapid05_n1ratios_test4_", {0, 4}}}}}},
-		{"test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
+		{"Ampt_test0", {{"test0", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
+		{"Ampt_test1", {{"test1", {{"Ampt_rapid05_n1ratios_test1_", {0, 1}}}}}},
+		{"Ampt_test2", {{"test2", {{"Ampt_rapid05_n1ratios_test2_", {0, 2}}}}}},
+		{"Ampt_test3", {{"test3", {{"Ampt_rapid05_n1ratios_test3_", {0, 3}}}}}},
+		{"Ampt_test4", {{"test4", {{"Ampt_rapid05_n1ratios_test4_", {0, 4}}}}}},
+		{"Ampt_test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
 	};
 
 	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
