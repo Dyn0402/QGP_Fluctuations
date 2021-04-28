@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 
 void read_new() {
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-			{"BES1_rapid05", {{"test", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit15", {0, 0}}}}}} };
+			{"BES1_rapid05", {{"test", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit15_", {0, 0}}}}}} };
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 19}}}}}},

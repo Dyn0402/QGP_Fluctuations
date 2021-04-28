@@ -265,6 +265,7 @@ void Event::read_tree_event(tree_branches branches) {
 		particle.set_nsigma(branches.nsigma->at(particle_index));
 		particle.set_beta(branches.beta->at(particle_index));
 		particle.set_charge(branches.charge->at(particle_index));
+		particle.set_nhits_fit(branches.nhits_fit->at(particle_index));
 
 		particles.push_back(particle);
 	}
