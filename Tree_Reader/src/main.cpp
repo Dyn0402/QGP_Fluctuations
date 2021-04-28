@@ -282,7 +282,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	string mix_out_job_dir = out_base_path;
 
 	if (in_string(job_type, "Ampt")) {
-		in_path = in_base_ampt_path + "AMPT_Trees/";
+		in_path = in_base_ampt_path + "AMPT_Trees_Test/";  // EDITED FOR SPEED TEST
 		out_job_dir += "Data_Ampt/";
 		mix_out_job_dir += "Data_Ampt_Mix/";
 	}
