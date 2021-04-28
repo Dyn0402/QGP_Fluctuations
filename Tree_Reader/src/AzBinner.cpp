@@ -929,7 +929,6 @@ void AzBinner::write_info_file() {
 		out << "max_pt_no_tof: " << to_string(cut.max_pt_no_tof) << endl;
 		out << "max_p_tof: " << to_string(cut.max_p_tof) << endl;
 		out << "max_p_no_tof: " << to_string(cut.max_p_no_tof) << endl;
-		out << "min_nhits_fit: " << to_string(cut.min_nhits_fit) << endl;
 
 		out << "min_multi: " << to_string(cut.min_multi) << endl;
 
@@ -1219,8 +1218,6 @@ void AzBinner::write_qa() {
 	post_m2_hist.SetLineColor(kRed);
 	post_m2_hist.Draw("sames");
 	m2_can.Write();
-
-	mix.write_qa();
 
 	qa.Close();
 }
