@@ -642,6 +642,7 @@ bool AzBinner::check_particle_good(const Track& particle) {
 
 	double pt = particle.get_pt();
 	double eta = particle.get_eta();
+	cout << "eta: " << eta << endl;
 	if (rapidity) {
 		float m = cut.particle_mass[this->particle];
 		float rapid = log((sqrt(pow(m, 2) + pow(pt, 2) * pow(cosh(eta), 2)) + pt * sinh(eta)) / sqrt(pow(m, 2) + pow(pt, 2)));
