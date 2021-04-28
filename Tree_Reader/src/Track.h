@@ -24,7 +24,7 @@ struct track_defaults {
 	float nsigma = 1.0;
 	float beta = -999;
 	short charge = 1;
-	short nhits_fit = 20;
+	short nhits_fit = 40;
 };
 
 
