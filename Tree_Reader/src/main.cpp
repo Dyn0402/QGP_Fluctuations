@@ -124,21 +124,32 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	map<string, map<string, map<string, pair<int, int>>>> sets = { 
-		{"BES1_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {0, 9}}}}}},
-		{"BES1_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {10, 19}}}}}},
-		{"BES1_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {20, 29}}}}}},
-		{"BES1_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {30, 39}}}}}},
-		{"BES1_4", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {40, 49}}}}}},
-		{"BES1_5", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {50, 59}}}}}},
+	//map<string, pair<int, int>> set_pairs = get_rand_set_pairs(55);
+
+	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
+	//	{"BES1_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {0, 9}}}}}},
+	//	{"BES1_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {10, 19}}}}}},
+	//	{"BES1_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {20, 29}}}}}},
+	//	{"BES1_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {30, 39}}}}}},
+	//	{"BES1_4", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {40, 49}}}}}},
+	//	{"BES1_5", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {50, 59}}}}}},
+	//};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"test0", {{"test0", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
+		{"test1", {{"test1", {{"Ampt_rapid05_n1ratios_test1_", {0, 1}}}}}},
+		{"test2", {{"test2", {{"Ampt_rapid05_n1ratios_test2_", {0, 2}}}}}},
+		{"test3", {{"test3", {{"Ampt_rapid05_n1ratios_test3_", {0, 3}}}}}},
+		{"test4", {{"test4", {{"Ampt_rapid05_n1ratios_test4_", {0, 4}}}}}},
+		{"test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
 	};
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	//vector<int> energy_list{ 7, 11 };
+	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 11;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -270,7 +281,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	string mix_out_job_dir = out_base_path;
 
 	if (in_string(job_type, "Ampt")) {
-		in_path = in_base_ampt_path + "AMPT_Trees/";
+		in_path = in_base_ampt_path + "AMPT_Trees_Test/";  // EDITED FOR SPEED TEST
 		out_job_dir += "Data_Ampt/";
 		mix_out_job_dir += "Data_Ampt_Mix/";
 	}
