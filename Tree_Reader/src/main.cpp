@@ -126,30 +126,30 @@ int main(int argc, char** argv) {
 void read_new() {
 	//map<string, pair<int, int>> set_pairs = get_rand_set_pairs(55);
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
-	//	{"BES1_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {0, 9}}}}}},
-	//	{"BES1_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {10, 19}}}}}},
-	//	{"BES1_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {20, 29}}}}}},
-	//	{"BES1_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {30, 39}}}}}},
-	//	{"BES1_4", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {40, 49}}}}}},
-	//	{"BES1_5", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_", {50, 59}}}}}},
-	//};
-
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_test0", {{"test0", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
-		{"Ampt_test1", {{"test1", {{"Ampt_rapid05_n1ratios_test1_", {0, 1}}}}}},
-		{"Ampt_test2", {{"test2", {{"Ampt_rapid05_n1ratios_test2_", {0, 2}}}}}},
-		{"Ampt_test3", {{"test3", {{"Ampt_rapid05_n1ratios_test3_", {0, 3}}}}}},
-		{"Ampt_test4", {{"test4", {{"Ampt_rapid05_n1ratios_test4_", {0, 4}}}}}},
-		{"Ampt_test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
+	map<string, map<string, map<string, pair<int, int>>>> sets = { 
+		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 19}}}}}},
+		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 39}}}}}},
+		{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {40, 59}}}}}},
+		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(20)}}},
+		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(20)}}},
+		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(20)}}}
 	};
 
-	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 7 };
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Ampt_test0", {{"test0", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
+	//	{"Ampt_test1", {{"test1", {{"Ampt_rapid05_n1ratios_test1_", {0, 1}}}}}},
+	//	{"Ampt_test2", {{"test2", {{"Ampt_rapid05_n1ratios_test2_", {0, 2}}}}}},
+	//	{"Ampt_test3", {{"test3", {{"Ampt_rapid05_n1ratios_test3_", {0, 3}}}}}},
+	//	{"Ampt_test4", {{"test4", {{"Ampt_rapid05_n1ratios_test4_", {0, 4}}}}}},
+	//	{"Ampt_test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
+	//};
+
+	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	//vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 11;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -281,7 +281,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	string mix_out_job_dir = out_base_path;
 
 	if (in_string(job_type, "Ampt")) {
-		in_path = in_base_ampt_path + "AMPT_Trees_Test/";  // EDITED FOR SPEED TEST
+		in_path = in_base_ampt_path + "AMPT_Trees/";
 		out_job_dir += "Data_Ampt/";
 		mix_out_job_dir += "Data_Ampt_Mix/";
 	}
@@ -394,7 +394,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					float nsigmaprx = str_num_dec(get_flag_trail(set.first, "nsprx", "_")[0], 1);
 					binner.cut.min_nsigma *= nsigmaprx;
 					binner.cut.max_nsigma *= nsigmaprx;
-					cout << "nsigma_cuts: " << binner.cut.min_nsigma << " " << binner.cut.max_nsigma << endl;
+					//cout << "nsigma_cuts: " << binner.cut.min_nsigma << " " << binner.cut.max_nsigma << endl;
 				}
 
 				if (in_string(set.first, { "m2r", "m2s" }, false)) {  // Set m^2 cut range
@@ -407,7 +407,12 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					if (in_string(set.first, "m2r")) { m2_range = str_num_dec(get_flag_trail(set.first, "m2r", "_")[0], 0); }
 					binner.cut.min_m2 = m2_mid - m2_range / 2;
 					binner.cut.max_m2 = m2_mid + m2_range / 2;
-					cout << "m^2_cuts: " << binner.cut.min_m2 << " " << binner.cut.max_m2 << endl;
+					//cout << "m^2_cuts: " << binner.cut.min_m2 << " " << binner.cut.max_m2 << endl;
+				}
+
+				if (in_string(set.first, "nhfit")) {
+					binner.cut.min_nhits_fit = str_num_dec(get_flag_trail(set.first, "nhfit", "_")[0], 0);
+					cout << "nhitsfit_cuts: " << binner.cut.min_nhits_fit << " " << binner.cut.min_nhits_fit << endl;
 				}
 
 				if (in_string(set.first, "eta")) {
@@ -1243,8 +1248,9 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs) {
 	set_ranges["dca"] = make_pair(make_pair(100, 3), make_pair(0.8, 1.2));
 	set_ranges["m2r"] = make_pair(make_pair(100, 3), make_pair(2.0, 6.0));
 	set_ranges["nsprx"] = make_pair(make_pair(100, 3), make_pair(0.9, 1.1));
+	set_ranges["nhfit"] = make_pair(make_pair(1, 2), make_pair(14.5001, 25.4999));
 
-	string name_post = "m2s0_sys2_";
+	string name_post = "m2s0_sys_";
 	pair<int, int> set_nums = {0,0};
 
 	for(int i = 0; i < num_pairs; i++) {
