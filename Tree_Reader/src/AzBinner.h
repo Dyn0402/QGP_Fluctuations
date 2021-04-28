@@ -42,7 +42,6 @@ public:
 	string get_out_path();
 	string get_qa_path();
 	string get_set_name();
-	string get_tree_name();
 	string get_event_cut_hist_name();
 	string get_track_cut_hist_name();
 	bool get_cbwc();
@@ -67,7 +66,6 @@ public:
 	void set_ampt_type(string type);
 	void set_qa_name(string name);
 	void set_set_name(string set_name);
-	void set_tree_name(string tree_name);
 	void set_sim_proton_dist_dataset(string path);
 	void set_sim_eff_dist_path(string root_path, string hist_name);
 	void set_energy(int energy);
