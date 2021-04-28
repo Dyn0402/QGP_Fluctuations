@@ -66,7 +66,7 @@ void set_tree_branches(TTree* tree, tree_branches &branches, string particle, in
 	tree->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	tree->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	tree->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
-	tree->SetBranchAddress((particle + ".nhits_fit").data(), &branches.eta, &branches.branch_eta);
+	tree->SetBranchAddress((particle + ".nhits_fit").data(), &branches.nhits_fit, &branches.branch_nhits_fit);
 }
 
 // Set tree branch addresses and return them in a tree_branches struct.
@@ -97,7 +97,7 @@ void set_tree_branches(TChain* chain, tree_branches &branches, string particle, 
 	chain->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	chain->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	chain->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
-	chain->SetBranchAddress((particle + ".nhits_fit").data(), &branches.eta, &branches.branch_eta);
+	chain->SetBranchAddress((particle + ".nhits_fit").data(), &branches.nhits_fit, &branches.branch_nhits_fit);
 }
 
 
