@@ -111,7 +111,7 @@ void set_particle_branches(TTree* tree, tree_branches &branches, string particle
 	tree->SetBranchAddress((particle+".dca_z").data(), &branches.dca_z, &branches.branch_dca_z);
 	tree->SetBranchAddress((particle+".nsigma").data(), &branches.nsigma, &branches.branch_nsigma);
 	tree->SetBranchAddress((particle+".eta").data(), &branches.eta, &branches.branch_eta);
-	tree->SetBranchAddress((particle + ".nhits_fit").data(), &branches.eta, &branches.branch_eta);
+	tree->SetBranchAddress((particle + ".nhits_fit").data(), &branches.nhits_fit, &branches.branch_nhits_fit);
 }
 
 

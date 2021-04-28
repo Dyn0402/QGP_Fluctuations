@@ -95,6 +95,7 @@ struct tree_branches {
 	TBranch *branch_nsigma = 0;
 	TBranch *branch_eta = 0;
 	TBranch *branch_charge = 0;
+	TBranch* branch_nhits_fit = 0;
 };
 
 
