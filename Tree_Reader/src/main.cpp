@@ -400,9 +400,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				//	binner.set_pile_up_prob(str_num_dec(get_flag_trail(set.first, "PileUp", "_")[0], 1));
 				//}
 
-				if (in_string(set.first, "_n1ratios")) { cout << "n1ratios" << endl; binner.set_n1_ratios(true); binner.set_single_ratio(false); }
-				else if (in_string(set.first, "_allratios")) { cout << "all ratios" << endl; binner.set_n1_ratios(false); binner.set_single_ratio(false); }
-				else { cout << "single ratio" << endl; binner.set_n1_ratios(false); binner.set_single_ratio(true); }
+				if (in_string(set.first, "_n1ratios")) { binner.set_n1_ratios(true); binner.set_single_ratio(false); }
+				else if (in_string(set.first, "_allratios")) { binner.set_n1_ratios(false); binner.set_single_ratio(false); }
+				else { binner.set_n1_ratios(false); binner.set_single_ratio(true); }
 
 				if (in_string(set.first, "dca")) {
 					binner.cut.max_dca = str_num_dec(get_flag_trail(set.first, "dca", "_")[0], 1);
@@ -412,7 +412,6 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					float nsigmaprx = str_num_dec(get_flag_trail(set.first, "nsprx", "_")[0], 1);
 					binner.cut.min_nsigma *= nsigmaprx;
 					binner.cut.max_nsigma *= nsigmaprx;
-					//cout << "nsigma_cuts: " << binner.cut.min_nsigma << " " << binner.cut.max_nsigma << endl;
 				}
 
 				if (in_string(set.first, { "m2r", "m2s" }, false)) {  // Set m^2 cut range
@@ -425,12 +424,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					if (in_string(set.first, "m2r")) { m2_range = str_num_dec(get_flag_trail(set.first, "m2r", "_")[0], 0); }
 					binner.cut.min_m2 = m2_mid - m2_range / 2;
 					binner.cut.max_m2 = m2_mid + m2_range / 2;
-					//cout << "m^2_cuts: " << binner.cut.min_m2 << " " << binner.cut.max_m2 << endl;
 				}
 
 				if (in_string(set.first, "nhfit")) {
 					binner.cut.min_nhits_fit = str_num_dec(get_flag_trail(set.first, "nhfit", "_")[0], 2);
-					//cout << "nhitsfit_cuts: " << binner.cut.min_nhits_fit << endl;
 				}
 
 				if (in_string(set.first, "eta")) {

@@ -294,6 +294,7 @@ void TreeReader::read_trees() {
 
 		if(file_list != NULL) {  // If file_list passed, check if path is being read on another thread before continuing
 			bool wait = true;
+			bool skip = false;
 			while(wait) {
 				if(mtx) { mtx->lock(); }
 				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {
@@ -311,10 +312,12 @@ void TreeReader::read_trees() {
 						cout << "Pushing to back of queue path: " << path << endl;
 						in_files_queue.push(path);
 						in_files_queue.pop();
-						continue;
+						skip = true;
+						break;
 					}
 				}
 			}
+			if (skip) { continue; }  // Skip to next file and return to current (busy one) at the end.
 		}
 
 		// Display progress and time while running.
