@@ -45,6 +45,7 @@ public:
 	string get_tree_name();
 	string get_event_cut_hist_name();
 	string get_track_cut_hist_name();
+	string get_particle();
 
 	// Setters
 	void set_in_path(string path);

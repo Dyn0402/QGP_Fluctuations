@@ -156,6 +156,10 @@ string TreeReader::get_track_cut_hist_name() {
 	return(track_cut_hist_name);
 }
 
+string TreeReader::get_particle() {
+	return particle;
+}
+
 
 // Setters
 

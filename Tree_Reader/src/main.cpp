@@ -353,6 +353,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.cut.set_dcaqa_path(base_path + "Dca_xy_QA/");
 				binner.cut.set_pileupqa_path(base_path + "Pile_Up_QA/");
 
+				binner.cut.set_values(energy, reader.get_particle());  // Setting here for now since it needs updated dca/pileup paths, think of better solution.
+
 				if (in_string(set.first, "_seed")) {
 					binner.set_tree_reader_rand_seed(42);
 					binner.set_mixer_rand_seed(42);

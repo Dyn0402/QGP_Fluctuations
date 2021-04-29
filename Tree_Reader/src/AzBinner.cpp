@@ -389,7 +389,7 @@ void AzBinner::set_stref_rand_seed(int seed) {
 
 // Set everything necessary for read just in time (construction too early to set). 
 void AzBinner::prep_read() {
-	cut.set_values(energy, particle);
+	//cut.set_values(energy, particle);  // Resets values set in main, for now call in main, think of better way
 	set_energy(energy);
 	mix.set_single_ratio(single_ratio);
 	mix.set_rand_rotate(rotate_random);
