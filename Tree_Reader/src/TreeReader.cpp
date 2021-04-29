@@ -11,6 +11,7 @@
 #include <fstream>
 #include <algorithm>
 #include <vector>
+#include <queue>
 #include <cmath>
 #include <thread>
 #include <ctime>
@@ -285,20 +286,33 @@ void TreeReader::read_trees() {
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 
-	for(string path:in_files) {
+	queue<string> in_files_queue;
+	for (const string& path : in_files) { in_files_queue.push(path); }
+
+	while (!in_files_queue.empty()) {
+		string path = in_files_queue.front();
 
 		if(file_list != NULL) {  // If file_list passed, check if path is being read on another thread before continuing
 			bool wait = true;
 			while(wait) {
 				if(mtx) { mtx->lock(); }
 				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {
+					in_files_queue.pop();
 					file_list->push_back(path);
 					wait = false;
 				}
 				if(mtx) { mtx->unlock(); }
 				if(wait) {
-					cout << "Waiting for path: " << path << endl;
-					this_thread::sleep_for(chrono::seconds(file_wait_sleep));
+					if (in_files_queue.size() == 1) {  // Last file in queue, just have to wait for it to open up
+						cout << "Waiting for path: " << path << endl;
+						this_thread::sleep_for(chrono::seconds(file_wait_sleep));
+					}
+					else {  // Put current file at end of queue and move on to next file
+						cout << "Pushing to back of queue path: " << path << endl;
+						in_files_queue.push(path);
+						in_files_queue.pop();
+						continue;
+					}
 				}
 			}
 		}

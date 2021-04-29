@@ -391,9 +391,10 @@ void AzBinner::set_stref_rand_seed(int seed) {
 void AzBinner::prep_read() {
 	//cut.set_values(energy, particle);  // Resets values set in main, for now call in main, think of better way
 	set_energy(energy);
+	cout << "For Mixer n1ratios: " << n1_ratios << ", single_ratio: " << single_ratio << endl;
 	mix.set_single_ratio(single_ratio);
-	mix.set_rand_rotate(rotate_random);
 	mix.set_n1_ratios(n1_ratios);
+	mix.set_rand_rotate(rotate_random);
 }
 
 
@@ -516,8 +517,8 @@ void AzBinner::process_event(const Event& event) {
 			for (auto& div : divs) {
 				int bin_num = (int)360 / div;
 				double div_rads = (double)div / 180 * M_PI;
-				if (single_ratio) { bin_num = 1; }
-				else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+				if (single_ratio) { cout << "single_ratio run" << endl; bin_num = 1; }
+				else if (bin_num > 1 && n1_ratios) { cout << "n1ratio run" << endl; bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
 				vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 				// Save ratio values to data

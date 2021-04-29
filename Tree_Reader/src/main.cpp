@@ -127,14 +127,14 @@ void read_new() {
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//		{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
-		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {10, 19}}}}}},
-		{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 29}}}}}},
-		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
-		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
-		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}}
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
+	//	{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {10, 19}}}}}},
+	//	{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 29}}}}}},
+	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
+	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
+	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}}
+	//};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
@@ -145,21 +145,27 @@ void read_new() {
 	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid02")}}}
 	//};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"Ampt_test0", {{"test0", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
-	//	{"Ampt_test1", {{"test1", {{"Ampt_rapid05_n1ratios_test1_", {0, 1}}}}}},
-	//	{"Ampt_test2", {{"test2", {{"Ampt_rapid05_n1ratios_test2_", {0, 2}}}}}},
-	//	{"Ampt_test3", {{"test3", {{"Ampt_rapid05_n1ratios_test3_", {0, 3}}}}}},
-	//	{"Ampt_test4", {{"test4", {{"Ampt_rapid05_n1ratios_test4_", {0, 4}}}}}},
-	//	{"Ampt_test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
-	//};
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Ampt_test0", {{"test", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
+		{"Ampt_test1", {{"test", {{"Ampt_rapid05_n1ratios_test1_", {0, 0}}}}}},
+		{"Ampt_test2", {{"test", {{"Ampt_rapid05_n1ratios_test2_", {0, 0}}}}}},
+		{"Ampt_test3", {{"test", {{"Ampt_rapid05_n1ratios_test3_", {0, 0}}}}}},
+		{"Ampt_test4", {{"test", {{"Ampt_rapid05_n1ratios_test4_", {0, 0}}}}}},
+		{"Ampt_test5", {{"test", {{"Ampt_rapid05_n1ratios_test5_", {0, 0}}}}}},
+		{"Ampt_test6", {{"test", {{"Ampt_rapid05_n1ratios_test6_", {0, 0}}}}}},
+		{"Ampt_test7", {{"test", {{"Ampt_rapid05_n1ratios_test7_", {0, 0}}}}}},
+		{"Ampt_test8", {{"test", {{"Ampt_rapid05_n1ratios_test8_", {0, 0}}}}}},
+		{"Ampt_test9", {{"test", {{"Ampt_rapid05_n1ratios_test9_", {0, 0}}}}}},
+		{"Ampt_test10", {{"test", {{"Ampt_rapid05_n1ratios_test10_", {0, 0}}}}}},
+		{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
+	};
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	//vector<int> energy_list{ 7 };
+	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 11;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -291,7 +297,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	string mix_out_job_dir = out_base_path;
 
 	if (in_string(job_type, "Ampt")) {
-		in_path = in_base_ampt_path + "AMPT_Trees/";
+		in_path = in_base_ampt_path + "AMPT_Trees_Test/";  // EDITED FOR TEST
 		out_job_dir += "Data_Ampt/";
 		mix_out_job_dir += "Data_Ampt_Mix/";
 	}
@@ -394,9 +400,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				//	binner.set_pile_up_prob(str_num_dec(get_flag_trail(set.first, "PileUp", "_")[0], 1));
 				//}
 
-				if (in_string(set.first, "_n1ratios")) { binner.set_n1_ratios(true); binner.set_single_ratio(false); }
-				if (in_string(set.first, "_allratios")) { binner.set_n1_ratios(false); binner.set_single_ratio(false); }
-				else { binner.set_n1_ratios(false); binner.set_single_ratio(true); }
+				if (in_string(set.first, "_n1ratios")) { cout << "n1ratios" << endl; binner.set_n1_ratios(true); binner.set_single_ratio(false); }
+				if (in_string(set.first, "_allratios")) { cout << "all ratios" << endl; binner.set_n1_ratios(false); binner.set_single_ratio(false); }
+				else { cout << "single ratio" << endl; binner.set_n1_ratios(false); binner.set_single_ratio(true); }
 
 				if (in_string(set.first, "dca")) {
 					binner.cut.max_dca = str_num_dec(get_flag_trail(set.first, "dca", "_")[0], 1);
@@ -424,7 +430,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 				if (in_string(set.first, "nhfit")) {
 					binner.cut.min_nhits_fit = str_num_dec(get_flag_trail(set.first, "nhfit", "_")[0], 2);
-					cout << "nhitsfit_cuts: " << binner.cut.min_nhits_fit << endl;
+					//cout << "nhitsfit_cuts: " << binner.cut.min_nhits_fit << endl;
 				}
 
 				if (in_string(set.first, "eta")) {
