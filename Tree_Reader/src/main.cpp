@@ -124,17 +124,17 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-			{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
-
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
-	//	{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {10, 19}}}}}},
-	//	{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 29}}}}}},
-	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
-	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
-	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}}
-	//};
+	//		{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
+		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {10, 19}}}}}},
+		{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 29}}}}}},
+		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
+		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
+		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}}
+	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
