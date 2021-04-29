@@ -662,7 +662,7 @@ bool AzBinner::check_particle_good(const Track& particle) {
 	if (!(dca >= cut.min_dca && dca <= cut.max_dca)) { return false; }
 	track_cut_hist.Fill("Good dca", 1);
 
-	if (particle.get_nhits_fit() <= cut.min_dca) { return false; }
+	if (particle.get_nhits_fit() <= cut.min_nhits_fit) { return false; }
 	track_cut_hist.Fill("Good nhitsfit", 1);
 
 	double p = particle.get_p();
