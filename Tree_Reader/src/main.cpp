@@ -154,8 +154,8 @@ void read_new() {
 	//	{"Ampt_test5", {{"test5", {{"Ampt_rapid05_n1ratios_test5_", {0, 5}}}}}},
 	//};
 
-	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	//vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
