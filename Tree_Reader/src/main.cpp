@@ -127,41 +127,39 @@ void read_new() {
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//		{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
-	//	{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {10, 19}}}}}},
-	//	{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 29}}}}}},
-	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
-	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
-	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}}
-	//};
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 9}}}}}},
+		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {10, 19}}}}}},
+		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}},
+		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid05")}}}
+	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
-	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {0, 9}}}}}},
-	//	{"BES1_rapid08", {{"default", {{"rapid08_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {10, 19}}}}}},
-	//	{"BES1_rapid02", {{"default", {{"rapid02_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20", {20, 29}}}}}},
+	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 9}}}}}},
+	//	{"BES1_rapid08", {{"default", {{"rapid08_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {10, 19}}}}}},
+	//	{"BES1_rapid02", {{"default", {{"rapid02_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {20, 29}}}}}},
 	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid1")}}},
 	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid08")}}},
 	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid02")}}}
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_test0", {{"test", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
-		{"Ampt_test1", {{"test", {{"Ampt_rapid05_n1ratios_test1_", {0, 0}}}}}},
-		{"Ampt_test2", {{"test", {{"Ampt_rapid05_n1ratios_test2_", {0, 0}}}}}},
-		{"Ampt_test3", {{"test", {{"Ampt_rapid05_n1ratios_test3_", {0, 0}}}}}},
-		{"Ampt_test4", {{"test", {{"Ampt_rapid05_n1ratios_test4_", {0, 0}}}}}},
-		{"Ampt_test5", {{"test", {{"Ampt_rapid05_n1ratios_test5_", {0, 0}}}}}},
-		{"Ampt_test6", {{"test", {{"Ampt_rapid05_n1ratios_test6_", {0, 0}}}}}},
-		{"Ampt_test7", {{"test", {{"Ampt_rapid05_n1ratios_test7_", {0, 0}}}}}},
-		{"Ampt_test8", {{"test", {{"Ampt_rapid05_n1ratios_test8_", {0, 0}}}}}},
-		{"Ampt_test9", {{"test", {{"Ampt_rapid05_n1ratios_test9_", {0, 0}}}}}},
-		{"Ampt_test10", {{"test", {{"Ampt_rapid05_n1ratios_test10_", {0, 0}}}}}},
-		{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Ampt_test0", {{"test", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
+	//	{"Ampt_test1", {{"test", {{"Ampt_rapid05_n1ratios_test1_", {0, 0}}}}}},
+	//	{"Ampt_test2", {{"test", {{"Ampt_rapid05_n1ratios_test2_", {0, 0}}}}}},
+	//	{"Ampt_test3", {{"test", {{"Ampt_rapid05_n1ratios_test3_", {0, 0}}}}}},
+	//	{"Ampt_test4", {{"test", {{"Ampt_rapid05_n1ratios_test4_", {0, 0}}}}}},
+	//	{"Ampt_test5", {{"test", {{"Ampt_rapid05_n1ratios_test5_", {0, 0}}}}}},
+	//	{"Ampt_test6", {{"test", {{"Ampt_rapid05_n1ratios_test6_", {0, 0}}}}}},
+	//	{"Ampt_test7", {{"test", {{"Ampt_rapid05_n1ratios_test7_", {0, 0}}}}}},
+	//	{"Ampt_test8", {{"test", {{"Ampt_rapid05_n1ratios_test8_", {0, 0}}}}}},
+	//	{"Ampt_test9", {{"test", {{"Ampt_rapid05_n1ratios_test9_", {0, 0}}}}}},
+	//	{"Ampt_test10", {{"test", {{"Ampt_rapid05_n1ratios_test10_", {0, 0}}}}}},
+	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
+	//};
 
-	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	//vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
