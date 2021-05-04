@@ -74,6 +74,8 @@ void run_tchain();
 //void AMPT_Proton_Num_Check();
 void get_flag_trail_test();
 map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid="rapid05");
+map<string, map<string, map<string, pair<int, int>>>> get_sets_from_dir(string path, int set_size=15);
+
 
 void tree_read_speed();
 
@@ -166,8 +168,8 @@ void read_new() {
 	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	//vector<int> energy_list{ 7 };
+//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7, 11 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -294,7 +296,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	}
 	else if (platform == "win") {
 		base_path = "C:/Users/Dylan/Desktop/Research/";
-		in_base_path = "D:/Research/";
+		in_base_path = "C:/Users/Dylan/Desktop/Research/";
 		in_base_ampt_path = "E:/Research/";
 	}
 	string out_base_path = base_path;
@@ -1287,3 +1289,25 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid) {
 
 	return set_pairs;
 }
+
+
+map<string, map<string, map<string, pair<int, int>>>> get_sets_from_dir(string path, int set_size) {
+	vector<string> set_names = get_files_in_dir(path, "", "name", true);
+	map<string, map<string, map<string, pair<int, int>>>> sets = {{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}}};
+	int i = 0;
+	int j = 0;
+	for (string set_name : set_names) {
+		if (in_string(set_name, "_sys_")) {
+//			rfind(set_name, '_')
+			// Need to remove trailing number!!!
+			sets["BES1_def_sys_" + to_string(i)]["default_sys"][set_name] = make_pair(0, 0);
+			if (++j >= set_size) {
+				i++;
+				j = 0;
+			}
+		}
+	}
+
+	return sets;
+}
+
