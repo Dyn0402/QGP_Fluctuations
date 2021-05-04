@@ -74,6 +74,8 @@ void run_tchain();
 //void AMPT_Proton_Num_Check();
 void get_flag_trail_test();
 map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid="rapid05");
+map<string, map<string, map<string, pair<int, int>>>> get_sets_from_dir(string path, int set_size=15);
+
 
 void tree_read_speed();
 
@@ -127,20 +129,22 @@ void read_new() {
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//		{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
-		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {15, 29}}}}}},
-		{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {30, 44}}}}}},
-		{"BES1_def_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {45, 59}}}}}},
-		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_3", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_4", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_5", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_6", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_7", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}}
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
+//		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {15, 29}}}}}},
+//		{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {30, 44}}}}}},
+//		{"BES1_def_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {45, 59}}}}}},
+//		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+//		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+//		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+//		{"BES1_def_sys_3", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+//		{"BES1_def_sys_4", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+//		{"BES1_def_sys_5", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+//		{"BES1_def_sys_6", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+//		{"BES1_def_sys_7", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}}
+//	};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = get_sets_from_dir("/home/dylan/Research/Data/default_sys/", 10);
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 9}}}}}},
@@ -166,8 +170,8 @@ void read_new() {
 	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	//vector<int> energy_list{ 7 };
+//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7, 11 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -1287,3 +1291,25 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid) {
 
 	return set_pairs;
 }
+
+
+map<string, map<string, map<string, pair<int, int>>>> get_sets_from_dir(string path, int set_size) {
+	vector<string> set_names = get_files_in_dir(path, "", "name", true);
+	map<string, map<string, map<string, pair<int, int>>>> sets = {{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}}};
+	int i = 0;
+	int j = 0;
+	for (string set_name : set_names) {
+		if (in_string(set_name, "_sys_")) {
+//			rfind(set_name, '_')
+			// Need to remove trailing number!!!
+			sets["BES1_def_sys_" + to_string(i)]["default_sys"][set_name] = make_pair(0, 0);
+			if (++j >= set_size) {
+				i++;
+				j = 0;
+			}
+		}
+	}
+
+	return sets;
+}
+
