@@ -127,29 +127,29 @@ void read_new() {
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//		{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
-		{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {15, 29}}}}}},
-		{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {30, 44}}}}}},
-		{"BES1_def_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {45, 59}}}}}},
-		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_3", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_4", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_5", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_6", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
-		{"BES1_def_sys_7", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}}
-	};
-
-	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
-	//	{"BES1_rapid1", {{"default", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 9}}}}}},
-	//	{"BES1_rapid08", {{"default", {{"rapid08_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {10, 19}}}}}},
-	//	{"BES1_rapid02", {{"default", {{"rapid02_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {20, 29}}}}}},
-	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid1")}}},
-	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid08")}}},
-	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid02")}}}
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
+	//	{"BES1_def_1", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {15, 29}}}}}},
+	//	{"BES1_def_2", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {30, 44}}}}}},
+	//	{"BES1_def_3", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {45, 59}}}}}},
+	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+	//	{"BES1_def_sys_3", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+	//	{"BES1_def_sys_4", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+	//	{"BES1_def_sys_5", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+	//	{"BES1_def_sys_6", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}},
+	//	{"BES1_def_sys_7", {{"default_sys", get_rand_set_pairs(15, "rapid05")}}}
 	//};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = { 
+		{"BES1_rapid1_0", {{"rapid1", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 19}}}}}},
+		{"BES1_rapid08", {{"rapid08", {{"rapid08_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {20, 39}}}}}},
+		{"BES1_rapid02", {{"rapid02", {{"rapid02_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {20, 29}}}}}},
+		{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid1")}}},
+		{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid08")}}},
+		{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid02")}}}
+	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Ampt_test0", {{"test", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
@@ -294,7 +294,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	}
 	else if (platform == "win") {
 		base_path = "C:/Users/Dylan/Desktop/Research/";
-		in_base_path = "C:/Users/Dylan/Desktop/Research/";
+		in_base_path = "D:/Research/";
 		in_base_ampt_path = "E:/Research/";
 	}
 	string out_base_path = base_path;
