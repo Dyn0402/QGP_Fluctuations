@@ -11,6 +11,14 @@
 #include <sstream>
 #include <thread>
 
+#ifdef _WIN32
+#include "dirent_win.h"
+static const std::string platform = "win";
+#else
+#include <dirent.h>
+static const std::string platform = "lin";
+#endif
+
 #include <TROOT.h>
 #include <TFile.h>
 #include <TDirectory.h>
@@ -34,6 +42,7 @@ void azimuth_bin_analyze();
 void binomial_analyze();
 
 map<string, vector<int>> get_sets(string dir_path, string val_flag, pair<float, float> val_range, int dec_pos, vector<string> other_flags={});
+map<string, vector<int>> get_sets(string dir_path);
 vector<string> get_set_names(map<string, vector<int>> sets);
 map<string, vector<int>> combine_sets(vector<map<string, vector<int>>> sets_set);
 
@@ -47,8 +56,8 @@ int main() {
 //	}
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 	azimuth_bin_analyze();
-	cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
-	binomial_analyze();
+	//cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
+	//binomial_analyze();
 
 	cout << "donzo" << endl;
 	return(0);
@@ -57,16 +66,30 @@ int main() {
 
 void azimuth_bin_analyze() {
 	AzimuthBinAnalyzer analyzer;
-	analyzer.set_bes_in_path("/home/dylan/Research/Data/");
-	analyzer.set_bes_in_mix_path("/home/dylan/Research/Data_Mix/");
-	analyzer.set_ampt_in_path("/home/dylan/Research/Data_Ampt/");
-	analyzer.set_ampt_in_mix_path("/home/dylan/Research/Data_Ampt_Mix/");
-	analyzer.set_sim_in_path("/home/dylan/Research/Data_Sim/");
-	analyzer.set_sim_in_mix_path("/home/dylan/Research/Data_Sim_Mix/");
-	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
+	if (platform == "lin") {
+		analyzer.set_bes_in_path("/home/dylan/Research/Data/");
+		analyzer.set_bes_in_mix_path("/home/dylan/Research/Data_Mix/");
+		analyzer.set_ampt_in_path("/home/dylan/Research/Data_Ampt/");
+		analyzer.set_ampt_in_mix_path("/home/dylan/Research/Data_Ampt_Mix/");
+		analyzer.set_sim_in_path("/home/dylan/Research/Data_Sim/");
+		analyzer.set_sim_in_mix_path("/home/dylan/Research/Data_Sim_Mix/");
+		analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
+	}
+	else if (platform == "win") {
+		analyzer.set_bes_in_path("C:/Users/Dylan/Research/Data/");
+		analyzer.set_bes_in_mix_path("C:/Users/Dylan/Research/Data_Mix/");
+		analyzer.set_ampt_in_path("C:/Users/Dylan/Research/Data_Ampt/");
+		analyzer.set_ampt_in_mix_path("C:/Users/Dylan/Research/Data_Ampt_Mix/");
+		analyzer.set_sim_in_path("C:/Users/Dylan/Research/Data_Sim/");
+		analyzer.set_sim_in_mix_path("C:/Users/Dylan/Research/Data_Sim_Mix/");
+		analyzer.set_out_path("C:/Users/Dylan/Research/Results/Azimuth_Analysis/");
+	}
+	else {
+		cout << "What platform? " << platform << endl;
+	}
 //	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 //	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("4-23-21_bes_ampt_reactionplane.root");
+	analyzer.set_out_root_name("5-4-21_bes_new_structure.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
 	analyzer.set_all_centralities({8}); // ,7,6,5,4,3,2,1
@@ -96,14 +119,24 @@ void azimuth_bin_analyze() {
 //	analyzer.set_sets(combine_sets({bes1_sys, bes1_def, ampt_def}));
 //	analyzer.set_sys_combos({{"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
 
-	map<string, vector<int>> bes1_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-	map<string, vector<int>> bes1_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
-	map<string, vector<int>> ampt_def {{"Ampt_rapid05_n1ratios", {0, 54}}};
-	map<string, vector<int>> ampt_sys = ampt_def;
-	map<string, vector<int>> ampt_rp_def {{"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {0, 16}}};
-	map<string, vector<int>> ampt_rp_sys = ampt_def;
-	analyzer.set_sets(combine_sets({bes1_def, bes1_sys, ampt_rp_def, ampt_def}));
-	analyzer.set_sys_combos({{"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}}, {"AMPT_RP", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
+	//map<string, vector<int>> bes1_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
+	//map<string, vector<int>> bes1_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
+	//map<string, vector<int>> ampt_def {{"Ampt_rapid05_n1ratios", {0, 54}}};
+	//map<string, vector<int>> ampt_sys = ampt_def;
+	//map<string, vector<int>> ampt_rp_def {{"Ampt_rapid05_n1ratios_dca1_ReactionPlane_", {0, 16}}};
+	//map<string, vector<int>> ampt_rp_sys = ampt_def;
+	//analyzer.set_sets(combine_sets({bes1_def, bes1_sys, ampt_rp_def, ampt_def}));
+	//analyzer.set_sys_combos({{"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}}, {"AMPT_RP", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
+
+
+	map<string, vector<int>> bes1_def = get_sets(analyzer.get_bes_in_path() + "default/");
+	map<string, vector<int>> bes1_sys = get_sets(analyzer.get_bes_in_path() + "default_sys/");
+	map<string, vector<int>> bes1_def1, bes1_sys1;
+	for (pair<string, vector<int>> def : bes1_def) { bes1_def1["default/" + def.first] = def.second;  }
+	for (pair<string, vector<int>> def : bes1_sys) { bes1_sys1["default_sys/" + def.first] = def.second; }
+	analyzer.set_sets(combine_sets({ bes1_def1, bes1_sys1}));
+	analyzer.set_sys_combos({ {"BES1", {get_set_names(bes1_def1)[0], get_set_names(bes1_sys1)}} });
+
 
 //	map<string, vector<int>> full_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
 //	map<string, vector<int>> full_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
@@ -236,6 +269,29 @@ void binomial_analyze() {
 	analyzer.set_set_combos({{"bes_ampt", {"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", "Ampt_rapid05_n1ratios"}}, {"ampt_rp", {"Ampt_rapid05_n1ratios", "Ampt_rapid05_n1ratios_dca1_ReactionPlane_"}}});
 
 	analyzer.analyze();
+}
+
+
+map<string, vector<int>> get_sets(string dir_path) {
+	map<string, vector<int>> out_vec;
+	vector<string> dir_names = get_files_in_dir(dir_path, "txt", "name", true);
+	for (string dir_name : dir_names) {
+		if (dir_name != "." && dir_name != "..") {
+			cout << dir_name << endl;
+			string set_name = strip_flag(dir_name, "_", true, false);
+			int set_num = stoi(strip_flag(dir_name, "_", false, true));
+			out_vec[set_name].push_back(set_num);
+		}
+	}
+
+	for (pair<string, vector<int>> set : out_vec) {
+		int high_num = 0;
+		while (count(set.second.begin(), set.second.end(), high_num) > 0) { high_num++; }
+		if (high_num == 0) { cout << "No zero dir num for " << set.first << endl; }
+		out_vec[set.first] = { 0, high_num - 1 };
+	}
+
+	return out_vec;
 }
 
 

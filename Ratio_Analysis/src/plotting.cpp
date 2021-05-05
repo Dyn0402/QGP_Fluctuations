@@ -22,6 +22,7 @@
 #include <TGraphErrors.h>
 #include <TLegend.h>
 #include <TStyle.h>
+#include <TF1.h>
 
 #include "ratio_methods.h"
 #include "plotting.h"

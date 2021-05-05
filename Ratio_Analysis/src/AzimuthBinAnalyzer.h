@@ -33,6 +33,8 @@
 
 using namespace std;
 
+pair<string, int> get_set_name_num(string set);
+
 
 class AzimuthBinAnalyzer {
 public:
@@ -41,6 +43,7 @@ public:
 	~AzimuthBinAnalyzer();
 
 	// Getters
+	string get_bes_in_path();
 
 	// Setters
 	void set_bes_in_path(string bes_in_path);
@@ -97,15 +100,11 @@ private:
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
 	bool sys_calc = false;
+
 	int free_threads = 0;
-//	map<string, vector<int>> sets {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
-//	map<string, vector<int>> sets {{"Rand_Rotate", {0, 29}}, {"No_Rotate", {0, 9}}, {"EP_Rotate", {0, 9}}, {"Efficiency_01_", {0, 6}}, {"Efficiency_08_", {0, 6}}, {"Efficiency_025_", {0, 6}}, {"Efficiency_05_", {0, 6}}, {"Pile_Up_001_", {0, 6}}, {"Pile_Up_01_", {0, 6}}, {"Pile_Up_002_", {0, 6}}, {"Pile_Up_005_", {0, 6}}, {"Pile_Up_008_", {0, 6}}};
-//	map<string, vector<int>> sets {{"Rand_Rotate", {0, 50}}, {"No_Rotate", {0, 8}}, {"EP_Rotate", {0, 8}}, {"No_BTof_Rej", {0, 8}}, {"Efficiency_01_", {0, 8}}, {"Efficiency_025_", {0, 8}}, {"Efficiency_05_", {0, 8}}, {"Efficiency_08_", {0, 8}}, {"Pile_Up_0002_", {0, 8}}, {"Pile_Up_0005_", {0, 8}}, {"Pile_Up_0008_", {0, 8}}, {"Pile_Up_001_", {0, 8}}, {"Pile_Up_002_", {0, 8}}, {"Pile_Up_005_", {0, 8}}, {"Pile_Up_008_", {0, 8}}, {"Pile_Up_01_", {0, 8}}};
-//	map<string, vector<int>> sets {{"Rand_Rotate", {0,1}}, {"Single_Ratio", {0,1}}};
-	map<string, vector<int>> sets {{"Single_Ratio", {0,0}}};
+	map<string, vector<int>> sets {{"Single_Ratio", {0}}};
 	map<string, vector<string>> set_combos;
 	map<string, pair<string, vector<string>>> sys_combos;  // sys_combos[combo_name]{first.default.set_name, second.systematics[set_names]}
-//	string def_set;
 
 
 	// Data Containers
@@ -154,6 +153,8 @@ private:
 	void combine_set_lite(string set_name);
 
 	void plot_systematics();
+
+	vector<string> get_sets(string set_dir);
 
 	map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders);
 	void calc_stat(AzimuthBinData *data, string type, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats);

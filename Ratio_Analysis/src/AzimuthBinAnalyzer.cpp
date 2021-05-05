@@ -32,7 +32,9 @@ AzimuthBinAnalyzer::~AzimuthBinAnalyzer() {
 
 // Getters
 
-
+string AzimuthBinAnalyzer::get_bes_in_path() {
+	return this->bes_in_path;
+}
 
 // Setters
 
@@ -171,12 +173,10 @@ void AzimuthBinAnalyzer::analyze_sets_lite() {
 	{
 		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 		mutex *mtx = new mutex;
-		for(pair<string, vector<int>> set:sets) {
-			for(int set_num = set.second[0]; set_num <= set.second[1]; set_num++) {
+		for (pair<string, vector<int>> set : sets) {
+			for (int set_num = set.second[0]; set_num <= set.second[1]; set_num++) {
 				pool.enqueue(&AzimuthBinAnalyzer::analyze_subset_lite, this, set.first, set_num, mtx);
-//				analyze_subset_lite(set.first, set_num);
 			}
-//			pool.enqueue(&AzimuthBinAnalyzer::analyze_set_lite, this, set.first, set.second);
 		}
 	}
 
@@ -205,7 +205,7 @@ void AzimuthBinAnalyzer::analyze_subset_lite(string set_name, int set_num, mutex
 
 	cout << "Starting Set " + set_name + to_string(set_num) << endl;
 
-	string path, path_mix;
+	string path, path_mix, set_dir_ext;
 	if(in_string(set_name, "Ampt")) {
 		path = ampt_in_path + set_name + to_string(set_num) + "/";
 		path_mix = ampt_in_mix_path + set_name + to_string(set_num) + "/";
@@ -2049,6 +2049,20 @@ map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string
 }
 
 
+vector<string> AzimuthBinAnalyzer::get_sets(string set_dir) {
+	string path;
+	if (in_string(set_dir, "Ampt")) {
+		path = ampt_in_path + set_dir + "/";
+	}
+	else if (in_string(set_dir, "Sim")) {
+		path = sim_in_path + set_dir + "/";
+	}
+	else {
+		path = bes_in_path + set_dir + "/";
+	}
+	return get_files_in_dir(path, "", "name", true);
+}
+
 //Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
 map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders) {
 	map<int, map<int, map<int, map<string, Measure>>>> stats;
@@ -2179,4 +2193,19 @@ double AzimuthBinAnalyzer::sample_sd_errweight(vector<Measure> data) {
 Measure AzimuthBinAnalyzer::median(vector<Measure> data) {
 	sort(data.begin(), data.end(), [] (Measure a, Measure b) { return(a.get_val() < b.get_val()); } );
 	return(data[(int)(data.size()-1) / 2]);
+}
+
+
+pair<string, int> get_set_name_num(string set) {
+	unsigned index = set.rfind("_");
+	if (index == string::npos) {
+		cout << "No _ found in " << set << endl;
+		return make_pair(set, 0);
+		set = set.substr(0, set.rfind('_')) + "_";
+	}
+	else {
+		string set_name = set.substr(0, index + 1);
+		int set_num = stoi(set.substr(index + 1));
+		return make_pair(set_name, set_num);
+	}
 }
