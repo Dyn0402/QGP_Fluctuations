@@ -145,10 +145,10 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-	{"AMPT_def_0", {{"default", {{"ampt_rapid05_n1ratios_", {0, 14}}}}}},
-	{"AMPT_def_1", {{"default", {{"ampt_rapid05_n1ratios_", {15, 29}}}}}},
-	{"AMPT_def_2", {{"default", {{"ampt_rapid05_n1ratios_", {30, 44}}}}}},
-	{"AMPT_def_3", {{"default", {{"ampt_rapid05_n1ratios_", {45, 59}}}}}}
+	{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
+	{"Ampt_def_1", {{"default", {{"Ampt_rapid05_n1ratios_", {15, 29}}}}}},
+	{"Ampt_def_2", {{"default", {{"Ampt_rapid05_n1ratios_", {30, 44}}}}}},
+	{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}}
 	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
@@ -175,8 +175,8 @@ void read_new() {
 	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
-//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 7, 11 };
+	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+//	vector<int> energy_list{ 7, 11 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -299,7 +299,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	if (platform == "lin") {
 		base_path = "/home/dylan/Research/";
 		in_base_path = "/media/ucla/Research/";
-		in_base_ampt_path = "/media/ssd/Research/";
+		in_base_ampt_path = "/media/ucla/Research/";
 	}
 	else if (platform == "win") {
 		base_path = "C:/Users/Dylan/Desktop/Research/";

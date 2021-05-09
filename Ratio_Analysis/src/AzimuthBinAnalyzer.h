@@ -44,6 +44,7 @@ public:
 
 	// Getters
 	string get_bes_in_path();
+	string get_ampt_in_path();
 
 	// Setters
 	void set_bes_in_path(string bes_in_path);

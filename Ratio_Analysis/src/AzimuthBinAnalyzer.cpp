@@ -36,6 +36,10 @@ string AzimuthBinAnalyzer::get_bes_in_path() {
 	return this->bes_in_path;
 }
 
+string AzimuthBinAnalyzer::get_ampt_in_path() {
+	return this->ampt_in_path;
+}
+
 // Setters
 
 void AzimuthBinAnalyzer::set_bes_in_path(string bes_in_path) {
