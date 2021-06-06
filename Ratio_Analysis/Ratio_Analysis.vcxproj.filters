@@ -36,6 +36,9 @@
     <ClCompile Include="src\plotting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\AzFigurePlotter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AzimuthBinAnalyzer.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\plotting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AzFigurePlotter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

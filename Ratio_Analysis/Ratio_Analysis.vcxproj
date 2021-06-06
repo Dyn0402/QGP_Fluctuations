@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="quick_root_macros\Nihal_Example.cpp" />
     <ClCompile Include="quick_root_macros\Plot_BES1_Inefficiencies.cpp" />
+    <ClCompile Include="src\AzFigurePlotter.cpp" />
     <ClCompile Include="src\AzimuthBinAnalyzer.cpp" />
     <ClCompile Include="src\BinomialAnalyzer.cpp" />
     <ClCompile Include="src\config_analysis.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="src\plotting.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AzFigurePlotter.h" />
     <ClInclude Include="src\AzimuthBinAnalyzer.h" />
     <ClInclude Include="src\BinomialAnalyzer.h" />
     <ClInclude Include="src\config_analysis.h" />
