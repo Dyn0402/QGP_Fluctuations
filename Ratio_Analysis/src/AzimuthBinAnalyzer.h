@@ -67,13 +67,14 @@ public:
 	void set_plot_dists(bool plot);
 	void set_plot_dist_canvases(bool plot);
 	void set_sys_calc(bool calc);
+	void set_plot_sys(bool plot);
 	void set_divs(vector<int> divisions);
 
 	// Doers
 	void analyze();
 	void analyze_lite();
 
-private:
+protected:
 	// Attributes
 	vector<string> stat_names = {"standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"};
 	vector<string> stat_names_rows = {"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"};
@@ -101,6 +102,7 @@ private:
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
 	bool sys_calc = false;
+	bool plot_sys = true;  // Plot systematics
 
 	int free_threads = 0;
 	map<string, vector<int>> sets {{"Single_Ratio", {0}}};
@@ -135,7 +137,7 @@ private:
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_mix_stats_median;
 	map<string, map<int, map<int, map<int, map<string, Measure>>>>> pull_divide_stats_median;
 
-	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> def_medians;
+	map<string, map<string, map<int, map<int, map<int, map<string, Measure>>>>>> def_medians;  // [setgroup_name][data_type][energy][div][cent][stat_name]
 	map<string, map<string, map<int, map<int, map<int, map<string, double>>>>>> def_systematics;
 
 
@@ -157,8 +159,10 @@ private:
 
 	vector<string> get_sets(string set_dir);
 
-	map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders);
-	void calc_stat(AzimuthBinData *data, string type, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats);
+	//map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type, vector<int> orders);
+	//void calc_stat(AzimuthBinData *data, string type, int energy, int div, int cent, vector<int> orders, map<int, map<int, map<int, map<string, Measure>>>> *stats);
+	map<int, map<int, map<int, map<string, Measure>>>> calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type);
+	void calc_stat(AzimuthBinData* data, string type, int energy, int div, int cent, map<int, map<int, map<int, map<string, Measure>>>>* stats);
 	map<int, map<int, map<int, map<int, map<string, Measure>>>>> calculate_mix_diff_sds(map<int, map<int, map<int, AzimuthBinData>>> data);
 	void calc_mix_diff_sd(AzimuthBinData *data, int energy, int div, int cent, map<int, map<int, map<int, map<int, map<string, Measure>>>>> *stats);
 	double sample_sd(vector<double> data);
