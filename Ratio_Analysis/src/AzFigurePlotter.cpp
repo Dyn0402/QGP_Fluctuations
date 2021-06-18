@@ -40,6 +40,7 @@ void AzFigurePlotter::plot_paper_figs() {
 	kurt_vs_energy();
 	kurt_vs_energy_divs();
 	kurt_vs_energy_cents();
+	moments_vs_energy();
 	fig_file.Close();
 }
 
