@@ -102,7 +102,7 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("6-17-21_paper_figs.root");
+	analyzer.set_out_root_name("6-18-21_paper_figs.root");
 	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
 	//	analyzer.set_energies({7});
 	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
@@ -113,7 +113,7 @@ void azimuth_bin_analyze_fig() {
 	analyzer.set_plot_cents({ 8 });
 	analyzer.set_plot_dists(true);
 	analyzer.set_plot_dist_canvases(true);
-	analyzer.set_plot_sys(false);
+	analyzer.set_plot_sys(true);
 	//	analyzer.set_can_wh(625, 550);
 	//	analyzer.set_can_wh(955, 900);
 	analyzer.set_can_wh(955, 805);
