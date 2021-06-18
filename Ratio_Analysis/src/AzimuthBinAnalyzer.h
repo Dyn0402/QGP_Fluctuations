@@ -61,6 +61,7 @@ public:
 	void set_all_centralities(vector<int> centralities);
 	void set_centralities(vector<int> centralities);
 	void set_plot_cents(vector<int> centralities);
+	void set_stat_names(vector<string> names);
 	void set_can_wh(int can_width, int can_height);
 	void set_set_combos(map<string, vector<string>> set_combos);
 	void set_sys_combos(map<string, pair<string, vector<string>>> sys_combos);

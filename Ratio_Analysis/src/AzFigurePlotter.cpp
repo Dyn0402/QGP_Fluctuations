@@ -211,7 +211,7 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 		energy_ampt.push_back(energy + 0.5);
 	}
 
-	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_can_"+type_name).data(), "Kurtosis vs Energy", 955, 805);
+	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_mg");
 	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
@@ -286,7 +286,7 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 	map<int, int> div_marker_size{ {60, 2}, {72, 2}, {90, 2}, {120, 2}, {180, 2} };
 
 
-	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_divs_can_" + type_name).data(), "Kurtosis vs Energy with Bin Width", 955, 805);
+	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_divs_can_" + type_name).data(), ("Kurtosis vs Energy with Bin Width " + type_name).data(), 955, 805);
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_mg");
 	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
@@ -364,7 +364,7 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 	map<int, int> cent_marker_size{ {8, 2}, {7, 2}, {6, 2}, {5, 2}, {4, 2}, {3, 2}, {2, 2}, {1, 2} };
 
 
-	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_cents_can_" + type_name).data(), "Kurtosis vs Energy with Centrality", 955, 805);
+	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_cents_can_" + type_name).data(), ("Kurtosis vs Energy with Centrality " + type_name).data(), 955, 805);
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_mg");
 	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
@@ -437,11 +437,11 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		energy_ampt.push_back(energy + 0.6);
 	}
 
-	map<string, int> color{ {"raw", kBlue}, {"mix", kGreen}, {"divide", kRed} };
+	map<string, int> color{ {"raw", kBlue}, {"mix", kGreen+2}, {"divide", kRed} };
 	map<string, int> marker_style{ {"raw", 2}, {"mix", 3}, {"divide", 4} };
 	map<string, int> marker_size{ {"raw", 2}, {"mix", 2}, {"divide", 2} };
 
-	TCanvas* can = new TCanvas(("Moments_vs_energy_can" + type_name).data(), "Moments vs Energy", 955, 805);
+	TCanvas* can = new TCanvas(("Moments_vs_energy_can_" + type_name).data(), ("Moments vs Energy " + type_name).data(), 955, 805);
 	can->Divide((int)bes1["raw"].size(), 2, 0.001, 0.001);
 	int can_index = 1;
 	for (pair<string, plot_data> stat : bes1["raw"]) {  // Iterate over stats, left to right on plot
@@ -450,6 +450,7 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		can->cd(can_index);
 		TMultiGraph* mg = new TMultiGraph();
 		mg->SetName((stat.first + "_raw_mixed").data());
+		mg->SetTitle((stat.first).data());
 
 		TGraphErrors* bes1_ratio_raw_def_g = graph_x_vs_y_err(energy_bes1, bes1["raw"][stat.first].val, energy_err, bes1["raw"][stat.first].stat);
 		TGraphErrors* ampt_ratio_raw_def_g = graph_x_vs_y_err(energy_ampt, ampt["raw"][stat.first].val, energy_err, ampt["raw"][stat.first].stat);

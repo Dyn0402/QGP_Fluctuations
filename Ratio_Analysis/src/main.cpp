@@ -108,6 +108,7 @@ void azimuth_bin_analyze_fig() {
 	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
 	analyzer.set_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
 	analyzer.set_divs({ 300, 270, 240, 180, 120, 90, 72, 60 });
+	analyzer.set_stat_names({"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"});
 	//	analyzer.set_divs({60});
 	analyzer.set_plot_cents({ 8 });
 	analyzer.set_plot_dists(true);

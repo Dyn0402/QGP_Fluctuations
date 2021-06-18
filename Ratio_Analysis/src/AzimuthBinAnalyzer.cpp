@@ -98,6 +98,10 @@ void AzimuthBinAnalyzer::set_plot_cents(vector<int> centralities) {
 	plot_cents = centralities;
 }
 
+void AzimuthBinAnalyzer::set_stat_names(vector<string> names) {
+	stat_names = names;
+}
+
 void AzimuthBinAnalyzer::set_can_wh(int can_width, int can_height) {
 	plot::canvas_width = can_width;
 	plot::canvas_height = can_height;
