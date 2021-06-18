@@ -30,6 +30,7 @@ public:
 	void kurt_vs_energy();
 	void kurt_vs_energy_divs();
 	void kurt_vs_energy_cents();
+	void moments_vs_energy();
 
 private:
 	// Attributes
@@ -38,4 +39,5 @@ private:
 	void kurt_vs_energy_plot(vector<int> energies, plot_data bes1, plot_data ampt, string type_name);
 	void kurt_vs_energy_divs_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
 	void kurt_vs_energy_cents_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
+	void moments_vs_energy_plot(vector<int> energies, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, string type_name);
 };
