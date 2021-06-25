@@ -145,18 +145,15 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_rapid1_0", {{"rapid1_def", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
-		{"BES1_rapid08_0", {{"rapid08_def", {{"rapid08_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
-		{"BES1_rapid06_0", {{"rapid06_def", {{"rapid06_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
-		{"BES1_rapid04_0", {{"rapid04_def", {{"rapid04_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
-		{"BES1_rapid1_sys_0", {{"rapid1_sys", get_rand_set_pairs(15, "rapid1")}}},
-		{"BES1_rapid1_sys_1", {{"rapid1_sys", get_rand_set_pairs(15, "rapid1")}}},
-		{"BES1rapid08_sys_0", {{"rapid08_sys", get_rand_set_pairs(15, "rapid08")}}},
-		{"BES1rapid08_sys_1", {{"rapid08_sys", get_rand_set_pairs(15, "rapid08")}}},
-		{"BES1rapid06_sys_0", {{"rapid06_sys", get_rand_set_pairs(15, "rapid06")}}},
-		{"BES1rapid06_sys_1", {{"rapid06_sys", get_rand_set_pairs(15, "rapid06")}}},
-		{"BES1rapid04_sys_0", {{"rapid04_sys", get_rand_set_pairs(15, "rapid04")}}},
-		{"BES1rapid04_sys_1", {{"rapid04_sys", get_rand_set_pairs(15, "rapid04")}}}
+		{"BES1_rapid01_0", {{"rapid01_def", {{"rapid01_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
+		{"BES1_rapid02_0", {{"rapid02_def", {{"rapid02_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
+		{"BES1_rapid03_0", {{"rapid03_def", {{"rapid03_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
+		{"BES1_rapid01_sys_0", {{"rapid01_sys", get_rand_set_pairs(15, "rapid01")}}},
+		{"BES1_rapid01_sys_1", {{"rapid01_sys", get_rand_set_pairs(15, "rapid01")}}},
+		{"BES1_rapid02_sys_0", {{"rapid02_sys", get_rand_set_pairs(15, "rapid02")}}},
+		{"BES1_rapid02_sys_1", {{"rapid02_sys", get_rand_set_pairs(15, "rapid02")}}},
+		{"BES1_rapid03_sys_0", {{"rapid03_sys", get_rand_set_pairs(15, "rapid03")}}},
+		{"BES1_rapid03_sys_1", {{"rapid03_sys", get_rand_set_pairs(15, "rapid03")}}}
 	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
