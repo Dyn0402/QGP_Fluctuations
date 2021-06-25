@@ -102,13 +102,13 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("6-18-21_paper_figs.root");
+	analyzer.set_out_root_name("6-23-21_cf_pres_slides.root");
 	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
 	//	analyzer.set_energies({7});
-	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
-	analyzer.set_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
+	analyzer.set_all_centralities({ 8 });//({ 8, 7, 6, 5, 4, 3, 2, 1 });
+	analyzer.set_centralities({ 8 });
 	analyzer.set_divs({ 300, 270, 240, 180, 120, 90, 72, 60 });
-	analyzer.set_stat_names({"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"});
+	analyzer.set_stat_names({ "non_excess_kurtosis" });//({"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"});
 	//	analyzer.set_divs({60});
 	analyzer.set_plot_cents({ 8 });
 	analyzer.set_plot_dists(true);
@@ -211,7 +211,7 @@ void azimuth_bin_analyze_fig() {
 	//		{"rapidvar_dca1_seed", get_set_names(get_sets("/home/dylan/Research/Data/", "rapid", make_pair(0.35, 0.7), 1, {"_dca1_"}))}});
 	//analyzer.analyze();
 	analyzer.analyze_lite();
-	analyzer.plot_paper_figs();
+	//analyzer.plot_paper_figs();
 }
 
 void azimuth_bin_analyze() {
