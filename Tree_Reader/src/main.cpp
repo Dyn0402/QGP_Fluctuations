@@ -73,7 +73,7 @@ void tchain_test();
 void run_tchain();
 //void AMPT_Proton_Num_Check();
 void get_flag_trail_test();
-map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid="rapid05");
+map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid="rapid05", string efficiency="");
 map<string, map<string, map<string, pair<int, int>>>> get_sets_from_dir(string path, int set_size=15);
 
 
@@ -156,6 +156,18 @@ void read_new() {
 	//	{"BES1_rapid03_sys_1", {{"rapid03_sys", get_rand_set_pairs(15, "rapid03")}}}
 	//};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"BES1_Eff1_0", {{"Eff1_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency1_", {0, 14}}}}}},
+		{"BES1_Eff2_0", {{"Eff2_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency2_", {0, 14}}}}}},
+		{"BES1_Eff3_0", {{"Eff3_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency3_", {0, 14}}}}}},
+		{"BES1_Eff1_sys_0", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficiency1")}}},
+		{"BES1_Eff1_sys_1", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy1")}}},
+		{"BES1_Eff2_sys_0", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy2")}}},
+		{"BES1_Eff2_sys_1", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy2")}}},
+		{"BES1_Eff3_sys_0", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}},
+		{"BES1_Eff3_sys_1", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}}
+	};
+
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
 	//{"Ampt_def_1", {{"default", {{"Ampt_rapid05_n1ratios_", {15, 29}}}}}},
@@ -163,15 +175,15 @@ void read_new() {
 	//{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}}
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid08", {{"rapid08_def", {{"Ampt_rapid08_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid06", {{"rapid06_def", {{"Ampt_rapid06_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid04", {{"rapid04_def", {{"Ampt_rapid04_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid03", {{"rapid03_def", {{"Ampt_rapid03_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid02", {{"rapid02_def", {{"Ampt_rapid02_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}}
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
+	//	{"Ampt_rapid08", {{"rapid08_def", {{"Ampt_rapid08_n1ratios_", {0, 14}}}}}},
+	//	{"Ampt_rapid06", {{"rapid06_def", {{"Ampt_rapid06_n1ratios_", {0, 14}}}}}},
+	//	{"Ampt_rapid04", {{"rapid04_def", {{"Ampt_rapid04_n1ratios_", {0, 14}}}}}},
+	//	{"Ampt_rapid03", {{"rapid03_def", {{"Ampt_rapid03_n1ratios_", {0, 14}}}}}},
+	//	{"Ampt_rapid02", {{"rapid02_def", {{"Ampt_rapid02_n1ratios_", {0, 14}}}}}},
+	//	{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}}
+	//};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1_0", {{"rapid1", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 19}}}}}},
@@ -1292,7 +1304,7 @@ void get_flag_trail_test() {
 	for(string c:get_flag_trail(a,b,"_")) { cout << str_num_dec(c, 2) << endl; }
 }
 
-map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid) {
+map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid, string efficiency) {
 	TRandom3 *rand = new TRandom3(0);
 	map<string, pair<int, int>> set_pairs = {};
 
@@ -1302,7 +1314,13 @@ map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid) {
 	set_ranges["nsprx"] = make_pair(make_pair(100, 3), make_pair(0.9, 1.1));
 	set_ranges["nhfit"] = make_pair(make_pair(1, 2), make_pair(14.5001, 25.4999));
 
-	string name_post = "m2s0_sys_";
+	string name_post;
+	if (efficiency == "") {
+		name_post = "m2s0_sys_";
+	}
+	else {
+		name_post = "m2s0_" + efficiency + "_sys_";
+	}
 	pair<int, int> set_nums = {0,0};
 
 	for(int i = 0; i < num_pairs; i++) {
