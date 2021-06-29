@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 		gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
 	}
 
-//	tree_read_speed();
+	tree_read_speed();
 
 	//TH2F btof_ref_hist("test", "test", 10, 0, 10, 10, 0, 10);
 	//btof_ref_hist.Fill(5, 5, 10);
@@ -106,7 +106,9 @@ int main(int argc, char** argv) {
 	//double rot_angle = M_PI / 2 - atan(lin_fit.GetParameter(0));
 	//cout << rot_angle << endl;
 	//read_class();
-	read_new();
+
+//	read_new();
+
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
