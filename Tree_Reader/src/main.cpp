@@ -158,17 +158,17 @@ void read_new() {
 	//	{"BES1_rapid03_sys_1", {{"rapid03_sys", get_rand_set_pairs(15, "rapid03")}}}
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_Eff1_0", {{"Eff1_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency1_", {0, 14}}}}}},
-		{"BES1_Eff2_0", {{"Eff2_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency2_", {0, 14}}}}}},
-		{"BES1_Eff3_0", {{"Eff3_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency3_", {0, 14}}}}}},
-		{"BES1_Eff1_sys_0", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficiency1")}}},
-		{"BES1_Eff1_sys_1", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy1")}}},
-		{"BES1_Eff2_sys_0", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy2")}}},
-		{"BES1_Eff2_sys_1", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy2")}}},
-		{"BES1_Eff3_sys_0", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}},
-		{"BES1_Eff3_sys_1", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}}
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_Eff1_0", {{"Eff1_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency1_", {0, 14}}}}}},
+//		{"BES1_Eff2_0", {{"Eff2_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency2_", {0, 14}}}}}},
+//		{"BES1_Eff3_0", {{"Eff3_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency3_", {0, 14}}}}}},
+//		{"BES1_Eff1_sys_0", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficiency1")}}},
+//		{"BES1_Eff1_sys_1", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy1")}}},
+//		{"BES1_Eff2_sys_0", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy2")}}},
+//		{"BES1_Eff2_sys_1", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy2")}}},
+//		{"BES1_Eff3_sys_0", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}},
+//		{"BES1_Eff3_sys_1", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}}
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
@@ -186,6 +186,12 @@ void read_new() {
 	//	{"Ampt_rapid02", {{"rapid02_def", {{"Ampt_rapid02_n1ratios_", {0, 14}}}}}},
 	//	{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}}
 	//};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Ampt_Eff1", {{"Eff1_def", {{"Ampt_rapid05_n1ratios_Efficien", {0, 14}}}}}},
+		{"Ampt_Eff2", {{"Eff2_def", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
+		{"Ampt_Eff3", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}}
+	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1_0", {{"rapid1", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 19}}}}}},
