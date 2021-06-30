@@ -8,6 +8,7 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <TLine.h>
 #include "PileUpQAer.h"
 
 double gaus_exp_r(double *x, double *par) {  // par = {amplitude, x_bar, sigma, k}
@@ -516,8 +517,8 @@ void PileUpQAer::rotate_dist() {
 				TF1 bkg("Background", "[0]*exp(-[1]*(x-[2]))/(1+exp(-(x-[2])/[3]))", slice_fits[slice.first].GetXmin(), slice_fits[slice.first].GetXmax());
 				bkg.SetParameters(slice_fits[slice.first].GetParameter(7), slice_fits[slice.first].GetParameter(8), slice_fits[slice.first].GetParameter(9), slice_fits[slice.first].GetParameter(10));
 				bkg.SetNpx(n_plot_points); bkg.SetLineColor(kViolet);
-				TLine low_cut_line(cuts[slice.first].first, 0, cuts[slice.first].first, slice.second.GetMaximum());
-				TLine high_cut_line(cuts[slice.first].second, 0, cuts[slice.first].second, slice.second.GetMaximum());
+				TLine low_cut_line(cuts[slice.first].first, 0.0, cuts[slice.first].first, (float)slice.second.GetMaximum());
+				TLine high_cut_line(cuts[slice.first].second, 0.0, cuts[slice.first].second, (float)slice.second.GetMaximum());
 				low_cut_line.SetLineColor(kOrange); high_cut_line.SetLineColor(kOrange);
 				low_cut_line.SetLineWidth(2); high_cut_line.SetLineWidth(2);
 	
