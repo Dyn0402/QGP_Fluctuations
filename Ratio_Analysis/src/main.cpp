@@ -52,6 +52,7 @@ void stat_sd_nan_test();
 
 map<string, vector<int>> get_sets(string dir_path, string val_flag, pair<float, float> val_range, int dec_pos, vector<string> other_flags={});
 map<string, vector<int>> get_sets(string dir_path);
+map<string, vector<int>> prepend_sets(map<string, vector<int>> orig_sets, string pre_string);
 vector<string> get_set_names(map<string, vector<int>> sets);
 map<string, vector<int>> combine_sets(vector<map<string, vector<int>>> sets_set);
 
@@ -144,8 +145,8 @@ void azimuth_bin_analyze_fig() {
 		//analyzer.set_sys_combos({{"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}}, {"AMPT_RP", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
 
 
-	map<string, vector<int>> bes1_def = get_sets(analyzer.get_bes_in_path() + "default/");
-	map<string, vector<int>> bes1_sys = get_sets(analyzer.get_bes_in_path() + "default_sys/");
+	map<string, vector<int>> bes1_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default/"), "default/");
+	map<string, vector<int>> bes1_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default_sys/"), "default_sys/");
 	map<string, vector<int>> bes1_def1, bes1_sys1;
 	for (pair<string, vector<int>> def : bes1_def) { bes1_def1["default/" + def.first] = def.second; }
 	for (pair<string, vector<int>> def : bes1_sys) { bes1_sys1["default_sys/" + def.first] = def.second; }
@@ -478,6 +479,14 @@ map<string, vector<int>> get_sets(string dir_path, string val_flag, pair<float, 
 	}
 
 	return out_vec;
+}
+
+
+map<string, vector<int>> prepend_sets(map<string, vector<int>> orig_sets, string pre_string) {
+	map<string, vector<int>> new_sets;
+	for (pair<string, vector<int>> def : orig_sets) { new_sets[pre_string + def.first] = def.second; }
+
+	return new_sets;
 }
 
 

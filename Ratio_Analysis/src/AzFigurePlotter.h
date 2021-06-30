@@ -31,6 +31,7 @@ public:
 	void kurt_vs_energy_divs();
 	void kurt_vs_energy_cents();
 	void moments_vs_energy();
+	void kurt_vs_rapidity();
 
 private:
 	// Attributes
