@@ -383,7 +383,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 			out_dir += set_group.first + "/";  // Add set-group directory to end of path
 			mix_out_dir += set_group.first + "/";
-			if (check_dir(out_dir) && check_dir(mix_out_dir)) { return; }  // Skip job if folders already exist.
+			if (check_dir(out_dir+to_string(energy)+"GeV") && check_dir(mix_out_dir+to_string(energy)+"GeV")) { return; }  // Skip job if folders already exist.
 			mkdir(out_dir);  // Create set-group directory if it does not already exist.
 			mkdir(mix_out_dir);
 
