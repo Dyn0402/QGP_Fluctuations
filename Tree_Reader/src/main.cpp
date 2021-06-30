@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 		gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
 	}
 
-	tree_read_speed();
+//	tree_read_speed();
 
 	//TH2F btof_ref_hist("test", "test", 10, 0, 10, 10, 0, 10);
 	//btof_ref_hist.Fill(5, 5, 10);
@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 	//cout << rot_angle << endl;
 	//read_class();
 
-//	read_new();
+	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
@@ -169,6 +169,17 @@ void read_new() {
 //		{"BES1_Eff3_sys_0", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}},
 //		{"BES1_Eff3_sys_1", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}}
 //	};
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"BES1_Eff1_0", {{"Eff1_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency1_", {0, 14}}}}}},
+		{"BES1_Eff2_0", {{"Eff2_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency2_", {0, 14}}}}}},
+		{"BES1_Eff3_0", {{"Eff3_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency3_", {0, 14}}}}}},
+		{"BES1_Eff1_sys_0", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficiency1")}}},
+		{"BES1_Eff1_sys_1", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficiency1")}}},
+		{"BES1_Eff2_sys_0", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficiency2")}}},
+		{"BES1_Eff2_sys_1", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficiency2")}}},
+		{"BES1_Eff3_sys_0", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficiency3")}}},
+		{"BES1_Eff3_sys_1", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficiency3")}}}
+	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
@@ -389,6 +400,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 			out_dir += set_group.first + "/";  // Add set-group directory to end of path
 			mix_out_dir += set_group.first + "/";
+			if (check_dir(out_dir+to_string(energy)+"GeV") && check_dir(mix_out_dir+to_string(energy)+"GeV")) { return; }  // Skip job if folders already exist.
 			mkdir(out_dir);  // Create set-group directory if it does not already exist.
 			mkdir(mix_out_dir);
 
