@@ -169,24 +169,40 @@ void read_new() {
 //		{"BES1_Eff3_sys_0", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}},
 //		{"BES1_Eff3_sys_1", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficinecy3")}}}
 //	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_Eff05_0", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {0, 14}}}}}},
+//		{"BES1_Eff15_0", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {0, 14}}}}}},
+//		{"BES1_Eff05_sys_0", {{"Eff05_sys", get_rand_set_pairs(15, "rapid05", "Efficiency05")}}},
+//		{"BES1_Eff05_sys_1", {{"Eff05_sys", get_rand_set_pairs(15, "rapid05", "Efficiency05")}}},
+//		{"BES1_Eff15_sys_0", {{"Eff15_sys", get_rand_set_pairs(15, "rapid05", "Efficiency15")}}},
+//		{"BES1_Eff15_sys_1", {{"Eff15_sys", get_rand_set_pairs(15, "rapid05", "Efficiency15")}}}
+//	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_Eff05_0", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {0, 4}}}}}},
+//		{"BES1_Eff05_1", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {5, 9}}}}}},
+//		{"BES1_Eff05_2", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {10, 14}}}}}},
+//		{"BES1_Eff15_0", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {0, 4}}}}}},
+//		{"BES1_Eff15_1", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {5, 9}}}}}},
+//		{"BES1_Eff15_2", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {10, 14}}}}}}
+//	};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_Eff1_0", {{"Eff1_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency1_", {0, 14}}}}}},
-		{"BES1_Eff2_0", {{"Eff2_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency2_", {0, 14}}}}}},
-		{"BES1_Eff3_0", {{"Eff3_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency3_", {0, 14}}}}}},
-		{"BES1_Eff1_sys_0", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficiency1")}}},
-		{"BES1_Eff1_sys_1", {{"Eff1_sys", get_rand_set_pairs(15, "rapid05", "Efficiency1")}}},
-		{"BES1_Eff2_sys_0", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficiency2")}}},
-		{"BES1_Eff2_sys_1", {{"Eff2_sys", get_rand_set_pairs(15, "rapid05", "Efficiency2")}}},
-		{"BES1_Eff3_sys_0", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficiency3")}}},
-		{"BES1_Eff3_sys_1", {{"Eff3_sys", get_rand_set_pairs(15, "rapid05", "Efficiency3")}}}
+		{"BES1_Eff05_sys_0", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
+		{"BES1_Eff05_sys_1", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
+		{"BES1_Eff05_sys_2", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
+		{"BES1_Eff15_sys_0", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}},
+		{"BES1_Eff15_sys_1", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}},
+		{"BES1_Eff15_sys_2", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}}
 	};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
-	//{"Ampt_def_1", {{"default", {{"Ampt_rapid05_n1ratios_", {15, 29}}}}}},
-	//{"Ampt_def_2", {{"default", {{"Ampt_rapid05_n1ratios_", {30, 44}}}}}},
-	//{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}}
-	//};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//	{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
+//	{"Ampt_def_1", {{"default", {{"Ampt_rapid05_n1ratios_", {15, 29}}}}}},
+//	{"Ampt_def_2", {{"default", {{"Ampt_rapid05_n1ratios_", {30, 44}}}}}},
+//	{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}}
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
@@ -198,11 +214,11 @@ void read_new() {
 	//	{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}}
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_Eff1", {{"Eff1_def", {{"Ampt_rapid05_n1ratios_Efficien", {0, 14}}}}}},
-		{"Ampt_Eff2", {{"Eff2_def", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
-		{"Ampt_Eff3", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}}
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Ampt_Eff1_0", {{"Eff1_def", {{"Ampt_rapid05_n1ratios_Efficiency1_", {0, 14}}}}}},
+//		{"Ampt_Eff2_0", {{"Eff2_def", {{"Ampt_rapid05_n1ratios_Efficiency2_", {0, 14}}}}}},
+//		{"Ampt_Eff3_0", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_Efficiency3_", {0, 14}}}}}}
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1_0", {{"rapid1", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 19}}}}}},
@@ -229,11 +245,11 @@ void read_new() {
 	//};
 
 	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-//	vector<int> energy_list{ 7, 11 };
+//	vector<int> energy_list{ 39, 11, 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 2;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -344,6 +360,7 @@ void read_new() {
 
 
 void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
+	bool replace_existing = true;  // If folder for job exists, overwrite if true, skip job if false
 	int ref = 3;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
@@ -400,7 +417,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 			out_dir += set_group.first + "/";  // Add set-group directory to end of path
 			mix_out_dir += set_group.first + "/";
-			if (check_dir(out_dir+to_string(energy)+"GeV") && check_dir(mix_out_dir+to_string(energy)+"GeV")) { return; }  // Skip job if folders already exist.
+			if (!replace_existing) {
+				if (check_dir(out_dir+to_string(energy)+"GeV") && check_dir(mix_out_dir+to_string(energy)+"GeV")) { return; }  // Skip job if folders already exist.
+			}
 			mkdir(out_dir);  // Create set-group directory if it does not already exist.
 			mkdir(mix_out_dir);
 
