@@ -128,8 +128,8 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-//	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//			{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//		{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
@@ -220,6 +220,13 @@ void read_new() {
 //		{"Ampt_Eff3_0", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_Efficiency3_", {0, 14}}}}}}
 //	};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
+		{"Ampt_Eff05_1", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
+		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
+		{"Ampt_Eff15_1", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
+	};
+
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1_0", {{"rapid1", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 19}}}}}},
 	//	{"BES1_rapid08", {{"rapid08", {{"rapid08_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {20, 39}}}}}},
@@ -249,7 +256,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 2;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
