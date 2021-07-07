@@ -128,8 +128,8 @@ int main(int argc, char** argv) {
 
 
 void read_new() {
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//		{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//			{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} };
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"BES1_def_0", {{"default", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 14}}}}}},
@@ -179,23 +179,23 @@ void read_new() {
 //		{"BES1_Eff15_sys_1", {{"Eff15_sys", get_rand_set_pairs(15, "rapid05", "Efficiency15")}}}
 //	};
 
-//	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//		{"BES1_Eff05_0", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {0, 4}}}}}},
-//		{"BES1_Eff05_1", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {5, 9}}}}}},
-//		{"BES1_Eff05_2", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {10, 14}}}}}},
-//		{"BES1_Eff15_0", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {0, 4}}}}}},
-//		{"BES1_Eff15_1", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {5, 9}}}}}},
-//		{"BES1_Eff15_2", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {10, 14}}}}}}
-//	};
-
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_Eff05_sys_0", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
-		{"BES1_Eff05_sys_1", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
-		{"BES1_Eff05_sys_2", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
-		{"BES1_Eff15_sys_0", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}},
-		{"BES1_Eff15_sys_1", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}},
-		{"BES1_Eff15_sys_2", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}}
+		{"BES1_Eff05_0", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {0, 4}}}}}},
+		{"BES1_Eff05_1", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {5, 9}}}}}},
+		{"BES1_Eff05_2", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {10, 14}}}}}},
+		{"BES1_Eff15_0", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {0, 4}}}}}},
+		{"BES1_Eff15_1", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {5, 9}}}}}},
+		{"BES1_Eff15_2", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {10, 14}}}}}}
 	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_Eff05_sys_0", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
+//		{"BES1_Eff05_sys_1", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
+//		{"BES1_Eff05_sys_2", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
+//		{"BES1_Eff15_sys_0", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}},
+//		{"BES1_Eff15_sys_1", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}},
+//		{"BES1_Eff15_sys_2", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}}
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //	{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
@@ -244,8 +244,8 @@ void read_new() {
 	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-//	vector<int> energy_list{ 39, 11, 7 };
+//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 39, 11, 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
