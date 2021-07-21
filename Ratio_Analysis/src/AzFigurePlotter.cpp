@@ -502,6 +502,7 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 	}
 
 	map<int, int> cent_color{ {8, kBlack}, {7, kBlue}, {6, kRed}, {5, kGreen + 3}, {4, kViolet}, {3, kOrange + 2}, {2, kCyan + 2}, {1, kYellow + 3} };
+	map<string, int> color{ {"bes", kBlack}, {"ampt", kRed} };
 	int bes_marker_style = 29;
 	int ampt_marker_style = 22;
 	map<int, int> cent_marker_size{ {8, 2}, {7, 2}, {6, 2}, {5, 2}, {4, 2}, {3, 2}, {2, 2}, {1, 2} };
@@ -509,10 +510,16 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 
 
 	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_cents_can_" + type_name).data(), ("Kurtosis vs Energy with Centrality " + type_name).data(), 955, 805);
-	TMultiGraph* mg = new TMultiGraph();
-	mg->SetName("Kurtosis_vs_energy_mg");
-	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+	can->Divide(3, 3);
+	int can_index = 0;
+
+//	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
 	for (pair<int, plot_data> cent : bes1) {
+		can->cd(++can_index);
+		TMultiGraph* mg = new TMultiGraph();
+		mg->SetName(("Kurtosis_vs_energy_mg_" + to_string(cent.first)).data());
+		mg->SetTitle((cent_string[cent.first]).data());
+
 		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1[cent.first].val, energy_err, bes1[cent.first].stat);
 		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt[cent.first].val, energy_err, ampt[cent.first].stat);
 		bes1_ratio_def_g->SetNameTitle(("bes1_" + to_string(cent.first)).data());
@@ -537,34 +544,38 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		mg->Add(bes1_ratio_sys_g, "[]");
 		mg->Add(ampt_ratio_sys_g, "[]");
 
-		leg->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "lp");
-		leg->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "lp");
+		mg->GetXaxis()->SetLimits(0, 80);
+		mg->GetXaxis()->SetRangeUser(0, 80);
+		if (!zoom) {
+			mg->GetYaxis()->SetLimits(0.9935, 1.0185);
+			mg->GetYaxis()->SetRangeUser(0.9935, 1.0185);
+		}
+
+		mg->GetXaxis()->SetTitle("Energy (GeV)");
+		mg->GetYaxis()->SetTitle("Kurtosis");
+
+		mg->Draw("AP");
+
+		TLine* one_line = new TLine(0, 1, 80, 1);
+		one_line->SetLineStyle(2);
+		one_line->Draw();
+
+//		gPad->SetTopMargin(0.04);
+//		gPad->SetLeftMargin(0.12);
+//		gPad->SetRightMargin(0.04);
+
+		if (can_index == 4) {
+			can->cd(++can_index);
+			TLegend *leg = new TLegend();
+			leg->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "lp");
+			leg->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "lp");
+			leg->SetBorderSize(0);
+			leg->SetFillStyle(0);
+			leg->Draw();
+		}
+
+
 	}
-
-	leg->SetBorderSize(0);
-	leg->SetFillStyle(0);
-
-	mg->GetXaxis()->SetLimits(0, 80);
-	mg->GetXaxis()->SetRangeUser(0, 80);
-	if (!zoom) {
-		mg->GetYaxis()->SetLimits(0.9935, 1.0185);
-		mg->GetYaxis()->SetRangeUser(0.9935, 1.0185);
-	}
-
-	mg->GetXaxis()->SetTitle("Energy (GeV)");
-	mg->GetYaxis()->SetTitle("Kurtosis");
-
-	mg->Draw("AP");
-
-	TLine* one_line = new TLine(0, 1, 80, 1);
-	one_line->SetLineStyle(2);
-	one_line->Draw();
-
-	leg->SetMargin(0.1); leg->Draw();
-
-	gPad->SetTopMargin(0.04);
-	gPad->SetLeftMargin(0.12);
-	gPad->SetRightMargin(0.04);
 
 	can->Update();
 	can->Write();
@@ -871,7 +882,7 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 	map<string, int> marker_color{ {"bes", kBlack}, {"ampt", kRed} };
 
 	TCanvas* can = new TCanvas(("Rapidity_vs_energy_can_" + type_name).data(), ("Rapidity vs Energy " + type_name).data(), 955, 805);
-	can->SetPad(0.05, 0.01, 0.99, 1);
+	can->SetPad(0.1, 0.01, 0.9, 1);
 	can->Divide(3, 3, 0, 0);
 	int can_index = 0;
 
@@ -937,6 +948,10 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 
 		if (can_index == 4) {
 			can->cd(++can_index);
+			gPad->SetTopMargin(0.2);
+			gPad->SetBottomMargin(0.2);
+			gPad->SetLeftMargin(0.2);
+			gPad->SetRightMargin(0.2);
 			TLegend *leg2 = new TLegend();
 			leg2->AddEntry(bes1_ratio_div_def_g, "BES1", "lp");
 			leg2->AddEntry(ampt_ratio_div_def_g, "AMPT", "lp");
