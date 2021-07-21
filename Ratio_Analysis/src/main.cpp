@@ -103,18 +103,21 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("7-7-21_rapid_test.root");
+	analyzer.set_out_root_name("7-20-21_fig_test.root");
 	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
 	//	analyzer.set_energies({7});
-	analyzer.set_all_centralities({ 8 });//({ 8, 7, 6, 5, 4, 3, 2, 1 });
+	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
 	analyzer.set_centralities({ 8 });
 	analyzer.set_divs({ 300, 270, 240, 180, 120, 90, 72, 60 });
-	analyzer.set_stat_names({ "non_excess_kurtosis" });//({"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"});
+	analyzer.set_stat_names({"mean", "standard_deviation", "skewness", "kurtosis", "non_excess_kurtosis", "kurtosis*variance"});
+	analyzer.set_cumulant_names({});
+	analyzer.set_central_moment_names({});
+	analyzer.set_raw_moment_names({});
 	//	analyzer.set_divs({60});
 	analyzer.set_plot_cents({ 8 });
 	analyzer.set_plot_dists(true);
 	analyzer.set_plot_dist_canvases(true);
-	analyzer.set_plot_sys(true);
+	analyzer.set_plot_sys(false);
 	//	analyzer.set_can_wh(625, 550);
 	//	analyzer.set_can_wh(955, 900);
 	analyzer.set_can_wh(955, 805);
@@ -170,13 +173,6 @@ void azimuth_bin_analyze_fig() {
 	map<string, vector<int>> bes1_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default/"), "default/");
 	map<string, vector<int>> bes1_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default_sys/"), "default_sys/");
 
-//	int x;
-//	cout << analyzer.get_bes_in_path() << endl;
-//	for (pair<string, vector<int>> set : bes1_def) {
-//		cout << set.first << endl;
-//	}
-//	cin >> x;
-
 	map<string, vector<int>> ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + "default/"), "default/");
 
 	map<string, pair<string, vector<string>>> combos{ {"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}},
@@ -188,24 +184,24 @@ void azimuth_bin_analyze_fig() {
 		string rapid_name = "rapid" + rapid;
 		map<string, vector<int>> rapidx_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
 		map<string, vector<int>> rapidx_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + rapid_name + "_sys/"), rapid_name + "_sys/");
-//		map<string, vector<int>> rapidx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
+		map<string, vector<int>> rapidx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
 		sets.push_back(rapidx_def);
 		sets.push_back(rapidx_sys);
-//		sets.push_back(rapidx_ampt_def);
+		sets.push_back(rapidx_ampt_def);
 		combos["BES1_" + rapid_name] = make_pair(get_set_names(rapidx_def)[0], get_set_names(rapidx_sys));
-//		combos["AMPT_" + rapid_name] = make_pair(get_set_names(rapidx_ampt_def)[0], get_set_names(rapidx_ampt_def));
+		combos["AMPT_" + rapid_name] = make_pair(get_set_names(rapidx_ampt_def)[0], get_set_names(rapidx_ampt_def));
 	}
 
 	for (string eff : effs) {
 		string eff_name = "Eff" + eff;
 		map<string, vector<int>> effx_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + eff_name + "_def/"), eff_name + "_def/");
 		map<string, vector<int>> effx_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + eff_name + "_sys/"), eff_name + "_sys/");
-//		map<string, vector<int>> effx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + eff_name + "_def/"), eff_name + "_def/");
+		map<string, vector<int>> effx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + eff_name + "_def/"), eff_name + "_def/");
 		sets.push_back(effx_def);
 		sets.push_back(effx_sys);
-//		sets.push_back(effx_ampt_def);
+		sets.push_back(effx_ampt_def);
 		combos["BES1_" + eff_name] = make_pair(get_set_names(effx_def)[0], get_set_names(effx_sys));
-//		combos["AMPT_" + eff_name] = make_pair(get_set_names(effx_ampt_def)[0], get_set_names(effx_ampt_def));
+		combos["AMPT_" + eff_name] = make_pair(get_set_names(effx_ampt_def)[0], get_set_names(effx_ampt_def));
 	}
 
 	analyzer.set_sets(combine_sets(sets));
@@ -264,7 +260,7 @@ void azimuth_bin_analyze_fig() {
 	//		{"rapidvar_dca1_seed", get_set_names(get_sets("/home/dylan/Research/Data/", "rapid", make_pair(0.35, 0.7), 1, {"_dca1_"}))}});
 	//analyzer.analyze();
 	analyzer.analyze_lite();
-	//analyzer.plot_paper_figs();
+	analyzer.plot_paper_figs();
 }
 
 void azimuth_bin_analyze() {

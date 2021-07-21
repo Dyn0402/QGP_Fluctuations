@@ -24,6 +24,7 @@ public:
 	// Getters
 
 	// Setters
+	void set_zoom(bool zoom);
 
 	// Doers
 	void plot_paper_figs();
@@ -32,15 +33,18 @@ public:
 	void kurt_vs_energy_cents();
 	void moments_vs_energy();
 	void kurt_vs_rapidity();
+	void kurt_vs_efficiency();
 
 private:
 	// Attributes
+	bool zoom = false;
 
 	// Doers
 	void kurt_vs_energy_plot(vector<int> energies, plot_data bes1, plot_data ampt, string type_name);
 	void kurt_vs_energy_divs_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
 	void kurt_vs_energy_cents_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
-	void moments_vs_energy_plot(vector<int> energies, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, string type_name);
+	void moments_vs_energy_plot(vector<int> energies, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, vector<string> stat_order, string type_name);
 	void kurt_vs_rapid_plot(vector<int> energies, map<string, map<float, plot_data>> bes1, map<string, map<float, plot_data>> ampt, string type_name);
+	void kurt_vs_efficiency_plot(vector<int> energies, map<string, map<float, plot_data>> bes1, map<string, map<float, plot_data>> ampt, string type_name);
 
 };

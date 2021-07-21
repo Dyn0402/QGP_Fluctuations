@@ -102,6 +102,18 @@ void AzimuthBinAnalyzer::set_stat_names(vector<string> names) {
 	stat_names = names;
 }
 
+void AzimuthBinAnalyzer::set_cumulant_names(vector<string> names) {
+	cumulant_names = names;
+}
+
+void AzimuthBinAnalyzer::set_central_moment_names(vector<string> names) {
+	central_moment_names = names;
+}
+
+void AzimuthBinAnalyzer::set_raw_moment_names(vector<string> names) {
+	raw_moment_names = names;
+}
+
 void AzimuthBinAnalyzer::set_can_wh(int can_width, int can_height) {
 	plot::canvas_width = can_width;
 	plot::canvas_height = can_height;
@@ -140,6 +152,7 @@ void AzimuthBinAnalyzer::set_divs(vector<int> divisions) {
 
 void AzimuthBinAnalyzer::analyze() {
 	analysis::energy_list = energy_list;
+	names = {{"stat",stat_names}, {"cumulant",cumulant_names}, {"raw_moment",raw_moment_names}, {"central_moment",central_moment_names}};
 	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
 	analyze_sets();
 }
@@ -176,6 +189,7 @@ void AzimuthBinAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
 
 void AzimuthBinAnalyzer::analyze_lite() {
 //	analysis::energy_list = energy_list;
+	names = {{"stat",stat_names}, {"cumulant",cumulant_names}, {"raw_moment",raw_moment_names}, {"central_moment",central_moment_names}};
 	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
 	analyze_sets_lite();
 }
@@ -1737,19 +1751,26 @@ void AzimuthBinAnalyzer::combine_set_lite(string set_name) {
 					diff_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 					pull_divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
-					//for(int i=0; i<(int)raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first].size(); i++) {
-					//	raw_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-					//	mix_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-					//	divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-					//	pull_raw_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = pull_raw_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-					//	pull_mix_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = pull_mix_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-					//	diff_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = diff_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-					//	pull_divide_stats_all[set_name+to_string(i)][energy.first][div.first][cent.first][stat.first] = pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first][i];
-					//}
+					// Delete individual sets once combined into median and sd.
+					raw_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+					mix_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+					divide_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+					pull_raw_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+					pull_mix_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+					diff_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+					pull_divide_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
 				}
 			}
 		}
 	}
+	// Delete individual sets once combined into median and sd.
+	raw_stats_sets.erase(set_name);
+	mix_stats_sets.erase(set_name);
+	divide_stats_sets.erase(set_name);
+	pull_raw_stats_sets.erase(set_name);
+	pull_mix_stats_sets.erase(set_name);
+	diff_stats_sets.erase(set_name);
+	pull_divide_stats_sets.erase(set_name);
 }
 
 
@@ -2155,6 +2176,7 @@ void AzimuthBinAnalyzer::calc_stat(AzimuthBinData* data, string type, int energy
 	Stats dist_mean_stat;
 	dist_mean_stat.set_distribution(data->get_proton_dist());
 	(*stats)[energy][div][cent]["particle_dist_mean"] = dist_mean_stat.get_mean();
+	stat.get_cumulant(4);  // Get 4th order cumulant to calculate relevant moments in one go.
 
 	for (pair<string, vector<string>> stat_type : names) {
 		for (string stat_name : stat_type.second) {

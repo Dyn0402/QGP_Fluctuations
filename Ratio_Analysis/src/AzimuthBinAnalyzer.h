@@ -62,6 +62,9 @@ public:
 	void set_centralities(vector<int> centralities);
 	void set_plot_cents(vector<int> centralities);
 	void set_stat_names(vector<string> names);
+	void set_cumulant_names(vector<string> names);
+	void set_central_moment_names(vector<string> names);
+	void set_raw_moment_names(vector<string> names);
 	void set_can_wh(int can_width, int can_height);
 	void set_set_combos(map<string, vector<string>> set_combos);
 	void set_sys_combos(map<string, pair<string, vector<string>>> sys_combos);
@@ -83,7 +86,7 @@ protected:
 	vector<string> raw_moment_names = {"raw moment 2", "raw moment 3", "raw moment 4"};
 	vector<string> central_moment_names = {"central moment 2", "central moment 3", "central moment 4"};
 	vector<string> row_types = {"raw", "mix", "divide"};
-	map<string, vector<string>> names = {{"stat",stat_names}, {"cumulant",cumulant_names}, {"raw_moment",raw_moment_names}, {"central_moment",central_moment_names}};
+	map<string, vector<string>> names;
 	vector<int> centralities = {8, 7, 4, 1};
 	vector<int> all_centralities = {8,7,6,5,4,3,2,1,0};
 	string bes_in_path = "/home/dylan/Research/Data/";
