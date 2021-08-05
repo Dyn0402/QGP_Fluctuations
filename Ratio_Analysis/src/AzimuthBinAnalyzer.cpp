@@ -7,6 +7,8 @@
 
 
 #include <vector>
+#include <sstream>
+#include <iomanip>
 
 #include "AzimuthBinAnalyzer.h"
 #include "plotting.h"
@@ -26,7 +28,9 @@ AzimuthBinAnalyzer::AzimuthBinAnalyzer() {
 }
 
 AzimuthBinAnalyzer::~AzimuthBinAnalyzer() {
-	out_root->Close();
+	if (out_root != NULL) {
+		out_root->Close();
+	}
 }
 
 
@@ -39,6 +43,11 @@ string AzimuthBinAnalyzer::get_bes_in_path() {
 string AzimuthBinAnalyzer::get_ampt_in_path() {
 	return this->ampt_in_path;
 }
+
+string AzimuthBinAnalyzer::get_out_path() {
+	return this->out_path;
+}
+
 
 // Setters
 
@@ -143,6 +152,10 @@ void AzimuthBinAnalyzer::set_plot_sys(bool plot) {
 	this->plot_sys = plot;
 }
 
+void AzimuthBinAnalyzer::set_write_sys(bool write) {
+	this->write_sys = write;
+}
+
 void AzimuthBinAnalyzer::set_divs(vector<int> divisions) {
 	this->divs = divisions;
 }
@@ -216,6 +229,7 @@ void AzimuthBinAnalyzer::analyze_sets_lite() {
 
 	combine_systematics();
 	if (plot_sys) { plot_systematics(); }
+	if (write_sys) { write_systematics(); }
 }
 
 
@@ -694,11 +708,17 @@ void AzimuthBinAnalyzer::combine_systematics() {
 
 		map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> sys_sets;
 
+		cout << "sys_sets start" << endl;
 		for(string set:sys_combo.second.second) {
+			cout << "sys_sets set: " << set << endl;
 			for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets[set]) {
+				cout << "sys_sets energy: " << energy.first << endl;
 				for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
+					cout << "sys_sets div: " << div.first << endl;
 					for(pair<int, map<string, vector<Measure>>> cent:div.second) {
+						cout << "sys_sets cent: " << cent.first << endl;
 						for(pair<string, vector<Measure>> stat:cent.second) {
+							cout << "sys_sets stat: " << stat.first << endl;
 							sys_sets["raw"][energy.first][div.first][cent.first][stat.first].insert(sys_sets["raw"][energy.first][div.first][cent.first][stat.first].end(), raw_stats_sets[set][energy.first][div.first][cent.first][stat.first].begin(), raw_stats_sets[set][energy.first][div.first][cent.first][stat.first].end());
 							sys_sets["mix"][energy.first][div.first][cent.first][stat.first].insert(sys_sets["mix"][energy.first][div.first][cent.first][stat.first].end(), mix_stats_sets[set][energy.first][div.first][cent.first][stat.first].begin(), mix_stats_sets[set][energy.first][div.first][cent.first][stat.first].end());
 							sys_sets["divide"][energy.first][div.first][cent.first][stat.first].insert(sys_sets["divide"][energy.first][div.first][cent.first][stat.first].end(), divide_stats_sets[set][energy.first][div.first][cent.first][stat.first].begin(), divide_stats_sets[set][energy.first][div.first][cent.first][stat.first].end());
@@ -711,11 +731,17 @@ void AzimuthBinAnalyzer::combine_systematics() {
 				}
 			}
 		}
+		cout << "Calc sys errors" << endl;
 		for(pair<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> data_type:sys_sets) {
+			cout << "Sys " << data_type.first << endl;
 			for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:data_type.second) {
+				cout << "Sys " << energy.first << endl;
 				for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
+					cout << "Sys " << div.first << endl;
 					for(pair<int, map<string, vector<Measure>>> cent:div.second) {
+						cout << "Sys " << cent.first << endl;
 						for(pair<string, vector<Measure>> stat:cent.second) {
+							cout << "Sys " << stat.first << endl;
 							def_systematics[sys_combo.first][data_type.first][energy.first][div.first][cent.first][stat.first] = sample_sd_errweight(stat.second);
 						}
 					}
@@ -1752,25 +1778,27 @@ void AzimuthBinAnalyzer::combine_set_lite(string set_name) {
 					pull_divide_stats_median[set_name][energy.first][div.first][cent.first][stat.first] = median(pull_divide_stats_sets[set_name][energy.first][div.first][cent.first][stat.first]);
 
 					// Delete individual sets once combined into median and sd.
-					raw_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
-					mix_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
-					divide_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
-					pull_raw_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
-					pull_mix_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
-					diff_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
-					pull_divide_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+					// NEEDED FOR COMBINE SYSTEMATICS SYSTEMATICS!!!!
+//					raw_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+//					mix_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+//					divide_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+//					pull_raw_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+//					pull_mix_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+//					diff_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
+//					pull_divide_stats_sets[set_name][energy.first][div.first][cent.first].erase(stat.first);
 				}
 			}
 		}
 	}
 	// Delete individual sets once combined into median and sd.
-	raw_stats_sets.erase(set_name);
-	mix_stats_sets.erase(set_name);
-	divide_stats_sets.erase(set_name);
-	pull_raw_stats_sets.erase(set_name);
-	pull_mix_stats_sets.erase(set_name);
-	diff_stats_sets.erase(set_name);
-	pull_divide_stats_sets.erase(set_name);
+	// NEEDED FOR COMBINE SYSTEMATICS SYSTEMATICS!!!!
+//	raw_stats_sets.erase(set_name);
+//	mix_stats_sets.erase(set_name);
+//	divide_stats_sets.erase(set_name);
+//	pull_raw_stats_sets.erase(set_name);
+//	pull_mix_stats_sets.erase(set_name);
+//	diff_stats_sets.erase(set_name);
+//	pull_divide_stats_sets.erase(set_name);
 }
 
 
@@ -2104,6 +2132,81 @@ vector<string> AzimuthBinAnalyzer::get_sets(string set_dir) {
 	}
 	return get_files_in_dir(path, "", "name", true);
 }
+
+
+void AzimuthBinAnalyzer::write_systematics() {
+	string out_sys_path = out_path + out_sys_name + "_" + split(out_root_name, ".")[0] + ".txt";
+	cout << "Write systematic values to output file: " << out_sys_path << endl;
+
+	ofstream file(out_sys_path);
+
+	for (auto set_name : def_medians) {  // systematic data set name [string] (BES1, AMPT, etc)
+		for (auto data_type : set_name.second) {  // data type [string] (raw, mix, divide, pull_raw, pull_mix, pull_divide, diff)
+			for (auto energy : data_type.second) {  // energy [int] (7, 11, 19, ...)
+				for (auto div : energy.second) {  // div [int] {60, 72, 90, ...)
+					for (auto cent : div.second) {  // cent [int] {0, 1, ..., 8)
+						for (auto stat : cent.second) {  // stat [string] (mean, standard_deviation, ...)
+							ostringstream val, err, sys;
+							val << fixed; err << fixed; sys << fixed;
+							val << setprecision(20); err << setprecision(20); sys << setprecision(20);
+							val << stat.second.get_val(); err << stat.second.get_err();
+							sys << def_systematics[set_name.first][data_type.first][energy.first][div.first][cent.first][stat.first];
+							string common = set_name.first + "," + data_type.first + "," + to_string(energy.first) + "," + to_string(div.first) + "," + to_string(cent.first) + "," + stat.first + ",";
+							string med_out = "medians," + common + val.str() + "±" + err.str();
+							string sys_out = "systematics," + common + sys.str();
+							file << med_out << endl;
+							file << sys_out << endl;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	file.close();
+}
+
+
+void AzimuthBinAnalyzer::read_systematics(string path) {
+	def_medians.clear(); def_systematics.clear();  // Delete before reading in from file
+
+	cout << "Reading systematics (def_medians and def_systematics) from " << path << endl;
+
+	ifstream file(path);
+	string line;
+	int line_num = 0;
+
+	while (getline(file, line)) {
+		++line_num;
+		vector<string> split_line = split(line, ',');
+		if (split_line.size() != 8) {
+			cout << "Wrong size of split line for line " << line_num << " of " << path << endl;
+		} else {
+			string set = split_line[1];
+			string data_type = split_line[2];
+			int energy = stoi(split_line[3]);
+			int div = stoi(split_line[4]);
+			int cent = stoi(split_line[5]);
+			string stat = split_line[6];
+
+			if (split_line[0] == "medians") {
+				vector<string> val_err = split(split_line[7], "±");
+				if (val_err.size() != 2) {
+					cout << "Wrong size of split val/err for line " << line_num << " of " << path << endl;
+				} else {
+					def_medians[set][data_type][energy][div][cent][stat] = Measure(stod(val_err[0]), stod(val_err[1]));
+				}
+			} else if (split_line[0] == "systematics") {
+				def_systematics[set][data_type][energy][div][cent][stat] = stod(split_line[7]);
+			} else {
+				cout << "Can't read first entry in line " << line_num << " of " << path << endl;
+			}
+		}
+	}
+
+	file.close();
+}
+
 
 //Calculate stats for each cumulant_order for each centrality for each number of divisions for each energy.
 map<int, map<int, map<int, map<string, Measure>>>> AzimuthBinAnalyzer::calculate_stats(map<int, map<int, map<int, AzimuthBinData>>> data, string type) {

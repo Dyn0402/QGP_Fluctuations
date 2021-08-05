@@ -46,6 +46,7 @@ using namespace std;
 
 void azimuth_bin_analyze();
 void azimuth_bin_analyze_fig();
+void fig_read_plot();
 void binomial_analyze();
 void mem_test();
 void stat_sd_nan_test();
@@ -66,7 +67,8 @@ int main() {
 //	}
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 	//azimuth_bin_analyze();
-	azimuth_bin_analyze_fig();
+//	azimuth_bin_analyze_fig();
+	fig_read_plot();
 	//cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
 	//binomial_analyze();
 
@@ -75,6 +77,16 @@ int main() {
 
 	cout << "donzo" << endl;
 	return(0);
+}
+
+
+void fig_read_plot() {
+	AzFigurePlotter analyzer;
+	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
+	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_8-3-21_write_test.txt");
+	analyzer.set_out_root_name("8-4-21_read_test.root");
+
+	analyzer.plot_paper_figs();
 }
 
 
@@ -103,7 +115,7 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("7-21-21_fig_test.root");
+	analyzer.set_out_root_name("8-3-21_write_test.root");
 	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
 	//	analyzer.set_energies({7});
 	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
@@ -115,9 +127,10 @@ void azimuth_bin_analyze_fig() {
 	analyzer.set_raw_moment_names({});
 	//	analyzer.set_divs({60});
 	analyzer.set_plot_cents({ 8 });
-	analyzer.set_plot_dists(true);
-	analyzer.set_plot_dist_canvases(true);
+	analyzer.set_plot_dists(false);
+	analyzer.set_plot_dist_canvases(false);
 	analyzer.set_plot_sys(false);
+	analyzer.set_write_sys(true);
 	//	analyzer.set_can_wh(625, 550);
 	//	analyzer.set_can_wh(955, 900);
 	analyzer.set_can_wh(955, 805);
@@ -260,7 +273,7 @@ void azimuth_bin_analyze_fig() {
 	//		{"rapidvar_dca1_seed", get_set_names(get_sets("/home/dylan/Research/Data/", "rapid", make_pair(0.35, 0.7), 1, {"_dca1_"}))}});
 	//analyzer.analyze();
 	analyzer.analyze_lite();
-	analyzer.plot_paper_figs();
+//	analyzer.plot_paper_figs();
 }
 
 void azimuth_bin_analyze() {

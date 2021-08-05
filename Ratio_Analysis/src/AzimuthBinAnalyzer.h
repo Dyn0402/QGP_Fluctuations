@@ -45,6 +45,7 @@ public:
 	// Getters
 	string get_bes_in_path();
 	string get_ampt_in_path();
+	string get_out_path();
 
 	// Setters
 	void set_bes_in_path(string bes_in_path);
@@ -72,11 +73,13 @@ public:
 	void set_plot_dist_canvases(bool plot);
 	void set_sys_calc(bool calc);
 	void set_plot_sys(bool plot);
+	void set_write_sys(bool write);
 	void set_divs(vector<int> divisions);
 
 	// Doers
 	void analyze();
 	void analyze_lite();
+	void read_systematics(string path);  // Read in def_medians and def_systematics from file.
 
 protected:
 	// Attributes
@@ -102,11 +105,13 @@ protected:
 	vector<int> plot_cents {8,5,1};//{0,1,2,3,4,5,6,7,8,9};
 	string out_path = "/home/dylan/Research/Results/";
 	string out_root_name = "1-25-20_pull_test.root";
+	string out_sys_name = "sys_vals";
 
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
 	bool sys_calc = false;
 	bool plot_sys = true;  // Plot systematics
+	bool write_sys = true;  // Write systmatics values to csv file if true
 
 	int free_threads = 0;
 	map<string, vector<int>> sets {{"Single_Ratio", {0}}};
@@ -160,6 +165,7 @@ protected:
 	void combine_set_lite(string set_name);
 
 	void plot_systematics();
+	void write_systematics();
 
 	vector<string> get_sets(string set_dir);
 
