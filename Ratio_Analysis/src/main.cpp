@@ -84,7 +84,7 @@ void fig_read_plot() {
 	AzFigurePlotter analyzer;
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_8-3-21_write_test.txt");
-	analyzer.set_out_root_name("8-4-21_read_test.root");
+	analyzer.set_out_root_name("8-17-21.root");
 
 	analyzer.plot_paper_figs();
 }

@@ -11,6 +11,7 @@
 #include <TLegend.h>
 #include <TStyle.h>
 #include <TText.h>
+#include <TLatex.h>
 
 using namespace std;
 
@@ -48,6 +49,7 @@ void AzFigurePlotter::plot_paper_figs() {
 	moments_vs_energy();
 	kurt_vs_rapidity();
 	kurt_vs_efficiency();
+	sd_vs_energy_cents();
 	fig_file.Close();
 	cout << "Wrote " << out_path+"figures_"+out_root_name << endl;
 }
@@ -149,6 +151,39 @@ void AzFigurePlotter::kurt_vs_energy_cents() {
 }
 
 
+void AzFigurePlotter::sd_vs_energy_cents() {
+	vector<int> energies{ 7, 11, 19, 27, 39, 62 };
+	int div = 120;
+	vector<int> cents{ 8, 7, 6, 5, 4, 3, 2, 1 };
+	string stat = "standard_deviation";
+
+	map<int, plot_data> bes1_ratio;
+	map<int, plot_data> ampt_ratio;
+	map<int, plot_data> bes1_pull;
+	map<int, plot_data> ampt_pull;
+
+	for (int cent : cents) {
+		for (int energy : energies) {
+			bes1_ratio[cent].val.push_back(def_medians["BES1"]["divide"][energy][div][cent][stat].get_val());
+			bes1_ratio[cent].stat.push_back(def_medians["BES1"]["divide"][energy][div][cent][stat].get_err());
+			bes1_ratio[cent].sys.push_back(def_systematics["BES1"]["divide"][energy][div][cent][stat]);
+			bes1_pull[cent].val.push_back(def_medians["BES1"]["pull_divide"][energy][div][cent][stat].get_val());
+			bes1_pull[cent].stat.push_back(def_medians["BES1"]["pull_divide"][energy][div][cent][stat].get_err());
+			bes1_pull[cent].sys.push_back(def_systematics["BES1"]["pull_divide"][energy][div][cent][stat]);
+			ampt_ratio[cent].val.push_back(def_medians["AMPT"]["divide"][energy][div][cent][stat].get_val());
+			ampt_ratio[cent].stat.push_back(def_medians["AMPT"]["divide"][energy][div][cent][stat].get_err());
+			ampt_ratio[cent].sys.push_back(def_systematics["AMPT"]["divide"][energy][div][cent][stat]);
+			ampt_pull[cent].val.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_val());
+			ampt_pull[cent].stat.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_err());
+			ampt_pull[cent].sys.push_back(def_systematics["AMPT"]["pull_divide"][energy][div][cent][stat]);
+		}
+	}
+
+	sd_vs_energy_cents_plot(energies, bes1_ratio, ampt_ratio, "Ratio");
+	sd_vs_energy_cents_plot(energies, bes1_pull, ampt_pull, "Pull");
+}
+
+
 void AzFigurePlotter::moments_vs_energy() {
 	vector<int> energies{ 7, 11, 19, 27, 39, 62 };
 	int div = 120;
@@ -203,8 +238,8 @@ void AzFigurePlotter::moments_vs_energy() {
 		}
 	}
 
-	moments_vs_energy_plot2(energies, bes1_ratio, ampt_ratio, stats, "Ratio");
-	moments_vs_energy_plot2(energies, bes1_pull, ampt_pull, stats, "Pull");
+	moments_vs_energy_plot(energies, bes1_ratio, ampt_ratio, stats, "Ratio");
+	moments_vs_energy_plot(energies, bes1_pull, ampt_pull, stats, "Pull");
 }
 
 
@@ -384,8 +419,8 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 	leg->AddEntry(bes1_ratio_def_g, "BES1", "lp");
 	leg->AddEntry(ampt_ratio_def_g, "AMPT", "lp");
 
-	mg->GetXaxis()->SetLimits(0, 80);
-	mg->GetXaxis()->SetRangeUser(0, 80);
+	mg->GetXaxis()->SetLimits(0.1, 79.9);
+	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
 	mg->GetYaxis()->SetLimits(0.9955, 1.0145);
 	mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
 
@@ -463,8 +498,8 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 	leg->SetBorderSize(0);
 	leg->SetFillStyle(0);
 
-	mg->GetXaxis()->SetLimits(0, 80);
-	mg->GetXaxis()->SetRangeUser(0, 80);
+	mg->GetXaxis()->SetLimits(0.1, 79.9);
+	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
 		mg->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -502,51 +537,114 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		energy_ampt.push_back(energy + 0.6);
 	}
 
+	vector<int> cent_order { 8, 7, 6, 5, 4, 3, 2, 1 };
+
 	map<int, int> cent_color{ {8, kBlack}, {7, kBlue}, {6, kRed}, {5, kGreen + 3}, {4, kViolet}, {3, kOrange + 2}, {2, kCyan + 2}, {1, kYellow + 3} };
-	map<string, int> color{ {"bes", kBlack}, {"ampt", kRed} };
-	int bes_marker_style = 29;
-	int ampt_marker_style = 22;
+	map<string, int> marker_style{ {"bes", 29}, {"ampt", 22} };
+	map<string, int> marker_size{ {"bes", 2}, {"ampt", 2} };
+	map<string, int> marker_color{ {"bes", kBlack}, {"ampt", kRed} };
 	map<int, int> cent_marker_size{ {8, 2}, {7, 2}, {6, 2}, {5, 2}, {4, 2}, {3, 2}, {2, 2}, {1, 2} };
 	map<int, string> cent_string{ {8, "0-5%"}, {7, "5-10%"}, {6, "10-20%"}, {5, "20-30%"}, {4, "30-40%"}, {3, "40-50%"}, {2, "50-60%"}, {1, "60-70%"} };
 
 
 	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_cents_can_" + type_name).data(), ("Kurtosis vs Energy with Centrality " + type_name).data(), 955, 805);
-	can->Divide(3, 3);
+
+	int x_num = 3;
+	int y_num = 3;
+
+	double y_top_pad = 0.01;
+	double y_bot_pad = 0.04;
+	double x_left_pad = 0.045;
+	double x_right_pad = 0.01;
+	double x_low = 0;
+	double x_up = 0;
+	double y_low = 0;
+	double y_up = 1.0;
+	double def_left_margin = 0.0;
+	double def_right_margin = 0.0;
+	double def_top_margin = 0.0;
+	double def_bot_margin = 0.0;
+
+	double x_step = (1.0 - x_left_pad - x_right_pad) / x_num;
+	double y_step = (1.0 - y_top_pad - y_bot_pad) / y_num;
+//	cout << "x_step: " << x_step << "  |  y_step: " << y_step << endl;
+	for (int y_index=0; y_index<y_num; y_index++) {
+		x_low = 0;
+		if (y_index == 0) { y_low = y_up - y_step - y_top_pad; }
+		else if (y_index == y_num - 1) { y_low = y_up - y_step - y_bot_pad; }
+		else { y_low = y_up - y_step; }
+
+		for (int x_index=0; x_index<x_num; x_index++) {
+			int pad_index = x_index + y_num * y_index + 1;
+
+			if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
+			else if (x_index == x_num - 1) { x_up = x_low + x_step + x_right_pad; }
+			else { x_up = x_low + x_step; }
+
+			if (y_up > 1.0) { y_up = 1.0;}
+			if (y_low < 0.0) { y_low = 0.0; }
+			if (x_up > 1.0) { x_up = 1.0;}
+			if (x_low < 0.0) { x_low = 0.0; }
+
+//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
+
+			string pad_name = gPad->GetName() + to_string(pad_index);
+			TPad *pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
+			pad->SetTickx();
+			pad->SetTicky();
+
+			if (x_index == 0) {	pad->SetLeftMargin(x_left_pad / (x_up - x_low) + def_left_margin); }
+			else { pad->SetLeftMargin(def_left_margin); }
+			if (x_index == x_num - 1) {	pad->SetRightMargin(x_right_pad / (x_up - x_low) + def_right_margin); }
+			else { pad->SetRightMargin(def_right_margin); }
+			if (y_index == 0) { pad->SetTopMargin(y_top_pad / (y_up - y_low) + def_top_margin); }
+			else { pad->SetTopMargin(def_top_margin); }
+			if (y_index == y_num -1) { pad->SetBottomMargin(y_bot_pad / (y_up - y_low) + def_bot_margin); }
+			else { pad->SetBottomMargin(def_bot_margin); }
+
+			pad->SetNumber(pad_index);
+
+			pad->Draw();
+			x_low = x_up;
+		}
+		y_up = y_low;
+	}
 	int can_index = 0;
 
-//	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-	for (pair<int, plot_data> cent : bes1) {
+	for (int cent : cent_order) {
+//	for (pair<int, plot_data> cent : bes1) {
 		can->cd(++can_index);
 		TMultiGraph* mg = new TMultiGraph();
-		mg->SetName(("Kurtosis_vs_energy_mg_" + to_string(cent.first)).data());
-		mg->SetTitle((cent_string[cent.first]).data());
+		mg->SetName(("Kurtosis_vs_energy_mg_" + to_string(cent)).data());
+//		mg->SetTitle((cent_string[cent]).data());
 
-		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1[cent.first].val, energy_err, bes1[cent.first].stat);
-		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt[cent.first].val, energy_err, ampt[cent.first].stat);
-		bes1_ratio_def_g->SetNameTitle(("bes1_" + to_string(cent.first)).data());
-		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(cent.first)).data());
-		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[cent.first].val, energy_err, bes1[cent.first].sys);
-		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[cent.first].val, energy_err, ampt[cent.first].sys);
+		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1[cent].val, energy_err, bes1[cent].stat);
+		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt[cent].val, energy_err, ampt[cent].stat);
+		bes1_ratio_def_g->SetNameTitle(("bes1_" + to_string(cent)).data());
+		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(cent)).data());
+		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[cent].val, energy_err, bes1[cent].sys);
+		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[cent].val, energy_err, ampt[cent].sys);
 
-		bes1_ratio_def_g->SetMarkerStyle(bes_marker_style);
-		bes1_ratio_def_g->SetMarkerColor(cent_color[cent.first]);
-		bes1_ratio_def_g->SetLineColor(cent_color[cent.first]);
-		bes1_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
-		bes1_ratio_sys_g->SetLineColor(cent_color[cent.first]);
+		bes1_ratio_def_g->SetMarkerStyle(marker_style["bes"]);
+		bes1_ratio_def_g->SetMarkerColor(marker_color["bes"]);
+		bes1_ratio_def_g->SetLineColor(marker_color["bes"]);
+		bes1_ratio_def_g->SetMarkerSize(marker_size["bes"]);
+		bes1_ratio_sys_g->SetLineColor(marker_color["bes"]);
 
-		ampt_ratio_def_g->SetMarkerStyle(ampt_marker_style);
-		ampt_ratio_def_g->SetMarkerColor(cent_color[cent.first]);
-		ampt_ratio_def_g->SetLineColor(cent_color[cent.first]);
-		ampt_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
-		ampt_ratio_sys_g->SetLineColor(cent_color[cent.first]);
+		ampt_ratio_def_g->SetMarkerStyle(marker_style["ampt"]);
+		ampt_ratio_def_g->SetMarkerColor(marker_color["ampt"]);
+		ampt_ratio_def_g->SetLineColor(marker_color["ampt"]);
+		ampt_ratio_def_g->SetMarkerSize(marker_size["ampt"]);
+		ampt_ratio_sys_g->SetLineColor(marker_color["ampt"]);
 
 		mg->Add(bes1_ratio_def_g, "APLZ");
 		mg->Add(ampt_ratio_def_g, "PL");
 		mg->Add(bes1_ratio_sys_g, "[]");
 		mg->Add(ampt_ratio_sys_g, "[]");
 
-		mg->GetXaxis()->SetLimits(0, 80);
-		mg->GetXaxis()->SetRangeUser(0, 80);
+		mg->GetXaxis()->SetLimits(0.1, 79.9);
+		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
 		if (!zoom) {
 			mg->GetYaxis()->SetLimits(0.9935, 1.0185);
 			mg->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -561,20 +659,36 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		one_line->SetLineStyle(2);
 		one_line->Draw();
 
-//		gPad->SetTopMargin(0.04);
-//		gPad->SetLeftMargin(0.12);
-//		gPad->SetRightMargin(0.04);
+		TLatex cent_label;
+		cent_label.SetTextFont(43);
+		cent_label.SetTextAlign(22);
+		cent_label.SetTextSize(25);
+		cent_label.DrawLatex(40, 0.9965, (cent_string[cent]).data());
+
 
 		if (can_index == 4) {
 			can->cd(++can_index);
-			TLegend *leg = new TLegend();
-			leg->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "lp");
-			leg->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "lp");
-			leg->SetBorderSize(0);
-			leg->SetFillStyle(0);
-			leg->Draw();
+			vector<double> x_hold {-1};
+			vector<double> y_hold {-1};
+			TGraph *g_hold = new TGraph(1, x_hold.data(), y_hold.data());
+			g_hold->SetTitle("");
+			g_hold->GetXaxis()->SetLimits(0.1, 79.9);
+			g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
+			if (!zoom) {
+				g_hold->GetYaxis()->SetLimits(0.9935, 1.0185);
+				g_hold->GetYaxis()->SetRangeUser(0.9935, 1.0185);
+			} else {
+				g_hold->GetYaxis()->SetLimits(0.9975, 1.0035);
+				g_hold->GetYaxis()->SetRangeUser(0.9975, 1.0035);
+			}
+			g_hold->Draw("AP");
+			TLegend *leg2 = new TLegend(0.3, 0.4, 0.7, 0.6);
+			leg2->AddEntry(bes1_ratio_def_g, "BES1", "lp");
+			leg2->AddEntry(ampt_ratio_def_g, "AMPT", "lp");
+			leg2->SetBorderSize(0);
+			leg2->SetFillStyle(0);
+			leg2->Draw();
 		}
-
 
 	}
 
@@ -594,7 +708,7 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		bes1_ratio_def_g->SetNameTitle(("bes1_" + to_string(cent.first)).data());
 		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[cent.first].val, energy_err, bes1[cent.first].sys);
 
-		bes1_ratio_def_g->SetMarkerStyle(bes_marker_style);
+		bes1_ratio_def_g->SetMarkerStyle(marker_style["bes"]);
 		bes1_ratio_def_g->SetMarkerColor(cent_color[cent.first]);
 		bes1_ratio_def_g->SetLineColor(cent_color[cent.first]);
 		bes1_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
@@ -609,8 +723,8 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 	leg_bes->SetBorderSize(0);
 	leg_bes->SetFillStyle(0);
 
-	mg_bes->GetXaxis()->SetLimits(0, 80);
-	mg_bes->GetXaxis()->SetRangeUser(0, 80);
+	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
 		mg_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -647,7 +761,7 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(cent.first)).data());
 		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[cent.first].val, energy_err, ampt[cent.first].sys);
 
-		ampt_ratio_def_g->SetMarkerStyle(ampt_marker_style);
+		ampt_ratio_def_g->SetMarkerStyle(marker_style["ampt"]);
 		ampt_ratio_def_g->SetMarkerColor(cent_color[cent.first]);
 		ampt_ratio_def_g->SetLineColor(cent_color[cent.first]);
 		ampt_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
@@ -662,8 +776,8 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 	leg_ampt->SetBorderSize(0);
 	leg_ampt->SetFillStyle(0);
 
-	mg_ampt->GetXaxis()->SetLimits(0, 80);
-	mg_ampt->GetXaxis()->SetRangeUser(0, 80);
+	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
 		mg_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -671,6 +785,284 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 
 	mg_ampt->GetXaxis()->SetTitle("Energy (GeV)");
 	mg_ampt->GetYaxis()->SetTitle("Kurtosis");
+
+	mg_ampt->Draw("AP");
+
+	TLine* one_line_ampt = new TLine(0, 1, 80, 1);
+	one_line_ampt->SetLineStyle(2);
+	one_line_ampt->Draw();
+
+	leg_ampt->SetMargin(0.1); leg_ampt->Draw();
+
+	gPad->SetTopMargin(0.04);
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.04);
+
+	can_ampt->Update();
+	can_ampt->Write();
+
+	delete can_ampt;
+}
+
+
+void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name) {
+	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
+	vector<double> energy_val(energies.begin(), energies.end());
+	vector<double> energy_bes1;
+	vector<double> energy_ampt;
+	for (double energy : energies) {
+		energy_bes1.push_back(energy - 0.6);
+		energy_ampt.push_back(energy + 0.6);
+	}
+
+	vector<int> cent_order { 8, 7, 6, 5, 4, 3, 2, 1 };
+
+	map<int, int> cent_color{ {8, kBlack}, {7, kBlue}, {6, kRed}, {5, kGreen + 3}, {4, kViolet}, {3, kOrange + 2}, {2, kCyan + 2}, {1, kYellow + 3} };
+	map<string, int> marker_style{ {"bes", 29}, {"ampt", 22} };
+	map<string, int> marker_size{ {"bes", 2}, {"ampt", 2} };
+	map<string, int> marker_color{ {"bes", kBlack}, {"ampt", kRed} };
+	map<int, int> cent_marker_size{ {8, 2}, {7, 2}, {6, 2}, {5, 2}, {4, 2}, {3, 2}, {2, 2}, {1, 2} };
+	map<int, string> cent_string{ {8, "0-5%"}, {7, "5-10%"}, {6, "10-20%"}, {5, "20-30%"}, {4, "30-40%"}, {3, "40-50%"}, {2, "50-60%"}, {1, "60-70%"} };
+
+
+	TCanvas* can = new TCanvas(("SD_vs_energy_cents_can_" + type_name).data(), ("SD vs Energy with Centrality " + type_name).data(), 955, 805);
+
+	int x_num = 3;
+	int y_num = 3;
+
+	double y_top_pad = 0.01;
+	double y_bot_pad = 0.04;
+	double x_left_pad = 0.045;
+	double x_right_pad = 0.01;
+	double x_low = 0;
+	double x_up = 0;
+	double y_low = 0;
+	double y_up = 1.0;
+	double def_left_margin = 0.0;
+	double def_right_margin = 0.0;
+	double def_top_margin = 0.0;
+	double def_bot_margin = 0.0;
+
+	double x_step = (1.0 - x_left_pad - x_right_pad) / x_num;
+	double y_step = (1.0 - y_top_pad - y_bot_pad) / y_num;
+//	cout << "x_step: " << x_step << "  |  y_step: " << y_step << endl;
+	for (int y_index=0; y_index<y_num; y_index++) {
+		x_low = 0;
+		if (y_index == 0) { y_low = y_up - y_step - y_top_pad; }
+		else if (y_index == y_num - 1) { y_low = y_up - y_step - y_bot_pad; }
+		else { y_low = y_up - y_step; }
+
+		for (int x_index=0; x_index<x_num; x_index++) {
+			int pad_index = x_index + y_num * y_index + 1;
+
+			if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
+			else if (x_index == x_num - 1) { x_up = x_low + x_step + x_right_pad; }
+			else { x_up = x_low + x_step; }
+
+			if (y_up > 1.0) { y_up = 1.0;}
+			if (y_low < 0.0) { y_low = 0.0; }
+			if (x_up > 1.0) { x_up = 1.0;}
+			if (x_low < 0.0) { x_low = 0.0; }
+
+//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
+
+			string pad_name = gPad->GetName() + to_string(pad_index);
+			TPad *pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
+			pad->SetTickx();
+			pad->SetTicky();
+
+			if (x_index == 0) {	pad->SetLeftMargin(x_left_pad / (x_up - x_low) + def_left_margin); }
+			else { pad->SetLeftMargin(def_left_margin); }
+			if (x_index == x_num - 1) {	pad->SetRightMargin(x_right_pad / (x_up - x_low) + def_right_margin); }
+			else { pad->SetRightMargin(def_right_margin); }
+			if (y_index == 0) { pad->SetTopMargin(y_top_pad / (y_up - y_low) + def_top_margin); }
+			else { pad->SetTopMargin(def_top_margin); }
+			if (y_index == y_num -1) { pad->SetBottomMargin(y_bot_pad / (y_up - y_low) + def_bot_margin); }
+			else { pad->SetBottomMargin(def_bot_margin); }
+
+			pad->SetNumber(pad_index);
+
+			pad->Draw();
+			x_low = x_up;
+		}
+		y_up = y_low;
+	}
+	int can_index = 0;
+
+	for (int cent : cent_order) {
+//	for (pair<int, plot_data> cent : bes1) {
+		can->cd(++can_index);
+		TMultiGraph* mg = new TMultiGraph();
+		mg->SetName(("SD_vs_energy_mg_" + to_string(cent)).data());
+//		mg->SetTitle((cent_string[cent]).data());
+
+		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1[cent].val, energy_err, bes1[cent].stat);
+		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt[cent].val, energy_err, ampt[cent].stat);
+		bes1_ratio_def_g->SetNameTitle(("bes1_" + to_string(cent)).data());
+		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(cent)).data());
+		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[cent].val, energy_err, bes1[cent].sys);
+		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[cent].val, energy_err, ampt[cent].sys);
+
+		bes1_ratio_def_g->SetMarkerStyle(marker_style["bes"]);
+		bes1_ratio_def_g->SetMarkerColor(marker_color["bes"]);
+		bes1_ratio_def_g->SetLineColor(marker_color["bes"]);
+		bes1_ratio_def_g->SetMarkerSize(marker_size["bes"]);
+		bes1_ratio_sys_g->SetLineColor(marker_color["bes"]);
+
+		ampt_ratio_def_g->SetMarkerStyle(marker_style["ampt"]);
+		ampt_ratio_def_g->SetMarkerColor(marker_color["ampt"]);
+		ampt_ratio_def_g->SetLineColor(marker_color["ampt"]);
+		ampt_ratio_def_g->SetMarkerSize(marker_size["ampt"]);
+		ampt_ratio_sys_g->SetLineColor(marker_color["ampt"]);
+
+		mg->Add(bes1_ratio_def_g, "APLZ");
+		mg->Add(ampt_ratio_def_g, "PL");
+		mg->Add(bes1_ratio_sys_g, "[]");
+		mg->Add(ampt_ratio_sys_g, "[]");
+
+		mg->GetXaxis()->SetLimits(0.1, 79.9);
+		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+		if (!zoom) {
+			mg->GetYaxis()->SetLimits(0.95, 1.0);
+			mg->GetYaxis()->SetRangeUser(0.95, 1.0);
+		}
+
+		mg->GetXaxis()->SetTitle("Energy (GeV)");
+		mg->GetYaxis()->SetTitle("Standard Deviation");
+
+		mg->Draw("AP");
+
+		TLine* one_line = new TLine(0, 1, 80, 1);
+		one_line->SetLineStyle(2);
+		one_line->Draw();
+
+		TLatex cent_label;
+		cent_label.SetTextFont(43);
+		cent_label.SetTextAlign(22);
+		cent_label.SetTextSize(25);
+		cent_label.DrawLatex(40, 0.955, (cent_string[cent]).data());
+
+
+		if (can_index == 4) {
+			can->cd(++can_index);
+			vector<double> x_hold {-1};
+			vector<double> y_hold {-1};
+			TGraph *g_hold = new TGraph(1, x_hold.data(), y_hold.data());
+			g_hold->SetTitle("");
+			g_hold->GetXaxis()->SetLimits(0.1, 79.9);
+			g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
+			if (!zoom) {
+				g_hold->GetYaxis()->SetLimits(0.95, 1.0);
+				g_hold->GetYaxis()->SetRangeUser(0.95, 1.0);
+			} else {
+				g_hold->GetYaxis()->SetLimits(0.95, 1.0);
+				g_hold->GetYaxis()->SetRangeUser(0.95, 1.0);
+			}
+			g_hold->Draw("AP");
+			TLegend *leg2 = new TLegend(0.3, 0.4, 0.7, 0.6);
+			leg2->AddEntry(bes1_ratio_def_g, "BES1", "lp");
+			leg2->AddEntry(ampt_ratio_def_g, "AMPT", "lp");
+			leg2->SetBorderSize(0);
+			leg2->SetFillStyle(0);
+			leg2->Draw();
+		}
+
+	}
+
+	can->Update();
+	can->Write();
+
+	delete can;
+
+
+	// Just BES1
+	TCanvas* can_bes = new TCanvas(("BES1_SD_vs_energy_cents_can_" + type_name).data(), ("SD vs Energy with Centrality " + type_name).data(), 955, 805);
+	TMultiGraph* mg_bes = new TMultiGraph();
+	mg_bes->SetName("SD_vs_energy_mg");
+	TLegend* leg_bes = new TLegend(0.3, 0.21, 0.3, 0.21);
+	for (pair<int, plot_data> cent : bes1) {
+		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1[cent.first].val, energy_err, bes1[cent.first].stat);
+		bes1_ratio_def_g->SetNameTitle(("bes1_" + to_string(cent.first)).data());
+		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[cent.first].val, energy_err, bes1[cent.first].sys);
+
+		bes1_ratio_def_g->SetMarkerStyle(marker_style["bes"]);
+		bes1_ratio_def_g->SetMarkerColor(cent_color[cent.first]);
+		bes1_ratio_def_g->SetLineColor(cent_color[cent.first]);
+		bes1_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
+		bes1_ratio_sys_g->SetLineColor(cent_color[cent.first]);
+
+		mg_bes->Add(bes1_ratio_def_g, "APLZ");
+		mg_bes->Add(bes1_ratio_sys_g, "[]");
+
+		leg_bes->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "lp");
+	}
+
+	leg_bes->SetBorderSize(0);
+	leg_bes->SetFillStyle(0);
+
+	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
+	if (!zoom) {
+		mg_bes->GetYaxis()->SetLimits(0.95, 1.0);
+		mg_bes->GetYaxis()->SetRangeUser(0.95, 1.0);
+	}
+
+	mg_bes->GetXaxis()->SetTitle("Energy (GeV)");
+	mg_bes->GetYaxis()->SetTitle("Standard Deviation");
+
+	mg_bes->Draw("AP");
+
+	TLine* one_line_bes = new TLine(0, 1, 80, 1);
+	one_line_bes->SetLineStyle(2);
+	one_line_bes->Draw();
+
+	leg_bes->SetMargin(0.1); leg_bes->Draw();
+
+	gPad->SetTopMargin(0.04);
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.04);
+
+	can_bes->Update();
+	can_bes->Write();
+
+	delete can_bes;
+
+
+	// Just AMPT
+	TCanvas* can_ampt = new TCanvas(("AMPT_SD_vs_energy_cents_can_" + type_name).data(), ("SD vs Energy with Centrality " + type_name).data(), 955, 805);
+	TMultiGraph* mg_ampt = new TMultiGraph();
+	mg_ampt->SetName("SD_vs_energy_mg");
+	TLegend* leg_ampt = new TLegend(0.3, 0.21, 0.3, 0.21);
+	for (pair<int, plot_data> cent : bes1) {
+		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt[cent.first].val, energy_err, ampt[cent.first].stat);
+		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(cent.first)).data());
+		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[cent.first].val, energy_err, ampt[cent.first].sys);
+
+		ampt_ratio_def_g->SetMarkerStyle(marker_style["ampt"]);
+		ampt_ratio_def_g->SetMarkerColor(cent_color[cent.first]);
+		ampt_ratio_def_g->SetLineColor(cent_color[cent.first]);
+		ampt_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
+		ampt_ratio_sys_g->SetLineColor(cent_color[cent.first]);
+
+		mg_ampt->Add(ampt_ratio_def_g, "PL");
+		mg_ampt->Add(ampt_ratio_sys_g, "[]");
+
+		leg_ampt->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "lp");
+	}
+
+	leg_ampt->SetBorderSize(0);
+	leg_ampt->SetFillStyle(0);
+
+	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
+	if (!zoom) {
+		mg_ampt->GetYaxis()->SetLimits(0.95, 1.0);
+		mg_ampt->GetYaxis()->SetRangeUser(0.95, 1.0);
+	}
+
+	mg_ampt->GetXaxis()->SetTitle("Energy (GeV)");
+	mg_ampt->GetYaxis()->SetTitle("Standard Deviation");
 
 	mg_ampt->Draw("AP");
 
@@ -701,206 +1093,33 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		energy_ampt.push_back(energy + 0.6);
 	}
 
-	map<string, int> color{ {"raw", kBlue}, {"mix", kGreen+2}, {"divide", kRed} };
+	map<string, int> color{ {"raw_bes", kBlue}, {"raw_ampt", kBlue}, {"mix_bes", kGreen+2}, {"mix_ampt", kGreen+2}, {"div_bes", kBlack}, {"div_ampt", kRed} };
 	map<string, int> marker_size{ {"raw", 2}, {"mix", 2}, {"divide", 2} };
-	int bes_marker_style = 29;
-	int ampt_marker_style = 22;
+	map<string, int> marker_style{ {"raw_bes", 29}, {"raw_ampt", 22}, {"mix_bes", 30}, {"mix_ampt", 26}, {"div_bes", 29}, {"div_ampt", 22} };
+	map<string, string> stat_title{ {"mean", "Mean"}, {"standard_deviation", "Standard Deviation"}, {"skewness", "Skewness"}, {"non_excess_kurtosis", "Kurtosis"} };
+//	int bes_marker_style = 29;
+//	int ampt_marker_style = 22;
 
-	TCanvas* can = new TCanvas(("Moments_vs_energy_can_" + type_name).data(), ("Moments vs Energy " + type_name).data(), 955, 805);
-//	can->SetPad(0, 0.01, 0.99, 1);
-	DividegPad((int)bes1["raw"].size(), 2, 0.1, 0.02, 0.02, 0.1);
-//	can->Divide((int)bes1["raw"].size(), 2);
-	int can_index = 1;
-	for ( string stat : stat_order) { //pair<string, plot_data> stat : bes1["raw"]) {  // Iterate over stats, left to right on plot
-
-		// Raw vs mixed on top plot
-		can->cd(can_index);
-		gPad->SetTopMargin(0.001);
-		gPad->SetBottomMargin(0.001);
-//		gPad->SetRightMargin(0.01);
-//		gPad->SetLeftMargin(0.01);
-
-		TMultiGraph* mg = new TMultiGraph();
-		mg->SetName((stat + "_raw_mixed").data());
-		mg->SetTitle((stat).data());
-
-		TGraphErrors* bes1_ratio_raw_def_g = graph_x_vs_y_err(energy_bes1, bes1["raw"][stat].val, energy_err, bes1["raw"][stat].stat);
-		TGraphErrors* ampt_ratio_raw_def_g = graph_x_vs_y_err(energy_ampt, ampt["raw"][stat].val, energy_err, ampt["raw"][stat].stat);
-		bes1_ratio_raw_def_g->SetNameTitle(("bes1_raw_" + stat).data());
-		ampt_ratio_raw_def_g->SetNameTitle(("ampt_raw_" + stat).data());
-		TGraphErrors* bes1_ratio_raw_sys_g = graph_x_vs_y_err(energy_bes1, bes1["raw"][stat].val, energy_err, bes1["raw"][stat].sys);
-		TGraphErrors* ampt_ratio_raw_sys_g = graph_x_vs_y_err(energy_ampt, ampt["raw"][stat].val, energy_err, ampt["raw"][stat].sys);
-
-		bes1_ratio_raw_def_g->SetMarkerStyle(bes_marker_style);
-		bes1_ratio_raw_def_g->SetMarkerColor(color["raw"]);
-		bes1_ratio_raw_def_g->SetLineColor(color["raw"]);
-		bes1_ratio_raw_def_g->SetMarkerSize(marker_size["raw"]);
-		bes1_ratio_raw_sys_g->SetLineColor(color["raw"]);
-
-		ampt_ratio_raw_def_g->SetMarkerStyle(ampt_marker_style);
-		ampt_ratio_raw_def_g->SetMarkerColor(color["raw"]);
-		ampt_ratio_raw_def_g->SetLineColor(color["raw"]);
-		ampt_ratio_raw_def_g->SetMarkerSize(marker_size["raw"]);
-		ampt_ratio_raw_sys_g->SetLineColor(color["raw"]);
-
-		TGraphErrors* bes1_ratio_mix_def_g = graph_x_vs_y_err(energy_bes1, bes1["mix"][stat].val, energy_err, bes1["mix"][stat].stat);
-		TGraphErrors* ampt_ratio_mix_def_g = graph_x_vs_y_err(energy_ampt, ampt["mix"][stat].val, energy_err, ampt["mix"][stat].stat);
-		bes1_ratio_mix_def_g->SetNameTitle(("bes1_mix_" + stat).data());
-		ampt_ratio_mix_def_g->SetNameTitle(("ampt_mix_" + stat).data());
-		TGraphErrors* bes1_ratio_mix_sys_g = graph_x_vs_y_err(energy_bes1, bes1["mix"][stat].val, energy_err, bes1["mix"][stat].sys);
-		TGraphErrors* ampt_ratio_mix_sys_g = graph_x_vs_y_err(energy_ampt, ampt["mix"][stat].val, energy_err, ampt["mix"][stat].sys);
-
-		bes1_ratio_mix_def_g->SetMarkerStyle(bes_marker_style);
-		bes1_ratio_mix_def_g->SetMarkerColor(color["mix"]);
-		bes1_ratio_mix_def_g->SetLineColor(color["mix"]);
-		bes1_ratio_mix_def_g->SetMarkerSize(marker_size["mix"]);
-		bes1_ratio_mix_sys_g->SetLineColor(color["mix"]);
-
-		ampt_ratio_mix_def_g->SetMarkerStyle(ampt_marker_style);
-		ampt_ratio_mix_def_g->SetMarkerColor(color["mix"]);
-		ampt_ratio_mix_def_g->SetLineColor(color["mix"]);
-		ampt_ratio_mix_def_g->SetMarkerSize(marker_size["mix"]);
-		ampt_ratio_mix_sys_g->SetLineColor(color["mix"]);
-
-		mg->Add(bes1_ratio_raw_def_g, "APLZ");
-		mg->Add(ampt_ratio_raw_def_g, "PL");
-		mg->Add(bes1_ratio_raw_sys_g, "[]");
-		mg->Add(ampt_ratio_raw_sys_g, "[]");
-		mg->Add(bes1_ratio_mix_def_g, "PL");
-		mg->Add(ampt_ratio_mix_def_g, "PL");
-		mg->Add(bes1_ratio_mix_sys_g, "[]");
-		mg->Add(ampt_ratio_mix_sys_g, "[]");
-
-		if (stat == "mean") {
-			TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-			leg->AddEntry(bes1_ratio_raw_def_g, "BES1 Raw", "lp");
-			leg->AddEntry(ampt_ratio_raw_def_g, "AMPT Raw", "lp");
-			leg->AddEntry(bes1_ratio_mix_def_g, "BES1 Mixed", "lp");
-			leg->AddEntry(ampt_ratio_mix_def_g, "AMPT Mixed", "lp");
-			leg->SetBorderSize(0);
-			leg->SetFillStyle(0);
-			leg->Draw();
-		}
-
-		mg->GetXaxis()->SetLimits(0, 80);
-		mg->GetXaxis()->SetRangeUser(0, 80);
-		//mg->GetYaxis()->SetLimits(0.9955, 1.0145);
-		//mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
-
-		mg->GetXaxis()->SetTitle("Energy (GeV)");
-		//mg->GetYaxis()->SetTitle("Kurtosis");
-
-		mg->Draw("AP");
-
-
-		// Divided plot on bottom
-		can->cd(can_index + (int)bes1["raw"].size());
-		gPad->SetTopMargin(0.001);
-//		gPad->SetBottomMargin(0.001);
-//		gPad->SetRightMargin(0.01);
-//		gPad->SetLeftMargin(0.01);
-//		gStyle->SetPadTickY(1);
-
-		TMultiGraph* mg_div = new TMultiGraph();
-		mg_div->SetName((stat + "_divided").data());
-
-		TGraphErrors* bes1_ratio_div_def_g = graph_x_vs_y_err(energy_bes1, bes1["divide"][stat].val, energy_err, bes1["divide"][stat].stat);
-		TGraphErrors* ampt_ratio_div_def_g = graph_x_vs_y_err(energy_ampt, ampt["divide"][stat].val, energy_err, ampt["divide"][stat].stat);
-		bes1_ratio_div_def_g->SetNameTitle(("bes1_div_" + stat).data());
-		ampt_ratio_div_def_g->SetNameTitle(("ampt_div_" + stat).data());
-		TGraphErrors* bes1_ratio_div_sys_g = graph_x_vs_y_err(energy_bes1, bes1["divide"][stat].val, energy_err, bes1["divide"][stat].sys);
-		TGraphErrors* ampt_ratio_div_sys_g = graph_x_vs_y_err(energy_ampt, ampt["divide"][stat].val, energy_err, ampt["divide"][stat].sys);
-
-		bes1_ratio_div_def_g->SetMarkerStyle(bes_marker_style);
-		bes1_ratio_div_def_g->SetMarkerColor(color["divide"]);
-		bes1_ratio_div_def_g->SetLineColor(color["divide"]);
-		bes1_ratio_div_def_g->SetMarkerSize(marker_size["divide"]);
-		bes1_ratio_div_sys_g->SetLineColor(color["divide"]);
-
-		ampt_ratio_div_def_g->SetMarkerStyle(ampt_marker_style);
-		ampt_ratio_div_def_g->SetMarkerColor(color["divide"]);
-		ampt_ratio_div_def_g->SetLineColor(color["divide"]);
-		ampt_ratio_div_def_g->SetMarkerSize(marker_size["divide"]);
-		ampt_ratio_div_sys_g->SetLineColor(color["divide"]);
-
-		mg_div->Add(bes1_ratio_div_def_g, "APLZ");
-		mg_div->Add(ampt_ratio_div_def_g, "PL");
-		mg_div->Add(bes1_ratio_div_sys_g, "[]");
-		mg_div->Add(ampt_ratio_div_sys_g, "[]");
-
-		if (stat == "mean") {
-			TLegend* leg_div = new TLegend(0.3, 0.21, 0.3, 0.21);
-			leg_div->AddEntry(bes1_ratio_div_def_g, "BES1 Raw/Mixed", "lp");
-			leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "lp");
-			leg_div->SetBorderSize(0);
-			leg_div->SetFillStyle(0);
-		}
-
-		mg_div->GetXaxis()->SetLimits(0, 80);
-		mg_div->GetXaxis()->SetRangeUser(0, 80);
-		//mg_div->GetYaxis()->SetLimits(0.9955, 1.0145);
-		//mg_div->GetYaxis()->SetRangeUser(0.9955, 1.0145);
-
-		mg_div->GetXaxis()->SetTitle("Energy (GeV)");
-		//mg_div->GetYaxis()->SetTitle("Kurtosis");
-
-		mg_div->Draw("AP");
-
-		if (1 < mg_div->GetYaxis()->GetXmax() && 1 > mg_div->GetYaxis()->GetXmin()) {
-			TLine* one_line = new TLine(0, 1, 80, 1);
-			one_line->SetLineStyle(2);
-			one_line->Draw();
-		}
-
-		can_index++;
-	}
-
-	//leg->SetMargin(0.1); leg->Draw();
-
-	//gPad->SetTopMargin(0.04);
-	//gPad->SetLeftMargin(0.12);
-	//gPad->SetRightMargin(0.04);
-
-	can->Update();
-	can->Write();
-
-	delete can;
-}
-
-
-void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, vector<string> stat_order, string type_name) {
-	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
-	vector<double> energy_val(energies.begin(), energies.end());
-	vector<double> energy_bes1;
-	vector<double> energy_ampt;
-	for (double energy : energies) {
-		energy_bes1.push_back(energy - 0.6);
-		energy_ampt.push_back(energy + 0.6);
-	}
-
-	map<string, int> color{ {"raw", kBlue}, {"mix", kGreen+2}, {"divide", kRed} };
-	map<string, int> marker_size{ {"raw", 2}, {"mix", 2}, {"divide", 2} };
-	int bes_marker_style = 29;
-	int ampt_marker_style = 22;
-
-	TCanvas* can = new TCanvas(("Moments_vs_energy_can_" + type_name).data(), ("Moments vs Energy " + type_name).data(), 955, 805);
+	TCanvas* can = new TCanvas(("Moments_vs_energy_can_" + type_name).data(), ("Moments vs Energy " + type_name).data(), 1250, 800);
 	int stat_num = (int)stat_order.size();
+
 	double y_top_pad = 0.01;
 	double y_bot_pad = 0.1;
-	double x_left_pad = 0.02;
+	double x_left_pad = 0.012;
 	double x_right_pad = 0.01;
-	double y_top_length = 0.7;
+	double y_top_length = 0.6;
 	double x_low = 0;
 	double x_up = 0;
-	double def_left_margin = 0.1;
-	double def_right_margin = 0.05;
+	double def_left_margin = 0.12;
+	double def_right_margin = 0.01;
+
 	double x_step = (1.0 - x_left_pad - x_right_pad) / stat_num;
-	cout << "x_step: " << x_step << endl;
+//	cout << "x_step: " << x_step << endl;
 	for (int x_index=0; x_index<stat_num; x_index++) {
 		if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
 		else if (x_index == stat_num - 1) { x_up = x_low + x_step + x_right_pad; }
 		else { x_up = x_low + x_step; }
-		cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+//		cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
 
 		int top_index = x_index * 2 + 1;
 		string name_top = gPad->GetName() + to_string(top_index);
@@ -911,6 +1130,7 @@ void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, 
 		int bottom_index = x_index * 2 + 2;
 		string name_bottom = gPad->GetName() + to_string(bottom_index);
 		TPad *bottom_pad = new TPad(name_top.data(), name_top.data(), x_low, 0, x_up, 1 - y_top_length);
+		bottom_pad->SetTickx();
 		bottom_pad->SetBottomMargin(y_bot_pad);
 		bottom_pad->SetTopMargin(0);
 
@@ -930,22 +1150,16 @@ void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, 
 		bottom_pad->Draw();
 		x_low = x_up;
 	}
-//	can->SetPad(0, 0.01, 0.99, 1);
-//	DividegPad((int)bes1["raw"].size(), 2, 0.1, 0.02, 0.02, 0.1);
-//	can->Divide((int)bes1["raw"].size(), 2);
+
 	int can_index = 1;
 	for ( string stat : stat_order) { //pair<string, plot_data> stat : bes1["raw"]) {  // Iterate over stats, left to right on plot
 
 		// Raw vs mixed on top plot
 		can->cd(can_index * 2 - 1);
-//		gPad->SetTopMargin(0.001);
-//		gPad->SetBottomMargin(0.001);
-//		gPad->SetRightMargin(0.01);
-//		gPad->SetLeftMargin(0.01);
 
 		TMultiGraph* mg = new TMultiGraph();
 		mg->SetName((stat + "_raw_mixed").data());
-		mg->SetTitle((stat).data());
+		mg->SetTitle((stat_title[stat]).data());
 
 		TGraphErrors* bes1_ratio_raw_def_g = graph_x_vs_y_err(energy_bes1, bes1["raw"][stat].val, energy_err, bes1["raw"][stat].stat);
 		TGraphErrors* ampt_ratio_raw_def_g = graph_x_vs_y_err(energy_ampt, ampt["raw"][stat].val, energy_err, ampt["raw"][stat].stat);
@@ -954,17 +1168,17 @@ void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, 
 		TGraphErrors* bes1_ratio_raw_sys_g = graph_x_vs_y_err(energy_bes1, bes1["raw"][stat].val, energy_err, bes1["raw"][stat].sys);
 		TGraphErrors* ampt_ratio_raw_sys_g = graph_x_vs_y_err(energy_ampt, ampt["raw"][stat].val, energy_err, ampt["raw"][stat].sys);
 
-		bes1_ratio_raw_def_g->SetMarkerStyle(bes_marker_style);
-		bes1_ratio_raw_def_g->SetMarkerColor(color["raw"]);
-		bes1_ratio_raw_def_g->SetLineColor(color["raw"]);
+		bes1_ratio_raw_def_g->SetMarkerStyle(marker_style["raw_bes"]);
+		bes1_ratio_raw_def_g->SetMarkerColor(color["raw_bes"]);
+		bes1_ratio_raw_def_g->SetLineColor(color["raw_bes"]);
 		bes1_ratio_raw_def_g->SetMarkerSize(marker_size["raw"]);
-		bes1_ratio_raw_sys_g->SetLineColor(color["raw"]);
+		bes1_ratio_raw_sys_g->SetLineColor(color["raw_bes"]);
 
-		ampt_ratio_raw_def_g->SetMarkerStyle(ampt_marker_style);
-		ampt_ratio_raw_def_g->SetMarkerColor(color["raw"]);
-		ampt_ratio_raw_def_g->SetLineColor(color["raw"]);
+		ampt_ratio_raw_def_g->SetMarkerStyle(marker_style["raw_ampt"]);
+		ampt_ratio_raw_def_g->SetMarkerColor(color["raw_ampt"]);
+		ampt_ratio_raw_def_g->SetLineColor(color["raw_ampt"]);
 		ampt_ratio_raw_def_g->SetMarkerSize(marker_size["raw"]);
-		ampt_ratio_raw_sys_g->SetLineColor(color["raw"]);
+		ampt_ratio_raw_sys_g->SetLineColor(color["raw_ampt"]);
 
 		TGraphErrors* bes1_ratio_mix_def_g = graph_x_vs_y_err(energy_bes1, bes1["mix"][stat].val, energy_err, bes1["mix"][stat].stat);
 		TGraphErrors* ampt_ratio_mix_def_g = graph_x_vs_y_err(energy_ampt, ampt["mix"][stat].val, energy_err, ampt["mix"][stat].stat);
@@ -973,17 +1187,17 @@ void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, 
 		TGraphErrors* bes1_ratio_mix_sys_g = graph_x_vs_y_err(energy_bes1, bes1["mix"][stat].val, energy_err, bes1["mix"][stat].sys);
 		TGraphErrors* ampt_ratio_mix_sys_g = graph_x_vs_y_err(energy_ampt, ampt["mix"][stat].val, energy_err, ampt["mix"][stat].sys);
 
-		bes1_ratio_mix_def_g->SetMarkerStyle(bes_marker_style);
-		bes1_ratio_mix_def_g->SetMarkerColor(color["mix"]);
-		bes1_ratio_mix_def_g->SetLineColor(color["mix"]);
+		bes1_ratio_mix_def_g->SetMarkerStyle(marker_style["mix_bes"]);
+		bes1_ratio_mix_def_g->SetMarkerColor(color["mix_bes"]);
+		bes1_ratio_mix_def_g->SetLineColor(color["mix_bes"]);
 		bes1_ratio_mix_def_g->SetMarkerSize(marker_size["mix"]);
-		bes1_ratio_mix_sys_g->SetLineColor(color["mix"]);
+		bes1_ratio_mix_sys_g->SetLineColor(color["mix_bes"]);
 
-		ampt_ratio_mix_def_g->SetMarkerStyle(ampt_marker_style);
-		ampt_ratio_mix_def_g->SetMarkerColor(color["mix"]);
-		ampt_ratio_mix_def_g->SetLineColor(color["mix"]);
+		ampt_ratio_mix_def_g->SetMarkerStyle(marker_style["mix_ampt"]);
+		ampt_ratio_mix_def_g->SetMarkerColor(color["mix_ampt"]);
+		ampt_ratio_mix_def_g->SetLineColor(color["mix_ampt"]);
 		ampt_ratio_mix_def_g->SetMarkerSize(marker_size["mix"]);
-		ampt_ratio_mix_sys_g->SetLineColor(color["mix"]);
+		ampt_ratio_mix_sys_g->SetLineColor(color["mix_ampt"]);
 
 		mg->Add(bes1_ratio_raw_def_g, "APLZ");
 		mg->Add(ampt_ratio_raw_def_g, "PL");
@@ -994,35 +1208,39 @@ void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, 
 		mg->Add(bes1_ratio_mix_sys_g, "[]");
 		mg->Add(ampt_ratio_mix_sys_g, "[]");
 
+		gStyle->SetTitleFont(3, "t");
+		gStyle->SetTitleSize(20, "t");
+		mg->GetXaxis()->SetLimits(0.1, 79.9);
+		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+		mg->GetXaxis()->SetLabelFont(3);
+		mg->GetXaxis()->SetLabelSize(10);
+		mg->GetYaxis()->SetLabelFont(3);
+		mg->GetYaxis()->SetLabelSize(10);
+		//mg->GetYaxis()->SetLimits(0.9955, 1.0145);
+		//mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
+
+		mg->GetXaxis()->SetTitle("Energy (GeV)");
+		mg->GetXaxis()->SetTitleFont(3);
+		mg->GetXaxis()->SetTitleSize(10);
+
+		mg->Draw("AP");
+
 		if (stat == "mean") {
-			TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-			leg->AddEntry(bes1_ratio_raw_def_g, "BES1 Raw", "lp");
+			TLegend* leg = new TLegend(0.6, 0.7, 0.9, 0.9);
+			leg->SetTextFont(43);
+			leg->SetTextSize(15);
+			leg->AddEntry(bes1_ratio_raw_def_g, "STAR Raw", "lp");
 			leg->AddEntry(ampt_ratio_raw_def_g, "AMPT Raw", "lp");
-			leg->AddEntry(bes1_ratio_mix_def_g, "BES1 Mixed", "lp");
+			leg->AddEntry(bes1_ratio_mix_def_g, "STAR Mixed", "lp");
 			leg->AddEntry(ampt_ratio_mix_def_g, "AMPT Mixed", "lp");
 			leg->SetBorderSize(0);
 			leg->SetFillStyle(0);
 			leg->Draw();
 		}
 
-		mg->GetXaxis()->SetLimits(0, 80);
-		mg->GetXaxis()->SetRangeUser(0, 80);
-		//mg->GetYaxis()->SetLimits(0.9955, 1.0145);
-		//mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
-
-		mg->GetXaxis()->SetTitle("Energy (GeV)");
-		//mg->GetYaxis()->SetTitle("Kurtosis");
-
-		mg->Draw("AP");
-
 
 		// Divided plot on bottom
 		can->cd(can_index * 2);
-//		gPad->SetTopMargin(0.001);
-//		gPad->SetBottomMargin(0.001);
-//		gPad->SetRightMargin(0.01);
-//		gPad->SetLeftMargin(0.01);
-//		gStyle->SetPadTickY(1);
 
 		TMultiGraph* mg_div = new TMultiGraph();
 		mg_div->SetName((stat + "_divided").data());
@@ -1034,40 +1252,49 @@ void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, 
 		TGraphErrors* bes1_ratio_div_sys_g = graph_x_vs_y_err(energy_bes1, bes1["divide"][stat].val, energy_err, bes1["divide"][stat].sys);
 		TGraphErrors* ampt_ratio_div_sys_g = graph_x_vs_y_err(energy_ampt, ampt["divide"][stat].val, energy_err, ampt["divide"][stat].sys);
 
-		bes1_ratio_div_def_g->SetMarkerStyle(bes_marker_style);
-		bes1_ratio_div_def_g->SetMarkerColor(color["divide"]);
-		bes1_ratio_div_def_g->SetLineColor(color["divide"]);
+		bes1_ratio_div_def_g->SetMarkerStyle(marker_style["div_bes"]);
+		bes1_ratio_div_def_g->SetMarkerColor(color["div_bes"]);
+		bes1_ratio_div_def_g->SetLineColor(color["div_bes"]);
 		bes1_ratio_div_def_g->SetMarkerSize(marker_size["divide"]);
-		bes1_ratio_div_sys_g->SetLineColor(color["divide"]);
+		bes1_ratio_div_sys_g->SetLineColor(color["div_bes"]);
 
-		ampt_ratio_div_def_g->SetMarkerStyle(ampt_marker_style);
-		ampt_ratio_div_def_g->SetMarkerColor(color["divide"]);
-		ampt_ratio_div_def_g->SetLineColor(color["divide"]);
+		ampt_ratio_div_def_g->SetMarkerStyle(marker_style["div_ampt"]);
+		ampt_ratio_div_def_g->SetMarkerColor(color["div_ampt"]);
+		ampt_ratio_div_def_g->SetLineColor(color["div_ampt"]);
 		ampt_ratio_div_def_g->SetMarkerSize(marker_size["divide"]);
-		ampt_ratio_div_sys_g->SetLineColor(color["divide"]);
+		ampt_ratio_div_sys_g->SetLineColor(color["div_ampt"]);
 
 		mg_div->Add(bes1_ratio_div_def_g, "APLZ");
 		mg_div->Add(ampt_ratio_div_def_g, "PL");
 		mg_div->Add(bes1_ratio_div_sys_g, "[]");
 		mg_div->Add(ampt_ratio_div_sys_g, "[]");
 
-		if (stat == "mean") {
-			TLegend* leg_div = new TLegend(0.3, 0.21, 0.3, 0.21);
-			leg_div->AddEntry(bes1_ratio_div_def_g, "BES1 Raw/Mixed", "lp");
-			leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "lp");
-			leg_div->SetBorderSize(0);
-			leg_div->SetFillStyle(0);
-		}
-
-		mg_div->GetXaxis()->SetLimits(0, 80);
-		mg_div->GetXaxis()->SetRangeUser(0, 80);
+		mg_div->GetXaxis()->SetLimits(0.1, 79.9);
+		mg_div->GetXaxis()->SetRangeUser(0.1, 79.9);
+		mg_div->GetXaxis()->SetLabelFont(3);
+		mg_div->GetXaxis()->SetLabelSize(10);
+		mg_div->GetYaxis()->SetLabelFont(3);
+		mg_div->GetYaxis()->SetLabelSize(10);
 		//mg_div->GetYaxis()->SetLimits(0.9955, 1.0145);
 		//mg_div->GetYaxis()->SetRangeUser(0.9955, 1.0145);
 
 		mg_div->GetXaxis()->SetTitle("Energy (GeV)");
-		//mg_div->GetYaxis()->SetTitle("Kurtosis");
+		mg_div->GetXaxis()->SetTitleFont(3);
+		mg_div->GetXaxis()->SetTitleSize(10);
+		mg_div->GetXaxis()->SetTitleOffset(3);
 
 		mg_div->Draw("AP");
+
+		if (stat == "mean") {
+			TLegend* leg_div = new TLegend(0.5, 0.75, 0.9, 0.9);
+			leg_div->SetTextFont(43);
+			leg_div->SetTextSize(15);
+			leg_div->AddEntry(bes1_ratio_div_def_g, "STAR Raw/Mixed", "lp");
+			leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "lp");
+			leg_div->SetBorderSize(0);
+			leg_div->SetFillStyle(0);
+			leg_div->Draw();
+		}
 
 		if (1 < mg_div->GetYaxis()->GetXmax() && 1 > mg_div->GetYaxis()->GetXmin()) {
 			TLine* one_line = new TLine(0, 1, 80, 1);
@@ -1077,12 +1304,6 @@ void AzFigurePlotter::moments_vs_energy_plot2(vector<int> energies, map<string, 
 
 		can_index++;
 	}
-
-	//leg->SetMargin(0.1); leg->Draw();
-
-	//gPad->SetTopMargin(0.04);
-	//gPad->SetLeftMargin(0.12);
-	//gPad->SetRightMargin(0.04);
 
 	can->Update();
 	can->Write();
@@ -1107,9 +1328,69 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 	map<string, int> marker_color{ {"bes", kBlack}, {"ampt", kRed} };
 
 	TCanvas* can = new TCanvas(("Rapidity_vs_energy_can_" + type_name).data(), ("Rapidity vs Energy " + type_name).data(), 955, 805);
-//	can->SetPad(0.1, 0.01, 0.9, 1);
-//	can->Divide(3, 3, 0, 0);
-	DividegPad(3, 3, 0.1, 0.02, 0.02, 0.1);
+
+	int x_num = 3;
+	int y_num = 3;
+
+	double y_top_pad = 0.01;
+	double y_bot_pad = 0.04;
+	double x_left_pad = 0.045;
+	double x_right_pad = 0.01;
+	double x_low = 0;
+	double x_up = 0;
+	double y_low = 0;
+	double y_up = 1.0;
+	double def_left_margin = 0.0;
+	double def_right_margin = 0.0;
+	double def_top_margin = 0.0;
+	double def_bot_margin = 0.0;
+
+	double x_step = (1.0 - x_left_pad - x_right_pad) / x_num;
+	double y_step = (1.0 - y_top_pad - y_bot_pad) / y_num;
+//	cout << "x_step: " << x_step << "  |  y_step: " << y_step << endl;
+	for (int y_index=0; y_index<y_num; y_index++) {
+		x_low = 0;
+		if (y_index == 0) { y_low = y_up - y_step - y_top_pad; }
+		else if (y_index == y_num - 1) { y_low = y_up - y_step - y_bot_pad; }
+		else { y_low = y_up - y_step; }
+
+		for (int x_index=0; x_index<x_num; x_index++) {
+			int pad_index = x_index + y_num * y_index + 1;
+
+			if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
+			else if (x_index == x_num - 1) { x_up = x_low + x_step + x_right_pad; }
+			else { x_up = x_low + x_step; }
+
+			if (y_up > 1.0) { y_up = 1.0;}
+			if (y_low < 0.0) { y_low = 0.0; }
+			if (x_up > 1.0) { x_up = 1.0;}
+			if (x_low < 0.0) { x_low = 0.0; }
+
+//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
+
+			string pad_name = gPad->GetName() + to_string(pad_index);
+			TPad *pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
+			pad->SetTickx();
+			pad->SetTicky();
+
+			if (x_index == 0) {	pad->SetLeftMargin(x_left_pad / (x_up - x_low) + def_left_margin); }
+			else { pad->SetLeftMargin(def_left_margin); }
+			if (x_index == x_num - 1) {	pad->SetRightMargin(x_right_pad / (x_up - x_low) + def_right_margin); }
+			else { pad->SetRightMargin(def_right_margin); }
+			if (y_index == 0) { pad->SetTopMargin(y_top_pad / (y_up - y_low) + def_top_margin); }
+			else { pad->SetTopMargin(def_top_margin); }
+			if (y_index == y_num -1) { pad->SetBottomMargin(y_bot_pad / (y_up - y_low) + def_bot_margin); }
+			else { pad->SetBottomMargin(def_bot_margin); }
+
+			pad->SetNumber(pad_index);
+
+			pad->Draw();
+			x_low = x_up;
+		}
+		y_up = y_low;
+	}
+
 	int can_index = 0;
 
 	for (pair<float, plot_data> rapid : bes1["raw"]) {  // Iterate over rapidities, left to right on plot
@@ -1142,9 +1423,6 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		mg_div->Add(bes1_ratio_div_sys_g, "[]");
 		mg_div->Add(ampt_ratio_div_sys_g, "[]");
 
-		TText* text = new TText(5, 1.015, ("|#eta|<" + to_string(rapid.first).substr(0, 3)).data());
-		text->SetTextSize(10); text->Draw();
-
 		mg_div->GetXaxis()->SetLimits(0.1, 79.9);
 		mg_div->GetXaxis()->SetRangeUser(0.1, 79.9);
 		if (!zoom) {
@@ -1160,19 +1438,39 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 
 		mg_div->Draw("AP");
 
+
+		TLatex rapid_label;
+		rapid_label.SetTextFont(43);
+		rapid_label.SetTextAlign(22);
+		rapid_label.SetTextSize(25);
+		rapid_label.DrawLatex(40, 1.015, ("|#eta|<" + to_string(rapid.first).substr(0, 3)).data());
+
+
 		TLine* one_line = new TLine(0, 1, 80, 1);
 		one_line->SetLineStyle(2);
 		one_line->Draw();
 
 		if (can_index == 4) {
 			can->cd(++can_index);
-			gPad->SetTopMargin(0.2);
-			gPad->SetBottomMargin(0.2);
-			gPad->SetLeftMargin(0.2);
-			gPad->SetRightMargin(0.2);
-			TLegend *leg2 = new TLegend();
+			vector<double> x_hold {-1};
+			vector<double> y_hold {-1};
+			TGraph *g_hold = new TGraph(1, x_hold.data(), y_hold.data());
+			g_hold->SetTitle("");
+			g_hold->GetXaxis()->SetLimits(0.1, 79.9);
+			g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
+			if (!zoom) {
+				g_hold->GetYaxis()->SetLimits(0.9935, 1.0185);
+				g_hold->GetYaxis()->SetRangeUser(0.9935, 1.0185);
+			} else {
+				g_hold->GetYaxis()->SetLimits(0.9975, 1.0035);
+				g_hold->GetYaxis()->SetRangeUser(0.9975, 1.0035);
+			}
+			g_hold->Draw("AP");
+			TLegend *leg2 = new TLegend(0.3, 0.4, 0.7, 0.6);
 			leg2->AddEntry(bes1_ratio_div_def_g, "BES1", "lp");
 			leg2->AddEntry(ampt_ratio_div_def_g, "AMPT", "lp");
+			leg2->SetBorderSize(0);
+			leg2->SetFillStyle(0);
 			leg2->Draw();
 		}
 	}
@@ -1211,8 +1509,8 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		leg_bes->AddEntry(bes1_ratio_div_def_g, ("BES1 |#eta|<" + to_string(rapid.first).substr(0, 3)).data(), "lp");
 	}
 
-	mg_div_bes->GetXaxis()->SetLimits(0, 80);
-	mg_div_bes->GetXaxis()->SetRangeUser(0, 80);
+	mg_div_bes->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_div_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
 		mg_div_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_div_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1269,8 +1567,8 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 //		can_index++;
 	}
 
-	mg_div_ampt->GetXaxis()->SetLimits(0, 80);
-	mg_div_ampt->GetXaxis()->SetRangeUser(0, 80);
+	mg_div_ampt->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_div_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
 		mg_div_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_div_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1358,8 +1656,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_bes->AddEntry(bes1_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
 	}
 
-	mg_bes->GetXaxis()->SetLimits(0, 80);
-	mg_bes->GetXaxis()->SetRangeUser(0, 80);
+	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
 //	if (!zoom) {
 //		mg_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 //		mg_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1401,8 +1699,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_div_bes->AddEntry(bes1_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
 	}
 
-	mg_div_bes->GetXaxis()->SetLimits(0, 80);
-	mg_div_bes->GetXaxis()->SetRangeUser(0, 80);
+	mg_div_bes->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_div_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
 		mg_div_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_div_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1472,8 +1770,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_ampt->AddEntry(ampt_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
 	}
 
-	mg_ampt->GetXaxis()->SetLimits(0, 80);
-	mg_ampt->GetXaxis()->SetRangeUser(0, 80);
+	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
 //	if (!zoom) {
 //		mg_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 //		mg_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1515,8 +1813,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_div_ampt->AddEntry(ampt_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
 	}
 
-	mg_div_ampt->GetXaxis()->SetLimits(0, 80);
-	mg_div_ampt->GetXaxis()->SetRangeUser(0, 80);
+	mg_div_ampt->GetXaxis()->SetLimits(0.1, 79.9);
+	mg_div_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
 //	if (!zoom) {
 //		mg_div_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 //		mg_div_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);
