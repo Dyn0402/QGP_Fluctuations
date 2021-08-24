@@ -122,12 +122,33 @@ struct ampt_tree_branches {
 };
 
 
+struct cooper_frye_tree_branches {
+	int event;
+	int refmult;
+	int refmult2;
+	int refmult3;
+
+	float qx, qy;
+
+	vector<int> *pid = 0;
+	vector<float> *px = 0;
+	vector<float> *py = 0;
+	vector<float> *pz = 0;
+
+	TBranch *branch_pid = 0;
+	TBranch *branch_px = 0;
+	TBranch *branch_py = 0;
+	TBranch *branch_pz = 0;
+};
+
+
 tree_leaves get_tree_leaves(TTree* tree, string particle = "proton", int ref = 3);
 ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref = 3);
 void set_tree_branches(TTree* tree, tree_branches &branches, string particle = "proton", int ref = 3);
 void set_tree_branches(TChain* chain, tree_branches &branches, string particle = "proton", int ref = 3);
 void set_particle_branches(TTree* tree, tree_branches &branches, string particle = "proton");
 void set_ampt_tree_branches(TTree* tree, ampt_tree_branches &branches);
+void set_cooper_frye_tree_branches(TTree* tree, cooper_frye_tree_branches &branches);
 
 
 
