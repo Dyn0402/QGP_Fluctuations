@@ -58,6 +58,7 @@ public:
 	void set_sim_eff_dist_path(string root_path, string hist_name);
 	void set_energy(int energy);
 	void set_ampt(bool ampt);
+	void set_cooper_frye(bool cf);
 	void set_pile_up(bool pile_up);
 	//void set_sim_eff(bool sim_eff);
 	//void set_sim_flow(bool sim_flow);
@@ -97,6 +98,7 @@ private:
 
 	tree_branches branches;
 	ampt_tree_branches ampt_branches;
+	cooper_frye_tree_branches cooper_frye_branches;
 
 	string tree_name = "tree";
 	string event_cut_hist_name = "Event Cut Hist";
@@ -116,12 +118,13 @@ private:
 	int energy;
 	int ref_num;
 	string particle = "proton";
-	vector<int> ampt_particle_pid{ 2212 };
+	vector<int> pdg_particle_pid{ 2212 };
 
 	int tree_reader_seed = 0;
 	int file_shuffle_seed = 0;
 
 	bool ampt;
+	bool cooper_frye;
 	bool pile_up;
 
 	double pile_up_prob;
@@ -131,10 +134,12 @@ private:
 	// Doers
 	void read_tree(TTree* tree);
 	void read_ampt_tree(TTree* tree);
+	void read_cooper_frye_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
 
 	void set_branches(TTree* tree);
 	void set_ampt_branches(TTree* tree);
+	void set_cooper_frye_branches(TTree* tree);
 
 	void set_binner(AzBinner& binner);
 

@@ -182,14 +182,14 @@ void read_new() {
 //		{"BES1_Eff15_sys_1", {{"Eff15_sys", get_rand_set_pairs(15, "rapid05", "Efficiency15")}}}
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_Eff05_0", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {0, 4}}}}}},
-		{"BES1_Eff05_1", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {5, 9}}}}}},
-		{"BES1_Eff05_2", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {10, 14}}}}}},
-		{"BES1_Eff15_0", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {0, 4}}}}}},
-		{"BES1_Eff15_1", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {5, 9}}}}}},
-		{"BES1_Eff15_2", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {10, 14}}}}}}
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_Eff05_0", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {0, 4}}}}}},
+//		{"BES1_Eff05_1", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {5, 9}}}}}},
+//		{"BES1_Eff05_2", {{"Eff05_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency05_", {10, 14}}}}}},
+//		{"BES1_Eff15_0", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {0, 4}}}}}},
+//		{"BES1_Eff15_1", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {5, 9}}}}}},
+//		{"BES1_Eff15_2", {{"Eff15_def", {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_Efficiency15_", {10, 14}}}}}}
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"BES1_Eff05_sys_0", {{"Eff05_sys", get_rand_set_pairs(10, "rapid05", "Efficiency05")}}},
@@ -223,12 +223,12 @@ void read_new() {
 //		{"Ampt_Eff3_0", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_Efficiency3_", {0, 14}}}}}}
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
-		{"Ampt_Eff05_1", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
-		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
-		{"Ampt_Eff15_1", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
+//		{"Ampt_Eff05_1", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
+//		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
+//		{"Ampt_Eff15_1", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = { 
 	//	{"BES1_rapid1_0", {{"rapid1", {{"rapid1_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 19}}}}}},
@@ -254,8 +254,15 @@ void read_new() {
 	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 14}}}}}},
+		{"CF_def_1", {{"default", {{"CF_rapid05_n1ratios_", {15, 29}}}}}},
+		{"CF_def_2", {{"default", {{"CF_rapid05_n1ratios_", {30, 44}}}}}},
+		{"CF_def_3", {{"default", {{"CF_rapid05_n1ratios_", {45, 59}}}}}}
+	};
+
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 39, 11, 7 };
+	vector<int> energy_list{ 62, 39, 27, 19, 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -375,16 +382,18 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
 
-	string base_path, in_base_path, in_base_ampt_path;
+	string base_path, in_base_path, in_base_ampt_path, in_base_cf_path;
 	if (platform == "lin") {
 		base_path = "/home/dylan/Research/";
 		in_base_path = "/media/ucla/Research/";
 		in_base_ampt_path = "/media/ucla/Research/";
+		in_base_cf_path = "/media/ucla/Research/";
 	}
 	else if (platform == "win") {
 		base_path = "C:/Users/Dylan/Desktop/Research/";
 		in_base_path = "C:/Users/Dylan/Desktop/Research/";
 		in_base_ampt_path = "E:/Research/";
+		in_base_cf_path = "E:/Research/";
 	}
 	string out_base_path = base_path;
 	string in_path = in_base_path;
@@ -400,6 +409,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 		in_path += "BES1_Trees/";
 		out_job_dir += "Data_Sim/";
 		mix_out_job_dir += "Data_Sim_Mix/";
+	}
+	else if (in_string(job_type, "CF")) {
+		in_path = in_base_cf_path + "Cooper_Frye_Trees/";
+		out_job_dir += "Data_CF/";
+		mix_out_job_dir += "Data_CF_Mix/";
 	}
 	else {
 		in_path += "BES1_Trees/";
@@ -443,6 +457,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.set_cent_binning(9);
 
 				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
+				if (in_string(set.first, "CF")) { reader.set_cooper_frye(true); binner.set_cooper_frye(true); }
 
 				if (in_string(set.first, "cbwc")) { binner.set_cbwc(true); }
 				else { binner.set_cbwc(false); }

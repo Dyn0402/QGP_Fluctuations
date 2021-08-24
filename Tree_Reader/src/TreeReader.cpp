@@ -49,6 +49,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
 	//sim_eff = false;
@@ -67,6 +68,7 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 	this->mtx = mtx;
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
 	//sim_eff = false;
@@ -83,6 +85,7 @@ TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
 	//sim_eff = false;
@@ -101,6 +104,7 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 	this->mtx = mtx;
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
 	//sim_eff = false;
@@ -117,6 +121,7 @@ TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
 	//sim_eff = false;
@@ -206,6 +211,10 @@ void TreeReader::set_ampt(bool ampt) {
 	this->ampt = ampt;
 }
 
+void TreeReader::set_cooper_frye(bool cf) {
+	this->cooper_frye = cf;
+}
+
 void TreeReader::set_pile_up(bool pile_up) {
 	this->pile_up = pile_up;
 }
@@ -231,7 +240,7 @@ void TreeReader::set_particle(string particle) {
 //}
 
 void TreeReader::set_ampt_particle_pid(vector<int> pid) {
-	ampt_particle_pid = pid;
+	pdg_particle_pid = pid;
 }
 
 void TreeReader::set_file_list(vector<string> *file_list) {
@@ -277,6 +286,9 @@ void TreeReader::read_trees() {
 		vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
 		in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
 	}
+//	else if (cooper_frye) {
+//		in_files = get_files_in_dir(in_path + to_string(energy) + "GeV/", "root", "path");
+//	}
 	else {
 		in_files = get_files_in_dir(in_path + to_string(energy) + "GeV/", "root", "path");
 	}
@@ -329,9 +341,10 @@ void TreeReader::read_trees() {
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
-		if (!ampt) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
+		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		if (ampt) { read_ampt_tree(tree); }  // Read tree from file into data
+		else if (cooper_frye) { read_cooper_frye_tree(tree); }
 		else { read_tree(tree); }  // Read tree from file into data
 		tree->ResetBranchAddresses();
 		file->Close();
@@ -472,7 +485,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 
 		vector<Track> particles;
 		for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
-			if (!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
+			if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
 			TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
 			Track new_particle(track_defs);
 			new_particle.set_p(p.Mag());
@@ -495,7 +508,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 
 					particles.clear();
 					for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
-						if (!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
+						if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
 						TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
 						Track new_particle(track_defs);
 						new_particle.set_p(p.Mag());
@@ -503,6 +516,82 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 						new_particle.set_phi(p.Phi() + M_PI);
 						new_particle.set_eta(p.PseudoRapidity());
 						new_particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
+						new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+						particles.push_back(new_particle);
+					}
+					event2.set_particles(particles);
+
+					event.pile_up(event2);
+				}
+			}
+		}
+
+		for (AzBinner& binner : binners) {
+			binner.process_event(event);
+		}
+
+		event_index++;
+	}
+}
+
+
+
+void TreeReader::read_cooper_frye_tree(TTree* tree) {
+	set_cooper_frye_tree_branches(tree, cooper_frye_branches);
+	set_cooper_frye_branches(tree);
+
+	int* ref_n = NULL;
+	switch (ref_num) {
+	case 1:
+		ref_n = &cooper_frye_branches.refmult; break;
+	case 2:
+		ref_n = &cooper_frye_branches.refmult2; break;
+	case 3:
+		ref_n = &cooper_frye_branches.refmult3; break;
+	default:
+		cout << "Unknown ref_num value!" << endl;
+	}
+
+	int cent_9bin = 8;
+	int event_index = 0;
+	while (tree->GetEvent(event_index)) {
+
+		Event event(event_defs, energy, ref_num, cent_9bin);
+		event.set_qx(cooper_frye_branches.qx); event.set_qy(cooper_frye_branches.qy);
+
+		vector<Track> particles;
+		for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
+			if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), cooper_frye_branches.pid->at(particle_index))) { continue; }
+			TVector3 p(cooper_frye_branches.px->at(particle_index), cooper_frye_branches.py->at(particle_index), cooper_frye_branches.pz->at(particle_index));
+			Track new_particle(track_defs);
+			new_particle.set_p(p.Mag());
+			new_particle.set_pt(p.Perp());
+			new_particle.set_phi(p.Phi() + M_PI);
+			new_particle.set_eta(p.PseudoRapidity());
+			new_particle.set_charge(cooper_frye_branches.pid->at(particle_index) / fabs(cooper_frye_branches.pid->at(particle_index)));
+			new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+			particles.push_back(new_particle);
+		}
+		event.set_particles(particles);
+
+		if (pile_up) {
+			if (trand->Rndm() < pile_up_prob) {  // Pile up next two events
+				event_index++;
+				if (tree->GetEntry(event_index)) {
+					cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
+					Event event2(event_defs, energy, ref_num, cent_9bin);
+					event2.set_qx(cooper_frye_branches.qx); event.set_qy(cooper_frye_branches.qy);
+
+					particles.clear();
+					for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
+						if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), cooper_frye_branches.pid->at(particle_index))) { continue; }
+						TVector3 p(cooper_frye_branches.px->at(particle_index), cooper_frye_branches.py->at(particle_index), cooper_frye_branches.pz->at(particle_index));
+						Track new_particle(track_defs);
+						new_particle.set_p(p.Mag());
+						new_particle.set_pt(p.Perp());
+						new_particle.set_phi(p.Phi() + M_PI);
+						new_particle.set_eta(p.PseudoRapidity());
+						new_particle.set_charge(cooper_frye_branches.pid->at(particle_index) / fabs(cooper_frye_branches.pid->at(particle_index)));
 						new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
 						particles.push_back(new_particle);
 					}
@@ -566,12 +655,34 @@ void TreeReader::set_ampt_branches(TTree* tree) {
 }
 
 
+void TreeReader::set_cooper_frye_branches(TTree* tree) {
+	tree->SetBranchStatus("*", 0);
+	tree->SetBranchStatus("qx", 1);
+	tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus("pid", 1);
+	tree->SetBranchStatus("px", 1);
+	tree->SetBranchStatus("py", 1);
+	tree->SetBranchStatus("pz", 1);
+
+	switch(ref_num) {
+	case 1 :
+		tree->SetBranchStatus("refmult", 1); break;
+	case 2 :
+		tree->SetBranchStatus("refmult2", 1); break;
+	case 3 :
+		tree->SetBranchStatus("refmult3", 1); break;
+	default :
+		cout << "Unknown ref_num value!" << endl;
+	}
+}
+
+
 // Pass TreeReader attributes down to AzBinner, if for no other reason than to write to info file.
 void TreeReader::set_binner(AzBinner& binner) {
 	binner.set_energy(energy);
 	binner.set_ref_num(ref_num);
 	binner.set_particle(particle);
-	binner.set_ampt_particle_pid(ampt_particle_pid);
+	binner.set_ampt_particle_pid(pdg_particle_pid);
 	binner.set_ampt(ampt);
 	binner.set_pile_up(pile_up);
 	binner.set_pile_up_prob(pile_up_prob);

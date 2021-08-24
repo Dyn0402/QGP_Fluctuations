@@ -46,6 +46,7 @@ using namespace std;
 
 AzBinner::AzBinner(int energy, int ref_num) {
 	ampt = false;
+	cooper_frye = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
@@ -77,6 +78,7 @@ AzBinner::AzBinner(int energy, int ref_num) {
 
 AzBinner::AzBinner(int energy) {
 	ampt = false;
+	cooper_frye = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
@@ -108,6 +110,7 @@ AzBinner::AzBinner(int energy) {
 
 AzBinner::AzBinner() {
 	ampt = false;
+	cooper_frye = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
@@ -271,6 +274,10 @@ void AzBinner::set_divs(vector<int> list) {
 
 void AzBinner::set_ampt(bool ampt) {
 	this->ampt = ampt;
+}
+
+void AzBinner::set_cooper_frye(bool cf) {
+	this->cooper_frye = cf;
 }
 
 void AzBinner::set_ampt_reaction_plane(bool rp) {
@@ -486,7 +493,7 @@ void AzBinner::process_event(const Event& event) {
 
 			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmunt n in place of centrality from here on.
 
-			if (ampt) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
+			if (ampt || cooper_frye) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
 				double rand_angle = trand->Rndm() * 2 * M_PI;
 				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
 				if (ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
