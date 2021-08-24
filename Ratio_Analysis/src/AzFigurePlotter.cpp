@@ -409,15 +409,15 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 	ampt_ratio_def_g->SetMarkerSize(1.8);
 	ampt_ratio_sys_g->SetLineColor(kRed);
 
-	mg->Add(bes1_ratio_def_g, "APLZ");
-	mg->Add(ampt_ratio_def_g, "PL");
-	mg->Add(bes1_ratio_sys_g, "[]");
+	mg->Add(ampt_ratio_def_g, "APZ");
 	mg->Add(ampt_ratio_sys_g, "[]");
+	mg->Add(bes1_ratio_def_g, "P");
+	mg->Add(bes1_ratio_sys_g, "[]");
 
 	leg->SetBorderSize(0);
 	leg->SetFillStyle(0);
-	leg->AddEntry(bes1_ratio_def_g, "BES1", "lp");
-	leg->AddEntry(ampt_ratio_def_g, "AMPT", "lp");
+	leg->AddEntry(bes1_ratio_def_g, "BES1", "p");
+	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 
 	mg->GetXaxis()->SetLimits(0.1, 79.9);
 	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
@@ -486,13 +486,13 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 		ampt_ratio_def_g->SetMarkerSize(div_marker_size[div.first]);
 		ampt_ratio_sys_g->SetLineColor(div_color[div.first]);
 
-		mg->Add(bes1_ratio_def_g, "APLZ");
-		mg->Add(ampt_ratio_def_g, "PL");
-		mg->Add(bes1_ratio_sys_g, "[]");
+		mg->Add(ampt_ratio_def_g, "APZ");
 		mg->Add(ampt_ratio_sys_g, "[]");
+		mg->Add(bes1_ratio_def_g, "P");
+		mg->Add(bes1_ratio_sys_g, "[]");
 
-		leg->AddEntry(bes1_ratio_def_g, ("BES1 " + to_string(div.first) + "#circ").data(), "lp");
-		leg->AddEntry(ampt_ratio_def_g, ("AMPT " +  to_string(div.first) + "#circ").data(), "lp");
+		leg->AddEntry(bes1_ratio_def_g, ("BES1 " + to_string(div.first) + "#circ").data(), "p");
+		leg->AddEntry(ampt_ratio_def_g, ("AMPT " +  to_string(div.first) + "#circ").data(), "p");
 	}
 
 	leg->SetBorderSize(0);
@@ -638,10 +638,10 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		ampt_ratio_def_g->SetMarkerSize(marker_size["ampt"]);
 		ampt_ratio_sys_g->SetLineColor(marker_color["ampt"]);
 
-		mg->Add(bes1_ratio_def_g, "APLZ");
-		mg->Add(ampt_ratio_def_g, "PL");
-		mg->Add(bes1_ratio_sys_g, "[]");
+		mg->Add(ampt_ratio_def_g, "APZ");
 		mg->Add(ampt_ratio_sys_g, "[]");
+		mg->Add(bes1_ratio_def_g, "P");
+		mg->Add(bes1_ratio_sys_g, "[]");
 
 		mg->GetXaxis()->SetLimits(0.1, 79.9);
 		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
@@ -683,8 +683,8 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 			}
 			g_hold->Draw("AP");
 			TLegend *leg2 = new TLegend(0.3, 0.4, 0.7, 0.6);
-			leg2->AddEntry(bes1_ratio_def_g, "BES1", "lp");
-			leg2->AddEntry(ampt_ratio_def_g, "AMPT", "lp");
+			leg2->AddEntry(bes1_ratio_def_g, "BES1", "p");
+			leg2->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 			leg2->SetBorderSize(0);
 			leg2->SetFillStyle(0);
 			leg2->Draw();
@@ -714,10 +714,10 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		bes1_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
 		bes1_ratio_sys_g->SetLineColor(cent_color[cent.first]);
 
-		mg_bes->Add(bes1_ratio_def_g, "APLZ");
+		mg_bes->Add(bes1_ratio_def_g, "APZ");
 		mg_bes->Add(bes1_ratio_sys_g, "[]");
 
-		leg_bes->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "lp");
+		leg_bes->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "p");
 	}
 
 	leg_bes->SetBorderSize(0);
@@ -767,10 +767,10 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		ampt_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
 		ampt_ratio_sys_g->SetLineColor(cent_color[cent.first]);
 
-		mg_ampt->Add(ampt_ratio_def_g, "PL");
+		mg_ampt->Add(ampt_ratio_def_g, "P");
 		mg_ampt->Add(ampt_ratio_sys_g, "[]");
 
-		leg_ampt->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "lp");
+		leg_ampt->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "p");
 	}
 
 	leg_ampt->SetBorderSize(0);
@@ -916,10 +916,10 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 		ampt_ratio_def_g->SetMarkerSize(marker_size["ampt"]);
 		ampt_ratio_sys_g->SetLineColor(marker_color["ampt"]);
 
-		mg->Add(bes1_ratio_def_g, "APLZ");
-		mg->Add(ampt_ratio_def_g, "PL");
-		mg->Add(bes1_ratio_sys_g, "[]");
+		mg->Add(ampt_ratio_def_g, "APZ");
 		mg->Add(ampt_ratio_sys_g, "[]");
+		mg->Add(bes1_ratio_def_g, "P");
+		mg->Add(bes1_ratio_sys_g, "[]");
 
 		mg->GetXaxis()->SetLimits(0.1, 79.9);
 		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
@@ -961,8 +961,8 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 			}
 			g_hold->Draw("AP");
 			TLegend *leg2 = new TLegend(0.3, 0.4, 0.7, 0.6);
-			leg2->AddEntry(bes1_ratio_def_g, "BES1", "lp");
-			leg2->AddEntry(ampt_ratio_def_g, "AMPT", "lp");
+			leg2->AddEntry(bes1_ratio_def_g, "BES1", "p");
+			leg2->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 			leg2->SetBorderSize(0);
 			leg2->SetFillStyle(0);
 			leg2->Draw();
@@ -992,10 +992,10 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 		bes1_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
 		bes1_ratio_sys_g->SetLineColor(cent_color[cent.first]);
 
-		mg_bes->Add(bes1_ratio_def_g, "APLZ");
+		mg_bes->Add(bes1_ratio_def_g, "APZ");
 		mg_bes->Add(bes1_ratio_sys_g, "[]");
 
-		leg_bes->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "lp");
+		leg_bes->AddEntry(bes1_ratio_def_g, ("BES1 " + cent_string[cent.first]).data(), "p");
 	}
 
 	leg_bes->SetBorderSize(0);
@@ -1045,10 +1045,10 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 		ampt_ratio_def_g->SetMarkerSize(cent_marker_size[cent.first]);
 		ampt_ratio_sys_g->SetLineColor(cent_color[cent.first]);
 
-		mg_ampt->Add(ampt_ratio_def_g, "PL");
+		mg_ampt->Add(ampt_ratio_def_g, "APZ");
 		mg_ampt->Add(ampt_ratio_sys_g, "[]");
 
-		leg_ampt->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "lp");
+		leg_ampt->AddEntry(ampt_ratio_def_g, ("AMPT " + cent_string[cent.first]).data(), "p");
 	}
 
 	leg_ampt->SetBorderSize(0);
@@ -1199,14 +1199,14 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		ampt_ratio_mix_def_g->SetMarkerSize(marker_size["mix"]);
 		ampt_ratio_mix_sys_g->SetLineColor(color["mix_ampt"]);
 
-		mg->Add(bes1_ratio_raw_def_g, "APLZ");
-		mg->Add(ampt_ratio_raw_def_g, "PL");
-		mg->Add(bes1_ratio_raw_sys_g, "[]");
-		mg->Add(ampt_ratio_raw_sys_g, "[]");
-		mg->Add(bes1_ratio_mix_def_g, "PL");
-		mg->Add(ampt_ratio_mix_def_g, "PL");
-		mg->Add(bes1_ratio_mix_sys_g, "[]");
+		mg->Add(ampt_ratio_mix_def_g, "APZ");
 		mg->Add(ampt_ratio_mix_sys_g, "[]");
+		mg->Add(ampt_ratio_raw_def_g, "P");
+		mg->Add(ampt_ratio_raw_sys_g, "[]");
+		mg->Add(bes1_ratio_mix_def_g, "P");
+		mg->Add(bes1_ratio_mix_sys_g, "[]");
+		mg->Add(bes1_ratio_raw_def_g, "P");
+		mg->Add(bes1_ratio_raw_sys_g, "[]");
 
 		gStyle->SetTitleFont(3, "t");
 		gStyle->SetTitleSize(20, "t");
@@ -1229,10 +1229,10 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 			TLegend* leg = new TLegend(0.6, 0.7, 0.9, 0.9);
 			leg->SetTextFont(43);
 			leg->SetTextSize(15);
-			leg->AddEntry(bes1_ratio_raw_def_g, "STAR Raw", "lp");
-			leg->AddEntry(ampt_ratio_raw_def_g, "AMPT Raw", "lp");
-			leg->AddEntry(bes1_ratio_mix_def_g, "STAR Mixed", "lp");
-			leg->AddEntry(ampt_ratio_mix_def_g, "AMPT Mixed", "lp");
+			leg->AddEntry(bes1_ratio_raw_def_g, "STAR Raw", "p");
+			leg->AddEntry(ampt_ratio_raw_def_g, "AMPT Raw", "p");
+			leg->AddEntry(bes1_ratio_mix_def_g, "STAR Mixed", "p");
+			leg->AddEntry(ampt_ratio_mix_def_g, "AMPT Mixed", "p");
 			leg->SetBorderSize(0);
 			leg->SetFillStyle(0);
 			leg->Draw();
@@ -1264,10 +1264,10 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		ampt_ratio_div_def_g->SetMarkerSize(marker_size["divide"]);
 		ampt_ratio_div_sys_g->SetLineColor(color["div_ampt"]);
 
-		mg_div->Add(bes1_ratio_div_def_g, "APLZ");
-		mg_div->Add(ampt_ratio_div_def_g, "PL");
-		mg_div->Add(bes1_ratio_div_sys_g, "[]");
+		mg_div->Add(ampt_ratio_div_def_g, "APZ");
 		mg_div->Add(ampt_ratio_div_sys_g, "[]");
+		mg_div->Add(bes1_ratio_div_def_g, "P");
+		mg_div->Add(bes1_ratio_div_sys_g, "[]");
 
 		mg_div->GetXaxis()->SetLimits(0.1, 79.9);
 		mg_div->GetXaxis()->SetRangeUser(0.1, 79.9);
@@ -1289,8 +1289,8 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 			TLegend* leg_div = new TLegend(0.5, 0.75, 0.9, 0.9);
 			leg_div->SetTextFont(43);
 			leg_div->SetTextSize(15);
-			leg_div->AddEntry(bes1_ratio_div_def_g, "STAR Raw/Mixed", "lp");
-			leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "lp");
+			leg_div->AddEntry(bes1_ratio_div_def_g, "STAR Raw/Mixed", "p");
+			leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "p");
 			leg_div->SetBorderSize(0);
 			leg_div->SetFillStyle(0);
 			leg_div->Draw();
@@ -1418,10 +1418,10 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		ampt_ratio_div_def_g->SetMarkerSize(marker_size["ampt"]);
 		ampt_ratio_div_sys_g->SetLineColor(marker_color["ampt"]);
 
-		mg_div->Add(bes1_ratio_div_def_g, "APLZ");
-		mg_div->Add(ampt_ratio_div_def_g, "PL");
-		mg_div->Add(bes1_ratio_div_sys_g, "[]");
+		mg_div->Add(ampt_ratio_div_def_g, "APZ");
 		mg_div->Add(ampt_ratio_div_sys_g, "[]");
+		mg_div->Add(bes1_ratio_div_def_g, "P");
+		mg_div->Add(bes1_ratio_div_sys_g, "[]");
 
 		mg_div->GetXaxis()->SetLimits(0.1, 79.9);
 		mg_div->GetXaxis()->SetRangeUser(0.1, 79.9);
@@ -1467,8 +1467,8 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 			}
 			g_hold->Draw("AP");
 			TLegend *leg2 = new TLegend(0.3, 0.4, 0.7, 0.6);
-			leg2->AddEntry(bes1_ratio_div_def_g, "BES1", "lp");
-			leg2->AddEntry(ampt_ratio_div_def_g, "AMPT", "lp");
+			leg2->AddEntry(bes1_ratio_div_def_g, "BES1", "p");
+			leg2->AddEntry(ampt_ratio_div_def_g, "AMPT", "p");
 			leg2->SetBorderSize(0);
 			leg2->SetFillStyle(0);
 			leg2->Draw();
@@ -1503,10 +1503,10 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		bes1_ratio_div_def_g->SetMarkerSize(marker_size["bes"]);
 		bes1_ratio_div_sys_g->SetLineColor(color[rapid.first]);
 
-		mg_div_bes->Add(bes1_ratio_div_def_g, "APLZ");
+		mg_div_bes->Add(bes1_ratio_div_def_g, "APZ");
 		mg_div_bes->Add(bes1_ratio_div_sys_g, "[]");
 
-		leg_bes->AddEntry(bes1_ratio_div_def_g, ("BES1 |#eta|<" + to_string(rapid.first).substr(0, 3)).data(), "lp");
+		leg_bes->AddEntry(bes1_ratio_div_def_g, ("BES1 |#eta|<" + to_string(rapid.first).substr(0, 3)).data(), "p");
 	}
 
 	mg_div_bes->GetXaxis()->SetLimits(0.1, 79.9);
@@ -1559,10 +1559,10 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		ampt_ratio_div_def_g->SetMarkerSize(marker_size["ampt"]);
 		ampt_ratio_div_sys_g->SetLineColor(color[rapid.first]);
 
-		mg_div_ampt->Add(ampt_ratio_div_def_g, "PL");
+		mg_div_ampt->Add(ampt_ratio_div_def_g, "P");
 		mg_div_ampt->Add(ampt_ratio_div_sys_g, "[]");
 
-		leg_ampt->AddEntry(ampt_ratio_div_def_g, ("AMPT |#eta|<" + to_string(rapid.first).substr(0, 3)).data(), "lp");
+		leg_ampt->AddEntry(ampt_ratio_div_def_g, ("AMPT |#eta|<" + to_string(rapid.first).substr(0, 3)).data(), "p");
 
 //		can_index++;
 	}
@@ -1647,13 +1647,13 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		bes1_ratio_mix_def_g->SetMarkerSize(marker_size[eff.first]);
 		bes1_ratio_mix_sys_g->SetLineColor(color_mix[eff.first]);
 
-		mg_bes->Add(bes1_ratio_raw_def_g, "APLZ");
-		mg_bes->Add(bes1_ratio_raw_sys_g, "[]");
-		mg_bes->Add(bes1_ratio_mix_def_g, "PL");
+		mg_bes->Add(bes1_ratio_mix_def_g, "APZ");
 		mg_bes->Add(bes1_ratio_mix_sys_g, "[]");
+		mg_bes->Add(bes1_ratio_raw_def_g, "P");
+		mg_bes->Add(bes1_ratio_raw_sys_g, "[]");
 
-		leg_bes->AddEntry(bes1_ratio_raw_def_g, ("Raw " + to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
-		leg_bes->AddEntry(bes1_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
+		leg_bes->AddEntry(bes1_ratio_raw_def_g, ("Raw " + to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
+		leg_bes->AddEntry(bes1_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
 	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
@@ -1693,10 +1693,10 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		bes1_ratio_div_def_g->SetMarkerSize(marker_size[eff.first]);
 		bes1_ratio_div_sys_g->SetLineColor(color_div[eff.first]);
 
-		mg_div_bes->Add(bes1_ratio_div_def_g, "APLZ");
+		mg_div_bes->Add(bes1_ratio_div_def_g, "APZ");
 		mg_div_bes->Add(bes1_ratio_div_sys_g, "[]");
 
-		leg_div_bes->AddEntry(bes1_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
+		leg_div_bes->AddEntry(bes1_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
 	mg_div_bes->GetXaxis()->SetLimits(0.1, 79.9);
@@ -1761,13 +1761,13 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		ampt_ratio_mix_def_g->SetMarkerSize(marker_size[eff.first]);
 		ampt_ratio_mix_sys_g->SetLineColor(color_mix[eff.first]);
 
-		mg_ampt->Add(ampt_ratio_raw_def_g, "APLZ");
-		mg_ampt->Add(ampt_ratio_raw_sys_g, "[]");
-		mg_ampt->Add(ampt_ratio_mix_def_g, "PL");
+		mg_ampt->Add(ampt_ratio_mix_def_g, "APZ");
 		mg_ampt->Add(ampt_ratio_mix_sys_g, "[]");
+		mg_ampt->Add(ampt_ratio_raw_def_g, "P");
+		mg_ampt->Add(ampt_ratio_raw_sys_g, "[]");
 
-		leg_ampt->AddEntry(ampt_ratio_raw_def_g, ("Raw " + to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
-		leg_ampt->AddEntry(ampt_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
+		leg_ampt->AddEntry(ampt_ratio_raw_def_g, ("Raw " + to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
+		leg_ampt->AddEntry(ampt_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
 	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
@@ -1807,10 +1807,10 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		ampt_ratio_div_def_g->SetMarkerSize(marker_size[eff.first]);
 		ampt_ratio_div_sys_g->SetLineColor(color_div[eff.first]);
 
-		mg_div_ampt->Add(ampt_ratio_div_def_g, "APLZ");
+		mg_div_ampt->Add(ampt_ratio_div_def_g, "APZ");
 		mg_div_ampt->Add(ampt_ratio_div_sys_g, "[]");
 
-		leg_div_ampt->AddEntry(ampt_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "lp");
+		leg_div_ampt->AddEntry(ampt_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
 	mg_div_ampt->GetXaxis()->SetLimits(0.1, 79.9);
