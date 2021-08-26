@@ -44,6 +44,10 @@ string AzimuthBinAnalyzer::get_ampt_in_path() {
 	return this->ampt_in_path;
 }
 
+string AzimuthBinAnalyzer::get_cf_in_path() {
+	return this->cf_in_path;
+}
+
 string AzimuthBinAnalyzer::get_out_path() {
 	return this->out_path;
 }
@@ -65,6 +69,14 @@ void AzimuthBinAnalyzer::set_ampt_in_path(string ampt_in_path) {
 
 void AzimuthBinAnalyzer::set_ampt_in_mix_path(string ampt_in_mix_path) {
 	this->ampt_in_mix_path = ampt_in_mix_path;
+}
+
+void AzimuthBinAnalyzer::set_cf_in_path(string cf_in_path) {
+	this->cf_in_path = cf_in_path;
+}
+
+void AzimuthBinAnalyzer::set_cf_in_mix_path(string cf_in_mix_path) {
+	this->cf_in_mix_path = cf_in_mix_path;
 }
 
 void AzimuthBinAnalyzer::set_sim_in_path(string sim_in_path) {
@@ -154,6 +166,10 @@ void AzimuthBinAnalyzer::set_plot_sys(bool plot) {
 
 void AzimuthBinAnalyzer::set_write_sys(bool write) {
 	this->write_sys = write;
+}
+
+void AzimuthBinAnalyzer::set_write_append(bool app) {
+	this->write_append = app;
 }
 
 void AzimuthBinAnalyzer::set_divs(vector<int> divisions) {
@@ -247,10 +263,13 @@ void AzimuthBinAnalyzer::analyze_subset_lite(string set_name, int set_num, mutex
 	cout << "Starting Set " + set_name + to_string(set_num) << endl;
 
 	string path, path_mix, set_dir_ext;
-	if(in_string(set_name, "Ampt")) {
+	if (in_string(set_name, "Ampt")) {
 		path = ampt_in_path + set_name + to_string(set_num) + "/";
 		path_mix = ampt_in_mix_path + set_name + to_string(set_num) + "/";
-	} else if(in_string(set_name, "Sim")) {
+	} else if (in_string(set_name, "CF")) {
+		path = cf_in_path + set_name + to_string(set_num) + "/";
+		path_mix = cf_in_mix_path + set_name + to_string(set_num) + "/";
+	} else if (in_string(set_name, "Sim")) {
 		path = sim_in_path + set_name + to_string(set_num) + "/";
 		path_mix = sim_in_mix_path + set_name + to_string(set_num) + "/";
 	} else {
@@ -708,17 +727,17 @@ void AzimuthBinAnalyzer::combine_systematics() {
 
 		map<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> sys_sets;
 
-		cout << "sys_sets start" << endl;
+//		cout << "sys_sets start" << endl;
 		for(string set:sys_combo.second.second) {
-			cout << "sys_sets set: " << set << endl;
+//			cout << "sys_sets set: " << set << endl;
 			for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:raw_stats_sets[set]) {
-				cout << "sys_sets energy: " << energy.first << endl;
+//				cout << "sys_sets energy: " << energy.first << endl;
 				for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
-					cout << "sys_sets div: " << div.first << endl;
+//					cout << "sys_sets div: " << div.first << endl;
 					for(pair<int, map<string, vector<Measure>>> cent:div.second) {
-						cout << "sys_sets cent: " << cent.first << endl;
+//						cout << "sys_sets cent: " << cent.first << endl;
 						for(pair<string, vector<Measure>> stat:cent.second) {
-							cout << "sys_sets stat: " << stat.first << endl;
+//							cout << "sys_sets stat: " << stat.first << endl;
 							sys_sets["raw"][energy.first][div.first][cent.first][stat.first].insert(sys_sets["raw"][energy.first][div.first][cent.first][stat.first].end(), raw_stats_sets[set][energy.first][div.first][cent.first][stat.first].begin(), raw_stats_sets[set][energy.first][div.first][cent.first][stat.first].end());
 							sys_sets["mix"][energy.first][div.first][cent.first][stat.first].insert(sys_sets["mix"][energy.first][div.first][cent.first][stat.first].end(), mix_stats_sets[set][energy.first][div.first][cent.first][stat.first].begin(), mix_stats_sets[set][energy.first][div.first][cent.first][stat.first].end());
 							sys_sets["divide"][energy.first][div.first][cent.first][stat.first].insert(sys_sets["divide"][energy.first][div.first][cent.first][stat.first].end(), divide_stats_sets[set][energy.first][div.first][cent.first][stat.first].begin(), divide_stats_sets[set][energy.first][div.first][cent.first][stat.first].end());
@@ -731,17 +750,17 @@ void AzimuthBinAnalyzer::combine_systematics() {
 				}
 			}
 		}
-		cout << "Calc sys errors" << endl;
+//		cout << "Calc sys errors" << endl;
 		for(pair<string, map<int, map<int, map<int, map<string, vector<Measure>>>>>> data_type:sys_sets) {
-			cout << "Sys " << data_type.first << endl;
+//			cout << "Sys " << data_type.first << endl;
 			for(pair<int, map<int, map<int, map<string, vector<Measure>>>>> energy:data_type.second) {
-				cout << "Sys " << energy.first << endl;
+//				cout << "Sys " << energy.first << endl;
 				for(pair<int, map<int, map<string, vector<Measure>>>> div:energy.second) {
-					cout << "Sys " << div.first << endl;
+//					cout << "Sys " << div.first << endl;
 					for(pair<int, map<string, vector<Measure>>> cent:div.second) {
-						cout << "Sys " << cent.first << endl;
+//						cout << "Sys " << cent.first << endl;
 						for(pair<string, vector<Measure>> stat:cent.second) {
-							cout << "Sys " << stat.first << endl;
+//							cout << "Sys " << stat.first << endl;
 							def_systematics[sys_combo.first][data_type.first][energy.first][div.first][cent.first][stat.first] = sample_sd_errweight(stat.second);
 						}
 					}
@@ -1809,10 +1828,13 @@ void AzimuthBinAnalyzer::analyze_subset(string set_name, int set_num, TDirectory
 	string set_name_file = split_string_by_char(set_name, '/').back();
 
 	string path, path_mix;
-	if(in_string(set_name, "Ampt")) {
+	if (in_string(set_name, "Ampt")) {
 		path = ampt_in_path + set_name + to_string(set_num) + "/";
 		path_mix = ampt_in_mix_path + set_name + to_string(set_num) + "/";
-	} else if(in_string(set_name, "Sim")) {
+	} else if (in_string(set_name, "CF")) {
+		path = cf_in_path + set_name + to_string(set_num) + "/";
+		path_mix = cf_in_mix_path + set_name + to_string(set_num) + "/";
+	} else if (in_string(set_name, "Sim")) {
 		path = sim_in_path + set_name + to_string(set_num) + "/";
 		path_mix = sim_in_mix_path + set_name + to_string(set_num) + "/";
 	} else {
@@ -2124,6 +2146,9 @@ vector<string> AzimuthBinAnalyzer::get_sets(string set_dir) {
 	if (in_string(set_dir, "Ampt")) {
 		path = ampt_in_path + set_dir + "/";
 	}
+	else if (in_string(set_dir, "CF")) {
+		path = cf_in_path + set_dir + "/";
+	}
 	else if (in_string(set_dir, "Sim")) {
 		path = sim_in_path + set_dir + "/";
 	}
@@ -2138,7 +2163,13 @@ void AzimuthBinAnalyzer::write_systematics() {
 	string out_sys_path = out_path + out_sys_name + "_" + split(out_root_name, ".")[0] + ".txt";
 	cout << "Write systematic values to output file: " << out_sys_path << endl;
 
-	ofstream file(out_sys_path);
+	ofstream file;
+	if (write_append) {
+//		cout << "Append to file not working" << endl;
+		file.open(out_sys_path, ios_base::ate);  // Append new sys values to existing file
+	} else {
+		file.open(out_sys_path, ios_base::trunc);  // Overwrite existing file with new sys values
+	}
 
 	for (auto set_name : def_medians) {  // systematic data set name [string] (BES1, AMPT, etc)
 		for (auto data_type : set_name.second) {  // data type [string] (raw, mix, divide, pull_raw, pull_mix, pull_divide, diff)

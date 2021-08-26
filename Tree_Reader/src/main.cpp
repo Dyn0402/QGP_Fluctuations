@@ -109,8 +109,8 @@ int main(int argc, char** argv) {
 	//cout << rot_angle << endl;
 	//read_class();
 
-//	read_new();
-	read_sim();
+	read_new();
+//	read_sim();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
@@ -254,15 +254,20 @@ void read_new() {
 	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 14}}}}}},
+//		{"CF_def_1", {{"default", {{"CF_rapid05_n1ratios_", {15, 29}}}}}},
+//		{"CF_def_2", {{"default", {{"CF_rapid05_n1ratios_", {30, 44}}}}}},
+//		{"CF_def_3", {{"default", {{"CF_rapid05_n1ratios_", {45, 59}}}}}}
+//	};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 14}}}}}},
-		{"CF_def_1", {{"default", {{"CF_rapid05_n1ratios_", {15, 29}}}}}},
-		{"CF_def_2", {{"default", {{"CF_rapid05_n1ratios_", {30, 44}}}}}},
-		{"CF_def_3", {{"default", {{"CF_rapid05_n1ratios_", {45, 59}}}}}}
+		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 0}}}}}}
 	};
 
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 62, 39, 27, 19, 7 };
+//	vector<int> energy_list{ 62, 39, 27, 19, 7 };
+	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -387,7 +392,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 		base_path = "/home/dylan/Research/";
 		in_base_path = "/media/ucla/Research/";
 		in_base_ampt_path = "/media/ucla/Research/";
-		in_base_cf_path = "/media/ucla/Research/";
+		in_base_cf_path = "/home/dylan/Research/";
 	}
 	else if (platform == "win") {
 		base_path = "C:/Users/Dylan/Desktop/Research/";

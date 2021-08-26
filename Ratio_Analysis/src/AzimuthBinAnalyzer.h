@@ -45,6 +45,7 @@ public:
 	// Getters
 	string get_bes_in_path();
 	string get_ampt_in_path();
+	string get_cf_in_path();
 	string get_out_path();
 
 	// Setters
@@ -52,6 +53,8 @@ public:
 	void set_bes_in_mix_path(string bes_in_mix_path);
 	void set_ampt_in_path(string ampt_in_path);
 	void set_ampt_in_mix_path(string ampt_in_mix_path);
+	void set_cf_in_path(string cf_in_path);
+	void set_cf_in_mix_path(string cf_in_mix_path);
 	void set_sim_in_path(string sim_in_path);
 	void set_sim_in_mix_path(string sim_in_mix_path);
 	void set_out_path(string path);
@@ -74,6 +77,7 @@ public:
 	void set_sys_calc(bool calc);
 	void set_plot_sys(bool plot);
 	void set_write_sys(bool write);
+	void set_write_append(bool app);
 	void set_divs(vector<int> divisions);
 
 	// Doers
@@ -96,6 +100,8 @@ protected:
 	string bes_in_mix_path = "/home/dylan/Research/Data_Mix/";
 	string ampt_in_path = "/home/dylan/Research/Data_Ampt/";
 	string ampt_in_mix_path = "/home/dylan/Research/Data_Ampt_Mix/";
+	string cf_in_path = "/home/dylan/Research/Data_CF/";
+	string cf_in_mix_path = "/home/dylan/Research/Data_CF_Mix/";
 	string sim_in_path = "/home/dylan/Research/Data_Sim/";
 	string sim_in_mix_path = "/home/dylan/Research/Data_Sim_Mix/";
 	vector<int> energy_list {7,11,19,27,39,62};
@@ -112,6 +118,7 @@ protected:
 	bool sys_calc = false;
 	bool plot_sys = true;  // Plot systematics
 	bool write_sys = true;  // Write systmatics values to csv file if true
+	bool write_append = false;  // If true and write_sys, append to current file instead of overwriting
 
 	int free_threads = 0;
 	map<string, vector<int>> sets {{"Single_Ratio", {0}}};
