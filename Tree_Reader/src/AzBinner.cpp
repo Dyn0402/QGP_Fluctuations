@@ -896,6 +896,7 @@ void AzBinner::write_info_file() {
 		out << "particle: " << particle << endl;
 
 		out << "ampt: " << boolalpha << ampt << endl;
+		out << "cooper_frye: " << boolalpha << cooper_frye << endl;
 		out << "ampt_reaction_plane: " << boolalpha << ampt_reaction_plane << endl;
 		out << "cbwc: " << boolalpha << cbwc << endl;
 		out << "rotate_random: " << boolalpha << rotate_random << endl;

@@ -66,9 +66,9 @@ int main() {
 //		}
 //	}
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
-	//azimuth_bin_analyze();
+	azimuth_bin_analyze();
 //	azimuth_bin_analyze_fig();
-	fig_read_plot();
+//	fig_read_plot();
 	//cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
 	//binomial_analyze();
 
@@ -314,14 +314,14 @@ void azimuth_bin_analyze() {
 	}
 //	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 //	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("5-7-21_bes_ampt_new_structure.root");
+	analyzer.set_out_root_name("9-1-21_ampt_heavy.root");
 	analyzer.set_energies({7, 11, 19, 27, 39, 62});
 //	analyzer.set_energies({7});
-	analyzer.set_all_centralities({8}); // ,7,6,5,4,3,2,1
-	analyzer.set_centralities({8});
+	analyzer.set_all_centralities({8,7,6,5,4,3,2,1}); // ,7,6,5,4,3,2,1
+	analyzer.set_centralities({8,7,6,5,4,3,2,1});
 	analyzer.set_divs({300, 270, 240, 180, 120, 90, 72, 60});
 //	analyzer.set_divs({60});
-	analyzer.set_plot_cents({8});
+	analyzer.set_plot_cents({8,7,6,5,4,3,2,1});
 	analyzer.set_plot_dists(true);
 	analyzer.set_plot_dist_canvases(true);
 	analyzer.set_plot_sys(true);
@@ -355,24 +355,28 @@ void azimuth_bin_analyze() {
 	//analyzer.set_sys_combos({{"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}}, {"AMPT_RP", {get_set_names(ampt_rp_def)[0], get_set_names(ampt_rp_sys)}}, {"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_sys)}}});
 
 
-	map<string, vector<int>> bes1_def = get_sets(analyzer.get_bes_in_path() + "default/");
-	map<string, vector<int>> bes1_sys = get_sets(analyzer.get_bes_in_path() + "default_sys/");
-	map<string, vector<int>> bes1_def1, bes1_sys1;
-	for (pair<string, vector<int>> def : bes1_def) { bes1_def1["default/" + def.first] = def.second;  }
-	for (pair<string, vector<int>> def : bes1_sys) { bes1_sys1["default_sys/" + def.first] = def.second; }
+//	map<string, vector<int>> bes1_def = get_sets(analyzer.get_bes_in_path() + "default/");
+//	map<string, vector<int>> bes1_sys = get_sets(analyzer.get_bes_in_path() + "default_sys/");
+//	map<string, vector<int>> bes1_def1, bes1_sys1;
+//	for (pair<string, vector<int>> def : bes1_def) { bes1_def1["default/" + def.first] = def.second;  }
+//	for (pair<string, vector<int>> def : bes1_sys) { bes1_sys1["default_sys/" + def.first] = def.second; }
 
 	map<string, vector<int>> ampt_def = get_sets(analyzer.get_ampt_in_path() + "default/");
+	ampt_def["Ampt_rapid05_n1ratios_"] = {0, 1, 2};
 	map<string, vector<int>> ampt_sys = ampt_def;
 	map<string, vector<int>> ampt_def1, ampt_sys1;
 	for (pair<string, vector<int>> def : ampt_def) { ampt_def1["default/" + def.first] = def.second; }
 	for (pair<string, vector<int>> def : ampt_sys) { ampt_sys1["default_sys/" + def.first] = def.second; }
 
-	analyzer.set_sets(combine_sets({ bes1_def1, bes1_sys1, ampt_def1}));
-	analyzer.set_sys_combos({ {"BES1", {get_set_names(bes1_def1)[0], get_set_names(bes1_sys1)}},
-		{"AMPT", {get_set_names(ampt_def1)[0], get_set_names(ampt_sys1)}}});
+	analyzer.set_sets(combine_sets({ampt_def1}));
+	analyzer.set_sys_combos({ {"AMPT", {get_set_names(ampt_def1)[0], get_set_names(ampt_sys1)}} });
+
+//	analyzer.set_sets(combine_sets({ bes1_def1, bes1_sys1, ampt_def1}));
+//	analyzer.set_sys_combos({ {"BES1", {get_set_names(bes1_def1)[0], get_set_names(bes1_sys1)}},
+//		{"AMPT", {get_set_names(ampt_def1)[0], get_set_names(ampt_sys1)}}});
 
 
-	analyzer.analyze_lite();
+	analyzer.analyze();
 }
 
 
