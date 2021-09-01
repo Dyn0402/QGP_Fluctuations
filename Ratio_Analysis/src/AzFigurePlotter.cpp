@@ -663,10 +663,10 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		cent_label.SetTextFont(43);
 		cent_label.SetTextAlign(22);
 		cent_label.SetTextSize(25);
-		cent_label.DrawLatex(40, 0.9965, (cent_string[cent]).data());
+		cent_label.DrawLatex(65, 0.9965, (cent_string[cent]).data());
 
 
-		if (can_index == 4) {
+		if (can_index == 8) {
 			can->cd(++can_index);
 			vector<double> x_hold {-1};
 			vector<double> y_hold {-1};
@@ -941,10 +941,10 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 		cent_label.SetTextFont(43);
 		cent_label.SetTextAlign(22);
 		cent_label.SetTextSize(25);
-		cent_label.DrawLatex(40, 0.955, (cent_string[cent]).data());
+		cent_label.DrawLatex(65, 0.955, (cent_string[cent]).data());
 
 
-		if (can_index == 4) {
+		if (can_index == 8) {
 			can->cd(++can_index);
 			vector<double> x_hold {-1};
 			vector<double> y_hold {-1};
@@ -1095,7 +1095,8 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 
 	map<string, int> color{ {"raw_bes", kBlue}, {"raw_ampt", kBlue}, {"mix_bes", kGreen+2}, {"mix_ampt", kGreen+2}, {"div_bes", kBlack}, {"div_ampt", kRed} };
 	map<string, int> marker_size{ {"raw", 2}, {"mix", 2}, {"divide", 2} };
-	map<string, int> marker_style{ {"raw_bes", 29}, {"raw_ampt", 22}, {"mix_bes", 30}, {"mix_ampt", 26}, {"div_bes", 29}, {"div_ampt", 22} };
+//	map<string, int> marker_style{ {"raw_bes", 29}, {"raw_ampt", 22}, {"mix_bes", 30}, {"mix_ampt", 26}, {"div_bes", 29}, {"div_ampt", 22} };
+	map<string, int> marker_style{ {"raw_bes", 20}, {"raw_ampt", 24}, {"mix_bes", 20}, {"mix_ampt", 24}, {"div_bes", 20}, {"div_ampt", 24} };
 	map<string, string> stat_title{ {"mean", "Mean"}, {"standard_deviation", "Standard Deviation"}, {"skewness", "Skewness"}, {"non_excess_kurtosis", "Kurtosis"} };
 //	int bes_marker_style = 29;
 //	int ampt_marker_style = 22;
@@ -1212,31 +1213,31 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		gStyle->SetTitleSize(20, "t");
 		mg->GetXaxis()->SetLimits(0.1, 79.9);
 		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
-		mg->GetXaxis()->SetLabelFont(3);
+		mg->GetXaxis()->SetLabelFont(43);
 		mg->GetXaxis()->SetLabelSize(10);
-		mg->GetYaxis()->SetLabelFont(3);
+		mg->GetYaxis()->SetLabelFont(43);
 		mg->GetYaxis()->SetLabelSize(10);
+		if (stat == "mean") { mg->GetYaxis()->SetDecimals(5); }
+		else { mg->GetYaxis()->SetDecimals(2); }
 		//mg->GetYaxis()->SetLimits(0.9955, 1.0145);
 		//mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
 
 		mg->GetXaxis()->SetTitle("Energy (GeV)");
-		mg->GetXaxis()->SetTitleFont(3);
+		mg->GetXaxis()->SetTitleFont(43);
 		mg->GetXaxis()->SetTitleSize(10);
 
 		mg->Draw("AP");
 
-		if (stat == "mean") {
-			TLegend* leg = new TLegend(0.6, 0.7, 0.9, 0.9);
-			leg->SetTextFont(43);
-			leg->SetTextSize(15);
-			leg->AddEntry(bes1_ratio_raw_def_g, "STAR Raw", "p");
-			leg->AddEntry(ampt_ratio_raw_def_g, "AMPT Raw", "p");
-			leg->AddEntry(bes1_ratio_mix_def_g, "STAR Mixed", "p");
-			leg->AddEntry(ampt_ratio_mix_def_g, "AMPT Mixed", "p");
-			leg->SetBorderSize(0);
-			leg->SetFillStyle(0);
-			leg->Draw();
-		}
+		TLegend* leg = new TLegend(0.6, 0.7, 0.9, 0.9);
+		leg->SetTextFont(43);
+		leg->SetTextSize(15);
+		leg->AddEntry(bes1_ratio_raw_def_g, "STAR Raw", "p");
+		leg->AddEntry(ampt_ratio_raw_def_g, "AMPT Raw", "p");
+		leg->AddEntry(bes1_ratio_mix_def_g, "STAR Mixed", "p");
+		leg->AddEntry(ampt_ratio_mix_def_g, "AMPT Mixed", "p");
+		leg->SetBorderSize(0);
+		leg->SetFillStyle(0);
+		if (stat == "mean") { leg->Draw(); }
 
 
 		// Divided plot on bottom
@@ -1271,30 +1272,32 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 
 		mg_div->GetXaxis()->SetLimits(0.1, 79.9);
 		mg_div->GetXaxis()->SetRangeUser(0.1, 79.9);
-		mg_div->GetXaxis()->SetLabelFont(3);
+		mg_div->GetXaxis()->SetLabelFont(43);
 		mg_div->GetXaxis()->SetLabelSize(10);
-		mg_div->GetYaxis()->SetLabelFont(3);
+		mg_div->GetYaxis()->SetLabelFont(43);
 		mg_div->GetYaxis()->SetLabelSize(10);
+		if (stat == "mean") { mg_div->GetYaxis()->SetDecimals(5); }
+		else if (stat == "skewness") { mg_div->GetYaxis()->SetDecimals(2); }
+		else { mg_div->GetYaxis()->SetDecimals(3); }
 		//mg_div->GetYaxis()->SetLimits(0.9955, 1.0145);
 		//mg_div->GetYaxis()->SetRangeUser(0.9955, 1.0145);
 
 		mg_div->GetXaxis()->SetTitle("Energy (GeV)");
-		mg_div->GetXaxis()->SetTitleFont(3);
+		mg_div->GetXaxis()->SetTitleFont(43);
 		mg_div->GetXaxis()->SetTitleSize(10);
 		mg_div->GetXaxis()->SetTitleOffset(3);
 
 		mg_div->Draw("AP");
 
-		if (stat == "mean") {
-			TLegend* leg_div = new TLegend(0.5, 0.75, 0.9, 0.9);
-			leg_div->SetTextFont(43);
-			leg_div->SetTextSize(15);
-			leg_div->AddEntry(bes1_ratio_div_def_g, "STAR Raw/Mixed", "p");
-			leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "p");
-			leg_div->SetBorderSize(0);
-			leg_div->SetFillStyle(0);
-			leg_div->Draw();
-		}
+
+		TLegend* leg_div = new TLegend(0.5, 0.75, 0.9, 0.9);
+		leg_div->SetTextFont(43);
+		leg_div->SetTextSize(15);
+		leg_div->AddEntry(bes1_ratio_div_def_g, "STAR Raw/Mixed", "p");
+		leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "p");
+		leg_div->SetBorderSize(0);
+		leg_div->SetFillStyle(0);
+		if (stat == "mean") { leg_div->Draw(); }
 
 		if (1 < mg_div->GetYaxis()->GetXmax() && 1 > mg_div->GetYaxis()->GetXmin()) {
 			TLine* one_line = new TLine(0, 1, 80, 1);
@@ -1303,11 +1306,72 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		}
 
 		can_index++;
+
+
+		// Individual Canvases
+		TCanvas *can_stat = new TCanvas((stat + "_vs_energy_can_" + type_name).data(), (stat + " vs Energy " + type_name).data(), 1000, 1000);
+		string name_top = gPad->GetName() + stat + "_top";
+		TPad *top_pad = new TPad(name_top.data(), name_top.data(), 0, 1 - y_top_length, 1, 1);
+		top_pad->SetTopMargin(y_top_pad);
+		top_pad->SetBottomMargin(0);
+
+		string name_bottom = gPad->GetName() + stat + "_bottom";
+		TPad *bottom_pad = new TPad(name_top.data(), name_top.data(), 0, 0, 1, 1 - y_top_length);
+		bottom_pad->SetTickx();
+		bottom_pad->SetBottomMargin(y_bot_pad);
+		bottom_pad->SetTopMargin(0);
+
+		top_pad->SetLeftMargin(x_left_pad + def_left_margin);
+		bottom_pad->SetLeftMargin(x_left_pad + def_left_margin);
+		top_pad->SetRightMargin(x_right_pad + def_right_margin);
+		bottom_pad->SetRightMargin(x_right_pad + def_right_margin);
+
+		top_pad->SetNumber(1);
+		bottom_pad->SetNumber(2);
+
+		top_pad->Draw();
+		bottom_pad->Draw();
+
+		can_stat->cd(1);
+		TMultiGraph *mg_clone = (TMultiGraph*)mg->Clone(((string)mg->GetName() + "_Clone").data());
+		mg_clone->GetYaxis()->SetTitle((stat_title[stat]).data());
+		mg_clone->SetTitle("Testhhher");
+		mg_clone->GetYaxis()->SetTitleFont(43);
+		mg_clone->GetYaxis()->SetTitleSize(10);
+		mg_clone->Draw("AP");
+		TLegend *leg_clone = (TLegend*)leg->Clone(((string)leg->GetName() + "_Clone").data());
+		leg_clone->Draw();
+		gPad->Update();
+		leg_clone->SetX1NDC(0.6); leg_clone->SetX2NDC(0.85); leg_clone->SetY1NDC(0.05); leg_clone->SetY2NDC(0.25);
+		gPad->Modified();
+
+		can_stat->cd(2);
+		TMultiGraph *mg_div_clone = (TMultiGraph*)mg_div->Clone(((string)mg_div->GetName() + "_Clone").data());
+//		mg_div->GetYaxis()->SetTitle((stat_title[stat] + "_Raw  /  " + stat_title[stat] + "_Mix").data());
+		mg_div_clone->GetYaxis()->SetTitle((stat_title[stat]).data());
+		mg_div_clone->GetYaxis()->SetTitleFont(43);
+		mg_div_clone->GetYaxis()->SetTitleSize(10);
+		mg_div_clone->Draw("AP");
+		TLegend *leg_div_clone = (TLegend*)leg_div->Clone(((string)leg_div->GetName() + "_Clone").data());
+		leg_div_clone->Draw();
+		gPad->Update();
+		leg_div_clone->SetX1NDC(0.6); leg_div_clone->SetX2NDC(0.85); leg_div_clone->SetY1NDC(0.15); leg_div_clone->SetY2NDC(0.3);
+		gPad->Modified();
+
+		if (1 < mg_div->GetYaxis()->GetXmax() && 1 > mg_div->GetYaxis()->GetXmin()) {
+			TLine* one_line = new TLine(0, 1, 80, 1);
+			one_line->SetLineStyle(2);
+			one_line->Draw();
+		}
+
+		can_stat->Update();
+		can_stat->Write();
+		delete can_stat;
+
 	}
 
 	can->Update();
 	can->Write();
-
 	delete can;
 }
 
@@ -1443,14 +1507,14 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		rapid_label.SetTextFont(43);
 		rapid_label.SetTextAlign(22);
 		rapid_label.SetTextSize(25);
-		rapid_label.DrawLatex(40, 1.015, ("|#eta|<" + to_string(rapid.first).substr(0, 3)).data());
+		rapid_label.DrawLatex(65, 1.015, ("|#eta|<" + to_string(rapid.first).substr(0, 3)).data());
 
 
 		TLine* one_line = new TLine(0, 1, 80, 1);
 		one_line->SetLineStyle(2);
 		one_line->Draw();
 
-		if (can_index == 4) {
+		if (can_index == 8) {
 			can->cd(++can_index);
 			vector<double> x_hold {-1};
 			vector<double> y_hold {-1};

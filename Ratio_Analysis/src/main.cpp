@@ -67,8 +67,8 @@ int main() {
 //	}
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 	//azimuth_bin_analyze();
-	azimuth_bin_analyze_fig();
-//	fig_read_plot();
+//	azimuth_bin_analyze_fig();
+	fig_read_plot();
 	//cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
 	//binomial_analyze();
 
@@ -84,7 +84,7 @@ void fig_read_plot() {
 	AzFigurePlotter analyzer;
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_8-3-21_write_test.txt");
-	analyzer.set_out_root_name("8-17-21.root");
+	analyzer.set_out_root_name("8-31-21.root");
 
 	analyzer.plot_paper_figs();
 }
@@ -360,9 +360,7 @@ void azimuth_bin_analyze() {
 	map<string, vector<int>> bes1_def1, bes1_sys1;
 	for (pair<string, vector<int>> def : bes1_def) { bes1_def1["default/" + def.first] = def.second;  }
 	for (pair<string, vector<int>> def : bes1_sys) { bes1_sys1["default_sys/" + def.first] = def.second; }
-//	cout << analyzer.get_ampt_in_path() << endl;
-//	int x;
-//	cin >> x;
+
 	map<string, vector<int>> ampt_def = get_sets(analyzer.get_ampt_in_path() + "default/");
 	map<string, vector<int>> ampt_sys = ampt_def;
 	map<string, vector<int>> ampt_def1, ampt_sys1;
@@ -374,47 +372,6 @@ void azimuth_bin_analyze() {
 		{"AMPT", {get_set_names(ampt_def1)[0], get_set_names(ampt_sys1)}}});
 
 
-//	map<string, vector<int>> full_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-//	map<string, vector<int>> full_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
-//	map<string, vector<int>> rand_def = full_def;
-//	map<string, vector<int>> rand_sys = full_def;
-//	map<string, vector<int>> mix_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {0, 20}}};
-//	map<string, vector<int>> mix_sys = mix_def;
-//	analyzer.set_sets(combine_sets({full_def, full_sys, mix_def}));
-//	analyzer.set_sys_combos({{"Full_Sys", {get_set_names(full_def)[0], get_set_names(full_sys)}},
-//		{"Rand_Sys", {get_set_names(rand_def)[0], get_set_names(rand_sys)}},
-//		{"ZMix_Sys", {get_set_names(mix_def)[0], get_set_names(mix_sys)}}});
-
-//	map<string, vector<int>> def_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-//	map<string, vector<int>> def_sys = def_def;
-//	map<string, vector<int>> mixseed_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixseed_", {0, 20}}};
-//	map<string, vector<int>> mixseed_sys = mixseed_def;
-//	map<string, vector<int>> mixnoseed_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {0, 20}}};
-//	map<string, vector<int>> mixnoseed_sys = mixnoseed_def;
-//	analyzer.set_sets(combine_sets({def_def, def_sys, mixseed_sys, mixseed_def, mixnoseed_sys, mixnoseed_def}));
-//	analyzer.set_sys_combos({{"def", {get_set_names(def_def)[0], get_set_names(def_sys)}},
-//		{"mixseed", {get_set_names(mixseed_def)[0], get_set_names(mixseed_sys)}},
-//		{"mixnoseed", {get_set_names(mixnoseed_def)[0], get_set_names(mixnoseed_sys)}}});
-
-//	map<string, vector<int>> def_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-//	map<string, vector<int>> def_sys = def_def;
-//	map<string, vector<int>> ef1_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_", {0, 16}}};
-//	map<string, vector<int>> ef1_sys = ef1_def;
-//	map<string, vector<int>> ef2_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0, 16}}};
-//	map<string, vector<int>> ef2_sys = ef2_def;
-//	map<string, vector<int>> ef3_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0, 16}}};
-//	map<string, vector<int>> ef3_sys = ef3_def;
-////	map<string, vector<int>> ef4_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency4_", {0, 16}}};
-////	map<string, vector<int>> ef4_sys = ef4_def;
-//	analyzer.set_sets(combine_sets({def_def, ef1_def, ef2_def, ef3_def}));
-//	analyzer.set_sys_combos({{"Efficiency 0", {get_set_names(def_def)[0], get_set_names(def_sys)}},
-//		{"Efficiency 1", {get_set_names(ef1_def)[0], get_set_names(ef1_sys)}},
-//		{"Efficiency 2", {get_set_names(ef2_def)[0], get_set_names(ef2_sys)}},
-//		{"Efficiency 3", {get_set_names(ef3_def)[0], get_set_names(ef3_sys)}}});
-////		{"Efficiency 4", {get_set_names(ef4_def)[0], get_set_names(ef4_sys)}}});
-
-//	analyzer.set_set_combos({{"rapid05_dcavar_seed", get_set_names(get_sets("/home/dylan/Research/Data/", "dca", make_pair(0.85, 1.2), 1, {"rapid05_"}))},
-//		{"rapidvar_dca1_seed", get_set_names(get_sets("/home/dylan/Research/Data/", "rapid", make_pair(0.35, 0.7), 1, {"_dca1_"}))}});
 	analyzer.analyze_lite();
 }
 
