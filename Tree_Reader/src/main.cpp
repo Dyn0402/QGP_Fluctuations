@@ -207,22 +207,22 @@ void read_new() {
 //	{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}}
 //	};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
-	//	{"Ampt_rapid08", {{"rapid08_def", {{"Ampt_rapid08_n1ratios_", {0, 14}}}}}},
-	//	{"Ampt_rapid06", {{"rapid06_def", {{"Ampt_rapid06_n1ratios_", {0, 14}}}}}},
-	//	{"Ampt_rapid04", {{"rapid04_def", {{"Ampt_rapid04_n1ratios_", {0, 14}}}}}},
-	//	{"Ampt_rapid03", {{"rapid03_def", {{"Ampt_rapid03_n1ratios_", {0, 14}}}}}},
-	//	{"Ampt_rapid02", {{"rapid02_def", {{"Ampt_rapid02_n1ratios_", {0, 14}}}}}},
-	//	{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}}
-	//};
-
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
+//		{"Ampt_rapid08", {{"rapid08_def", {{"Ampt_rapid08_n1ratios_", {0, 14}}}}}},
+//		{"Ampt_rapid06", {{"rapid06_def", {{"Ampt_rapid06_n1ratios_", {0, 14}}}}}},
+//		{"Ampt_rapid04", {{"rapid04_def", {{"Ampt_rapid04_n1ratios_", {0, 14}}}}}},
+//		{"Ampt_rapid03", {{"rapid03_def", {{"Ampt_rapid03_n1ratios_", {0, 14}}}}}},
+//		{"Ampt_rapid02", {{"rapid02_def", {{"Ampt_rapid02_n1ratios_", {0, 14}}}}}},
+//		{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}}
+//	};
+//
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_Eff1_0", {{"Eff1_def", {{"Ampt_rapid05_n1ratios_Efficiency1_", {0, 14}}}}}},
 //		{"Ampt_Eff2_0", {{"Eff2_def", {{"Ampt_rapid05_n1ratios_Efficiency2_", {0, 14}}}}}},
 //		{"Ampt_Eff3_0", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_Efficiency3_", {0, 14}}}}}}
 //	};
-
+//
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
 //		{"Ampt_Eff05_1", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
@@ -254,22 +254,42 @@ void read_new() {
 	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 9}}}}}},
-		{"CF_def_1", {{"default", {{"CF_rapid05_n1ratios_", {10, 19}}}}}},
-		{"CF_def_2", {{"default", {{"CF_rapid05_n1ratios_", {20, 29}}}}}},
-		{"CF_def_3", {{"default", {{"CF_rapid05_n1ratios_", {30, 39}}}}}},
-		{"CF_def_4", {{"default", {{"CF_rapid05_n1ratios_", {40, 49}}}}}},
-		{"CF_def_5", {{"default", {{"CF_rapid05_n1ratios_", {50, 59}}}}}}
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 9}}}}}},
+//		{"CF_def_1", {{"default", {{"CF_rapid05_n1ratios_", {10, 19}}}}}},
+//		{"CF_def_2", {{"default", {{"CF_rapid05_n1ratios_", {20, 29}}}}}},
+//		{"CF_def_3", {{"default", {{"CF_rapid05_n1ratios_", {30, 39}}}}}},
+//		{"CF_def_4", {{"default", {{"CF_rapid05_n1ratios_", {40, 49}}}}}},
+//		{"CF_def_5", {{"default", {{"CF_rapid05_n1ratios_", {50, 59}}}}}}
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 0}}}}}}
 //	};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
+		{"Ampt_def_1", {{"default", {{"Ampt_rapid05_n1ratios_", {15, 29}}}}}},
+		{"Ampt_def_2", {{"default", {{"Ampt_rapid05_n1ratios_", {30, 44}}}}}},
+		{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}},
+		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
+		{"Ampt_rapid08", {{"rapid08_def", {{"Ampt_rapid08_n1ratios_", {0, 14}}}}}},
+		{"Ampt_rapid06", {{"rapid06_def", {{"Ampt_rapid06_n1ratios_", {0, 14}}}}}},
+		{"Ampt_rapid04", {{"rapid04_def", {{"Ampt_rapid04_n1ratios_", {0, 14}}}}}},
+		{"Ampt_rapid03", {{"rapid03_def", {{"Ampt_rapid03_n1ratios_", {0, 14}}}}}},
+		{"Ampt_rapid02", {{"rapid02_def", {{"Ampt_rapid02_n1ratios_", {0, 14}}}}}},
+		{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}},
+		{"Ampt_Eff1_0", {{"Eff1_def", {{"Ampt_rapid05_n1ratios_Efficiency1_", {0, 14}}}}}},
+		{"Ampt_Eff2_0", {{"Eff2_def", {{"Ampt_rapid05_n1ratios_Efficiency2_", {0, 14}}}}}},
+		{"Ampt_Eff3_0", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_Efficiency3_", {0, 14}}}}}},
+		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 14}}}}}},
+		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 14}}}}}}
+
+	};
+
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 39, 27, 19, 7 };
-//	vector<int> energy_list{ 7 };
+//	vector<int> energy_list{ 39, 27, 19, 7 };
+	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -384,7 +404,7 @@ void read_new() {
 
 
 void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
-	bool replace_existing = true;  // If folder for job exists, overwrite if true, skip job if false
+	bool replace_existing = false;  // If folder for job exists, overwrite if true, skip job if false
 	int ref = 3;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
