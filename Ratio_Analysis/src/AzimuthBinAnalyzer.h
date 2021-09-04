@@ -72,6 +72,7 @@ public:
 	void set_can_wh(int can_width, int can_height);
 	void set_set_combos(map<string, vector<string>> set_combos);
 	void set_sys_combos(map<string, pair<string, vector<string>>> sys_combos);
+	void set_free_threads(int free_threads);
 	void set_plot_dists(bool plot);
 	void set_plot_dist_canvases(bool plot);
 	void set_sys_calc(bool calc);

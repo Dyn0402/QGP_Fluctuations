@@ -148,6 +148,10 @@ void AzimuthBinAnalyzer::set_sys_combos(map<string, pair<string, vector<string>>
 	this->sys_combos = sys_combos;
 }
 
+void AzimuthBinAnalyzer::set_free_threads(int free_threads) {
+	this->free_threads = free_threads;
+}
+
 void AzimuthBinAnalyzer::set_plot_dists(bool plot) {
 	this->plot_dists = plot;
 }
@@ -197,7 +201,7 @@ void AzimuthBinAnalyzer::analyze_sets() {
 //		}
 //	}
 
-	for(pair<string, vector<int>> set:sets) {
+	for (pair<string, vector<int>> set : sets) {
 		analyze_set(set.first, set.second);
 	}
 
@@ -208,7 +212,7 @@ void AzimuthBinAnalyzer::analyze_sets() {
 void AzimuthBinAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
 	string set_name_file = split_string_by_char(set_name, '/').back();
 	TDirectory *set_dir = out_root->mkdir(set_name_file.data());
-	for(int set_num = set_nums[0]; set_num <= set_nums[1]; set_num++) {
+	for(int set_num = set_nums.front(); set_num <= set_nums.back(); set_num++) {
 		analyze_subset(set_name, set_num, set_dir);
 	}
 
@@ -230,7 +234,7 @@ void AzimuthBinAnalyzer::analyze_sets_lite() {
 		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 		mutex *mtx = new mutex;
 		for (pair<string, vector<int>> set : sets) {
-			for (int set_num = set.second[0]; set_num <= set.second[1]; set_num++) {
+			for (int set_num = set.second.front(); set_num <= set.second.back(); set_num++) {
 				pool.enqueue(&AzimuthBinAnalyzer::analyze_subset_lite, this, set.first, set_num, mtx);
 			}
 		}
@@ -2165,8 +2169,7 @@ void AzimuthBinAnalyzer::write_systematics() {
 
 	ofstream file;
 	if (write_append) {
-//		cout << "Append to file not working" << endl;
-		file.open(out_sys_path, ios_base::ate);  // Append new sys values to existing file
+		file.open(out_sys_path, ios_base::app);  // Append new sys values to existing file. app works but ate does not?
 	} else {
 		file.open(out_sys_path, ios_base::trunc);  // Overwrite existing file with new sys values
 	}
