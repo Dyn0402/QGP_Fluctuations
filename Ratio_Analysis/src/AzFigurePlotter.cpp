@@ -61,9 +61,11 @@ void AzFigurePlotter::kurt_vs_energy() {
 	string stat = "non_excess_kurtosis";
 
 	plot_data bes1_ratio;
-	plot_data ampt_ratio;
 	plot_data bes1_pull;
+	plot_data ampt_ratio;
 	plot_data ampt_pull;
+	plot_data cf_ratio;
+	plot_data cf_pull;
 
 	for (int energy : energies) {
 		bes1_ratio.val.push_back(def_medians["BES1"]["divide"][energy][div][cent][stat].get_val());
@@ -78,10 +80,19 @@ void AzFigurePlotter::kurt_vs_energy() {
 		ampt_pull.val.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_val());
 		ampt_pull.stat.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_err());
 		ampt_pull.sys.push_back(def_systematics["AMPT"]["pull_divide"][energy][div][cent][stat]);
+		cf_ratio.val.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_val());
+		cf_ratio.stat.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_err());
+		cf_ratio.sys.push_back(def_systematics["CF"]["divide"][energy][div][cent][stat]);
+		cf_pull.val.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_val());
+		cf_pull.stat.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_err());
+		cf_pull.sys.push_back(def_systematics["CF"]["pull_divide"][energy][div][cent][stat]);
 	}
 
 	kurt_vs_energy_plot(energies, bes1_ratio, ampt_ratio, "Ratio");
 	kurt_vs_energy_plot(energies, bes1_pull, ampt_pull, "Pull");
+
+	kurt_vs_energy_cf_plot(energies, bes1_ratio, ampt_ratio, cf_ratio, "Ratio");
+	kurt_vs_energy_cf_plot(energies, bes1_pull, ampt_pull, cf_pull, "Pull");
 }
 
 
@@ -158,9 +169,11 @@ void AzFigurePlotter::sd_vs_energy_cents() {
 	string stat = "standard_deviation";
 
 	map<int, plot_data> bes1_ratio;
-	map<int, plot_data> ampt_ratio;
 	map<int, plot_data> bes1_pull;
+	map<int, plot_data> ampt_ratio;
 	map<int, plot_data> ampt_pull;
+	map<int, plot_data> cf_ratio;
+	map<int, plot_data> cf_pull;
 
 	for (int cent : cents) {
 		for (int energy : energies) {
@@ -176,11 +189,21 @@ void AzFigurePlotter::sd_vs_energy_cents() {
 			ampt_pull[cent].val.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_val());
 			ampt_pull[cent].stat.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_err());
 			ampt_pull[cent].sys.push_back(def_systematics["AMPT"]["pull_divide"][energy][div][cent][stat]);
+			// Only centrality 8 for cf_ratio, remove from cent loop if there's a problem with grabbing non-existing centralities
+			cf_ratio[cent].val.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_val());
+			cf_ratio[cent].stat.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_err());
+			cf_ratio[cent].sys.push_back(def_systematics["CF"]["divide"][energy][div][cent][stat]);
+			cf_pull[cent].val.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_val());
+			cf_pull[cent].stat.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_err());
+			cf_pull[cent].sys.push_back(def_systematics["CF"]["pull_divide"][energy][div][cent][stat]);
 		}
 	}
 
 	sd_vs_energy_cents_plot(energies, bes1_ratio, ampt_ratio, "Ratio");
 	sd_vs_energy_cents_plot(energies, bes1_pull, ampt_pull, "Pull");
+
+	sd_vs_energy_cf_plot(energies, bes1_ratio[8], ampt_ratio[8], cf_ratio[8], "Ratio");
+	sd_vs_energy_cf_plot(energies, bes1_pull[8], ampt_pull[8], cf_pull[8], "Pull");
 }
 
 
@@ -423,6 +446,179 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
 	mg->GetYaxis()->SetLimits(0.9955, 1.0145);
 	mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
+	mg->GetYaxis()->SetDecimals(3);
+
+	mg->GetXaxis()->SetTitle("Energy (GeV)");
+	mg->GetYaxis()->SetTitle("Kurtosis");
+
+	mg->Draw("AP");
+
+	TLine* one_line = new TLine(0, 1, 80, 1);
+	one_line->SetLineStyle(2);
+	one_line->Draw();
+
+	leg->SetMargin(0.1); leg->Draw();
+
+	gPad->SetTopMargin(0.04);
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.04);
+
+	can->Update();
+	can->Write();
+
+	delete can;
+}
+
+
+
+void AzFigurePlotter::kurt_vs_energy_cf_plot(vector<int> energies, plot_data bes1, plot_data ampt, plot_data cf, string type_name) {
+	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
+	vector<double> energy_val(energies.begin(), energies.end());
+	vector<double> energy_bes1;
+	vector<double> energy_ampt;
+	vector<double> energy_cf;
+	for (double energy : energies) {
+		energy_ampt.push_back(energy - 0.5);
+		energy_bes1.push_back(energy);
+		energy_cf.push_back(energy + 0.5);
+	}
+
+	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_cf_can_"+type_name).data(), ("Kurtosis vs Energy CF " + type_name).data(), 955, 805);
+	TMultiGraph* mg = new TMultiGraph();
+	mg->SetName("Kurtosis_vs_energy_cf_mg");
+	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.stat);
+	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.stat);
+	TGraphErrors* cf_ratio_def_g = graph_x_vs_y_err(energy_cf, cf.val, energy_err, cf.stat);
+	bes1_ratio_def_g->SetNameTitle("bes1");
+	ampt_ratio_def_g->SetNameTitle("ampt");
+	cf_ratio_def_g->SetNameTitle("cf");
+	TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.sys);
+	TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.sys);
+	TGraphErrors* cf_ratio_sys_g = graph_x_vs_y_err(energy_cf, cf.val, energy_err, cf.sys);
+
+	bes1_ratio_def_g->SetMarkerStyle(20);
+	bes1_ratio_def_g->SetMarkerColor(kBlack);
+	bes1_ratio_def_g->SetLineColor(kBlack);
+	bes1_ratio_def_g->SetMarkerSize(2);
+	bes1_ratio_sys_g->SetLineColor(kBlack);
+
+	ampt_ratio_def_g->SetMarkerStyle(24);
+	ampt_ratio_def_g->SetMarkerColor(kRed);
+	ampt_ratio_def_g->SetLineColor(kRed);
+	ampt_ratio_def_g->SetMarkerSize(1.8);
+	ampt_ratio_sys_g->SetLineColor(kRed);
+
+	cf_ratio_def_g->SetMarkerStyle(24);
+	cf_ratio_def_g->SetMarkerColor(kBlue);
+	cf_ratio_def_g->SetLineColor(kBlue);
+	cf_ratio_def_g->SetMarkerSize(1.8);
+	cf_ratio_sys_g->SetLineColor(kBlue);
+
+	mg->Add(cf_ratio_def_g, "APZ");
+	mg->Add(cf_ratio_sys_g, "[]");
+	mg->Add(ampt_ratio_def_g, "P");
+	mg->Add(ampt_ratio_sys_g, "[]");
+	mg->Add(bes1_ratio_def_g, "P");
+	mg->Add(bes1_ratio_sys_g, "[]");
+
+	leg->SetBorderSize(0);
+	leg->SetFillStyle(0);
+	leg->AddEntry(bes1_ratio_def_g, "BES1", "p");
+	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
+	leg->AddEntry(cf_ratio_def_g, "Cooper-Frye", "p");
+
+	mg->GetXaxis()->SetLimits(0.1, 79.9);
+	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg->GetYaxis()->SetLimits(0.9955, 1.0145);
+	mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
+	mg->GetYaxis()->SetDecimals(3);
+
+	mg->GetXaxis()->SetTitle("Energy (GeV)");
+	mg->GetYaxis()->SetTitle("Kurtosis");
+
+	mg->Draw("AP");
+
+	TLine* one_line = new TLine(0, 1, 80, 1);
+	one_line->SetLineStyle(2);
+	one_line->Draw();
+
+	leg->SetMargin(0.1); leg->Draw();
+
+	gPad->SetTopMargin(0.04);
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.04);
+
+	can->Update();
+	can->Write();
+
+	delete can;
+}
+
+
+void AzFigurePlotter::sd_vs_energy_cf_plot(vector<int> energies, plot_data bes1, plot_data ampt, plot_data cf, string type_name) {
+	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
+	vector<double> energy_val(energies.begin(), energies.end());
+	vector<double> energy_bes1;
+	vector<double> energy_ampt;
+	vector<double> energy_cf;
+	for (double energy : energies) {
+		energy_ampt.push_back(energy - 0.5);
+		energy_bes1.push_back(energy);
+		energy_cf.push_back(energy + 0.5);
+	}
+
+	TCanvas* can = new TCanvas(("SD_vs_energy_cf_can_"+type_name).data(), ("Standard Deviation vs Energy CF " + type_name).data(), 955, 805);
+	TMultiGraph* mg = new TMultiGraph();
+	mg->SetName("SD_vs_energy_cf_mg");
+	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.stat);
+	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.stat);
+	TGraphErrors* cf_ratio_def_g = graph_x_vs_y_err(energy_cf, cf.val, energy_err, cf.stat);
+	bes1_ratio_def_g->SetNameTitle("bes1");
+	ampt_ratio_def_g->SetNameTitle("ampt");
+	cf_ratio_def_g->SetNameTitle("cf");
+	TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.sys);
+	TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.sys);
+	TGraphErrors* cf_ratio_sys_g = graph_x_vs_y_err(energy_cf, cf.val, energy_err, cf.sys);
+
+	bes1_ratio_def_g->SetMarkerStyle(20);
+	bes1_ratio_def_g->SetMarkerColor(kBlack);
+	bes1_ratio_def_g->SetLineColor(kBlack);
+	bes1_ratio_def_g->SetMarkerSize(2);
+	bes1_ratio_sys_g->SetLineColor(kBlack);
+
+	ampt_ratio_def_g->SetMarkerStyle(24);
+	ampt_ratio_def_g->SetMarkerColor(kRed);
+	ampt_ratio_def_g->SetLineColor(kRed);
+	ampt_ratio_def_g->SetMarkerSize(1.8);
+	ampt_ratio_sys_g->SetLineColor(kRed);
+
+	cf_ratio_def_g->SetMarkerStyle(24);
+	cf_ratio_def_g->SetMarkerColor(kBlue);
+	cf_ratio_def_g->SetLineColor(kBlue);
+	cf_ratio_def_g->SetMarkerSize(1.8);
+	cf_ratio_sys_g->SetLineColor(kBlue);
+
+	mg->Add(cf_ratio_def_g, "APZ");
+	mg->Add(cf_ratio_sys_g, "[]");
+	mg->Add(ampt_ratio_def_g, "P");
+	mg->Add(ampt_ratio_sys_g, "[]");
+	mg->Add(bes1_ratio_def_g, "P");
+	mg->Add(bes1_ratio_sys_g, "[]");
+
+	leg->SetBorderSize(0);
+	leg->SetFillStyle(0);
+	leg->AddEntry(bes1_ratio_def_g, "BES1", "p");
+	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
+	leg->AddEntry(cf_ratio_def_g, "Cooper-Frye", "p");
+
+	mg->GetXaxis()->SetLimits(0.1, 79.9);
+	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+	if (!zoom) {
+		mg->GetYaxis()->SetLimits(0.948, 1.012);
+		mg->GetYaxis()->SetRangeUser(0.948, 1.012);
+	}
 	mg->GetYaxis()->SetDecimals(3);
 
 	mg->GetXaxis()->SetTitle("Energy (GeV)");
@@ -943,9 +1139,10 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 		mg->GetXaxis()->SetLimits(0.1, 79.9);
 		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
 		if (!zoom) {
-			mg->GetYaxis()->SetLimits(0.95, 1.0);
-			mg->GetYaxis()->SetRangeUser(0.95, 1.0);
+			mg->GetYaxis()->SetLimits(0.948, 1.002);
+			mg->GetYaxis()->SetRangeUser(0.948, 1.002);
 		}
+		mg->GetYaxis()->SetDecimals(3);
 
 		mg->GetXaxis()->SetTitle("Energy (GeV)");
 		mg->GetYaxis()->SetTitle("Standard Deviation");
@@ -972,11 +1169,11 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 			g_hold->GetXaxis()->SetLimits(0.1, 79.9);
 			g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
 			if (!zoom) {
-				g_hold->GetYaxis()->SetLimits(0.95, 1.0);
-				g_hold->GetYaxis()->SetRangeUser(0.95, 1.0);
+				g_hold->GetYaxis()->SetLimits(0.948, 1.0);
+				g_hold->GetYaxis()->SetRangeUser(0.948, 1.0);
 			} else {
-				g_hold->GetYaxis()->SetLimits(0.95, 1.0);
-				g_hold->GetYaxis()->SetRangeUser(0.95, 1.0);
+				g_hold->GetYaxis()->SetLimits(0.948, 1.0);
+				g_hold->GetYaxis()->SetRangeUser(0.948, 1.0);
 			}
 			g_hold->Draw("AP");
 			TLegend *leg2 = new TLegend(0.3, 0.4, 0.7, 0.6);
@@ -1023,9 +1220,10 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
 	mg_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
-		mg_bes->GetYaxis()->SetLimits(0.95, 1.0);
-		mg_bes->GetYaxis()->SetRangeUser(0.95, 1.0);
+		mg_bes->GetYaxis()->SetLimits(0.948, 1.0);
+		mg_bes->GetYaxis()->SetRangeUser(0.948, 1.0);
 	}
+	mg_bes->GetYaxis()->SetDecimals(3);
 
 	mg_bes->GetXaxis()->SetTitle("Energy (GeV)");
 	mg_bes->GetYaxis()->SetTitle("Standard Deviation");
@@ -1076,9 +1274,10 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
 	mg_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
 	if (!zoom) {
-		mg_ampt->GetYaxis()->SetLimits(0.95, 1.0);
-		mg_ampt->GetYaxis()->SetRangeUser(0.95, 1.0);
+		mg_ampt->GetYaxis()->SetLimits(0.948, 1.0);
+		mg_ampt->GetYaxis()->SetRangeUser(0.948, 1.0);
 	}
+	mg_ampt->GetYaxis()->SetDecimals(3);
 
 	mg_ampt->GetXaxis()->SetTitle("Energy (GeV)");
 	mg_ampt->GetYaxis()->SetTitle("Standard Deviation");

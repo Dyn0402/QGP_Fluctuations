@@ -83,8 +83,8 @@ int main() {
 void fig_read_plot() {
 	AzFigurePlotter analyzer;
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
-	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_9-3-21_bes_ampt_fixed.txt");
-	analyzer.set_out_root_name("9-3-21_ampt_fix.root");
+	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_9-7-21_bes_ampt_cf.txt");
+	analyzer.set_out_root_name("9-7-21_cf.root");
 
 	analyzer.plot_paper_figs();
 }
@@ -119,8 +119,8 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("9-3-21_bes_ampt_fixed.root");
-	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
+	analyzer.set_out_root_name("9-7-21_cf_test.root");
+	analyzer.set_energies({ 7, 19, 27, 39, 62 });
 	//	analyzer.set_energies({7});
 	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
 	analyzer.set_centralities({ 8 });
@@ -186,105 +186,54 @@ void azimuth_bin_analyze_fig() {
 //		{"AMPT", {get_set_names(ampt_def1)[0], get_set_names(ampt_sys1)}} });
 
 
-	vector<string> rapids{ "01", "02", "03", "04", "06", "08", "1" };
-	vector<string> effs{ "05", "1", "15", "2", "3" };
-
-	map<string, vector<int>> bes1_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default/"), "default/");
-	map<string, vector<int>> bes1_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default_sys/"), "default_sys/");
-
-	map<string, vector<int>> ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + "default/"), "default/");
-
-	map<string, pair<string, vector<string>>> combos{ {"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}},
-		{"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_def)}} };
-
-	vector<map<string, vector<int>>> sets{ bes1_def, bes1_sys, ampt_def };
-
-	for (string rapid : rapids) {
-		string rapid_name = "rapid" + rapid;
-		map<string, vector<int>> rapidx_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
-		map<string, vector<int>> rapidx_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + rapid_name + "_sys/"), rapid_name + "_sys/");
-		map<string, vector<int>> rapidx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
-		sets.push_back(rapidx_def);
-		sets.push_back(rapidx_sys);
-		sets.push_back(rapidx_ampt_def);
-		combos["BES1_" + rapid_name] = make_pair(get_set_names(rapidx_def)[0], get_set_names(rapidx_sys));
-		combos["AMPT_" + rapid_name] = make_pair(get_set_names(rapidx_ampt_def)[0], get_set_names(rapidx_ampt_def));
-	}
-
-	for (string eff : effs) {
-		string eff_name = "Eff" + eff;
-		map<string, vector<int>> effx_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + eff_name + "_def/"), eff_name + "_def/");
-		map<string, vector<int>> effx_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + eff_name + "_sys/"), eff_name + "_sys/");
-		map<string, vector<int>> effx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + eff_name + "_def/"), eff_name + "_def/");
-		sets.push_back(effx_def);
-		sets.push_back(effx_sys);
-		sets.push_back(effx_ampt_def);
-		combos["BES1_" + eff_name] = make_pair(get_set_names(effx_def)[0], get_set_names(effx_sys));
-		combos["AMPT_" + eff_name] = make_pair(get_set_names(effx_ampt_def)[0], get_set_names(effx_ampt_def));
-	}
-
-	analyzer.set_sets(combine_sets(sets));
-	analyzer.set_sys_combos(combos);
-
-//	map<string, vector<int>> cf_def = prepend_sets(get_sets(analyzer.get_cf_in_path() + "default/"), "default/");
-//	vector<map<string, vector<int>>> sets{ cf_def };
+//	vector<string> rapids{ "01", "02", "03", "04", "06", "08", "1" };
+//	vector<string> effs{ "05", "1", "15", "2", "3" };
 //
-//	map<string, pair<string, vector<string>>> combos{ {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} };
+//	map<string, vector<int>> bes1_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default/"), "default/");
+//	map<string, vector<int>> bes1_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + "default_sys/"), "default_sys/");
+//
+//	map<string, vector<int>> ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + "default/"), "default/");
+//
+//	map<string, pair<string, vector<string>>> combos{ {"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}},
+//		{"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_def)}} };
+//
+//	vector<map<string, vector<int>>> sets{ bes1_def, bes1_sys, ampt_def };
+//
+//	for (string rapid : rapids) {
+//		string rapid_name = "rapid" + rapid;
+//		map<string, vector<int>> rapidx_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
+//		map<string, vector<int>> rapidx_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + rapid_name + "_sys/"), rapid_name + "_sys/");
+//		map<string, vector<int>> rapidx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
+//		sets.push_back(rapidx_def);
+//		sets.push_back(rapidx_sys);
+//		sets.push_back(rapidx_ampt_def);
+//		combos["BES1_" + rapid_name] = make_pair(get_set_names(rapidx_def)[0], get_set_names(rapidx_sys));
+//		combos["AMPT_" + rapid_name] = make_pair(get_set_names(rapidx_ampt_def)[0], get_set_names(rapidx_ampt_def));
+//	}
+//
+//	for (string eff : effs) {
+//		string eff_name = "Eff" + eff;
+//		map<string, vector<int>> effx_def = prepend_sets(get_sets(analyzer.get_bes_in_path() + eff_name + "_def/"), eff_name + "_def/");
+//		map<string, vector<int>> effx_sys = prepend_sets(get_sets(analyzer.get_bes_in_path() + eff_name + "_sys/"), eff_name + "_sys/");
+//		map<string, vector<int>> effx_ampt_def = prepend_sets(get_sets(analyzer.get_ampt_in_path() + eff_name + "_def/"), eff_name + "_def/");
+//		sets.push_back(effx_def);
+//		sets.push_back(effx_sys);
+//		sets.push_back(effx_ampt_def);
+//		combos["BES1_" + eff_name] = make_pair(get_set_names(effx_def)[0], get_set_names(effx_sys));
+//		combos["AMPT_" + eff_name] = make_pair(get_set_names(effx_ampt_def)[0], get_set_names(effx_ampt_def));
+//	}
 //
 //	analyzer.set_sets(combine_sets(sets));
-//	analyzer.set_sys_combos( { {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} } );
+//	analyzer.set_sys_combos(combos);
 
-//	analyzer.set_sets(combine_sets({ bes1_def, bes1_sys, ampt_def }));
-//	analyzer.set_sys_combos({ {"BES1", {get_set_names(bes1_def)[0], get_set_names(bes1_sys)}},
-//		{"AMPT", {get_set_names(ampt_def)[0], get_set_names(ampt_def)}} });
+	map<string, vector<int>> cf_def = prepend_sets(get_sets(analyzer.get_cf_in_path() + "default/"), "default/");
+	vector<map<string, vector<int>>> sets{ cf_def };
 
-	//map<string, vector<int>> bes1_sys = get_sets(analyzer.get_bes_in_path() + "default_sys_test/");
-	//map<string, vector<int>> bes1_sys1;
-	//for (pair<string, vector<int>> def : bes1_sys) { bes1_sys1["default_sys_test/" + def.first] = def.second; }
-	//analyzer.set_sets(bes1_sys1);
+	map<string, pair<string, vector<string>>> combos{ {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} };
 
+	analyzer.set_sets(combine_sets(sets));
+	analyzer.set_sys_combos( { {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} } );
 
-	//	map<string, vector<int>> full_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-	//	map<string, vector<int>> full_sys = get_sets("/home/dylan/Research/Data/", "sys", make_pair(2, 2), 1);
-	//	map<string, vector<int>> rand_def = full_def;
-	//	map<string, vector<int>> rand_sys = full_def;
-	//	map<string, vector<int>> mix_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {0, 20}}};
-	//	map<string, vector<int>> mix_sys = mix_def;
-	//	analyzer.set_sets(combine_sets({full_def, full_sys, mix_def}));
-	//	analyzer.set_sys_combos({{"Full_Sys", {get_set_names(full_def)[0], get_set_names(full_sys)}},
-	//		{"Rand_Sys", {get_set_names(rand_def)[0], get_set_names(rand_sys)}},
-	//		{"ZMix_Sys", {get_set_names(mix_def)[0], get_set_names(mix_sys)}}});
-
-	//	map<string, vector<int>> def_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-	//	map<string, vector<int>> def_sys = def_def;
-	//	map<string, vector<int>> mixseed_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixseed_", {0, 20}}};
-	//	map<string, vector<int>> mixseed_sys = mixseed_def;
-	//	map<string, vector<int>> mixnoseed_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_mixnoseed_", {0, 20}}};
-	//	map<string, vector<int>> mixnoseed_sys = mixnoseed_def;
-	//	analyzer.set_sets(combine_sets({def_def, def_sys, mixseed_sys, mixseed_def, mixnoseed_sys, mixnoseed_def}));
-	//	analyzer.set_sys_combos({{"def", {get_set_names(def_def)[0], get_set_names(def_sys)}},
-	//		{"mixseed", {get_set_names(mixseed_def)[0], get_set_names(mixseed_sys)}},
-	//		{"mixnoseed", {get_set_names(mixnoseed_def)[0], get_set_names(mixnoseed_sys)}}});
-
-	//	map<string, vector<int>> def_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_", {0, 54}}};
-	//	map<string, vector<int>> def_sys = def_def;
-	//	map<string, vector<int>> ef1_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency1_", {0, 16}}};
-	//	map<string, vector<int>> ef1_sys = ef1_def;
-	//	map<string, vector<int>> ef2_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency2_", {0, 16}}};
-	//	map<string, vector<int>> ef2_sys = ef2_def;
-	//	map<string, vector<int>> ef3_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency3_", {0, 16}}};
-	//	map<string, vector<int>> ef3_sys = ef3_def;
-	////	map<string, vector<int>> ef4_def {{"rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_Efficiency4_", {0, 16}}};
-	////	map<string, vector<int>> ef4_sys = ef4_def;
-	//	analyzer.set_sets(combine_sets({def_def, ef1_def, ef2_def, ef3_def}));
-	//	analyzer.set_sys_combos({{"Efficiency 0", {get_set_names(def_def)[0], get_set_names(def_sys)}},
-	//		{"Efficiency 1", {get_set_names(ef1_def)[0], get_set_names(ef1_sys)}},
-	//		{"Efficiency 2", {get_set_names(ef2_def)[0], get_set_names(ef2_sys)}},
-	//		{"Efficiency 3", {get_set_names(ef3_def)[0], get_set_names(ef3_sys)}}});
-	////		{"Efficiency 4", {get_set_names(ef4_def)[0], get_set_names(ef4_sys)}}});
-
-	//	analyzer.set_set_combos({{"rapid05_dcavar_seed", get_set_names(get_sets("/home/dylan/Research/Data/", "dca", make_pair(0.85, 1.2), 1, {"rapid05_"}))},
-	//		{"rapidvar_dca1_seed", get_set_names(get_sets("/home/dylan/Research/Data/", "rapid", make_pair(0.35, 0.7), 1, {"_dca1_"}))}});
 	//analyzer.analyze();
 	analyzer.analyze_lite();
 //	analyzer.plot_paper_figs();
