@@ -36,6 +36,7 @@ public:
 	void sd_vs_energy_cents();
 	void moments_vs_energy();
 	void kurt_vs_rapidity();
+	void kurt_vs_energy_rapidity();
 	void kurt_vs_efficiency();
 
 private:
@@ -51,6 +52,7 @@ private:
 	void sd_vs_energy_cf_plot(vector<int> energies, plot_data bes1, plot_data ampt, plot_data cf, string type_name);
 	void moments_vs_energy_plot(vector<int> energies, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, vector<string> stat_order, string type_name);
 	void kurt_vs_rapid_plot(vector<int> energies, map<string, map<float, plot_data>> bes1, map<string, map<float, plot_data>> ampt, string type_name);
+	void kurt_vs_energy_rapid_plot(vector<float> rapidities, map<string, map<float, plot_data>> bes1, map<string, map<float, plot_data>> ampt, string type_name);
 	void kurt_vs_efficiency_plot(vector<int> energies, map<string, map<float, plot_data>> bes1, map<string, map<float, plot_data>> ampt, string type_name);
 
 };
