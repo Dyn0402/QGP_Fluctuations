@@ -84,7 +84,7 @@ void fig_read_plot() {
 	AzFigurePlotter analyzer;
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_9-7-21_bes_ampt_cf.txt");
-	analyzer.set_out_root_name("9-13-21.root");
+	analyzer.set_out_root_name("9-14-21.root");
 
 	analyzer.plot_paper_figs();
 }
@@ -119,7 +119,7 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("9-7-21_cf_test.root");
+	analyzer.set_out_root_name("9-14-21.root");
 	analyzer.set_energies({ 7, 19, 27, 39, 62 });
 	//	analyzer.set_energies({7});
 	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
@@ -226,13 +226,37 @@ void azimuth_bin_analyze_fig() {
 //	analyzer.set_sets(combine_sets(sets));
 //	analyzer.set_sys_combos(combos);
 
-	map<string, vector<int>> cf_def = prepend_sets(get_sets(analyzer.get_cf_in_path() + "default/"), "default/");
-	vector<map<string, vector<int>>> sets{ cf_def };
+//	map<string, vector<int>> cf_def = prepend_sets(get_sets(analyzer.get_cf_in_path() + "default/"), "default/");
+//	vector<map<string, vector<int>>> sets{ cf_def };
+//
+//	map<string, pair<string, vector<string>>> combos{ {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} };
+//
+//	analyzer.set_sets(combine_sets(sets));
+//	analyzer.set_sys_combos( { {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} } );
 
-	map<string, pair<string, vector<string>>> combos{ {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} };
+	vector<string> rapids{ "01", "02", "03", "04", "06", "08", "1" };
+	vector<string> effs{ "05", "1", "15", "2", "3" };
+
+	map<string, pair<string, vector<string>>> combos;
+
+	vector<map<string, vector<int>>> sets;
+
+	for (string rapid : rapids) {
+		string rapid_name = "rapid" + rapid;
+		map<string, vector<int>> rapidx_cf_def = prepend_sets(get_sets(analyzer.get_cf_in_path() + rapid_name + "_def/"), rapid_name + "_def/");
+		sets.push_back(rapidx_cf_def);
+		combos["CF_" + rapid_name] = make_pair(get_set_names(rapidx_cf_def)[0], get_set_names(rapidx_cf_def));
+	}
+
+	for (string eff : effs) {
+		string eff_name = "Eff" + eff;
+		map<string, vector<int>> effx_cf_def = prepend_sets(get_sets(analyzer.get_cf_in_path() + eff_name + "_def/"), eff_name + "_def/");
+		sets.push_back(effx_cf_def);
+		combos["CF_" + eff_name] = make_pair(get_set_names(effx_cf_def)[0], get_set_names(effx_cf_def));
+	}
 
 	analyzer.set_sets(combine_sets(sets));
-	analyzer.set_sys_combos( { {"CF", {get_set_names(cf_def)[0], get_set_names(cf_def)}} } );
+	analyzer.set_sys_combos(combos);
 
 	//analyzer.analyze();
 	analyzer.analyze_lite();

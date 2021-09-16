@@ -483,7 +483,7 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_mg");
-	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+	TLegend* leg = new TLegend(0.15, 0.15, 0.35, 0.3);
 	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.stat);
 	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.stat);
 	bes1_ratio_def_g->SetNameTitle("bes1");
@@ -513,14 +513,24 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 	leg->AddEntry(bes1_ratio_def_g, "BES1", "p");
 	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 
-	mg->GetXaxis()->SetLimits(0.1, 79.9);
-	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg->GetXaxis()->SetLimits(-2, 78);
+	mg->GetXaxis()->SetRangeUser(-2, 78);
 	mg->GetYaxis()->SetLimits(0.9955, 1.0145);
 	mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
+	mg->GetXaxis()->SetLabelFont(43);
+	mg->GetXaxis()->SetTitleFont(43);
+	mg->GetXaxis()->SetLabelSize(28);
+	mg->GetXaxis()->SetTitleSize(28);
+	mg->GetYaxis()->SetLabelFont(43);
+	mg->GetYaxis()->SetTitleFont(43);
+	mg->GetYaxis()->SetLabelSize(28);
+	mg->GetYaxis()->SetTitleSize(28);
 	mg->GetYaxis()->SetDecimals(3);
+	mg->GetXaxis()->SetTitleOffset(1.2);
+	mg->GetYaxis()->SetTitleOffset(1.7);
 
 	mg->GetXaxis()->SetTitle("Energy (GeV)");
-	mg->GetYaxis()->SetTitle("Kurtosis");
+	mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
 
 	mg->Draw("AP");
 
@@ -577,13 +587,13 @@ void AzFigurePlotter::kurt_vs_energy_cf_plot(vector<int> energies, plot_data bes
 	ampt_ratio_def_g->SetMarkerStyle(24);
 	ampt_ratio_def_g->SetMarkerColor(kRed);
 	ampt_ratio_def_g->SetLineColor(kRed);
-	ampt_ratio_def_g->SetMarkerSize(1.8);
+	ampt_ratio_def_g->SetMarkerSize(2);
 	ampt_ratio_sys_g->SetLineColor(kRed);
 
 	cf_ratio_def_g->SetMarkerStyle(24);
 	cf_ratio_def_g->SetMarkerColor(kBlue);
 	cf_ratio_def_g->SetLineColor(kBlue);
-	cf_ratio_def_g->SetMarkerSize(1.8);
+	cf_ratio_def_g->SetMarkerSize(2);
 	cf_ratio_sys_g->SetLineColor(kBlue);
 
 	mg->Add(cf_ratio_def_g, "APZ");
@@ -599,14 +609,24 @@ void AzFigurePlotter::kurt_vs_energy_cf_plot(vector<int> energies, plot_data bes
 	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 	leg->AddEntry(cf_ratio_def_g, "Cooper-Frye", "p");
 
-	mg->GetXaxis()->SetLimits(0.1, 79.9);
-	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg->GetXaxis()->SetLimits(-2, 78);
+	mg->GetXaxis()->SetRangeUser(-2, 78);
 	mg->GetYaxis()->SetLimits(0.9955, 1.0145);
 	mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
+	mg->GetXaxis()->SetLabelFont(43);
+	mg->GetXaxis()->SetTitleFont(43);
+	mg->GetXaxis()->SetLabelSize(def_text_size);
+	mg->GetXaxis()->SetTitleSize(def_text_size);
+	mg->GetYaxis()->SetLabelFont(43);
+	mg->GetYaxis()->SetTitleFont(43);
+	mg->GetYaxis()->SetLabelSize(def_text_size);
+	mg->GetYaxis()->SetTitleSize(def_text_size);
 	mg->GetYaxis()->SetDecimals(3);
+	mg->GetXaxis()->SetTitleOffset(2.9);
+	mg->GetYaxis()->SetTitleOffset(4.4);
 
 	mg->GetXaxis()->SetTitle("Energy (GeV)");
-	mg->GetYaxis()->SetTitle("Kurtosis");
+	mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
 
 	mg->Draw("AP");
 
@@ -662,13 +682,13 @@ void AzFigurePlotter::sd_vs_energy_cf_plot(vector<int> energies, plot_data bes1,
 	ampt_ratio_def_g->SetMarkerStyle(24);
 	ampt_ratio_def_g->SetMarkerColor(kRed);
 	ampt_ratio_def_g->SetLineColor(kRed);
-	ampt_ratio_def_g->SetMarkerSize(1.8);
+	ampt_ratio_def_g->SetMarkerSize(2);
 	ampt_ratio_sys_g->SetLineColor(kRed);
 
 	cf_ratio_def_g->SetMarkerStyle(24);
 	cf_ratio_def_g->SetMarkerColor(kBlue);
 	cf_ratio_def_g->SetLineColor(kBlue);
-	cf_ratio_def_g->SetMarkerSize(1.8);
+	cf_ratio_def_g->SetMarkerSize(2);
 	cf_ratio_sys_g->SetLineColor(kBlue);
 
 	mg->Add(cf_ratio_def_g, "APZ");
@@ -684,16 +704,26 @@ void AzFigurePlotter::sd_vs_energy_cf_plot(vector<int> energies, plot_data bes1,
 	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 	leg->AddEntry(cf_ratio_def_g, "Cooper-Frye", "p");
 
-	mg->GetXaxis()->SetLimits(0.1, 79.9);
-	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg->GetXaxis()->SetLimits(-2, 78);
+	mg->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg->GetYaxis()->SetLimits(0.948, 1.012);
 		mg->GetYaxis()->SetRangeUser(0.948, 1.012);
 	}
+	mg->GetXaxis()->SetLabelFont(43);
+	mg->GetXaxis()->SetTitleFont(43);
+	mg->GetXaxis()->SetLabelSize(def_text_size);
+	mg->GetXaxis()->SetTitleSize(def_text_size);
+	mg->GetYaxis()->SetLabelFont(43);
+	mg->GetYaxis()->SetTitleFont(43);
+	mg->GetYaxis()->SetLabelSize(def_text_size);
+	mg->GetYaxis()->SetTitleSize(def_text_size);
 	mg->GetYaxis()->SetDecimals(3);
+	mg->GetXaxis()->SetTitleOffset(2.9);
+	mg->GetYaxis()->SetTitleOffset(4.4);
 
 	mg->GetXaxis()->SetTitle("Energy (GeV)");
-	mg->GetYaxis()->SetTitle("Kurtosis");
+	mg->GetYaxis()->SetTitle("Standard Deviation_{Raw}  /  Standard Deviation_{Mix}");
 
 	mg->Draw("AP");
 
@@ -766,8 +796,8 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 	leg->SetBorderSize(0);
 	leg->SetFillStyle(0);
 
-	mg->GetXaxis()->SetLimits(0.1, 79.9);
-	mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg->GetXaxis()->SetLimits(-2, 78);
+	mg->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -822,8 +852,8 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 	int y_num = 3;
 
 	double y_top_pad = 0.01;
-	double y_bot_pad = 0.04;
-	double x_left_pad = 0.06;
+	double y_bot_pad = 0.06;
+	double x_left_pad = 0.075;
 	double x_right_pad = 0.01;
 	double x_low = 0;
 	double x_up = 0;
@@ -912,16 +942,16 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		mg->Add(bes1_ratio_def_g, "P");
 		mg->Add(bes1_ratio_sys_g, "[]");
 
-		mg->GetXaxis()->SetLimits(0.1, 79.9);
-		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+		mg->GetXaxis()->SetLimits(-2, 78);
+		mg->GetXaxis()->SetRangeUser(-2, 78);
 		mg->GetXaxis()->SetLabelFont(43);
 		mg->GetXaxis()->SetTitleFont(43);
-		mg->GetXaxis()->SetLabelSize(15);
-		mg->GetXaxis()->SetTitleSize(15);
+		mg->GetXaxis()->SetLabelSize(def_text_size);
+		mg->GetXaxis()->SetTitleSize(def_text_size);
 		mg->GetYaxis()->SetLabelFont(43);
 		mg->GetYaxis()->SetTitleFont(43);
-		mg->GetYaxis()->SetLabelSize(15);
-		mg->GetYaxis()->SetTitleSize(15);
+		mg->GetYaxis()->SetLabelSize(def_text_size);
+		mg->GetYaxis()->SetTitleSize(def_text_size);
 		mg->GetYaxis()->SetDecimals(3);
 		mg->GetXaxis()->SetTitleOffset(2.9);
 		mg->GetYaxis()->SetTitleOffset(4.4);
@@ -931,7 +961,7 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 		}
 
 		mg->GetXaxis()->SetTitle("Energy (GeV)");
-		mg->GetYaxis()->SetTitle("Kurtosis");
+		mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
 
 		mg->Draw("AP");
 
@@ -952,13 +982,13 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 			vector<double> y_hold {-1};
 			TGraph *g_hold = new TGraph(1, x_hold.data(), y_hold.data());
 			g_hold->SetTitle("");
-			g_hold->GetXaxis()->SetLimits(0.1, 79.9);
-			g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
+			g_hold->GetXaxis()->SetLimits(-2, 78);
+			g_hold->GetXaxis()->SetRangeUser(-2, 78);
 			g_hold->GetXaxis()->SetTitle("Energy (GeV)");
 			g_hold->GetXaxis()->SetTitleFont(43);
 			g_hold->GetXaxis()->SetLabelFont(43);
-			g_hold->GetXaxis()->SetTitleSize(15);
-			g_hold->GetXaxis()->SetLabelSize(15);
+			g_hold->GetXaxis()->SetTitleSize(def_text_size);
+			g_hold->GetXaxis()->SetLabelSize(def_text_size);
 			g_hold->GetXaxis()->SetTitleOffset(2.9);
 			if (!zoom) {
 				g_hold->GetYaxis()->SetLimits(0.9935, 1.0185);
@@ -1009,8 +1039,8 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 	leg_bes->SetBorderSize(0);
 	leg_bes->SetFillStyle(0);
 
-	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_bes->GetXaxis()->SetLimits(-2, 78);
+	mg_bes->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1062,8 +1092,8 @@ void AzFigurePlotter::kurt_vs_energy_cents_plot(vector<int> energies, map<int, p
 	leg_ampt->SetBorderSize(0);
 	leg_ampt->SetFillStyle(0);
 
-	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_ampt->GetXaxis()->SetLimits(-2, 78);
+	mg_ampt->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1207,8 +1237,8 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 		mg->Add(bes1_ratio_def_g, "P");
 		mg->Add(bes1_ratio_sys_g, "[]");
 
-		mg->GetXaxis()->SetLimits(0.1, 79.9);
-		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+		mg->GetXaxis()->SetLimits(-2, 78);
+		mg->GetXaxis()->SetRangeUser(-2, 78);
 		if (!zoom) {
 			mg->GetYaxis()->SetLimits(0.948, 1.002);
 			mg->GetYaxis()->SetRangeUser(0.948, 1.002);
@@ -1216,7 +1246,7 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 		mg->GetYaxis()->SetDecimals(3);
 
 		mg->GetXaxis()->SetTitle("Energy (GeV)");
-		mg->GetYaxis()->SetTitle("Standard Deviation");
+		mg->GetYaxis()->SetTitle("Standard Deviation_{Raw}  /  Standard Deviation_{<ix}");
 
 		mg->Draw("AP");
 
@@ -1237,8 +1267,8 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 			vector<double> y_hold {-1};
 			TGraph *g_hold = new TGraph(1, x_hold.data(), y_hold.data());
 			g_hold->SetTitle("");
-			g_hold->GetXaxis()->SetLimits(0.1, 79.9);
-			g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
+			g_hold->GetXaxis()->SetLimits(-2, 78);
+			g_hold->GetXaxis()->SetRangeUser(-2, 78);
 			if (!zoom) {
 				g_hold->GetYaxis()->SetLimits(0.948, 1.0);
 				g_hold->GetYaxis()->SetRangeUser(0.948, 1.0);
@@ -1288,8 +1318,8 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 	leg_bes->SetBorderSize(0);
 	leg_bes->SetFillStyle(0);
 
-	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_bes->GetXaxis()->SetLimits(-2, 78);
+	mg_bes->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg_bes->GetYaxis()->SetLimits(0.948, 1.0);
 		mg_bes->GetYaxis()->SetRangeUser(0.948, 1.0);
@@ -1342,8 +1372,8 @@ void AzFigurePlotter::sd_vs_energy_cents_plot(vector<int> energies, map<int, plo
 	leg_ampt->SetBorderSize(0);
 	leg_ampt->SetFillStyle(0);
 
-	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_ampt->GetXaxis()->SetLimits(-2, 78);
+	mg_ampt->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg_ampt->GetYaxis()->SetLimits(0.948, 1.0);
 		mg_ampt->GetYaxis()->SetRangeUser(0.948, 1.0);
@@ -1500,12 +1530,12 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 
 //		gStyle->SetTitleFont(3, "t");
 //		gStyle->SetTitleSize(20, "t");
-		mg->GetXaxis()->SetLimits(0.1, 79.9);
-		mg->GetXaxis()->SetRangeUser(0.1, 79.9);
+		mg->GetXaxis()->SetLimits(-2, 78);
+		mg->GetXaxis()->SetRangeUser(-2, 78);
 		mg->GetXaxis()->SetLabelFont(43);
-		mg->GetXaxis()->SetLabelSize(13);
+		mg->GetXaxis()->SetLabelSize(def_text_size);
 		mg->GetYaxis()->SetLabelFont(43);
-		mg->GetYaxis()->SetLabelSize(13);
+		mg->GetYaxis()->SetLabelSize(def_text_size);
 		if (stat == "mean") { mg->GetYaxis()->SetDecimals(5); }
 		else { mg->GetYaxis()->SetDecimals(2); }
 		//mg->GetYaxis()->SetLimits(0.9955, 1.0145);
@@ -1513,13 +1543,13 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 
 		mg->GetXaxis()->SetTitle("Energy (GeV)");
 		mg->GetXaxis()->SetTitleFont(43);
-		mg->GetXaxis()->SetTitleSize(13);
+		mg->GetXaxis()->SetTitleSize(def_text_size);
 
 		mg->Draw("AP");
 
 		TLegend* leg = new TLegend(0.6, 0.7, 0.9, 0.9);
 		leg->SetTextFont(43);
-		leg->SetTextSize(15);
+		leg->SetTextSize(def_text_size);
 		leg->AddEntry(bes1_ratio_raw_def_g, "STAR Raw", "p");
 		leg->AddEntry(bes1_ratio_mix_def_g, "STAR Mixed", "p");
 		leg->AddEntry(ampt_ratio_raw_def_g, "AMPT Raw", "p");
@@ -1565,8 +1595,8 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 		mg_div->Add(bes1_ratio_div_def_g, "P");
 		mg_div->Add(bes1_ratio_div_sys_g, "[]");
 
-		mg_div->GetXaxis()->SetLimits(0.1, 79.9);
-		mg_div->GetXaxis()->SetRangeUser(0.1, 79.9);
+		mg_div->GetXaxis()->SetLimits(-2, 78);
+		mg_div->GetXaxis()->SetRangeUser(-2, 78);
 		mg_div->GetXaxis()->SetLabelFont(43);
 		mg_div->GetXaxis()->SetLabelSize(13);
 		mg_div->GetYaxis()->SetLabelFont(43);
@@ -1587,7 +1617,7 @@ void AzFigurePlotter::moments_vs_energy_plot(vector<int> energies, map<string, m
 
 		TLegend* leg_div = new TLegend(0.5, 0.75, 0.9, 0.9);
 		leg_div->SetTextFont(43);
-		leg_div->SetTextSize(15);
+		leg_div->SetTextSize(def_text_size);
 		leg_div->AddEntry(bes1_ratio_div_def_g, "STAR Raw/Mixed", "p");
 		leg_div->AddEntry(ampt_ratio_div_def_g, "AMPT Raw/Mixed", "p");
 		leg_div->SetBorderSize(0);
@@ -1796,8 +1826,8 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		mg_div->Add(bes1_ratio_div_def_g, "P");
 		mg_div->Add(bes1_ratio_div_sys_g, "[]");
 
-		mg_div->GetXaxis()->SetLimits(0.1, 79.9);
-		mg_div->GetXaxis()->SetRangeUser(0.1, 79.9);
+		mg_div->GetXaxis()->SetLimits(-2, 78);
+		mg_div->GetXaxis()->SetRangeUser(-2, 78);
 		if (!zoom) {
 			mg_div->GetYaxis()->SetLimits(0.9935, 1.0185);
 			mg_div->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1829,8 +1859,8 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 			vector<double> y_hold {-1};
 			TGraph *g_hold = new TGraph(1, x_hold.data(), y_hold.data());
 			g_hold->SetTitle("");
-			g_hold->GetXaxis()->SetLimits(0.1, 79.9);
-			g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
+			g_hold->GetXaxis()->SetLimits(-2, 78);
+			g_hold->GetXaxis()->SetRangeUser(-2, 78);
 			if (!zoom) {
 				g_hold->GetYaxis()->SetLimits(0.9935, 1.0185);
 				g_hold->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1882,8 +1912,8 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 		leg_bes->AddEntry(bes1_ratio_div_def_g, ("BES1 |#eta|<" + to_string(rapid.first).substr(0, 3)).data(), "p");
 	}
 
-	mg_div_bes->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_div_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_div_bes->GetXaxis()->SetLimits(-2, 78);
+	mg_div_bes->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg_div_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_div_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1940,8 +1970,8 @@ void AzFigurePlotter::kurt_vs_rapid_plot(vector<int> energies, map<string, map<f
 //		can_index++;
 	}
 
-	mg_div_ampt->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_div_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_div_ampt->GetXaxis()->SetLimits(-2, 78);
+	mg_div_ampt->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg_div_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_div_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -1990,8 +2020,8 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 	int y_num = 2;
 
 	double y_top_pad = 0.01;
-	double y_bot_pad = 0.04;
-	double x_left_pad = 0.06;
+	double y_bot_pad = 0.045;
+	double x_left_pad = 0.07;
 	double x_right_pad = 0.01;
 	double x_low = 0;
 	double x_up = 0;
@@ -2023,9 +2053,9 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 			if (x_up > 1.0) { x_up = 1.0; }
 			if (x_low < 0.0) { x_low = 0.0; }
 
-			cout << endl << "pad_index: " << pad_index << endl;
-			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
-			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
+//			cout << endl << "pad_index: " << pad_index << endl;
+//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
 
 			string pad_name = gPad->GetName() + to_string(pad_index);
 			TPad* pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
@@ -2053,7 +2083,7 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 
 	for (pair<int, string> energy : energies) { // Iterate over energies, left to right on plot
 		can->cd(++can_index);
-		cout << energy.second << " GeV can_index: " << can_index << endl;
+//		cout << energy.second << " GeV can_index: " << can_index << endl;
 
 		TMultiGraph* mg_div = new TMultiGraph();
 		mg_div->SetName(("Energy_" + energy.second).data());
@@ -2086,12 +2116,12 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 		mg_div->GetXaxis()->SetRangeUser(-0.1, 1.1);
 		mg_div->GetXaxis()->SetLabelFont(43);
 		mg_div->GetXaxis()->SetTitleFont(43);
-		mg_div->GetXaxis()->SetLabelSize(15);
-		mg_div->GetXaxis()->SetTitleSize(15);
+		mg_div->GetXaxis()->SetLabelSize(def_text_size);
+		mg_div->GetXaxis()->SetTitleSize(def_text_size);
 		mg_div->GetYaxis()->SetLabelFont(43);
 		mg_div->GetYaxis()->SetTitleFont(43);
-		mg_div->GetYaxis()->SetLabelSize(15);
-		mg_div->GetYaxis()->SetTitleSize(15);
+		mg_div->GetYaxis()->SetLabelSize(def_text_size);
+		mg_div->GetYaxis()->SetTitleSize(def_text_size);
 		mg_div->GetYaxis()->SetDecimals(3);
 		mg_div->GetXaxis()->SetTitleOffset(1.9);
 		mg_div->GetYaxis()->SetTitleOffset(4.4);
@@ -2105,7 +2135,7 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 		}
 
 		mg_div->GetXaxis()->SetTitle("Rapidity");
-		mg_div->GetYaxis()->SetTitle("Kurtosis");
+		mg_div->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
 
 		mg_div->Draw("AP");
 
@@ -2127,8 +2157,8 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 			//vector<double> y_hold{ -1 };
 			//TGraph* g_hold = new TGraph(1, x_hold.data(), y_hold.data());
 			//g_hold->SetTitle("");
-			//g_hold->GetXaxis()->SetLimits(0.1, 79.9);
-			//g_hold->GetXaxis()->SetRangeUser(0.1, 79.9);
+			//g_hold->GetXaxis()->SetLimits(-2, 78);
+			//g_hold->GetXaxis()->SetRangeUser(-2, 78);
 			//if (!zoom) {
 			//	g_hold->GetYaxis()->SetLimits(0.9935, 1.0185);
 			//	g_hold->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -2193,7 +2223,7 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 	}
 
 	mg_div_bes->GetXaxis()->SetTitle("Rapidity");
-	mg_div_bes->GetYaxis()->SetTitle("Kurtosis");
+	mg_div_bes->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
 
 	mg_div_bes->Draw("AP");
 
@@ -2252,7 +2282,7 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 	}
 
 	mg_div_ampt->GetXaxis()->SetTitle("Rapidity");
-	mg_div_ampt->GetYaxis()->SetTitle("Kurtosis");
+	mg_div_ampt->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
 
 	mg_div_ampt->Draw("AP");
 
@@ -2333,8 +2363,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_bes->AddEntry(bes1_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
-	mg_bes->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_bes->GetXaxis()->SetLimits(-2, 78);
+	mg_bes->GetXaxis()->SetRangeUser(-2, 78);
 //	if (!zoom) {
 //		mg_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 //		mg_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -2376,8 +2406,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_div_bes->AddEntry(bes1_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
-	mg_div_bes->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_div_bes->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_div_bes->GetXaxis()->SetLimits(-2, 78);
+	mg_div_bes->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
 		mg_div_bes->GetYaxis()->SetLimits(0.9935, 1.0185);
 		mg_div_bes->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -2447,8 +2477,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_ampt->AddEntry(ampt_ratio_mix_def_g, ("Mixed " + to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
-	mg_ampt->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_ampt->GetXaxis()->SetLimits(-2, 78);
+	mg_ampt->GetXaxis()->SetRangeUser(-2, 78);
 //	if (!zoom) {
 //		mg_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 //		mg_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);
@@ -2490,8 +2520,8 @@ void AzFigurePlotter::kurt_vs_efficiency_plot(vector<int> energies, map<string, 
 		leg_div_ampt->AddEntry(ampt_ratio_div_def_g, (to_string(eff.first*100).substr(0, 3) + "%").data(), "p");
 	}
 
-	mg_div_ampt->GetXaxis()->SetLimits(0.1, 79.9);
-	mg_div_ampt->GetXaxis()->SetRangeUser(0.1, 79.9);
+	mg_div_ampt->GetXaxis()->SetLimits(-2, 78);
+	mg_div_ampt->GetXaxis()->SetRangeUser(-2, 78);
 //	if (!zoom) {
 //		mg_div_ampt->GetYaxis()->SetLimits(0.9935, 1.0185);
 //		mg_div_ampt->GetYaxis()->SetRangeUser(0.9935, 1.0185);

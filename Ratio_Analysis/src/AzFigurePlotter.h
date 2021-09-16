@@ -42,6 +42,7 @@ public:
 private:
 	// Attributes
 	bool zoom = false;
+	float def_text_size = 18;
 
 	// Doers
 	void kurt_vs_energy_plot(vector<int> energies, plot_data bes1, plot_data ampt, string type_name);
