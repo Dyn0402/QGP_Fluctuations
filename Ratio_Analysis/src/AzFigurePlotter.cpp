@@ -848,70 +848,70 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 	delete can;
 
 
-	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_cents_can_" + type_name).data(), ("Kurtosis vs Energy with Centrality " + type_name).data(), 955, 805);
-
-	int x_num = 3;
-	int y_num = 3;
-
-	double y_top_pad = 0.01;
-	double y_bot_pad = 0.06;
-	double x_left_pad = 0.075;
-	double x_right_pad = 0.01;
-	double x_low = 0;
-	double x_up = 0;
-	double y_low = 0;
-	double y_up = 1.0;
-	double def_left_margin = 0.0;
-	double def_right_margin = 0.0;
-	double def_top_margin = 0.0;
-	double def_bot_margin = 0.0;
-
-	double x_step = (1.0 - x_left_pad - x_right_pad) / x_num;
-	double y_step = (1.0 - y_top_pad - y_bot_pad) / y_num;
-	//	cout << "x_step: " << x_step << "  |  y_step: " << y_step << endl;
-	for (int y_index = 0; y_index < y_num; y_index++) {
-		x_low = 0;
-		if (y_index == 0) { y_low = y_up - y_step - y_top_pad; }
-		else if (y_index == y_num - 1) { y_low = y_up - y_step - y_bot_pad; }
-		else { y_low = y_up - y_step; }
-
-		for (int x_index = 0; x_index < x_num; x_index++) {
-			int pad_index = x_index + x_num * y_index + 1;
-
-			if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
-			else if (x_index == x_num - 1) { x_up = x_low + x_step + x_right_pad; }
-			else { x_up = x_low + x_step; }
-
-			if (y_up > 1.0) { y_up = 1.0; }
-			if (y_low < 0.0) { y_low = 0.0; }
-			if (x_up > 1.0) { x_up = 1.0; }
-			if (x_low < 0.0) { x_low = 0.0; }
-
-			//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
-			//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
-
-			string pad_name = gPad->GetName() + to_string(pad_index);
-			TPad* pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
-			pad->SetTickx();
-			pad->SetTicky();
-
-			if (x_index == 0) { pad->SetLeftMargin(x_left_pad / (x_up - x_low) + def_left_margin); }
-			else { pad->SetLeftMargin(def_left_margin); }
-			if (x_index == x_num - 1) { pad->SetRightMargin(x_right_pad / (x_up - x_low) + def_right_margin); }
-			else { pad->SetRightMargin(def_right_margin); }
-			if (y_index == 0) { pad->SetTopMargin(y_top_pad / (y_up - y_low) + def_top_margin); }
-			else { pad->SetTopMargin(def_top_margin); }
-			if (y_index == y_num - 1) { pad->SetBottomMargin(y_bot_pad / (y_up - y_low) + def_bot_margin); }
-			else { pad->SetBottomMargin(def_bot_margin); }
-
-			pad->SetNumber(pad_index);
-
-			pad->Draw();
-			x_low = x_up;
-		}
-		y_up = y_low;
-	}
-	int can_index = 0;
+//	TCanvas* can_multi = new TCanvas(("Kurtosis_vs_energy_cents_can_" + type_name).data(), ("Kurtosis vs Energy with Centrality " + type_name).data(), 955, 805);
+//
+//	int x_num = 3;
+//	int y_num = 3;
+//
+//	double y_top_pad = 0.01;
+//	double y_bot_pad = 0.06;
+//	double x_left_pad = 0.075;
+//	double x_right_pad = 0.01;
+//	double x_low = 0;
+//	double x_up = 0;
+//	double y_low = 0;
+//	double y_up = 1.0;
+//	double def_left_margin = 0.0;
+//	double def_right_margin = 0.0;
+//	double def_top_margin = 0.0;
+//	double def_bot_margin = 0.0;
+//
+//	double x_step = (1.0 - x_left_pad - x_right_pad) / x_num;
+//	double y_step = (1.0 - y_top_pad - y_bot_pad) / y_num;
+//	//	cout << "x_step: " << x_step << "  |  y_step: " << y_step << endl;
+//	for (int y_index = 0; y_index < y_num; y_index++) {
+//		x_low = 0;
+//		if (y_index == 0) { y_low = y_up - y_step - y_top_pad; }
+//		else if (y_index == y_num - 1) { y_low = y_up - y_step - y_bot_pad; }
+//		else { y_low = y_up - y_step; }
+//
+//		for (int x_index = 0; x_index < x_num; x_index++) {
+//			int pad_index = x_index + x_num * y_index + 1;
+//
+//			if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
+//			else if (x_index == x_num - 1) { x_up = x_low + x_step + x_right_pad; }
+//			else { x_up = x_low + x_step; }
+//
+//			if (y_up > 1.0) { y_up = 1.0; }
+//			if (y_low < 0.0) { y_low = 0.0; }
+//			if (x_up > 1.0) { x_up = 1.0; }
+//			if (x_low < 0.0) { x_low = 0.0; }
+//
+//			//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+//			//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
+//
+//			string pad_name = gPad->GetName() + to_string(pad_index);
+//			TPad* pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
+//			pad->SetTickx();
+//			pad->SetTicky();
+//
+//			if (x_index == 0) { pad->SetLeftMargin(x_left_pad / (x_up - x_low) + def_left_margin); }
+//			else { pad->SetLeftMargin(def_left_margin); }
+//			if (x_index == x_num - 1) { pad->SetRightMargin(x_right_pad / (x_up - x_low) + def_right_margin); }
+//			else { pad->SetRightMargin(def_right_margin); }
+//			if (y_index == 0) { pad->SetTopMargin(y_top_pad / (y_up - y_low) + def_top_margin); }
+//			else { pad->SetTopMargin(def_top_margin); }
+//			if (y_index == y_num - 1) { pad->SetBottomMargin(y_bot_pad / (y_up - y_low) + def_bot_margin); }
+//			else { pad->SetBottomMargin(def_bot_margin); }
+//
+//			pad->SetNumber(pad_index);
+//
+//			pad->Draw();
+//			x_low = x_up;
+//		}
+//		y_up = y_low;
+//	}
+//	int can_index = 0;
 }
 
 
