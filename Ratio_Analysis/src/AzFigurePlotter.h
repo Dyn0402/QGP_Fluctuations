@@ -54,6 +54,7 @@ private:
 	void moments_vs_energy_plot(vector<int> energies, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, vector<string> stat_order, string type_name);
 	void kurt_vs_rapid_plot(vector<int> energies, map<string, map<float, plot_data>> bes1, map<string, map<float, plot_data>> ampt, string type_name);
 	void kurt_vs_energy_rapid_plot(map<int, string> energies, vector<float> rapidities, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, string type_name);
+	void kurt_vs_energy_rapid_cf_plot(map<int, string> energies, vector<float> rapidities, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, map<string, map<string, plot_data>> cf, string type_name);
 	void kurt_vs_efficiency_plot(vector<int> energies, map<string, map<float, plot_data>> bes1, map<string, map<float, plot_data>> ampt, string type_name);
 
 };

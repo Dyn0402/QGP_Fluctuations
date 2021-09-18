@@ -99,7 +99,7 @@ void AzFigurePlotter::kurt_vs_energy() {
 
 void AzFigurePlotter::kurt_vs_energy_divs() {
 	vector<int> energies{ 7, 11, 19, 27, 39, 62 };
-	vector<int> divs{ 60, 72, 90, 120, 180, 240, 270, 300 };
+	vector<int> divs{ 60, 90, 120, 180, 240, 270, 300 };
 	int cent = 8;
 	string stat = "non_excess_kurtosis";
 
@@ -343,9 +343,11 @@ void AzFigurePlotter::kurt_vs_energy_rapidity() {
 	string stat = "non_excess_kurtosis";
 
 	map<string, map<string, plot_data>> bes1_ratio;
-	map<string, map<string, plot_data>> ampt_ratio;
 	map<string, map<string, plot_data>> bes1_pull;
+	map<string, map<string, plot_data>> ampt_ratio;
 	map<string, map<string, plot_data>> ampt_pull;
+	map<string, map<string, plot_data>> cf_ratio;
+	map<string, map<string, plot_data>> cf_pull;
 
 	vector<float> rapid_vals;
 
@@ -353,9 +355,11 @@ void AzFigurePlotter::kurt_vs_energy_rapidity() {
 		rapid_vals.push_back(rapid.first);
 		string bes = "BES1_rapid" + rapid.second;
 		string ampt = "AMPT_rapid" + rapid.second;
+		string cf = "CF_rapid" + rapid.second;
 		if (rapid.second == "default") {
 			bes = "BES1";
 			ampt = "AMPT";
+			cf = "CF";
 		}
 		for (pair<int, string> energy : energies) {
 			bes1_ratio["divide"][energy.second].val.push_back(def_medians[bes]["divide"][energy.first][div][cent][stat].get_val());
@@ -370,6 +374,12 @@ void AzFigurePlotter::kurt_vs_energy_rapidity() {
 			ampt_pull["divide"][energy.second].val.push_back(def_medians[ampt]["pull_divide"][energy.first][div][cent][stat].get_val());
 			ampt_pull["divide"][energy.second].stat.push_back(def_medians[ampt]["pull_divide"][energy.first][div][cent][stat].get_err());
 			ampt_pull["divide"][energy.second].sys.push_back(def_systematics[ampt]["pull_divide"][energy.first][div][cent][stat]);
+			cf_ratio["divide"][energy.second].val.push_back(def_medians[cf]["divide"][energy.first][div][cent][stat].get_val());
+			cf_ratio["divide"][energy.second].stat.push_back(def_medians[cf]["divide"][energy.first][div][cent][stat].get_err());
+			cf_ratio["divide"][energy.second].sys.push_back(def_systematics[cf]["divide"][energy.first][div][cent][stat]);
+			cf_pull["divide"][energy.second].val.push_back(def_medians[cf]["pull_divide"][energy.first][div][cent][stat].get_val());
+			cf_pull["divide"][energy.second].stat.push_back(def_medians[cf]["pull_divide"][energy.first][div][cent][stat].get_err());
+			cf_pull["divide"][energy.second].sys.push_back(def_systematics[cf]["pull_divide"][energy.first][div][cent][stat]);
 
 			bes1_ratio["raw"][energy.second].val.push_back(def_medians[bes]["raw"][energy.first][div][cent][stat].get_val());
 			bes1_ratio["raw"][energy.second].stat.push_back(def_medians[bes]["raw"][energy.first][div][cent][stat].get_err());
@@ -383,6 +393,12 @@ void AzFigurePlotter::kurt_vs_energy_rapidity() {
 			ampt_pull["raw"][energy.second].val.push_back(def_medians[ampt]["pull_raw"][energy.first][div][cent][stat].get_val());
 			ampt_pull["raw"][energy.second].stat.push_back(def_medians[ampt]["pull_raw"][energy.first][div][cent][stat].get_err());
 			ampt_pull["raw"][energy.second].sys.push_back(def_systematics[ampt]["pull_raw"][energy.first][div][cent][stat]);
+			cf_ratio["raw"][energy.second].val.push_back(def_medians[cf]["raw"][energy.first][div][cent][stat].get_val());
+			cf_ratio["raw"][energy.second].stat.push_back(def_medians[cf]["raw"][energy.first][div][cent][stat].get_err());
+			cf_ratio["raw"][energy.second].sys.push_back(def_systematics[cf]["raw"][energy.first][div][cent][stat]);
+			cf_pull["raw"][energy.second].val.push_back(def_medians[cf]["pull_raw"][energy.first][div][cent][stat].get_val());
+			cf_pull["raw"][energy.second].stat.push_back(def_medians[cf]["pull_raw"][energy.first][div][cent][stat].get_err());
+			cf_pull["raw"][energy.second].sys.push_back(def_systematics[cf]["pull_raw"][energy.first][div][cent][stat]);
 
 			bes1_ratio["mix"][energy.second].val.push_back(def_medians[bes]["mix"][energy.first][div][cent][stat].get_val());
 			bes1_ratio["mix"][energy.second].stat.push_back(def_medians[bes]["mix"][energy.first][div][cent][stat].get_err());
@@ -396,11 +412,20 @@ void AzFigurePlotter::kurt_vs_energy_rapidity() {
 			ampt_pull["mix"][energy.second].val.push_back(def_medians[ampt]["pull_mix"][energy.first][div][cent][stat].get_val());
 			ampt_pull["mix"][energy.second].stat.push_back(def_medians[ampt]["pull_mix"][energy.first][div][cent][stat].get_err());
 			ampt_pull["mix"][energy.second].sys.push_back(def_systematics[ampt]["pull_mix"][energy.first][div][cent][stat]);
+			cf_ratio["mix"][energy.second].val.push_back(def_medians[cf]["mix"][energy.first][div][cent][stat].get_val());
+			cf_ratio["mix"][energy.second].stat.push_back(def_medians[cf]["mix"][energy.first][div][cent][stat].get_err());
+			cf_ratio["mix"][energy.second].sys.push_back(def_systematics[cf]["mix"][energy.first][div][cent][stat]);
+			cf_pull["mix"][energy.second].val.push_back(def_medians[cf]["pull_mix"][energy.first][div][cent][stat].get_val());
+			cf_pull["mix"][energy.second].stat.push_back(def_medians[cf]["pull_mix"][energy.first][div][cent][stat].get_err());
+			cf_pull["mix"][energy.second].sys.push_back(def_systematics[cf]["pull_mix"][energy.first][div][cent][stat]);
 		}
 	}
 
 	kurt_vs_energy_rapid_plot(energies, rapid_vals, bes1_ratio, ampt_ratio, "Ratio");
 	kurt_vs_energy_rapid_plot(energies, rapid_vals, bes1_pull, ampt_pull, "Pull");
+
+	kurt_vs_energy_rapid_cf_plot(energies, rapid_vals, bes1_ratio, ampt_ratio, cf_ratio, "Ratio");
+	kurt_vs_energy_rapid_cf_plot(energies, rapid_vals, bes1_pull, ampt_pull, cf_pull, "Pull");
 }
 
 
@@ -755,8 +780,7 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 	}
 
 	map<int, int> div_color{ {60, kBlack}, {72, kRed}, {90, kGreen+3}, {120, kBlue}, {180, kViolet}, {240, kCyan + 2}, {270, kGreen + 1}, {300, kGray + 2} };
-	int bes_marker_style = 29;
-	int ampt_marker_style = 22;
+	map<string, int> marker_style{ {"bes", 20}, {"ampt", 24} };
 	map<int, int> div_marker_size{ {60, 2}, {72, 2}, {90, 2}, {120, 2}, {180, 2}, {240, 2}, {270, 2}, {300, 2} };
 
 
@@ -772,13 +796,13 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[div.first].val, energy_err, bes1[div.first].sys);
 		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[div.first].val, energy_err, ampt[div.first].sys);
 
-		bes1_ratio_def_g->SetMarkerStyle(bes_marker_style);
+		bes1_ratio_def_g->SetMarkerStyle(marker_style["bes"]);
 		bes1_ratio_def_g->SetMarkerColor(div_color[div.first]);
 		bes1_ratio_def_g->SetLineColor(div_color[div.first]);
 		bes1_ratio_def_g->SetMarkerSize(div_marker_size[div.first]);
 		bes1_ratio_sys_g->SetLineColor(div_color[div.first]);
 
-		ampt_ratio_def_g->SetMarkerStyle(ampt_marker_style);
+		ampt_ratio_def_g->SetMarkerStyle(marker_style["ampt"]);
 		ampt_ratio_def_g->SetMarkerColor(div_color[div.first]);
 		ampt_ratio_def_g->SetLineColor(div_color[div.first]);
 		ampt_ratio_def_g->SetMarkerSize(div_marker_size[div.first]);
@@ -822,6 +846,72 @@ void AzFigurePlotter::kurt_vs_energy_divs_plot(vector<int> energies, map<int, pl
 	can->Write();
 
 	delete can;
+
+
+	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_cents_can_" + type_name).data(), ("Kurtosis vs Energy with Centrality " + type_name).data(), 955, 805);
+
+	int x_num = 3;
+	int y_num = 3;
+
+	double y_top_pad = 0.01;
+	double y_bot_pad = 0.06;
+	double x_left_pad = 0.075;
+	double x_right_pad = 0.01;
+	double x_low = 0;
+	double x_up = 0;
+	double y_low = 0;
+	double y_up = 1.0;
+	double def_left_margin = 0.0;
+	double def_right_margin = 0.0;
+	double def_top_margin = 0.0;
+	double def_bot_margin = 0.0;
+
+	double x_step = (1.0 - x_left_pad - x_right_pad) / x_num;
+	double y_step = (1.0 - y_top_pad - y_bot_pad) / y_num;
+	//	cout << "x_step: " << x_step << "  |  y_step: " << y_step << endl;
+	for (int y_index = 0; y_index < y_num; y_index++) {
+		x_low = 0;
+		if (y_index == 0) { y_low = y_up - y_step - y_top_pad; }
+		else if (y_index == y_num - 1) { y_low = y_up - y_step - y_bot_pad; }
+		else { y_low = y_up - y_step; }
+
+		for (int x_index = 0; x_index < x_num; x_index++) {
+			int pad_index = x_index + x_num * y_index + 1;
+
+			if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
+			else if (x_index == x_num - 1) { x_up = x_low + x_step + x_right_pad; }
+			else { x_up = x_low + x_step; }
+
+			if (y_up > 1.0) { y_up = 1.0; }
+			if (y_low < 0.0) { y_low = 0.0; }
+			if (x_up > 1.0) { x_up = 1.0; }
+			if (x_low < 0.0) { x_low = 0.0; }
+
+			//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+			//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
+
+			string pad_name = gPad->GetName() + to_string(pad_index);
+			TPad* pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
+			pad->SetTickx();
+			pad->SetTicky();
+
+			if (x_index == 0) { pad->SetLeftMargin(x_left_pad / (x_up - x_low) + def_left_margin); }
+			else { pad->SetLeftMargin(def_left_margin); }
+			if (x_index == x_num - 1) { pad->SetRightMargin(x_right_pad / (x_up - x_low) + def_right_margin); }
+			else { pad->SetRightMargin(def_right_margin); }
+			if (y_index == 0) { pad->SetTopMargin(y_top_pad / (y_up - y_low) + def_top_margin); }
+			else { pad->SetTopMargin(def_top_margin); }
+			if (y_index == y_num - 1) { pad->SetBottomMargin(y_bot_pad / (y_up - y_low) + def_bot_margin); }
+			else { pad->SetBottomMargin(def_bot_margin); }
+
+			pad->SetNumber(pad_index);
+
+			pad->Draw();
+			x_low = x_up;
+		}
+		y_up = y_low;
+	}
+	int can_index = 0;
 }
 
 
@@ -2300,6 +2390,208 @@ void AzFigurePlotter::kurt_vs_energy_rapid_plot(map<int, string> energies, vecto
 	can_ampt->Write();
 
 	delete can_ampt;
+}
+
+
+void AzFigurePlotter::kurt_vs_energy_rapid_cf_plot(map<int, string> energies, vector<float> rapidities, map<string, map<string, plot_data>> bes1, map<string, map<string, plot_data>> ampt, map<string, map<string, plot_data>> cf, string type_name) {
+	vector<double> rapid_err{ 0, 0, 0, 0, 0, 0 };
+	vector<double> rapid_val(rapidities.begin(), rapidities.end());
+	vector<double> rapid_bes1;
+	vector<double> rapid_ampt;
+	vector<double> rapid_cf;
+	for (double rapid : rapidities) {
+		rapid_bes1.push_back(rapid);
+		rapid_ampt.push_back(rapid - 0.02);
+		rapid_cf.push_back(rapid + 0.02);
+	}
+
+	map<string, int> color{ {"7.7", kBlue}, {"11.5", kGreen + 3}, {"19.6", kRed}, {"27", kBlack}, {"39", kGray + 2}, {"62.4", kViolet} };
+	map<string, int> marker_style{ {"bes", 20}, {"ampt", 24}, {"cf", 24} };
+	map<string, int> marker_size{ {"bes", 2}, {"ampt", 2}, {"cf", 2} };
+	map<string, int> marker_color{ {"bes", kBlack}, {"ampt", kRed}, {"ampt", kBlue} };
+
+	TCanvas* can = new TCanvas(("VS_Rapidity_cf_can_" + type_name).data(), ("Kurtosis vs Rapidity " + type_name).data(), 955, 805);
+
+	int x_num = 3;
+	int y_num = 2;
+
+	double y_top_pad = 0.01;
+	double y_bot_pad = 0.045;
+	double x_left_pad = 0.07;
+	double x_right_pad = 0.01;
+	double x_low = 0;
+	double x_up = 0;
+	double y_low = 0;
+	double y_up = 1.0;
+	double def_left_margin = 0.0;
+	double def_right_margin = 0.0;
+	double def_top_margin = 0.0;
+	double def_bot_margin = 0.0;
+
+	double x_step = (1.0 - x_left_pad - x_right_pad) / x_num;
+	double y_step = (1.0 - y_top_pad - y_bot_pad) / y_num;
+	//	cout << "x_step: " << x_step << "  |  y_step: " << y_step << endl;
+	for (int y_index = 0; y_index < y_num; y_index++) {
+		x_low = 0;
+		if (y_index == 0) { y_low = y_up - y_step - y_top_pad; }
+		else if (y_index == y_num - 1) { y_low = y_up - y_step - y_bot_pad; }
+		else { y_low = y_up - y_step; }
+
+		for (int x_index = 0; x_index < x_num; x_index++) {
+			int pad_index = x_index + x_num * y_index + 1;
+
+			if (x_index == 0) { x_up = x_low + x_step + x_left_pad; }
+			else if (x_index == x_num - 1) { x_up = x_low + x_step + x_right_pad; }
+			else { x_up = x_low + x_step; }
+
+			if (y_up > 1.0) { y_up = 1.0; }
+			if (y_low < 0.0) { y_low = 0.0; }
+			if (x_up > 1.0) { x_up = 1.0; }
+			if (x_low < 0.0) { x_low = 0.0; }
+
+			//			cout << endl << "pad_index: " << pad_index << endl;
+			//			cout << "x_index: " << x_index << " x_low: " << x_low << " x_up: " << x_up << endl;
+			//			cout << "y_index: " << y_index << " y_low: " << y_low << " y_up: " << y_up << endl;
+
+			string pad_name = gPad->GetName() + to_string(pad_index);
+			TPad* pad = new TPad(pad_name.data(), pad_name.data(), x_low, y_low, x_up, y_up);
+			pad->SetTickx();
+			pad->SetTicky();
+
+			if (x_index == 0) { pad->SetLeftMargin(x_left_pad / (x_up - x_low) + def_left_margin); }
+			else { pad->SetLeftMargin(def_left_margin); }
+			if (x_index == x_num - 1) { pad->SetRightMargin(x_right_pad / (x_up - x_low) + def_right_margin); }
+			else { pad->SetRightMargin(def_right_margin); }
+			if (y_index == 0) { pad->SetTopMargin(y_top_pad / (y_up - y_low) + def_top_margin); }
+			else { pad->SetTopMargin(def_top_margin); }
+			if (y_index == y_num - 1) { pad->SetBottomMargin(y_bot_pad / (y_up - y_low) + def_bot_margin); }
+			else { pad->SetBottomMargin(def_bot_margin); }
+
+			pad->SetNumber(pad_index);
+
+			pad->Draw();
+			x_low = x_up;
+		}
+		y_up = y_low;
+	}
+
+	int can_index = 0;
+
+	for (pair<int, string> energy : energies) { // Iterate over energies, left to right on plot
+		can->cd(++can_index);
+		//		cout << energy.second << " GeV can_index: " << can_index << endl;
+
+		TMultiGraph* mg_div = new TMultiGraph();
+		mg_div->SetName(("Energy_" + energy.second).data());
+
+		TGraphErrors* bes1_ratio_div_def_g = graph_x_vs_y_err(rapid_bes1, bes1["divide"][energy.second].val, rapid_err, bes1["divide"][energy.second].stat);
+		TGraphErrors* ampt_ratio_div_def_g = graph_x_vs_y_err(rapid_ampt, ampt["divide"][energy.second].val, rapid_err, ampt["divide"][energy.second].stat);
+		TGraphErrors* cf_ratio_div_def_g = graph_x_vs_y_err(rapid_cf, cf["divide"][energy.second].val, rapid_err, cf["divide"][energy.second].stat);
+		bes1_ratio_div_def_g->SetNameTitle(("bes1_div_" + energy.second).data());
+		ampt_ratio_div_def_g->SetNameTitle(("ampt_div_" + energy.second).data());
+		cf_ratio_div_def_g->SetNameTitle(("cf_div_" + energy.second).data());
+		TGraphErrors* bes1_ratio_div_sys_g = graph_x_vs_y_err(rapid_bes1, bes1["divide"][energy.second].val, rapid_err, bes1["divide"][energy.second].sys);
+		TGraphErrors* ampt_ratio_div_sys_g = graph_x_vs_y_err(rapid_ampt, ampt["divide"][energy.second].val, rapid_err, ampt["divide"][energy.second].sys);
+		TGraphErrors* cf_ratio_div_sys_g = graph_x_vs_y_err(rapid_cf, cf["divide"][energy.second].val, rapid_err, cf["divide"][energy.second].sys);
+
+		bes1_ratio_div_def_g->SetMarkerStyle(marker_style["bes"]);
+		bes1_ratio_div_def_g->SetMarkerColor(marker_color["bes"]);
+		bes1_ratio_div_def_g->SetLineColor(marker_color["bes"]);
+		bes1_ratio_div_def_g->SetMarkerSize(marker_size["bes"]);
+		bes1_ratio_div_sys_g->SetLineColor(marker_color["bes"]);
+
+		ampt_ratio_div_def_g->SetMarkerStyle(marker_style["ampt"]);
+		ampt_ratio_div_def_g->SetMarkerColor(marker_color["ampt"]);
+		ampt_ratio_div_def_g->SetLineColor(marker_color["ampt"]);
+		ampt_ratio_div_def_g->SetMarkerSize(marker_size["ampt"]);
+		ampt_ratio_div_sys_g->SetLineColor(marker_color["ampt"]);
+
+		cf_ratio_div_def_g->SetMarkerStyle(marker_style["cf"]);
+		cf_ratio_div_def_g->SetMarkerColor(marker_color["cf"]);
+		cf_ratio_div_def_g->SetLineColor(marker_color["cf"]);
+		cf_ratio_div_def_g->SetMarkerSize(marker_size["cf"]);
+		cf_ratio_div_sys_g->SetLineColor(marker_color["cf"]);
+
+		mg_div->Add(ampt_ratio_div_def_g, "APZ");
+		mg_div->Add(ampt_ratio_div_sys_g, "[]");
+		mg_div->Add(cf_ratio_div_def_g, "P");
+		mg_div->Add(cf_ratio_div_sys_g, "[]");
+		mg_div->Add(bes1_ratio_div_def_g, "P");
+		mg_div->Add(bes1_ratio_div_sys_g, "[]");
+
+		mg_div->GetXaxis()->SetLimits(-0.1, 1.1);
+		mg_div->GetXaxis()->SetRangeUser(-0.1, 1.1);
+		mg_div->GetXaxis()->SetLabelFont(43);
+		mg_div->GetXaxis()->SetTitleFont(43);
+		mg_div->GetXaxis()->SetLabelSize(def_text_size);
+		mg_div->GetXaxis()->SetTitleSize(def_text_size);
+		mg_div->GetYaxis()->SetLabelFont(43);
+		mg_div->GetYaxis()->SetTitleFont(43);
+		mg_div->GetYaxis()->SetLabelSize(def_text_size);
+		mg_div->GetYaxis()->SetTitleSize(def_text_size);
+		mg_div->GetYaxis()->SetDecimals(3);
+		mg_div->GetXaxis()->SetTitleOffset(1.9);
+		mg_div->GetYaxis()->SetTitleOffset(4.4);
+		if (!zoom) {
+			mg_div->GetYaxis()->SetLimits(0.9935, 1.0185);
+			mg_div->GetYaxis()->SetRangeUser(0.9935, 1.0185);
+		}
+		else {
+			mg_div->GetYaxis()->SetLimits(0.9975, 1.0035);
+			mg_div->GetYaxis()->SetRangeUser(0.9975, 1.0035);
+		}
+
+		mg_div->GetXaxis()->SetTitle("Rapidity");
+		mg_div->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
+
+		mg_div->Draw("AP");
+
+
+		TLatex energy_label;
+		energy_label.SetTextFont(43);
+		energy_label.SetTextAlign(22);
+		energy_label.SetTextSize(25);
+		energy_label.DrawLatex(0.8, 1.017, (energy.second + " GeV").data());  //to_string(energy.first).substr(0, 3)
+
+
+		TLine* one_line = new TLine(-0.1, 1, 1.1, 1);
+		one_line->SetLineStyle(2);
+		one_line->Draw();
+
+		if (can_index == 1) {
+			//can->cd(++can_index);
+			//vector<double> x_hold{ -1 };
+			//vector<double> y_hold{ -1 };
+			//TGraph* g_hold = new TGraph(1, x_hold.data(), y_hold.data());
+			//g_hold->SetTitle("");
+			//g_hold->GetXaxis()->SetLimits(-2, 78);
+			//g_hold->GetXaxis()->SetRangeUser(-2, 78);
+			//if (!zoom) {
+			//	g_hold->GetYaxis()->SetLimits(0.9935, 1.0185);
+			//	g_hold->GetYaxis()->SetRangeUser(0.9935, 1.0185);
+			//}
+			//else {
+			//	g_hold->GetYaxis()->SetLimits(0.9975, 1.0035);
+			//	g_hold->GetYaxis()->SetRangeUser(0.9975, 1.0035);
+			//}
+			//g_hold->Draw("AP");
+			float y1 = 0.5, y2 = 0.7;
+			if (type_name == "Ratio") { y1 = 0.05; y2 = 0.25; }
+			else if (type_name == "Pull") { y1 = 0.5; y2 = 0.7; }
+			TLegend* leg2 = new TLegend(0.2, y1, 0.5, y2);
+			leg2->AddEntry(bes1_ratio_div_def_g, "BES1", "p");
+			leg2->AddEntry(ampt_ratio_div_def_g, "AMPT", "p");
+			leg2->AddEntry(cf_ratio_div_def_g, "MUSIC + FIST", "p");
+			leg2->SetBorderSize(0);
+			leg2->SetFillStyle(0);
+			leg2->Draw();
+		}
+	}
+
+	can->Update();
+	can->Write();
+
+	delete can;
 }
 
 
