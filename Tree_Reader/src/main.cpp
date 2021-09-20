@@ -109,6 +109,7 @@ int main(int argc, char** argv) {
 	//cout << rot_angle << endl;
 	//read_class();
 
+	cout << check_dir("/home/dylan/Research/Data_Ampt/default/Ampt_rapid05_n1ratios_0/"+to_string(7)+"GeV") << endl;
 	read_new();
 //	read_sim();
 
@@ -268,28 +269,34 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
-		{"Ampt_def_1", {{"default", {{"Ampt_rapid05_n1ratios_", {15, 29}}}}}},
-		{"Ampt_def_2", {{"default", {{"Ampt_rapid05_n1ratios_", {30, 44}}}}}},
-		{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}},
-		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid08", {{"rapid08_def", {{"Ampt_rapid08_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid06", {{"rapid06_def", {{"Ampt_rapid06_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid04", {{"rapid04_def", {{"Ampt_rapid04_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid03", {{"rapid03_def", {{"Ampt_rapid03_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid02", {{"rapid02_def", {{"Ampt_rapid02_n1ratios_", {0, 14}}}}}},
-		{"Ampt_rapid01", {{"rapid01_def", {{"Ampt_rapid01_n1ratios_", {0, 14}}}}}},
-		{"Ampt_Eff1_0", {{"Eff1_def", {{"Ampt_rapid05_n1ratios_Efficiency1_", {0, 14}}}}}},
-		{"Ampt_Eff2_0", {{"Eff2_def", {{"Ampt_rapid05_n1ratios_Efficiency2_", {0, 14}}}}}},
-		{"Ampt_Eff3_0", {{"Eff3_def", {{"Ampt_rapid05_n1ratios_Efficiency3_", {0, 14}}}}}},
-		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 14}}}}}},
-		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 14}}}}}}
-
+		{"CF_rapid1_0", {{"rapid1_def", {{"CF_rapid1_n1ratios_", {0, 7}}}}}},
+		{"CF_rapid1_1", {{"rapid1_def", {{"CF_rapid1_n1ratios_", {8, 14}}}}}},
+		{"CF_rapid08_0", {{"rapid08_def", {{"CF_rapid08_n1ratios_", {0, 7}}}}}},
+		{"CF_rapid08_1", {{"rapid08_def", {{"CF_rapid08_n1ratios_", {8, 14}}}}}},
+		{"CF_rapid06_0", {{"rapid06_def", {{"CF_rapid06_n1ratios_", {0, 7}}}}}},
+		{"CF_rapid06_1", {{"rapid06_def", {{"CF_rapid06_n1ratios_", {8, 14}}}}}},
+		{"CF_rapid04_0", {{"rapid04_def", {{"CF_rapid04_n1ratios_", {0, 7}}}}}},
+		{"CF_rapid04_1", {{"rapid04_def", {{"CF_rapid04_n1ratios_", {8, 14}}}}}},
+		{"CF_rapid03_0", {{"rapid03_def", {{"CF_rapid03_n1ratios_", {0, 7}}}}}},
+		{"CF_rapid03_1", {{"rapid03_def", {{"CF_rapid03_n1ratios_", {8, 14}}}}}},
+		{"CF_rapid02_0", {{"rapid02_def", {{"CF_rapid02_n1ratios_", {0, 7}}}}}},
+		{"CF_rapid02_1", {{"rapid02_def", {{"CF_rapid02_n1ratios_", {8, 14}}}}}},
+		{"CF_rapid01_0", {{"rapid01_def", {{"CF_rapid01_n1ratios_", {0, 7}}}}}},
+		{"CF_rapid01_1", {{"rapid01_def", {{"CF_rapid01_n1ratios_", {8, 14}}}}}},
+		{"CF_Eff1_0", {{"Eff1_def", {{"CF_rapid05_n1ratios_Efficiency1_", {0, 7}}}}}},
+		{"CF_Eff1_1", {{"Eff1_def", {{"CF_rapid05_n1ratios_Efficiency1_", {8, 14}}}}}},
+		{"CF_Eff2_0", {{"Eff2_def", {{"CF_rapid05_n1ratios_Efficiency2_", {0, 7}}}}}},
+		{"CF_Eff2_1", {{"Eff2_def", {{"CF_rapid05_n1ratios_Efficiency2_", {8, 14}}}}}},
+		{"CF_Eff3_0", {{"Eff3_def", {{"CF_rapid05_n1ratios_Efficiency3_", {0, 7}}}}}},
+		{"CF_Eff3_1", {{"Eff3_def", {{"CF_rapid05_n1ratios_Efficiency3_", {8, 14}}}}}},
+		{"CF_Eff05_0", {{"Eff05_def", {{"CF_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
+		{"CF_Eff05_1", {{"Eff05_def", {{"CF_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
+		{"CF_Eff15_0", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
+		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
 	};
 
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-//	vector<int> energy_list{ 39, 27, 19, 7 };
-	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 39, 27, 19, 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -404,7 +411,7 @@ void read_new() {
 
 
 void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
-	bool replace_existing = false;  // If folder for job exists, overwrite if true, skip job if false
+//	bool replace_existing = false;  // If folder for job exists, overwrite if true, skip job if false // Logic doesn't work. Rework a more complicated implementation if wanted
 	int ref = 3;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
@@ -468,9 +475,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 			out_dir += set_group.first + "/";  // Add set-group directory to end of path
 			mix_out_dir += set_group.first + "/";
-			if (!replace_existing) {
-				if (check_dir(out_dir+to_string(energy)+"GeV") && check_dir(mix_out_dir+to_string(energy)+"GeV")) { return; }  // Skip job if folders already exist.
-			}
+//			if (!replace_existing) {  // Logic doesn't work. Rework a more complicated implementation if wanted
+//				if (check_dir(out_dir+to_string(energy)+"GeV") && check_dir(mix_out_dir+to_string(energy)+"GeV")) { return; }  // Skip job if folders already exist.
+//			}
 			mkdir(out_dir);  // Create set-group directory if it does not already exist.
 			mkdir(mix_out_dir);
 
