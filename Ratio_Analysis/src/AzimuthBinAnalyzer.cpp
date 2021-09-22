@@ -95,6 +95,10 @@ void AzimuthBinAnalyzer::set_out_root_name(string name) {
 	out_root_name = name;
 }
 
+void AzimuthBinAnalyzer::set_out_sys_name(string name) {
+	out_sys_name = name;
+}
+
 //void AzimuthBinAnalyzer::set_def_set(string set) {
 //	this->def_set = set;
 //}
@@ -221,7 +225,6 @@ void AzimuthBinAnalyzer::analyze_set(string set_name, vector<int> set_nums) {
 
 
 void AzimuthBinAnalyzer::analyze_lite() {
-//	analysis::energy_list = energy_list;
 	names = {{"stat",stat_names}, {"cumulant",cumulant_names}, {"raw_moment",raw_moment_names}, {"central_moment",central_moment_names}};
 	out_root = new TFile((out_path+out_root_name).data(), "RECREATE");
 	analyze_sets_lite();
@@ -1813,6 +1816,7 @@ void AzimuthBinAnalyzer::combine_set_lite(string set_name) {
 			}
 		}
 	}
+
 	// Delete individual sets once combined into median and sd.
 	// NEEDED FOR COMBINE SYSTEMATICS SYSTEMATICS!!!!
 //	raw_stats_sets.erase(set_name);
@@ -2130,6 +2134,7 @@ map<int, map<int, map<int, AzimuthBinData>>> AzimuthBinAnalyzer::get_data(string
 				az_data.read_data_from_dir(path, div, cent);  // Read azimuthal bin data from file path
 
 				if(az_data.get_num_bins() <= min_num_events) {
+					cout << "Too few entries " << az_data.get_num_bins() << " | " << to_string(az_data.get_num_bins() <= min_num_events) << " | " << path << endl;
 					if(div == divs[0]) {
 						cout << "Centrality " << cent << " with only " << az_data.get_num_bins() << " entries. Skipping." << endl;
 					}
@@ -2164,7 +2169,7 @@ vector<string> AzimuthBinAnalyzer::get_sets(string set_dir) {
 
 
 void AzimuthBinAnalyzer::write_systematics() {
-	string out_sys_path = out_path + out_sys_name + "_" + split(out_root_name, ".")[0] + ".txt";
+	string out_sys_path = out_path + out_sys_name;  // + "_" + split(out_root_name, ".")[0] + ".txt";
 	cout << "Write systematic values to output file: " << out_sys_path << endl;
 
 	ofstream file;

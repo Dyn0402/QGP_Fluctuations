@@ -59,6 +59,7 @@ public:
 	void set_sim_in_mix_path(string sim_in_mix_path);
 	void set_out_path(string path);
 	void set_out_root_name(string name);
+	void set_out_sys_name(string name);
 //	void set_def_set(string set);
 	void set_sets(map<string, vector<int>> sets);
 	void set_energies(vector<int> energies);
@@ -112,7 +113,7 @@ protected:
 	vector<int> plot_cents {8,5,1};//{0,1,2,3,4,5,6,7,8,9};
 	string out_path = "/home/dylan/Research/Results/";
 	string out_root_name = "1-25-20_pull_test.root";
-	string out_sys_name = "sys_vals";
+	string out_sys_name = "sys_vals.txt";
 
 	bool plot_dists = true;
 	bool plot_dist_canvases = true;
