@@ -775,10 +775,19 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
 	vector<double> energy_val(energies.begin(), energies.end());
 	vector<double> energy_bes1;
+	vector<double> energy_bes1_raw;
+	vector<double> energy_bes1_mix;
 	vector<double> energy_ampt;
+	vector<double> energy_ampt_raw;
+	vector<double> energy_ampt_mix;
 	for (double energy : energies) {
 		energy_ampt.push_back(energy - 0.5);
 		energy_bes1.push_back(energy + 0.5);
+
+		energy_ampt_raw.push_back(energy - 1.5);
+		energy_ampt_mix.push_back(energy - 0.5);
+		energy_bes1_raw.push_back(energy + 0.5);
+		energy_bes1_mix.push_back(energy + 1.5);
 	}
 
 	// Divide plot
@@ -796,13 +805,13 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	bes1_ratio_def_g->SetMarkerStyle(29);
 	bes1_ratio_def_g->SetMarkerColor(kRed);
 	bes1_ratio_def_g->SetLineColor(kRed);
-	bes1_ratio_def_g->SetMarkerSize(2.5);
+	bes1_ratio_def_g->SetMarkerSize(3);
 	bes1_ratio_sys_g->SetLineColor(kRed);
 
 	ampt_ratio_def_g->SetMarkerStyle(20);
 	ampt_ratio_def_g->SetMarkerColor(kBlue);
 	ampt_ratio_def_g->SetLineColor(kBlue);
-	ampt_ratio_def_g->SetMarkerSize(1.5);
+	ampt_ratio_def_g->SetMarkerSize(2);
 	ampt_ratio_sys_g->SetLineColor(kBlue);
 
 	mg->Add(ampt_ratio_def_g, "APZ");
@@ -840,7 +849,7 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	one_line->SetLineStyle(2);
 	one_line->Draw();
 
-	leg->SetMargin(0.1); leg->Draw();
+//	leg->SetMargin(0.1); leg->Draw();
 
 	gPad->SetTopMargin(0.04);
 	gPad->SetLeftMargin(0.12);
@@ -857,42 +866,42 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	TMultiGraph* mg_rm = new TMultiGraph();
 	mg_rm->SetName("Kurtosis_vs_energy_raw_mix_mg");
 	TLegend* leg_rm = new TLegend(0.15, 0.15, 0.35, 0.3);
-	TGraphErrors* bes1_ratio_def_raw_g = graph_x_vs_y_err(energy_bes1, bes1["raw"].val, energy_err, bes1["raw"].stat);
-	TGraphErrors* ampt_ratio_def_raw_g = graph_x_vs_y_err(energy_ampt, ampt["raw"].val, energy_err, ampt["raw"].stat);
+	TGraphErrors* bes1_ratio_def_raw_g = graph_x_vs_y_err(energy_bes1_raw, bes1["raw"].val, energy_err, bes1["raw"].stat);
+	TGraphErrors* ampt_ratio_def_raw_g = graph_x_vs_y_err(energy_ampt_raw, ampt["raw"].val, energy_err, ampt["raw"].stat);
 	bes1_ratio_def_raw_g->SetNameTitle("bes1");
 	ampt_ratio_def_raw_g->SetNameTitle("ampt");
-	TGraphErrors* bes1_ratio_sys_raw_g = graph_x_vs_y_err(energy_bes1, bes1["raw"].val, energy_err, bes1["raw"].sys);
-	TGraphErrors* ampt_ratio_sys_raw_g = graph_x_vs_y_err(energy_ampt, ampt["raw"].val, energy_err, ampt["raw"].sys);
+	TGraphErrors* bes1_ratio_sys_raw_g = graph_x_vs_y_err(energy_bes1_raw, bes1["raw"].val, energy_err, bes1["raw"].sys);
+	TGraphErrors* ampt_ratio_sys_raw_g = graph_x_vs_y_err(energy_ampt_raw, ampt["raw"].val, energy_err, ampt["raw"].sys);
 
-	TGraphErrors* bes1_ratio_def_mix_g = graph_x_vs_y_err(energy_bes1, bes1["mix"].val, energy_err, bes1["mix"].stat);
-	TGraphErrors* ampt_ratio_def_mix_g = graph_x_vs_y_err(energy_ampt, ampt["mix"].val, energy_err, ampt["mix"].stat);
+	TGraphErrors* bes1_ratio_def_mix_g = graph_x_vs_y_err(energy_bes1_mix, bes1["mix"].val, energy_err, bes1["mix"].stat);
+	TGraphErrors* ampt_ratio_def_mix_g = graph_x_vs_y_err(energy_ampt_mix, ampt["mix"].val, energy_err, ampt["mix"].stat);
 	bes1_ratio_def_mix_g->SetNameTitle("bes1");
 	ampt_ratio_def_mix_g->SetNameTitle("ampt");
-	TGraphErrors* bes1_ratio_sys_mix_g = graph_x_vs_y_err(energy_bes1, bes1["mix"].val, energy_err, bes1["mix"].sys);
-	TGraphErrors* ampt_ratio_sys_mix_g = graph_x_vs_y_err(energy_ampt, ampt["mix"].val, energy_err, ampt["mix"].sys);
+	TGraphErrors* bes1_ratio_sys_mix_g = graph_x_vs_y_err(energy_bes1_mix, bes1["mix"].val, energy_err, bes1["mix"].sys);
+	TGraphErrors* ampt_ratio_sys_mix_g = graph_x_vs_y_err(energy_ampt_mix, ampt["mix"].val, energy_err, ampt["mix"].sys);
 
 	bes1_ratio_def_raw_g->SetMarkerStyle(29);
 	bes1_ratio_def_raw_g->SetMarkerColor(kRed);
 	bes1_ratio_def_raw_g->SetLineColor(kRed);
-	bes1_ratio_def_raw_g->SetMarkerSize(2.5);
+	bes1_ratio_def_raw_g->SetMarkerSize(3);
 	bes1_ratio_sys_raw_g->SetLineColor(kRed);
 
 	bes1_ratio_def_mix_g->SetMarkerStyle(30);
 	bes1_ratio_def_mix_g->SetMarkerColor(kRed);
 	bes1_ratio_def_mix_g->SetLineColor(kRed);
-	bes1_ratio_def_mix_g->SetMarkerSize(2.5);
+	bes1_ratio_def_mix_g->SetMarkerSize(3);
 	bes1_ratio_sys_mix_g->SetLineColor(kRed);
 
 	ampt_ratio_def_raw_g->SetMarkerStyle(20);
 	ampt_ratio_def_raw_g->SetMarkerColor(kBlue);
 	ampt_ratio_def_raw_g->SetLineColor(kBlue);
-	ampt_ratio_def_raw_g->SetMarkerSize(1.5);
+	ampt_ratio_def_raw_g->SetMarkerSize(2);
 	ampt_ratio_sys_raw_g->SetLineColor(kBlue);
 
 	ampt_ratio_def_mix_g->SetMarkerStyle(24);
 	ampt_ratio_def_mix_g->SetMarkerColor(kBlue);
 	ampt_ratio_def_mix_g->SetLineColor(kBlue);
-	ampt_ratio_def_mix_g->SetMarkerSize(1.5);
+	ampt_ratio_def_mix_g->SetMarkerSize(2);
 	ampt_ratio_sys_mix_g->SetLineColor(kBlue);
 
 	mg_rm->Add(ampt_ratio_def_mix_g, "APZ");
@@ -911,6 +920,14 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 
 	mg_rm->GetXaxis()->SetLimits(-2, 78);
 	mg_rm->GetXaxis()->SetRangeUser(-2, 78);
+	if (type_name == "Pull") {
+		mg_rm->GetYaxis()->SetLimits(2.829, 1.0145);
+		mg_rm->GetYaxis()->SetRangeUser(2.829, 1.0145);
+	}
+	else if (type_name == "Ratio") {
+		mg_rm->GetYaxis()->SetLimits(3.041, 3.239);
+		mg_rm->GetYaxis()->SetRangeUser(3.041, 3.239);
+	}
 //	mg_rm->GetYaxis()->SetLimits(0.9955, 1.0145);
 //	mg_rm->GetYaxis()->SetRangeUser(0.9955, 1.0145);
 	mg_rm->GetXaxis()->SetLabelFont(43);
@@ -934,7 +951,7 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	one_line_rm->SetLineStyle(2);
 	one_line_rm->Draw();
 
-	leg_rm->SetMargin(0.1); leg_rm->Draw();
+//	leg_rm->SetMargin(0.1); leg_rm->Draw();
 
 	gPad->SetTopMargin(0.04);
 	gPad->SetLeftMargin(0.12);
@@ -944,9 +961,9 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	label_rm.SetTextFont(43);
 	label_rm.SetTextAlign(12);
 	label_rm.SetTextSize(25);
-	string label_text = type_name + " Distribution#splitline0-5% Centrality#splitline120#circ Divisions";
+	string label_text = "#splitline{#splitline{" + type_name + " Distribution}{0-5% Centrality}}{120#circ Divisions}";
 	if (type_name == "Pull") { label_rm.DrawLatex(55, 2.95, label_text.data()); }
-	else if (type_name == "Ratio") { label_rm.DrawLatex(0, 3.2, label_text.data()); }
+	else if (type_name == "Ratio") { label_rm.DrawLatex(5, 3.2, label_text.data()); }
 
 	can_rm->Update();
 	can_rm->Write();
