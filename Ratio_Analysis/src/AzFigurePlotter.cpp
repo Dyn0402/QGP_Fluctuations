@@ -43,7 +43,7 @@ void AzFigurePlotter::plot_paper_figs() {
 	cout << "Making paper figures" << endl;
 	TFile fig_file((out_path+"figures_"+out_root_name).data(), "RECREATE");
 	fig_file.cd();
-	kurt_vs_energy();
+//	kurt_vs_energy();
 	kurt_vs_divs_w_energy();
 	kurt_vs_energy_cents();
 	moments_vs_energy();
@@ -57,45 +57,139 @@ void AzFigurePlotter::plot_paper_figs() {
 	cout << "Wrote " << out_path+"figures_"+out_root_name << endl;
 }
 
-void AzFigurePlotter::kurt_vs_energy() {
+
+void AzFigurePlotter::plot_pres_figs() {
+	cout << "Making presentation figure" << endl;
+	TFile fig_file((out_path+"figures_"+out_root_name).data(), "RECREATE");
+	fig_file.cd();
+	kurt_vs_energy_pres();
+	kurt_vs_divs_w_energy_pres();
+	fig_file.Close();
+	cout << "Wrote " << out_path+"figures_"+out_root_name << endl;
+}
+
+
+void AzFigurePlotter::kurt_vs_energy_pres() {
 	vector<int> energies{ 7, 11, 19, 27, 39, 62 };
 	int div = 120;
 	int cent = 8;
 	string stat = "non_excess_kurtosis";
 
-	plot_data bes1_ratio;
-	plot_data bes1_pull;
-	plot_data ampt_ratio;
-	plot_data ampt_pull;
-	plot_data cf_ratio;
-	plot_data cf_pull;
+	map<string, plot_data> bes1_ratio;
+	map<string, plot_data> bes1_pull;
+	map<string, plot_data> ampt_ratio;
+	map<string, plot_data> ampt_pull;
+	map<string, plot_data> cf_ratio;
+	map<string, plot_data> cf_pull;
 
 	for (int energy : energies) {
-		bes1_ratio.val.push_back(def_medians["BES1"]["divide"][energy][div][cent][stat].get_val());
-		bes1_ratio.stat.push_back(def_medians["BES1"]["divide"][energy][div][cent][stat].get_err());
-		bes1_ratio.sys.push_back(def_systematics["BES1"]["divide"][energy][div][cent][stat]);
-		bes1_pull.val.push_back(def_medians["BES1"]["pull_divide"][energy][div][cent][stat].get_val());
-		bes1_pull.stat.push_back(def_medians["BES1"]["pull_divide"][energy][div][cent][stat].get_err());
-		bes1_pull.sys.push_back(def_systematics["BES1"]["pull_divide"][energy][div][cent][stat]);
-		ampt_ratio.val.push_back(def_medians["AMPT"]["divide"][energy][div][cent][stat].get_val());
-		ampt_ratio.stat.push_back(def_medians["AMPT"]["divide"][energy][div][cent][stat].get_err());
-		ampt_ratio.sys.push_back(def_systematics["AMPT"]["divide"][energy][div][cent][stat]);
-		ampt_pull.val.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_val());
-		ampt_pull.stat.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_err());
-		ampt_pull.sys.push_back(def_systematics["AMPT"]["pull_divide"][energy][div][cent][stat]);
-		cf_ratio.val.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_val());
-		cf_ratio.stat.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_err());
-		cf_ratio.sys.push_back(def_systematics["CF"]["divide"][energy][div][cent][stat]);
-		cf_pull.val.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_val());
-		cf_pull.stat.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_err());
-		cf_pull.sys.push_back(def_systematics["CF"]["pull_divide"][energy][div][cent][stat]);
+		bes1_ratio["raw"].val.push_back(def_medians["BES1"]["raw"][energy][div][cent][stat].get_val());
+		bes1_ratio["raw"].stat.push_back(def_medians["BES1"]["raw"][energy][div][cent][stat].get_err());
+		bes1_ratio["raw"].sys.push_back(def_systematics["BES1"]["raw"][energy][div][cent][stat]);
+		bes1_pull["raw"].val.push_back(def_medians["BES1"]["pull_raw"][energy][div][cent][stat].get_val());
+		bes1_pull["raw"].stat.push_back(def_medians["BES1"]["pull_raw"][energy][div][cent][stat].get_err());
+		bes1_pull["raw"].sys.push_back(def_systematics["BES1"]["pull_raw"][energy][div][cent][stat]);
+		ampt_ratio["raw"].val.push_back(def_medians["AMPT"]["raw"][energy][div][cent][stat].get_val());
+		ampt_ratio["raw"].stat.push_back(def_medians["AMPT"]["raw"][energy][div][cent][stat].get_err());
+		ampt_ratio["raw"].sys.push_back(def_systematics["AMPT"]["raw"][energy][div][cent][stat]);
+		ampt_pull["raw"].val.push_back(def_medians["AMPT"]["pull_raw"][energy][div][cent][stat].get_val());
+		ampt_pull["raw"].stat.push_back(def_medians["AMPT"]["pull_raw"][energy][div][cent][stat].get_err());
+		ampt_pull["raw"].sys.push_back(def_systematics["AMPT"]["pull_raw"][energy][div][cent][stat]);
+		cf_ratio["raw"].val.push_back(def_medians["CF"]["raw"][energy][div][cent][stat].get_val());
+		cf_ratio["raw"].stat.push_back(def_medians["CF"]["raw"][energy][div][cent][stat].get_err());
+		cf_ratio["raw"].sys.push_back(def_systematics["CF"]["raw"][energy][div][cent][stat]);
+		cf_pull["raw"].val.push_back(def_medians["CF"]["pull_raw"][energy][div][cent][stat].get_val());
+		cf_pull["raw"].stat.push_back(def_medians["CF"]["pull_raw"][energy][div][cent][stat].get_err());
+		cf_pull["raw"].sys.push_back(def_systematics["CF"]["pull_raw"][energy][div][cent][stat]);
+
+		bes1_ratio["mix"].val.push_back(def_medians["BES1"]["mix"][energy][div][cent][stat].get_val());
+		bes1_ratio["mix"].stat.push_back(def_medians["BES1"]["mix"][energy][div][cent][stat].get_err());
+		bes1_ratio["mix"].sys.push_back(def_systematics["BES1"]["mix"][energy][div][cent][stat]);
+		bes1_pull["mix"].val.push_back(def_medians["BES1"]["pull_mix"][energy][div][cent][stat].get_val());
+		bes1_pull["mix"].stat.push_back(def_medians["BES1"]["pull_mix"][energy][div][cent][stat].get_err());
+		bes1_pull["mix"].sys.push_back(def_systematics["BES1"]["pull_mix"][energy][div][cent][stat]);
+		ampt_ratio["mix"].val.push_back(def_medians["AMPT"]["mix"][energy][div][cent][stat].get_val());
+		ampt_ratio["mix"].stat.push_back(def_medians["AMPT"]["mix"][energy][div][cent][stat].get_err());
+		ampt_ratio["mix"].sys.push_back(def_systematics["AMPT"]["mix"][energy][div][cent][stat]);
+		ampt_pull["mix"].val.push_back(def_medians["AMPT"]["pull_mix"][energy][div][cent][stat].get_val());
+		ampt_pull["mix"].stat.push_back(def_medians["AMPT"]["pull_mix"][energy][div][cent][stat].get_err());
+		ampt_pull["mix"].sys.push_back(def_systematics["AMPT"]["pull_mix"][energy][div][cent][stat]);
+		cf_ratio["mix"].val.push_back(def_medians["CF"]["mix"][energy][div][cent][stat].get_val());
+		cf_ratio["mix"].stat.push_back(def_medians["CF"]["mix"][energy][div][cent][stat].get_err());
+		cf_ratio["mix"].sys.push_back(def_systematics["CF"]["mix"][energy][div][cent][stat]);
+		cf_pull["mix"].val.push_back(def_medians["CF"]["pull_mix"][energy][div][cent][stat].get_val());
+		cf_pull["mix"].stat.push_back(def_medians["CF"]["pull_mix"][energy][div][cent][stat].get_err());
+		cf_pull["mix"].sys.push_back(def_systematics["CF"]["pull_mix"][energy][div][cent][stat]);
+
+		bes1_ratio["divide"].val.push_back(def_medians["BES1"]["divide"][energy][div][cent][stat].get_val());
+		bes1_ratio["divide"].stat.push_back(def_medians["BES1"]["divide"][energy][div][cent][stat].get_err());
+		bes1_ratio["divide"].sys.push_back(def_systematics["BES1"]["divide"][energy][div][cent][stat]);
+		bes1_pull["divide"].val.push_back(def_medians["BES1"]["pull_divide"][energy][div][cent][stat].get_val());
+		bes1_pull["divide"].stat.push_back(def_medians["BES1"]["pull_divide"][energy][div][cent][stat].get_err());
+		bes1_pull["divide"].sys.push_back(def_systematics["BES1"]["pull_divide"][energy][div][cent][stat]);
+		ampt_ratio["divide"].val.push_back(def_medians["AMPT"]["divide"][energy][div][cent][stat].get_val());
+		ampt_ratio["divide"].stat.push_back(def_medians["AMPT"]["divide"][energy][div][cent][stat].get_err());
+		ampt_ratio["divide"].sys.push_back(def_systematics["AMPT"]["divide"][energy][div][cent][stat]);
+		ampt_pull["divide"].val.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_val());
+		ampt_pull["divide"].stat.push_back(def_medians["AMPT"]["pull_divide"][energy][div][cent][stat].get_err());
+		ampt_pull["divide"].sys.push_back(def_systematics["AMPT"]["pull_divide"][energy][div][cent][stat]);
+		cf_ratio["divide"].val.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_val());
+		cf_ratio["divide"].stat.push_back(def_medians["CF"]["divide"][energy][div][cent][stat].get_err());
+		cf_ratio["divide"].sys.push_back(def_systematics["CF"]["divide"][energy][div][cent][stat]);
+		cf_pull["divide"].val.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_val());
+		cf_pull["divide"].stat.push_back(def_medians["CF"]["pull_divide"][energy][div][cent][stat].get_err());
+		cf_pull["divide"].sys.push_back(def_systematics["CF"]["pull_divide"][energy][div][cent][stat]);
 	}
 
-	kurt_vs_energy_plot(energies, bes1_ratio, ampt_ratio, "Ratio");
-	kurt_vs_energy_plot(energies, bes1_pull, ampt_pull, "Pull");
+	kurt_vs_energy_pres_plot(energies, bes1_ratio, ampt_ratio, "Ratio");
+	kurt_vs_energy_pres_plot(energies, bes1_pull, ampt_pull, "Pull");
 
-	kurt_vs_energy_cf_plot(energies, bes1_ratio, ampt_ratio, cf_ratio, "Ratio");
-	kurt_vs_energy_cf_plot(energies, bes1_pull, ampt_pull, cf_pull, "Pull");
+	kurt_vs_energy_cf_pres_plot(energies, bes1_ratio, ampt_ratio, cf_ratio, "Ratio");
+	kurt_vs_energy_cf_pres_plot(energies, bes1_pull, ampt_pull, cf_pull, "Pull");
+}
+
+
+void AzFigurePlotter::kurt_vs_divs_w_energy_pres() {
+	map<int, int> energies{ {7, 7.7}, {11, 11.5}, {19, 19.6}, {27, 27}, {39, 39}, {62, 62.4} };
+//	map<int, string> energies{ {7, "7.7"}, {11, "11.5"}, {19, "19.6"}, {27, "27"}, {39, "39"}, {62, "62.4"} };
+	vector<int> divs{ 60, 90, 120, 180, 240, 270, 300 };
+	int cent = 8;
+	string stat = "non_excess_kurtosis";
+
+	map<int, plot_data> bes1_ratio;
+	map<int, plot_data> bes1_pull;
+	map<int, plot_data> ampt_ratio;
+	map<int, plot_data> ampt_pull;
+	map<int, plot_data> cf_ratio;
+	map<int, plot_data> cf_pull;
+
+	for (pair<int, int> energy : energies) {
+		for (int div : divs) {
+			bes1_ratio[div].val.push_back(def_medians["BES1"]["divide"][energy.first][div][cent][stat].get_val());
+			bes1_ratio[div].stat.push_back(def_medians["BES1"]["divide"][energy.first][div][cent][stat].get_err());
+			bes1_ratio[div].sys.push_back(def_systematics["BES1"]["divide"][energy.first][div][cent][stat]);
+			bes1_pull[div].val.push_back(def_medians["BES1"]["pull_divide"][energy.first][div][cent][stat].get_val());
+			bes1_pull[div].stat.push_back(def_medians["BES1"]["pull_divide"][energy.first][div][cent][stat].get_err());
+			bes1_pull[div].sys.push_back(def_systematics["BES1"]["pull_divide"][energy.first][div][cent][stat]);
+
+			ampt_ratio[div].val.push_back(def_medians["AMPT"]["divide"][energy.first][div][cent][stat].get_val());
+			ampt_ratio[div].stat.push_back(def_medians["AMPT"]["divide"][energy.first][div][cent][stat].get_err());
+			ampt_ratio[div].sys.push_back(def_systematics["AMPT"]["divide"][energy.first][div][cent][stat]);
+			ampt_pull[div].val.push_back(def_medians["AMPT"]["pull_divide"][energy.first][div][cent][stat].get_val());
+			ampt_pull[div].stat.push_back(def_medians["AMPT"]["pull_divide"][energy.first][div][cent][stat].get_err());
+			ampt_pull[div].sys.push_back(def_systematics["AMPT"]["pull_divide"][energy.first][div][cent][stat]);
+
+			cf_ratio[div].val.push_back(def_medians["CF"]["divide"][energy.first][div][cent][stat].get_val());
+			cf_ratio[div].stat.push_back(def_medians["CF"]["divide"][energy.first][div][cent][stat].get_err());
+			cf_ratio[div].sys.push_back(def_systematics["CF"]["divide"][energy.first][div][cent][stat]);
+			cf_pull[div].val.push_back(def_medians["CF"]["pull_divide"][energy.first][div][cent][stat].get_val());
+			cf_pull[div].stat.push_back(def_medians["CF"]["pull_divide"][energy.first][div][cent][stat].get_err());
+			cf_pull[div].sys.push_back(def_systematics["CF"]["pull_divide"][energy.first][div][cent][stat]);
+		}
+	}
+
+	kurt_vs_divs_w_energy_pres_plot(energies, bes1_ratio, ampt_ratio, "Ratio");
+	kurt_vs_divs_w_energy_pres_plot(energies, bes1_pull, ampt_pull, "Pull");
 }
 
 
@@ -677,38 +771,39 @@ void AzFigurePlotter::kurt_vs_efficiency() {
 }
  
 
-void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, plot_data ampt, string type_name) {
+void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string, plot_data> bes1, map<string, plot_data> ampt, string type_name) {
 	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
 	vector<double> energy_val(energies.begin(), energies.end());
 	vector<double> energy_bes1;
 	vector<double> energy_ampt;
 	for (double energy : energies) {
-		energy_bes1.push_back(energy - 0.5);
-		energy_ampt.push_back(energy + 0.5);
+		energy_ampt.push_back(energy - 0.5);
+		energy_bes1.push_back(energy + 0.5);
 	}
 
+	// Divide plot
 	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_mg");
 	TLegend* leg = new TLegend(0.15, 0.15, 0.35, 0.3);
-	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.stat);
-	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.stat);
+	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1["divide"].val, energy_err, bes1["divide"].stat);
+	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt["divide"].val, energy_err, ampt["divide"].stat);
 	bes1_ratio_def_g->SetNameTitle("bes1");
 	ampt_ratio_def_g->SetNameTitle("ampt");
-	TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.sys);
-	TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.sys);
+	TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1["divide"].val, energy_err, bes1["divide"].sys);
+	TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt["divide"].val, energy_err, ampt["divide"].sys);
 
-	bes1_ratio_def_g->SetMarkerStyle(20);
-	bes1_ratio_def_g->SetMarkerColor(kBlack);
-	bes1_ratio_def_g->SetLineColor(kBlack);
-	bes1_ratio_def_g->SetMarkerSize(2);
-	bes1_ratio_sys_g->SetLineColor(kBlack);
+	bes1_ratio_def_g->SetMarkerStyle(29);
+	bes1_ratio_def_g->SetMarkerColor(kRed);
+	bes1_ratio_def_g->SetLineColor(kRed);
+	bes1_ratio_def_g->SetMarkerSize(2.5);
+	bes1_ratio_sys_g->SetLineColor(kRed);
 
-	ampt_ratio_def_g->SetMarkerStyle(24);
-	ampt_ratio_def_g->SetMarkerColor(kRed);
-	ampt_ratio_def_g->SetLineColor(kRed);
-	ampt_ratio_def_g->SetMarkerSize(1.8);
-	ampt_ratio_sys_g->SetLineColor(kRed);
+	ampt_ratio_def_g->SetMarkerStyle(20);
+	ampt_ratio_def_g->SetMarkerColor(kBlue);
+	ampt_ratio_def_g->SetLineColor(kBlue);
+	ampt_ratio_def_g->SetMarkerSize(1.5);
+	ampt_ratio_sys_g->SetLineColor(kBlue);
 
 	mg->Add(ampt_ratio_def_g, "APZ");
 	mg->Add(ampt_ratio_sys_g, "[]");
@@ -717,7 +812,7 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 
 	leg->SetBorderSize(0);
 	leg->SetFillStyle(0);
-	leg->AddEntry(bes1_ratio_def_g, "BES1", "p");
+	leg->AddEntry(bes1_ratio_def_g, "STAR", "p");
 	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 
 	mg->GetXaxis()->SetLimits(-2, 78);
@@ -741,7 +836,7 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 
 	mg->Draw("AP");
 
-	TLine* one_line = new TLine(0, 1, 80, 1);
+	TLine* one_line = new TLine(-2, 1, 78, 1);
 	one_line->SetLineStyle(2);
 	one_line->Draw();
 
@@ -755,11 +850,112 @@ void AzFigurePlotter::kurt_vs_energy_plot(vector<int> energies, plot_data bes1, 
 	can->Write();
 
 	delete can;
+
+
+	// Raw vs mixed plot
+	TCanvas* can_rm = new TCanvas(("Kurtosis_vs_energy_raw_mix_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
+	TMultiGraph* mg_rm = new TMultiGraph();
+	mg_rm->SetName("Kurtosis_vs_energy_raw_mix_mg");
+	TLegend* leg_rm = new TLegend(0.15, 0.15, 0.35, 0.3);
+	TGraphErrors* bes1_ratio_def_raw_g = graph_x_vs_y_err(energy_bes1, bes1["raw"].val, energy_err, bes1["raw"].stat);
+	TGraphErrors* ampt_ratio_def_raw_g = graph_x_vs_y_err(energy_ampt, ampt["raw"].val, energy_err, ampt["raw"].stat);
+	bes1_ratio_def_raw_g->SetNameTitle("bes1");
+	ampt_ratio_def_raw_g->SetNameTitle("ampt");
+	TGraphErrors* bes1_ratio_sys_raw_g = graph_x_vs_y_err(energy_bes1, bes1["raw"].val, energy_err, bes1["raw"].sys);
+	TGraphErrors* ampt_ratio_sys_raw_g = graph_x_vs_y_err(energy_ampt, ampt["raw"].val, energy_err, ampt["raw"].sys);
+
+	TGraphErrors* bes1_ratio_def_mix_g = graph_x_vs_y_err(energy_bes1, bes1["mix"].val, energy_err, bes1["mix"].stat);
+	TGraphErrors* ampt_ratio_def_mix_g = graph_x_vs_y_err(energy_ampt, ampt["mix"].val, energy_err, ampt["mix"].stat);
+	bes1_ratio_def_mix_g->SetNameTitle("bes1");
+	ampt_ratio_def_mix_g->SetNameTitle("ampt");
+	TGraphErrors* bes1_ratio_sys_mix_g = graph_x_vs_y_err(energy_bes1, bes1["mix"].val, energy_err, bes1["mix"].sys);
+	TGraphErrors* ampt_ratio_sys_mix_g = graph_x_vs_y_err(energy_ampt, ampt["mix"].val, energy_err, ampt["mix"].sys);
+
+	bes1_ratio_def_raw_g->SetMarkerStyle(29);
+	bes1_ratio_def_raw_g->SetMarkerColor(kRed);
+	bes1_ratio_def_raw_g->SetLineColor(kRed);
+	bes1_ratio_def_raw_g->SetMarkerSize(2.5);
+	bes1_ratio_sys_raw_g->SetLineColor(kRed);
+
+	bes1_ratio_def_mix_g->SetMarkerStyle(30);
+	bes1_ratio_def_mix_g->SetMarkerColor(kRed);
+	bes1_ratio_def_mix_g->SetLineColor(kRed);
+	bes1_ratio_def_mix_g->SetMarkerSize(2.5);
+	bes1_ratio_sys_mix_g->SetLineColor(kRed);
+
+	ampt_ratio_def_raw_g->SetMarkerStyle(20);
+	ampt_ratio_def_raw_g->SetMarkerColor(kBlue);
+	ampt_ratio_def_raw_g->SetLineColor(kBlue);
+	ampt_ratio_def_raw_g->SetMarkerSize(1.5);
+	ampt_ratio_sys_raw_g->SetLineColor(kBlue);
+
+	ampt_ratio_def_mix_g->SetMarkerStyle(24);
+	ampt_ratio_def_mix_g->SetMarkerColor(kBlue);
+	ampt_ratio_def_mix_g->SetLineColor(kBlue);
+	ampt_ratio_def_mix_g->SetMarkerSize(1.5);
+	ampt_ratio_sys_mix_g->SetLineColor(kBlue);
+
+	mg_rm->Add(ampt_ratio_def_mix_g, "APZ");
+	mg_rm->Add(ampt_ratio_sys_mix_g, "[]");
+	mg_rm->Add(ampt_ratio_def_raw_g, "P");
+	mg_rm->Add(ampt_ratio_sys_raw_g, "[]");
+	mg_rm->Add(bes1_ratio_def_mix_g, "P");
+	mg_rm->Add(bes1_ratio_sys_mix_g, "[]");
+	mg_rm->Add(bes1_ratio_def_raw_g, "P");
+	mg_rm->Add(bes1_ratio_sys_raw_g, "[]");
+
+	leg_rm->SetBorderSize(0);
+	leg_rm->SetFillStyle(0);
+	leg_rm->AddEntry(bes1_ratio_def_g, "STAR", "p");
+	leg_rm->AddEntry(ampt_ratio_def_g, "AMPT", "p");
+
+	mg_rm->GetXaxis()->SetLimits(-2, 78);
+	mg_rm->GetXaxis()->SetRangeUser(-2, 78);
+//	mg_rm->GetYaxis()->SetLimits(0.9955, 1.0145);
+//	mg_rm->GetYaxis()->SetRangeUser(0.9955, 1.0145);
+	mg_rm->GetXaxis()->SetLabelFont(43);
+	mg_rm->GetXaxis()->SetTitleFont(43);
+	mg_rm->GetXaxis()->SetLabelSize(28);
+	mg_rm->GetXaxis()->SetTitleSize(28);
+	mg_rm->GetYaxis()->SetLabelFont(43);
+	mg_rm->GetYaxis()->SetTitleFont(43);
+	mg_rm->GetYaxis()->SetLabelSize(28);
+	mg_rm->GetYaxis()->SetTitleSize(28);
+	mg_rm->GetYaxis()->SetDecimals(3);
+	mg_rm->GetXaxis()->SetTitleOffset(1.2);
+	mg_rm->GetYaxis()->SetTitleOffset(1.7);
+
+	mg_rm->GetXaxis()->SetTitle("Energy (GeV)");
+	mg_rm->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
+
+	mg_rm->Draw("AP");
+
+	TLine* one_line_rm = new TLine(-2, 1, 78, 1);
+	one_line_rm->SetLineStyle(2);
+	one_line_rm->Draw();
+
+	leg_rm->SetMargin(0.1); leg_rm->Draw();
+
+	gPad->SetTopMargin(0.04);
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.04);
+
+	TLatex label_rm;
+	label_rm.SetTextFont(43);
+	label_rm.SetTextAlign(12);
+	label_rm.SetTextSize(25);
+	string label_text = type_name + " Distribution#splitline0-5% Centrality#splitline120#circ Divisions";
+	if (type_name == "Pull") { label_rm.DrawLatex(55, 2.95, label_text.data()); }
+	else if (type_name == "Ratio") { label_rm.DrawLatex(0, 3.2, label_text.data()); }
+
+	can_rm->Update();
+	can_rm->Write();
+
+	delete can_rm;
 }
 
 
-
-void AzFigurePlotter::kurt_vs_energy_cf_plot(vector<int> energies, plot_data bes1, plot_data ampt, plot_data cf, string type_name) {
+void AzFigurePlotter::kurt_vs_energy_cf_pres_plot(vector<int> energies, map<string, plot_data> bes1, map<string, plot_data> ampt, map<string, plot_data> cf, string type_name) {
 	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
 	vector<double> energy_val(energies.begin(), energies.end());
 	vector<double> energy_bes1;
@@ -775,15 +971,15 @@ void AzFigurePlotter::kurt_vs_energy_cf_plot(vector<int> energies, plot_data bes
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_cf_mg");
 	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.stat);
-	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.stat);
-	TGraphErrors* cf_ratio_def_g = graph_x_vs_y_err(energy_cf, cf.val, energy_err, cf.stat);
+	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1["divide"].val, energy_err, bes1["divide"].stat);
+	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt["divide"].val, energy_err, ampt["divide"].stat);
+	TGraphErrors* cf_ratio_def_g = graph_x_vs_y_err(energy_cf, cf["divide"].val, energy_err, cf["divide"].stat);
 	bes1_ratio_def_g->SetNameTitle("bes1");
 	ampt_ratio_def_g->SetNameTitle("ampt");
 	cf_ratio_def_g->SetNameTitle("cf");
-	TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1.val, energy_err, bes1.sys);
-	TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt.val, energy_err, ampt.sys);
-	TGraphErrors* cf_ratio_sys_g = graph_x_vs_y_err(energy_cf, cf.val, energy_err, cf.sys);
+	TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1["divide"].val, energy_err, bes1["divide"].sys);
+	TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt["divide"].val, energy_err, ampt["divide"].sys);
+	TGraphErrors* cf_ratio_sys_g = graph_x_vs_y_err(energy_cf, cf["divide"].val, energy_err, cf["divide"].sys);
 
 	bes1_ratio_def_g->SetMarkerStyle(20);
 	bes1_ratio_def_g->SetMarkerColor(kBlack);
@@ -834,6 +1030,87 @@ void AzFigurePlotter::kurt_vs_energy_cf_plot(vector<int> energies, plot_data bes
 
 	mg->GetXaxis()->SetTitle("Energy (GeV)");
 	mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
+
+	mg->Draw("AP");
+
+	TLine* one_line = new TLine(0, 1, 80, 1);
+	one_line->SetLineStyle(2);
+	one_line->Draw();
+
+	leg->SetMargin(0.1); leg->Draw();
+
+	gPad->SetTopMargin(0.04);
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.04);
+
+	can->Update();
+	can->Write();
+
+	delete can;
+}
+
+
+void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name) {
+	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
+	vector<double> energy_bes1;
+	vector<double> energy_ampt;
+//	vector<double> energy_cf;
+	for (pair<int, int> energy : energies) {
+		energy_ampt.push_back(energy.second - 0.5);
+		energy_bes1.push_back(energy.second + 0.5);
+//		energy_cf.push_back(energy.first + 0.5);
+	}
+
+
+	map<int, int> div_color{ {60, kBlack}, {72, kRed}, {90, kGreen+3}, {120, kBlue}, {180, kViolet}, {240, kCyan + 2}, {270, kGreen + 1}, {300, kGray + 2} };
+	map<string, int> marker_style{ {"bes", 20}, {"ampt", 24}, {"cf", 24} };
+	map<int, int> div_marker_size{ {60, 2}, {72, 2}, {90, 2}, {120, 2}, {180, 2}, {240, 2}, {270, 2}, {300, 2} };
+
+	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_divs_can_" + type_name).data(), ("Kurtosis vs Energy with Bin Width " + type_name).data(), 955, 805);
+	TMultiGraph* mg = new TMultiGraph();
+	mg->SetName("Kurtosis_vs_energy_mg");
+	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
+	for ( pair<int, plot_data> div : bes1) {
+		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1[div.first].val, energy_err, bes1[div.first].stat);
+		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt[div.first].val, energy_err, ampt[div.first].stat);
+		bes1_ratio_def_g->SetNameTitle(("bes1_"+to_string(div.first)).data());
+		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(div.first)).data());
+		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[div.first].val, energy_err, bes1[div.first].sys);
+		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[div.first].val, energy_err, ampt[div.first].sys);
+
+		bes1_ratio_def_g->SetMarkerStyle(marker_style["bes"]);
+		bes1_ratio_def_g->SetMarkerColor(div_color[div.first]);
+		bes1_ratio_def_g->SetLineColor(div_color[div.first]);
+		bes1_ratio_def_g->SetMarkerSize(div_marker_size[div.first]);
+		bes1_ratio_sys_g->SetLineColor(div_color[div.first]);
+
+		ampt_ratio_def_g->SetMarkerStyle(marker_style["ampt"]);
+		ampt_ratio_def_g->SetMarkerColor(div_color[div.first]);
+		ampt_ratio_def_g->SetLineColor(div_color[div.first]);
+		ampt_ratio_def_g->SetMarkerSize(div_marker_size[div.first]);
+		ampt_ratio_sys_g->SetLineColor(div_color[div.first]);
+
+		mg->Add(ampt_ratio_def_g, "APZ");
+		mg->Add(ampt_ratio_sys_g, "[]");
+		mg->Add(bes1_ratio_def_g, "P");
+		mg->Add(bes1_ratio_sys_g, "[]");
+
+		leg->AddEntry(bes1_ratio_def_g, ("BES1 " + to_string(div.first) + "#circ").data(), "p");
+		leg->AddEntry(ampt_ratio_def_g, ("AMPT " +  to_string(div.first) + "#circ").data(), "p");
+	}
+
+	leg->SetBorderSize(0);
+	leg->SetFillStyle(0);
+
+	mg->GetXaxis()->SetLimits(-2, 78);
+	mg->GetXaxis()->SetRangeUser(-2, 78);
+	if (!zoom) {
+		mg->GetYaxis()->SetLimits(0.9935, 1.0185);
+		mg->GetYaxis()->SetRangeUser(0.9935, 1.0185);
+	}
+
+	mg->GetXaxis()->SetTitle("Energy (GeV)");
+	mg->GetYaxis()->SetTitle("Kurtosis");
 
 	mg->Draw("AP");
 

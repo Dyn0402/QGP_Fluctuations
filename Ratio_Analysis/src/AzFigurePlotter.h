@@ -30,7 +30,6 @@ public:
 
 	// Doers
 	void plot_paper_figs();
-	void kurt_vs_energy();
 	void kurt_vs_divs_w_energy();
 	void kurt_vs_energy_cents();
 	void sd_vs_energy_cents();
@@ -41,14 +40,20 @@ public:
 	void kurt_with_efficiency();
 	void kurt_vs_efficiency();
 
+	void plot_pres_figs();
+	void kurt_vs_energy_pres();
+	void kurt_vs_divs_w_energy_pres();
+
 private:
 	// Attributes
 	bool zoom = false;
 	float def_text_size = 18;
 
 	// Doers
-	void kurt_vs_energy_plot(vector<int> energies, plot_data bes1, plot_data ampt, string type_name);
-	void kurt_vs_energy_cf_plot(vector<int> energies, plot_data bes1, plot_data ampt, plot_data cf, string type_name);
+	void kurt_vs_energy_pres_plot(vector<int> energies, map<string, plot_data> bes1, map<string, plot_data> ampt, string type_name);
+	void kurt_vs_energy_cf_pres_plot(vector<int> energies, map<string, plot_data> bes1, map<string, plot_data> ampt, map<string, plot_data> cf, string type_name);
+	void kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
+
 	void kurt_vs_divs_w_energy_plot(map<int, string> energies, vector<int> divs, map<string, map<int, plot_data>> bes1, map<string, map<int, plot_data>> ampt, map<string, map<int, plot_data>> cf, string type_name);
 	void kurt_vs_energy_cents_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
 	void sd_vs_energy_cents_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
