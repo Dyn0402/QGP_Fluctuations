@@ -152,7 +152,7 @@ void AzFigurePlotter::kurt_vs_energy_pres() {
 void AzFigurePlotter::kurt_vs_divs_w_energy_pres() {
 	map<int, int> energies{ {7, 7.7}, {11, 11.5}, {19, 19.6}, {27, 27}, {39, 39}, {62, 62.4} };
 //	map<int, string> energies{ {7, "7.7"}, {11, "11.5"}, {19, "19.6"}, {27, "27"}, {39, "39"}, {62, "62.4"} };
-	vector<int> divs{ 60, 90, 120, 180, 240, 270, 300 };
+	vector<int> divs{ 180, 120, 240, 90, 270, 60, 300 };
 	int cent = 8;
 	string stat = "non_excess_kurtosis";
 
@@ -188,8 +188,8 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres() {
 		}
 	}
 
-	kurt_vs_divs_w_energy_pres_plot(energies, bes1_ratio, ampt_ratio, "Ratio");
-	kurt_vs_divs_w_energy_pres_plot(energies, bes1_pull, ampt_pull, "Pull");
+	kurt_vs_divs_w_energy_pres_plot(energies, divs, bes1_ratio, ampt_ratio, "Ratio");
+	kurt_vs_divs_w_energy_pres_plot(energies, divs, bes1_pull, ampt_pull, "Pull");
 }
 
 
@@ -781,20 +781,20 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	vector<double> energy_ampt_raw;
 	vector<double> energy_ampt_mix;
 	for (double energy : energies) {
-		energy_ampt.push_back(energy - 0.5);
-		energy_bes1.push_back(energy + 0.5);
+		energy_ampt.push_back(energy - 0.7);
+		energy_bes1.push_back(energy + 0.7);
 
-		energy_ampt_raw.push_back(energy - 1.5);
-		energy_ampt_mix.push_back(energy - 0.5);
-		energy_bes1_raw.push_back(energy + 0.5);
-		energy_bes1_mix.push_back(energy + 1.5);
+		energy_ampt_raw.push_back(energy - 0.3);
+		energy_ampt_mix.push_back(energy + 0.4);
+		energy_bes1_raw.push_back(energy - 0.4);
+		energy_bes1_mix.push_back(energy + 0.3);
 	}
 
 	// Divide plot
 	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_mg");
-	TLegend* leg = new TLegend(0.15, 0.15, 0.35, 0.3);
+	TLegend* leg = new TLegend(0.7, 0.13, 0.9, 0.3);
 	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1["divide"].val, energy_err, bes1["divide"].stat);
 	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt["divide"].val, energy_err, ampt["divide"].stat);
 	bes1_ratio_def_g->SetNameTitle("bes1");
@@ -821,13 +821,15 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 
 	leg->SetBorderSize(0);
 	leg->SetFillStyle(0);
+	leg->SetTextFont(43);
+	leg->SetTextSize(28);
 	leg->AddEntry(bes1_ratio_def_g, "STAR", "p");
 	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 
 	mg->GetXaxis()->SetLimits(-2, 78);
 	mg->GetXaxis()->SetRangeUser(-2, 78);
-	mg->GetYaxis()->SetLimits(0.9955, 1.0145);
-	mg->GetYaxis()->SetRangeUser(0.9955, 1.0145);
+	mg->GetYaxis()->SetLimits(0.9961, 1.0109);
+	mg->GetYaxis()->SetRangeUser(0.9961, 1.0109);
 	mg->GetXaxis()->SetLabelFont(43);
 	mg->GetXaxis()->SetTitleFont(43);
 	mg->GetXaxis()->SetLabelSize(28);
@@ -841,7 +843,7 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	mg->GetYaxis()->SetTitleOffset(1.7);
 
 	mg->GetXaxis()->SetTitle("Energy (GeV)");
-	mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
+	mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mixed}");
 
 	mg->Draw("AP");
 
@@ -849,11 +851,26 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	one_line->SetLineStyle(2);
 	one_line->Draw();
 
-//	leg->SetMargin(0.1); leg->Draw();
+	leg->Draw();
 
 	gPad->SetTopMargin(0.04);
 	gPad->SetLeftMargin(0.12);
 	gPad->SetRightMargin(0.04);
+
+	TLatex label;
+	label.SetTextFont(43);
+	label.SetTextAlign(12);
+	label.SetTextSize(28);
+	string label_text = "#splitline{#splitline{" + type_name + " Distribution}{0-5% Centrality}}{120#circ Divisions}";
+	if (type_name == "Pull") { label.DrawLatex(5, 1.0096, label_text.data()); }
+	else if (type_name == "Ratio") { label.DrawLatex(5, 1.0096, label_text.data()); }
+
+	TLatex prelim;
+	prelim.SetTextFont(43);
+	prelim.SetTextAlign(12);
+	prelim.SetTextSize(28);
+	if (type_name == "Pull") { prelim.DrawLatex(50, 1.01, "STAR Preliminary"); }
+	else if (type_name == "Ratio") { prelim.DrawLatex(50, 1.01, "STAR Preliminary"); }
 
 	can->Update();
 	can->Write();
@@ -865,7 +882,10 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	TCanvas* can_rm = new TCanvas(("Kurtosis_vs_energy_raw_mix_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
 	TMultiGraph* mg_rm = new TMultiGraph();
 	mg_rm->SetName("Kurtosis_vs_energy_raw_mix_mg");
-	TLegend* leg_rm = new TLegend(0.15, 0.15, 0.35, 0.3);
+	float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+	if (type_name == "Ratio") { x1 = 0.15; x2 = 0.3; y1 = 0.65; y2 = 0.9; }
+	else if (type_name == "Pull") { x1 = 0.15;  x2 = 0.3; y1 = 0.2; y2 = 0.45; }
+	TLegend* leg_rm = new TLegend(x1, y1, x2, y2);
 	TGraphErrors* bes1_ratio_def_raw_g = graph_x_vs_y_err(energy_bes1_raw, bes1["raw"].val, energy_err, bes1["raw"].stat);
 	TGraphErrors* ampt_ratio_def_raw_g = graph_x_vs_y_err(energy_ampt_raw, ampt["raw"].val, energy_err, ampt["raw"].stat);
 	bes1_ratio_def_raw_g->SetNameTitle("bes1");
@@ -915,14 +935,19 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 
 	leg_rm->SetBorderSize(0);
 	leg_rm->SetFillStyle(0);
-	leg_rm->AddEntry(bes1_ratio_def_g, "STAR", "p");
-	leg_rm->AddEntry(ampt_ratio_def_g, "AMPT", "p");
+	leg_rm->SetTextFont(43);
+	leg_rm->SetTextSize(28);
+	leg_rm->SetMargin(0.3);
+	leg_rm->AddEntry(bes1_ratio_def_raw_g, "STAR Raw", "p");
+	leg_rm->AddEntry(bes1_ratio_def_mix_g, "STAR Mixed", "p");
+	leg_rm->AddEntry(ampt_ratio_def_raw_g, "AMPT Raw", "p");
+	leg_rm->AddEntry(ampt_ratio_def_mix_g, "AMPT Mixed", "p");
 
 	mg_rm->GetXaxis()->SetLimits(-2, 78);
 	mg_rm->GetXaxis()->SetRangeUser(-2, 78);
 	if (type_name == "Pull") {
-		mg_rm->GetYaxis()->SetLimits(2.829, 1.0145);
-		mg_rm->GetYaxis()->SetRangeUser(2.829, 1.0145);
+		mg_rm->GetYaxis()->SetLimits(2.819, 2.969);
+		mg_rm->GetYaxis()->SetRangeUser(2.819, 2.969);
 	}
 	else if (type_name == "Ratio") {
 		mg_rm->GetYaxis()->SetLimits(3.041, 3.239);
@@ -943,7 +968,7 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	mg_rm->GetYaxis()->SetTitleOffset(1.7);
 
 	mg_rm->GetXaxis()->SetTitle("Energy (GeV)");
-	mg_rm->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
+	mg_rm->GetYaxis()->SetTitle("Kurtosis");
 
 	mg_rm->Draw("AP");
 
@@ -951,7 +976,7 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	one_line_rm->SetLineStyle(2);
 	one_line_rm->Draw();
 
-//	leg_rm->SetMargin(0.1); leg_rm->Draw();
+	leg_rm->Draw();
 
 	gPad->SetTopMargin(0.04);
 	gPad->SetLeftMargin(0.12);
@@ -960,10 +985,17 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	TLatex label_rm;
 	label_rm.SetTextFont(43);
 	label_rm.SetTextAlign(12);
-	label_rm.SetTextSize(25);
-	string label_text = "#splitline{#splitline{" + type_name + " Distribution}{0-5% Centrality}}{120#circ Divisions}";
-	if (type_name == "Pull") { label_rm.DrawLatex(55, 2.95, label_text.data()); }
-	else if (type_name == "Ratio") { label_rm.DrawLatex(5, 3.2, label_text.data()); }
+	label_rm.SetTextSize(28);
+	string label_text_rm = "#splitline{#splitline{" + type_name + " Distribution}{0-5% Centrality}}{120#circ Divisions}";
+	if (type_name == "Pull") { label_rm.DrawLatex(55, 2.95, label_text_rm.data()); }
+	else if (type_name == "Ratio") { label_rm.DrawLatex(55, 3.065, label_text_rm.data()); }
+
+	TLatex prelim_rm;
+	prelim_rm.SetTextFont(43);
+	prelim_rm.SetTextAlign(12);
+	prelim_rm.SetTextSize(28);
+	if (type_name == "Pull") { prelim_rm.DrawLatex(50, 2.88, "STAR Preliminary"); }
+	else if (type_name == "Ratio") { prelim_rm.DrawLatex(41, 3.16, "STAR Preliminary"); }
 
 	can_rm->Update();
 	can_rm->Write();
@@ -1046,7 +1078,7 @@ void AzFigurePlotter::kurt_vs_energy_cf_pres_plot(vector<int> energies, map<stri
 	mg->GetYaxis()->SetTitleOffset(4.4);
 
 	mg->GetXaxis()->SetTitle("Energy (GeV)");
-	mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
+	mg->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mixed}");
 
 	mg->Draw("AP");
 
@@ -1067,84 +1099,199 @@ void AzFigurePlotter::kurt_vs_energy_cf_pres_plot(vector<int> energies, map<stri
 }
 
 
-void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name) {
+void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, vector<int> div_order, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name) {
 	vector<double> energy_err{ 0, 0, 0, 0, 0, 0 };
-	vector<double> energy_bes1;
-	vector<double> energy_ampt;
-//	vector<double> energy_cf;
-	for (pair<int, int> energy : energies) {
-		energy_ampt.push_back(energy.second - 0.5);
-		energy_bes1.push_back(energy.second + 0.5);
-//		energy_cf.push_back(energy.first + 0.5);
-	}
+	map<int, vector<double>> energy_vals;
+	double offset = 0;
+	for ( int div : div_order) {
+		for (pair<int, int> energy : energies) {
+			if (div > 180) { offset = 0.7; }
+			else if (div < 180) { offset = -0.7; }
+			else { offset = 0; }
 
+			energy_vals[div].push_back(energy.second + offset);
+		}
+	}
 
 	map<int, int> div_color{ {60, kBlack}, {72, kRed}, {90, kGreen+3}, {120, kBlue}, {180, kViolet}, {240, kCyan + 2}, {270, kGreen + 1}, {300, kGray + 2} };
-	map<string, int> marker_style{ {"bes", 20}, {"ampt", 24}, {"cf", 24} };
+	map<int, int> marker_style{ {60, 22}, {72, 2}, {90, 21}, {120, 20}, {180, 34}, {240, 24}, {270, 25}, {300, 26} };
 	map<int, int> div_marker_size{ {60, 2}, {72, 2}, {90, 2}, {120, 2}, {180, 2}, {240, 2}, {270, 2}, {300, 2} };
+	int text_size = 26;
 
-	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_divs_can_" + type_name).data(), ("Kurtosis vs Energy with Bin Width " + type_name).data(), 955, 805);
-	TMultiGraph* mg = new TMultiGraph();
-	mg->SetName("Kurtosis_vs_energy_mg");
-	TLegend* leg = new TLegend(0.3, 0.21, 0.3, 0.21);
-	for ( pair<int, plot_data> div : bes1) {
-		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1[div.first].val, energy_err, bes1[div.first].stat);
-		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt[div.first].val, energy_err, ampt[div.first].stat);
-		bes1_ratio_def_g->SetNameTitle(("bes1_"+to_string(div.first)).data());
-		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(div.first)).data());
-		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_bes1, bes1[div.first].val, energy_err, bes1[div.first].sys);
-		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_ampt, ampt[div.first].val, energy_err, ampt[div.first].sys);
+	// BES1
+	TCanvas* can_bes = new TCanvas(("Kurtosis_vs_energy_divs_can_bes_" + type_name).data(), ("BES1 Kurtosis vs Energy with Bin Width " + type_name).data(), 955, 805);
+	TMultiGraph* mg_bes = new TMultiGraph();
+	mg_bes->SetName("Kurtosis_vs_energy_mg_bes");
 
-		bes1_ratio_def_g->SetMarkerStyle(marker_style["bes"]);
-		bes1_ratio_def_g->SetMarkerColor(div_color[div.first]);
-		bes1_ratio_def_g->SetLineColor(div_color[div.first]);
-		bes1_ratio_def_g->SetMarkerSize(div_marker_size[div.first]);
-		bes1_ratio_sys_g->SetLineColor(div_color[div.first]);
+	double y1 = 0.1, y2 = 0.2, x1 = 0.7, x2 = 0.9;
+	if (type_name == "Ratio") { y1 = 0.13; y2 = 0.33; x1 = 0.7; x2 = 0.9; }
+	else if (type_name == "Pull") { y1 = 0.73; y2 = 0.93; x1 = 0.65; x2 = 0.85; }
+	TLegend* leg_bes = new TLegend(x1, y1, x2, y2);
+	leg_bes->SetHeader("Phi Bin Width", "C");
+	for ( int div : div_order) {
+		TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_vals[div], bes1[div].val, energy_err, bes1[div].stat);
+		bes1_ratio_def_g->SetNameTitle(("bes1_"+to_string(div)).data());
+		TGraphErrors* bes1_ratio_sys_g = graph_x_vs_y_err(energy_vals[div], bes1[div].val, energy_err, bes1[div].sys);
 
-		ampt_ratio_def_g->SetMarkerStyle(marker_style["ampt"]);
-		ampt_ratio_def_g->SetMarkerColor(div_color[div.first]);
-		ampt_ratio_def_g->SetLineColor(div_color[div.first]);
-		ampt_ratio_def_g->SetMarkerSize(div_marker_size[div.first]);
-		ampt_ratio_sys_g->SetLineColor(div_color[div.first]);
+		bes1_ratio_def_g->SetMarkerStyle(marker_style[div]);
+		bes1_ratio_def_g->SetMarkerColor(div_color[div]);
+		bes1_ratio_def_g->SetLineColor(div_color[div]);
+		bes1_ratio_def_g->SetMarkerSize(div_marker_size[div]);
+		bes1_ratio_sys_g->SetLineColor(div_color[div]);
 
-		mg->Add(ampt_ratio_def_g, "APZ");
-		mg->Add(ampt_ratio_sys_g, "[]");
-		mg->Add(bes1_ratio_def_g, "P");
-		mg->Add(bes1_ratio_sys_g, "[]");
+		mg_bes->Add(bes1_ratio_def_g, "APZ");
+		mg_bes->Add(bes1_ratio_sys_g, "[]");
 
-		leg->AddEntry(bes1_ratio_def_g, ("BES1 " + to_string(div.first) + "#circ").data(), "p");
-		leg->AddEntry(ampt_ratio_def_g, ("AMPT " +  to_string(div.first) + "#circ").data(), "p");
+		leg_bes->AddEntry(bes1_ratio_def_g, (to_string(div) + "#circ").data(), "p");
+		if (div == 180) { leg_bes->AddEntry("", "", ""); }
 	}
 
-	leg->SetBorderSize(0);
-	leg->SetFillStyle(0);
+	leg_bes->SetBorderSize(0);
+	leg_bes->SetFillStyle(0);
 
-	mg->GetXaxis()->SetLimits(-2, 78);
-	mg->GetXaxis()->SetRangeUser(-2, 78);
+	mg_bes->GetXaxis()->SetLimits(-2, 78);
+	mg_bes->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
-		mg->GetYaxis()->SetLimits(0.9935, 1.0185);
-		mg->GetYaxis()->SetRangeUser(0.9935, 1.0185);
+		mg_bes->GetYaxis()->SetLimits(0.989, 1.0129);
+		mg_bes->GetYaxis()->SetRangeUser(0.989, 1.0129);
 	}
 
-	mg->GetXaxis()->SetTitle("Energy (GeV)");
-	mg->GetYaxis()->SetTitle("Kurtosis");
+	mg_bes->GetXaxis()->SetTitle("Energy (GeV)");
+	mg_bes->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mix}");
+	mg_bes->GetXaxis()->SetLabelFont(43);
+	mg_bes->GetXaxis()->SetTitleFont(43);
+	mg_bes->GetXaxis()->SetLabelSize(text_size);
+	mg_bes->GetXaxis()->SetTitleSize(text_size);
+	mg_bes->GetYaxis()->SetLabelFont(43);
+	mg_bes->GetYaxis()->SetTitleFont(43);
+	mg_bes->GetYaxis()->SetLabelSize(text_size);
+	mg_bes->GetYaxis()->SetTitleSize(text_size);
+	mg_bes->GetYaxis()->SetDecimals(3);
+	mg_bes->GetXaxis()->SetTitleOffset(1.4);
+	mg_bes->GetYaxis()->SetTitleOffset(1.8);
 
-	mg->Draw("AP");
+	mg_bes->Draw("AP");
 
-	TLine* one_line = new TLine(0, 1, 80, 1);
-	one_line->SetLineStyle(2);
-	one_line->Draw();
+	TLine* one_line_bes = new TLine(-2, 1, 78, 1);
+	one_line_bes->SetLineStyle(2);
+	one_line_bes->Draw();
 
-	leg->SetMargin(0.1); leg->Draw();
+	leg_bes->SetNColumns(2);
+//	leg_bes->SetTextFont(43);
+//	leg_bes->SetTextSize(text_size);
+	leg_bes->SetMargin(0.3);
+	leg_bes->Draw();
+
+	TLatex label_bes;
+	label_bes.SetTextFont(43);
+	label_bes.SetTextAlign(12);
+	label_bes.SetTextSize(text_size);
+	string label_text_bes = "#splitline{STAR}{#splitline{" + type_name + " Distribution}{0-5% Centrality}}";
+	if (type_name == "Pull") { label_bes.DrawLatex(8, 1.01, label_text_bes.data()); }
+	else if (type_name == "Ratio") { label_bes.DrawLatex(27, 0.993, label_text_bes.data()); }
+
+	TLatex prelim_bes;
+	prelim_bes.SetTextFont(43);
+	prelim_bes.SetTextAlign(12);
+	prelim_bes.SetTextSize(text_size);
+	if (type_name == "Pull") { prelim_bes.DrawLatex(40, 0.991, "STAR Preliminary"); }
+	else if (type_name == "Ratio") { prelim_bes.DrawLatex(52, 1.011, "STAR Preliminary"); }
+
 
 	gPad->SetTopMargin(0.04);
 	gPad->SetLeftMargin(0.12);
 	gPad->SetRightMargin(0.04);
 
-	can->Update();
-	can->Write();
+	can_bes->Update();
+	can_bes->Write();
 
-	delete can;
+	delete can_bes;
+
+
+	TCanvas* can_ampt = new TCanvas(("Kurtosis_vs_energy_divs_can_ampt_" + type_name).data(), ("AMPT Kurtosis vs Energy with Bin Width " + type_name).data(), 955, 805);
+	TMultiGraph* mg_ampt = new TMultiGraph();
+	mg_ampt->SetName("Kurtosis_vs_energy_mg_ampt");
+	if (type_name == "Ratio") { y1 = 0.13; y2 = 0.33; x1 = 0.57; x2 = 0.77; }
+	else if (type_name == "Pull") { y1 = 0.73; y2 = 0.93; x1 = 0.65; x2 = 0.85; }
+	TLegend* leg_ampt = new TLegend(x1, y1, x2, y2);
+	leg_ampt->SetHeader("Phi Bin Width", "C");
+	for ( int div : div_order) {
+		TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_vals[div], ampt[div].val, energy_err, ampt[div].stat);
+		ampt_ratio_def_g->SetNameTitle(("ampt_" + to_string(div)).data());
+		TGraphErrors* ampt_ratio_sys_g = graph_x_vs_y_err(energy_vals[div], ampt[div].val, energy_err, ampt[div].sys);
+
+		ampt_ratio_def_g->SetMarkerStyle(marker_style[div]);
+		ampt_ratio_def_g->SetMarkerColor(div_color[div]);
+		ampt_ratio_def_g->SetLineColor(div_color[div]);
+		ampt_ratio_def_g->SetMarkerSize(div_marker_size[div]);
+		ampt_ratio_sys_g->SetLineColor(div_color[div]);
+
+		mg_ampt->Add(ampt_ratio_def_g, "APZ");
+		mg_ampt->Add(ampt_ratio_sys_g, "[]");
+
+		leg_ampt->AddEntry(ampt_ratio_def_g, (to_string(div) + "#circ").data(), "p");
+		if (div == 180) { leg_ampt->AddEntry("", "", ""); }
+	}
+
+	leg_ampt->SetBorderSize(0);
+	leg_ampt->SetFillStyle(0);
+
+	mg_ampt->GetXaxis()->SetLimits(-2, 78);
+	mg_ampt->GetXaxis()->SetRangeUser(-2, 78);
+	if (!zoom) {
+		mg_ampt->GetYaxis()->SetLimits(0.989, 1.0129);
+		mg_ampt->GetYaxis()->SetRangeUser(0.989, 1.0129);
+	}
+
+	mg_ampt->GetXaxis()->SetTitle("Energy (GeV)");
+	mg_ampt->GetYaxis()->SetTitle("Kurtosis_{Raw}  /  Kurtosis_{Mixed}");
+	mg_ampt->GetXaxis()->SetLabelFont(43);
+	mg_ampt->GetXaxis()->SetTitleFont(43);
+	mg_ampt->GetXaxis()->SetLabelSize(text_size);
+	mg_ampt->GetXaxis()->SetTitleSize(text_size);
+	mg_ampt->GetYaxis()->SetLabelFont(43);
+	mg_ampt->GetYaxis()->SetTitleFont(43);
+	mg_ampt->GetYaxis()->SetLabelSize(text_size);
+	mg_ampt->GetYaxis()->SetTitleSize(text_size);
+	mg_ampt->GetYaxis()->SetDecimals(3);
+	mg_ampt->GetXaxis()->SetTitleOffset(1.4);
+	mg_ampt->GetYaxis()->SetTitleOffset(1.8);
+
+	mg_ampt->Draw("AP");
+
+	TLine* one_line = new TLine(-2, 1, 78, 1);
+	one_line->SetLineStyle(2);
+	one_line->Draw();
+
+	leg_ampt->SetNColumns(2);
+//	leg_ampt->SetTextFont(43);  // Somehow lose header with this
+//	leg_ampt->SetTextSize(text_size);
+	leg_ampt->SetMargin(0.3);
+	leg_ampt->Draw();
+
+	TLatex label_ampt;
+	label_ampt.SetTextFont(43);
+	label_ampt.SetTextAlign(12);
+	label_ampt.SetTextSize(text_size);
+	string label_text_ampt = "#splitline{AMPT}{#splitline{" + type_name + " Distribution}{0-5% Centrality}}";
+	if (type_name == "Pull") { label_ampt.DrawLatex(8, 1.01, label_text_ampt.data()); }
+	else if (type_name == "Ratio") { label_ampt.DrawLatex(5, 0.992, label_text_ampt.data()); }
+
+	TLatex prelim_ampt;
+	prelim_ampt.SetTextFont(43);
+	prelim_ampt.SetTextAlign(12);
+	prelim_ampt.SetTextSize(text_size);
+	if (type_name == "Pull") { prelim_ampt.DrawLatex(5, 0.991, "STAR Preliminary"); }
+	else if (type_name == "Ratio") { prelim_ampt.DrawLatex(3, 1.012, "STAR Preliminary"); }
+
+	gPad->SetTopMargin(0.04);
+	gPad->SetLeftMargin(0.12);
+	gPad->SetRightMargin(0.04);
+
+	can_ampt->Update();
+	can_ampt->Write();
+
+	delete can_ampt;
 }
 
 

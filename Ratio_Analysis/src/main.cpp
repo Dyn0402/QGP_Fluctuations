@@ -82,10 +82,10 @@ int main() {
 
 void fig_read_plot() {
 	AzFigurePlotter analyzer;
-//	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
-	analyzer.set_out_path("/home/dylan/Downloads/");
+	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
+//	analyzer.set_out_path("/home/dylan/Downloads/");
 	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_9-22-21_current.txt");
-	analyzer.set_out_root_name("9-28-21.root");
+	analyzer.set_out_root_name("9-28-21_Preliminaries.root");
 
 //	analyzer.plot_paper_figs();
 	analyzer.plot_pres_figs();

@@ -52,7 +52,7 @@ private:
 	// Doers
 	void kurt_vs_energy_pres_plot(vector<int> energies, map<string, plot_data> bes1, map<string, plot_data> ampt, string type_name);
 	void kurt_vs_energy_cf_pres_plot(vector<int> energies, map<string, plot_data> bes1, map<string, plot_data> ampt, map<string, plot_data> cf, string type_name);
-	void kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
+	void kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, vector<int> div_order, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
 
 	void kurt_vs_divs_w_energy_plot(map<int, string> energies, vector<int> divs, map<string, map<int, plot_data>> bes1, map<string, map<int, plot_data>> ampt, map<string, map<int, plot_data>> cf, string type_name);
 	void kurt_vs_energy_cents_plot(vector<int> energies, map<int, plot_data> bes1, map<int, plot_data> ampt, string type_name);
