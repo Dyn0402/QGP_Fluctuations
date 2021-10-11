@@ -67,7 +67,7 @@ public:
 	void set_qa_name(string name);
 	void set_set_name(string set_name);
 	void set_sim_proton_dist_dataset(string path);
-	void set_sim_eff_dist_path(string root_path, string hist_name);
+//	void set_sim_eff_dist_path(string root_path, string hist_name);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_ampt(bool ampt);
@@ -94,6 +94,7 @@ public:
 	void set_particle(string particle);
 	void set_particle_dist_hist_max(int max);
 	void set_ampt_particle_pid(vector<int> pid);
+	void set_sim_pars(simulation_pars pars);
 
 	void set_tree_reader_rand_seed(int seed = 0);
 	void set_mixer_rand_seed(int seed = 0);
@@ -118,7 +119,6 @@ public:
 	Mixer mix;
 	Randomizer random;
 
-	Simulator sim;
 	AmptCentralityMaker ampt_cent;
 
 private:
@@ -128,6 +128,7 @@ private:
 	TRandom3* trand = new TRandom3(0);
 	tree_branches branches;
 	ampt_tree_branches ampt_branches;
+	simulation_pars sim_pars;
 
 	string event_cut_hist_name = "Event Cut Hist";
 	string track_cut_hist_name = "Track Cut Hist";
@@ -145,7 +146,7 @@ private:
 	string ampt_type = "string_melting";
 
 	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
-	vector<string> sim_eff_dist_path{};
+//	vector<string> sim_eff_dist_path{};
 
 	vector<int> divs = { 180, 120, 90, 72, 60 };
 	int energy;

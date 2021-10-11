@@ -258,11 +258,11 @@ void AzBinner::set_sim_proton_dist_dataset(string path) {
 	sim_proton_dist_dataset = path;
 }
 
-void AzBinner::set_sim_eff_dist_path(string root_path, string hist_name) {
-	if ((int)sim_eff_dist_path.size() > 0) { sim_eff_dist_path.clear(); }
-	sim_eff_dist_path.push_back(root_path);
-	sim_eff_dist_path.push_back(hist_name);
-}
+//void AzBinner::set_sim_eff_dist_path(string root_path, string hist_name) {
+//	if ((int)sim_eff_dist_path.size() > 0) { sim_eff_dist_path.clear(); }
+//	sim_eff_dist_path.push_back(root_path);
+//	sim_eff_dist_path.push_back(hist_name);
+//}
 
 void AzBinner::set_energy(int energy) {
 	this->energy = energy;
@@ -388,6 +388,10 @@ void AzBinner::set_file_shuffle_rand_seed(int seed) {
 void AzBinner::set_stref_rand_seed(int seed) {
 	stref_seed = seed;
 	refmultCorrUtil->set_rand_seed(seed);
+}
+
+void AzBinner::set_sim_pars(simulation_pars pars) {
+	this->sim_pars = pars;
 }
 
 
@@ -947,8 +951,15 @@ void AzBinner::write_info_file() {
 
 		out << "min_multi: " << to_string(cut.min_multi) << endl;
 
-		out << "sim p_group: " << to_string(sim.get_p_group()) << endl;
-		out << "sim spread_sigma: " << to_string(sim.get_spread_sigma()) << endl;
+		out << "sim p_group: " << to_string(sim_pars.p_group) << endl;
+		out << "sim spread_sigma: " << to_string(sim_pars.spread_sigma) << endl;
+		out << "sim min_protons: " << to_string(sim_pars.min_protons) << endl;
+		out << "sim proton_dist: " << sim_pars.proton_dist << endl;
+		out << "sim particle_mean: " << to_string(sim_pars.particle_mean) << endl;
+		out << "sim particle_max: " << to_string(sim_pars.particle_max) << endl;
+		out << "sim hom_eff: " << to_string(sim_pars.hom_eff) << endl;
+		out << "sim v2: " << to_string(sim_pars.v2) << endl;
+		out << "sim ep_res: " << to_string(sim_pars.ep_res) << endl;
 
 		out << "mix single_ratio: " << boolalpha << mix.get_single_ratio() << endl;
 		out << "mix n1_ratios: " << boolalpha << mix.get_n1_ratios() << endl;
