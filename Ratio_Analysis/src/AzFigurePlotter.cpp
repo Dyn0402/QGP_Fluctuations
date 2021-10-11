@@ -794,7 +794,10 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	TCanvas* can = new TCanvas(("Kurtosis_vs_energy_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
 	TMultiGraph* mg = new TMultiGraph();
 	mg->SetName("Kurtosis_vs_energy_mg");
-	TLegend* leg = new TLegend(0.7, 0.13, 0.9, 0.3);
+	float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+	if (type_name == "Ratio") { x1 = 0.7743966; y1 = 0.1286812; x2 = 0.9737671; y2 = 0.2989757; }
+	else if (type_name == "Pull") { x1 = 0.6222455; y1 = 0.5428937; x2 = 0.8205666; y2 = 0.7131882; }
+	TLegend* leg = new TLegend(x1, y1, x2, y2);
 	TGraphErrors* bes1_ratio_def_g = graph_x_vs_y_err(energy_bes1, bes1["divide"].val, energy_err, bes1["divide"].stat);
 	TGraphErrors* ampt_ratio_def_g = graph_x_vs_y_err(energy_ampt, ampt["divide"].val, energy_err, ampt["divide"].stat);
 	bes1_ratio_def_g->SetNameTitle("bes1");
@@ -822,7 +825,7 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	leg->SetBorderSize(0);
 	leg->SetFillStyle(0);
 	leg->SetTextFont(43);
-	leg->SetTextSize(28);
+	leg->SetTextSize(26);
 	leg->AddEntry(bes1_ratio_def_g, "STAR", "p");
 	leg->AddEntry(ampt_ratio_def_g, "AMPT", "p");
 
@@ -860,24 +863,34 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	TLatex label;
 	label.SetTextFont(43);
 	label.SetTextAlign(12);
-	label.SetTextSize(28);
-	string label_text = "#splitline{#splitline{#splitline{#splitline{#splitline{" + type_name + " Distribution}{protons}}{0-5% Centrality}}{120#circ Divisions}}{|y| < 0.5}}{0.4 < p_{t} < 2.0}";
-	if (type_name == "Pull") { label.DrawLatex(5, 1.0096, label_text.data()); }
-	else if (type_name == "Ratio") { label.DrawLatex(5, 1.0096, label_text.data()); }
+	label.SetTextSize(26);
+	string label_text = "#splitline{#splitline{#splitline{#splitline{#splitline{#bf{" + type_name + " Transformation}}{Protons}}{0-5% Centrality}}{120#circ Divisions}}{|y| < 0.5}}{0.4 < p_{T}(GeV/c) < 2.0}";
+	if (type_name == "Pull") { label.DrawLatex(6.858242, 1.008371, label_text.data()); }
+	else if (type_name == "Ratio") { label.DrawLatex(34.14051, 1.002157, label_text.data()); }
+
+//	TLatex y_val_label;
+//	y_val_label.SetTextFont(43);
+//	y_val_label.SetTextAlign(12);
+//	y_val_label.SetTextSize(30);
+//	string y_val_text = "#frac{Raw " + type_name + " Distribution Kurtosis}{Mixed " + type_name + " Distribution Kurtosis}";
+//	if (type_name == "Pull") { y_val_label.DrawLatex(3.360516, 1.009804, y_val_text.data()); }
+//	else if (type_name == "Ratio") { y_val_label.DrawLatex(3.360516, 1.009804, y_val_text.data()); }
 
 	TLatex prelim;
 	prelim.SetTextFont(43);
 	prelim.SetTextAlign(12);
-	prelim.SetTextSize(28);
-	if (type_name == "Pull") { prelim.DrawLatex(50, 1.01, "STAR Preliminary"); }
-	else if (type_name == "Ratio") { prelim.DrawLatex(50, 1.01, "STAR Preliminary"); }
+	prelim.SetTextSize(31);
+	prelim.SetNDC();
+	if (type_name == "Pull") { prelim.DrawLatex(0.71, 0.93, "STAR Preliminary"); }
+	else if (type_name == "Ratio") { prelim.DrawLatex(0.71, 0.93, "STAR Preliminary"); }
 
 	TLatex x_shift;
 	x_shift.SetTextFont(43);
 	x_shift.SetTextAlign(12);
-	x_shift.SetTextSize(20);
-	if (type_name == "Pull") { x_shift.DrawLatex(50, 0.999, "Energy values slightly offset for clarity"); }
-	if (type_name == "Ratio") { x_shift.DrawLatex(50, 0.999, "Energy values slightly offset for clarity"); }
+	x_shift.SetTextSize(18);
+	x_shift.SetNDC();
+	if (type_name == "Pull") { x_shift.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
+	if (type_name == "Ratio") { x_shift.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
 
 	can->Update();
 	can->Write();
@@ -889,9 +902,8 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	TCanvas* can_rm = new TCanvas(("Kurtosis_vs_energy_raw_mix_can_"+type_name).data(), ("Kurtosis vs Energy " + type_name).data(), 955, 805);
 	TMultiGraph* mg_rm = new TMultiGraph();
 	mg_rm->SetName("Kurtosis_vs_energy_raw_mix_mg");
-	float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-	if (type_name == "Ratio") { x1 = 0.1; x2 = 0.6; y1 = 0.75; y2 = 0.9; }
-	else if (type_name == "Pull") { x1 = 0.1;  x2 = 0.6; y1 = 0.2; y2 = 0.35; }
+	if (type_name == "Ratio") { x1 = 0.7240294; y1 = 0.1792574; x2 = 0.980063; y2 = 0.3290653; }
+	else if (type_name == "Pull") { x1 = 0.7040923; y1 = 0.7016645; x2 = 0.9601259; y2 = 0.8514725; }
 	TLegend* leg_rm = new TLegend(x1, y1, x2, y2);
 	TGraphErrors* bes1_ratio_def_raw_g = graph_x_vs_y_err(energy_bes1_raw, bes1["raw"].val, energy_err, bes1["raw"].stat);
 	TGraphErrors* ampt_ratio_def_raw_g = graph_x_vs_y_err(energy_ampt_raw, ampt["raw"].val, energy_err, ampt["raw"].stat);
@@ -940,16 +952,25 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	mg_rm->Add(bes1_ratio_def_raw_g, "P");
 	mg_rm->Add(bes1_ratio_sys_raw_g, "[]");
 
-	leg_rm->SetNColumns(2);
+	leg_rm->SetNColumns(3);
 	leg_rm->SetBorderSize(0);
 	leg_rm->SetFillStyle(0);
 	leg_rm->SetTextFont(43);
-	leg_rm->SetTextSize(28);
-	leg_rm->SetMargin(0.3);
-	leg_rm->AddEntry(bes1_ratio_def_raw_g, "STAR Raw", "p");
-	leg_rm->AddEntry(ampt_ratio_def_raw_g, "AMPT Raw", "p");
-	leg_rm->AddEntry(bes1_ratio_def_mix_g, "STAR Mixed", "p");
-	leg_rm->AddEntry(ampt_ratio_def_mix_g, "AMPT Mixed", "p");
+	leg_rm->SetTextSize(26);
+	leg_rm->SetMargin(-0.7);
+	leg_rm->AddEntry("", "", "");
+	leg_rm->AddEntry("", "STAR", "");
+	leg_rm->AddEntry("", "AMPT", "");
+	leg_rm->AddEntry("", "Raw", "");
+	leg_rm->AddEntry(bes1_ratio_def_raw_g, "", "p");
+	leg_rm->AddEntry(ampt_ratio_def_raw_g, "", "p");
+	leg_rm->AddEntry("", "Mixed", "");
+	leg_rm->AddEntry(bes1_ratio_def_mix_g, "", "p");
+	leg_rm->AddEntry(ampt_ratio_def_mix_g, "", "p");
+//	leg_rm->AddEntry(bes1_ratio_def_raw_g, "STAR Raw", "p");
+//	leg_rm->AddEntry(ampt_ratio_def_raw_g, "AMPT Raw", "p");
+//	leg_rm->AddEntry(bes1_ratio_def_mix_g, "STAR Mixed", "p");
+//	leg_rm->AddEntry(ampt_ratio_def_mix_g, "AMPT Mixed", "p");
 
 	mg_rm->GetXaxis()->SetLimits(-2, 78);
 	mg_rm->GetXaxis()->SetRangeUser(-2, 78);
@@ -993,24 +1014,36 @@ void AzFigurePlotter::kurt_vs_energy_pres_plot(vector<int> energies, map<string,
 	TLatex label_rm;
 	label_rm.SetTextFont(43);
 	label_rm.SetTextAlign(12);
-	label_rm.SetTextSize(28);
-	string label_text_rm = "#splitline{#splitline{#splitline{#splitline{#splitline{" + type_name + " Distribution}{protons}}{0-5% Centrality}}{120#circ Divisions}}{|y| < 0.5}}{0.4 < p_{t} < 2.0}";
-	if (type_name == "Pull") { label_rm.DrawLatex(55, 2.95, label_text_rm.data()); }
-	else if (type_name == "Ratio") { label_rm.DrawLatex(55, 3.065, label_text_rm.data()); }
+	label_rm.SetTextSize(26);
+	label_rm.SetNDC();
+	string label_text_rm = "#splitline{#splitline{#splitline{#splitline{#splitline{#bf{" + type_name + " Transformation}}{Protons}}{0-5% Centrality}}{120#circ Divisions}}{|y| < 0.5}}{0.4 < p_{T}(GeV/c) < 2.0}";
+	if (type_name == "Pull") { label_rm.DrawLatex(0.1710388, 0.2432778, label_text_rm.data()); }
+	else if (type_name == "Ratio") { label_rm.DrawLatex(0.1710388, 0.7861716, label_text_rm.data()); }
+
+//	TLatex y_val_label_rm;
+//	y_val_label_rm.SetTextFont(43);
+//	y_val_label_rm.SetTextAlign(12);
+//	y_val_label_rm.SetTextSize(30);
+//	y_val_label_rm.SetNDC();
+//	string y_val_text_rm = type_name + " Distribution Kurtosis";
+//	if (type_name == "Pull") { y_val_label_rm.DrawLatex(0.1741868, 0.8924456, y_val_text_rm.data()); }
+//	else if (type_name == "Ratio") { y_val_label_rm.DrawLatex(0.1741868, 0.8924456, y_val_text_rm.data()); }
 
 	TLatex prelim_rm;
 	prelim_rm.SetTextFont(43);
 	prelim_rm.SetTextAlign(12);
-	prelim_rm.SetTextSize(28);
-	if (type_name == "Pull") { prelim_rm.DrawLatex(50, 2.88, "STAR Preliminary"); }
-	else if (type_name == "Ratio") { prelim_rm.DrawLatex(41, 3.16, "STAR Preliminary"); }
+	prelim_rm.SetTextSize(31);
+	prelim_rm.SetNDC();
+	if (type_name == "Pull") { prelim_rm.DrawLatex(0.71, 0.93, "STAR Preliminary"); }
+	else if (type_name == "Ratio") { prelim_rm.DrawLatex(0.71, 0.93, "STAR Preliminary"); }
 
 	TLatex x_shift_rm;
 	x_shift_rm.SetTextFont(43);
 	x_shift_rm.SetTextAlign(12);
-	x_shift_rm.SetTextSize(20);
-	if (type_name == "Pull") { x_shift_rm.DrawLatex(50, 2.8, "Energy values slightly offset for clarity"); }
-	if (type_name == "Ratio") { x_shift_rm.DrawLatex(50, 3.0, "Energy values slightly offset for clarity"); }
+	x_shift_rm.SetTextSize(18);
+	x_shift_rm.SetNDC();
+	if (type_name == "Pull") { x_shift_rm.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
+	if (type_name == "Ratio") { x_shift_rm.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
 
 	can_rm->Update();
 	can_rm->Write();
@@ -1131,7 +1164,7 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	map<int, int> div_color{ {60, kBlack}, {72, kRed}, {90, kGreen+3}, {120, kBlue}, {180, kViolet}, {240, kCyan + 2}, {270, kGreen + 1}, {300, kGray + 2} };
 	map<int, int> marker_style{ {60, 22}, {72, 2}, {90, 21}, {120, 20}, {180, 34}, {240, 24}, {270, 25}, {300, 26} };
 	map<int, int> div_marker_size{ {60, 2}, {72, 2}, {90, 2}, {120, 2}, {180, 2}, {240, 2}, {270, 2}, {300, 2} };
-	int text_size = 26;
+	int text_size = 28;
 
 	// BES1
 	TCanvas* can_bes = new TCanvas(("Kurtosis_vs_energy_divs_can_bes_" + type_name).data(), ("BES1 Kurtosis vs Energy with Bin Width " + type_name).data(), 955, 805);
@@ -1139,8 +1172,8 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	mg_bes->SetName("Kurtosis_vs_energy_mg_bes");
 
 	double y1 = 0.1, y2 = 0.2, x1 = 0.7, x2 = 0.9;
-	if (type_name == "Ratio") { y1 = 0.13; y2 = 0.33; x1 = 0.7; x2 = 0.9; }
-	else if (type_name == "Pull") { y1 = 0.73; y2 = 0.93; x1 = 0.65; x2 = 0.85; }
+	if (type_name == "Ratio") { x1 = 0.7177335; y1 = 0.1395647; x2 = 0.9171039; y2 = 0.3393086; }
+	else if (type_name == "Pull") { x1 = 0.5687303; y1 = 0.6696543; x2 = 0.7691501; y2 = 0.8693982; }
 	TLegend* leg_bes = new TLegend(x1, y1, x2, y2);
 	leg_bes->SetHeader("Angular Width", "C");
 	for ( int div : div_order) {
@@ -1167,8 +1200,8 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	mg_bes->GetXaxis()->SetLimits(-2, 78);
 	mg_bes->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
-		mg_bes->GetYaxis()->SetLimits(0.989, 1.0129);
-		mg_bes->GetYaxis()->SetRangeUser(0.989, 1.0129);
+		mg_bes->GetYaxis()->SetLimits(0.988, 1.0129);
+		mg_bes->GetYaxis()->SetRangeUser(0.988, 1.0129);
 	}
 
 	mg_bes->GetXaxis()->SetTitle("Energy (GeV)");
@@ -1200,25 +1233,36 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	TLatex label_bes;
 	label_bes.SetTextFont(43);
 	label_bes.SetTextAlign(12);
-	label_bes.SetTextSize(text_size);
-	string label_text_bes = "#splitline{#splitline{#splitline{#splitline{#splitline{STAR}{" + type_name + " Distribution}}{protons}}{0-5% Centrality}}{|y| < 0.5}}{0.4 < p_{t} < 2.0}";
-	if (type_name == "Pull") { label_bes.DrawLatex(8, 1.01, label_text_bes.data()); }
-	else if (type_name == "Ratio") { label_bes.DrawLatex(27, 0.993, label_text_bes.data()); }
+	label_bes.SetTextSize(text_size - 2);
+	label_bes.SetNDC();
+	string label_text_bes = "#splitline{#splitline{#splitline{#splitline{#splitline{#bf{" + type_name + " Transformation}}{STAR}}{Protons}}{0-5% Centrality}}{|y| < 0.5}}{0.4 < p_{T}(GeV/c) < 2.0}";
+	if (type_name == "Pull") { label_bes.DrawLatex(0.18468, 0.8245839, label_text_bes.data()); }
+	else if (type_name == "Ratio") { label_bes.DrawLatex(0.3913956, 0.2317542, label_text_bes.data()); }
+
+//	TLatex y_val_label_bes;
+//	y_val_label_bes.SetTextFont(43);
+//	y_val_label_bes.SetTextAlign(12);
+//	y_val_label_bes.SetTextSize(text_size + 2);
+//	y_val_label_bes.SetNDC();
+//	string y_val_text_bes = "#frac{Raw " + type_name + " Distribution Kurtosis}{Mixed " + type_name + " Distribution Kurtosis}";
+//	if (type_name == "Pull") { y_val_label_bes.DrawLatex(0.1668416, 0.8975672, y_val_text_bes.data()); }
+//	else if (type_name == "Ratio") { y_val_label_bes.DrawLatex(0.1490031, 0.1702945, y_val_text_bes.data()); }
 
 	TLatex prelim_bes;
 	prelim_bes.SetTextFont(43);
 	prelim_bes.SetTextAlign(12);
-	prelim_bes.SetTextSize(text_size);
-	if (type_name == "Pull") { prelim_bes.DrawLatex(40, 0.991, "STAR Preliminary"); }
-	else if (type_name == "Ratio") { prelim_bes.DrawLatex(52, 1.011, "STAR Preliminary"); }
+	prelim_bes.SetTextSize(text_size + 3);
+	prelim_bes.SetNDC();
+	if (type_name == "Pull") { prelim_bes.DrawLatex(0.71, 0.93, "STAR Preliminary"); }
+	else if (type_name == "Ratio") { prelim_bes.DrawLatex(0.71, 0.93, "STAR Preliminary"); }
 
 	TLatex x_shift;
 	x_shift.SetTextFont(43);
 	x_shift.SetTextAlign(12);
-	x_shift.SetTextSize(20);
-	if (type_name == "Pull") { x_shift.DrawLatex(50, 0.99, "Energy values slightly offset for clarity"); }
-	if (type_name == "Ratio") { x_shift.DrawLatex(50, 0.99, "Energy values slightly offset for clarity"); }
-
+	x_shift.SetTextSize(18);
+	x_shift.SetNDC();
+	if (type_name == "Pull") { x_shift.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
+	if (type_name == "Ratio") { x_shift.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
 
 	gPad->SetTopMargin(0.04);
 	gPad->SetLeftMargin(0.12);
@@ -1233,8 +1277,8 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	TCanvas* can_ampt = new TCanvas(("Kurtosis_vs_energy_divs_can_ampt_" + type_name).data(), ("AMPT Kurtosis vs Energy with Bin Width " + type_name).data(), 955, 805);
 	TMultiGraph* mg_ampt = new TMultiGraph();
 	mg_ampt->SetName("Kurtosis_vs_energy_mg_ampt");
-	if (type_name == "Ratio") { y1 = 0.13; y2 = 0.33; x1 = 0.57; x2 = 0.77; }
-	else if (type_name == "Pull") { y1 = 0.73; y2 = 0.93; x1 = 0.65; x2 = 0.85; }
+	if (type_name == "Ratio") { x1 = 0.1500525; y1 = 0.1293214; x2 = 0.3494229; y2 = 0.3290653; }
+	else if (type_name == "Pull") { x1 = 0.5897167; y1 = 0.7323944; x2 = 0.7901364; y2 = 0.9321383; }
 	TLegend* leg_ampt = new TLegend(x1, y1, x2, y2);
 	leg_ampt->SetHeader("Angular Width", "C");
 	for ( int div : div_order) {
@@ -1261,8 +1305,8 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	mg_ampt->GetXaxis()->SetLimits(-2, 78);
 	mg_ampt->GetXaxis()->SetRangeUser(-2, 78);
 	if (!zoom) {
-		mg_ampt->GetYaxis()->SetLimits(0.989, 1.0129);
-		mg_ampt->GetYaxis()->SetRangeUser(0.989, 1.0129);
+		mg_ampt->GetYaxis()->SetLimits(0.988, 1.0129);
+		mg_ampt->GetYaxis()->SetRangeUser(0.988, 1.0129);
 	}
 
 	mg_ampt->GetXaxis()->SetTitle("Energy (GeV)");
@@ -1294,10 +1338,20 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	TLatex label_ampt;
 	label_ampt.SetTextFont(43);
 	label_ampt.SetTextAlign(12);
-	label_ampt.SetTextSize(text_size);
-	string label_text_ampt = "#splitline{#splitline{#splitline{#splitline{#splitline{AMPT}{" + type_name + " Distribution}}{protons}}{0-5% Centrality}}{|y| < 0.5}}{0.4 < p_{t} < 2.0}";
-	if (type_name == "Pull") { label_ampt.DrawLatex(8, 1.01, label_text_ampt.data()); }
-	else if (type_name == "Ratio") { label_ampt.DrawLatex(5, 0.992, label_text_ampt.data()); }
+	label_ampt.SetTextSize(text_size - 2);
+	label_ampt.SetNDC();
+	string label_text_ampt = "#splitline{#splitline{#splitline{#splitline{#splitline{#bf{" + type_name + " Transformation}}{AMPT}}{Protons}}{0-5% Centrality}}{|y| < 0.5}}{0.4 < p_{T}(GeV/c) < 2.0}";
+	if (type_name == "Pull") { label_ampt.DrawLatex(0.1741868, 0.8322663, label_text_ampt.data()); }
+	else if (type_name == "Ratio") { label_ampt.DrawLatex(0.570829, 0.2291933, label_text_ampt.data()); }
+
+//	TLatex y_val_label_ampt;
+//	y_val_label_ampt.SetTextFont(43);
+//	y_val_label_ampt.SetTextAlign(12);
+//	y_val_label_ampt.SetTextSize(text_size + 2);
+//	y_val_label_ampt.SetNDC();
+//	string y_val_text_ampt = "#frac{Raw " + type_name + " Distribution Kurtosis}{Mixed " + type_name + " Distribution Kurtosis}";
+//	if (type_name == "Pull") { y_val_label_ampt.DrawLatex(0.1668416, 0.8975672, y_val_text_ampt.data()); }
+//	else if (type_name == "Ratio") { y_val_label_ampt.DrawLatex(0.1490031, 0.1702945, y_val_text_ampt.data()); }
 
 //	TLatex prelim_ampt;
 //	prelim_ampt.SetTextFont(43);
@@ -1309,9 +1363,10 @@ void AzFigurePlotter::kurt_vs_divs_w_energy_pres_plot(map<int, int> energies, ve
 	TLatex x_shift_ampt;
 	x_shift_ampt.SetTextFont(43);
 	x_shift_ampt.SetTextAlign(12);
-	x_shift_ampt.SetTextSize(20);
-	if (type_name == "Pull") { x_shift_ampt.DrawLatex(50, 0.99, "Energy values slightly offset for clarity"); }
-	if (type_name == "Ratio") { x_shift_ampt.DrawLatex(50, 0.99, "Energy values slightly offset for clarity"); }
+	x_shift_ampt.SetTextSize(18);
+	x_shift_ampt.SetNDC();
+	if (type_name == "Pull") { x_shift_ampt.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
+	if (type_name == "Ratio") { x_shift_ampt.DrawLatex(0.1479538, 0.03457106, "Energy values slightly offset for clarity"); }
 
 	gPad->SetTopMargin(0.04);
 	gPad->SetLeftMargin(0.12);
