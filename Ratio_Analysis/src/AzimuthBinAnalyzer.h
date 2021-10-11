@@ -46,6 +46,7 @@ public:
 	string get_bes_in_path();
 	string get_ampt_in_path();
 	string get_cf_in_path();
+	string get_sim_in_path();
 	string get_out_path();
 
 	// Setters

@@ -48,6 +48,10 @@ string AzimuthBinAnalyzer::get_cf_in_path() {
 	return this->cf_in_path;
 }
 
+string AzimuthBinAnalyzer::get_sim_in_path() {
+	return this->sim_in_path;
+}
+
 string AzimuthBinAnalyzer::get_out_path() {
 	return this->out_path;
 }
