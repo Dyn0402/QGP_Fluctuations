@@ -60,11 +60,11 @@ public:
 	void set_ampt(bool ampt);
 	void set_cooper_frye(bool cf);
 	void set_pile_up(bool pile_up);
-	//void set_sim_eff(bool sim_eff);
-	//void set_sim_flow(bool sim_flow);
+	void set_sim_eff(bool sim_eff);
+	void set_sim_flow(bool sim_flow);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_particle(string particle);
-	//void set_particle_dist_hist_max(int max);
+//	void set_particle_dist_hist_max(int max);
 	void set_ampt_particle_pid(vector<int> pid);
 	void set_file_list(vector<string> *file_list);
 
@@ -75,7 +75,7 @@ public:
 
 	// Doers
 	void read_trees();
-	//void sim_events(map<int, int> cent_num_events);
+	void sim_events(map<int, int> cent_num_events);
 
 	// Attributes
 	clock_t start = clock();
@@ -87,6 +87,8 @@ public:
 	event_defaults event_defs;  // Just for AMPT default values
 	track_defaults track_defs;  // Just for AMPT default values
 	AmptCentralityMaker ampt_cent;
+
+	Simulator sim;
 
 private:
 	// Attributes
@@ -113,6 +115,7 @@ private:
 	string ampt_type = "string_melting";
 
 	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
+	string sim_dist_qa_name = "QA_";
 	vector<string> sim_eff_dist_path {};
 
 	int energy;
@@ -126,6 +129,8 @@ private:
 	bool ampt;
 	bool cooper_frye;
 	bool pile_up;
+	bool sim_eff;
+	bool sim_flow;
 
 	double pile_up_prob;
 

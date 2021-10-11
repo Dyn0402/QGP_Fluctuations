@@ -268,31 +268,45 @@ void read_new() {
 //		{"CF_def_0", {{"default", {{"CF_rapid05_n1ratios_", {0, 0}}}}}}
 //	};
 
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"CF_rapid1_0", {{"rapid1_def", {{"CF_rapid1_n1ratios_", {0, 7}}}}}},
+//		{"CF_rapid1_1", {{"rapid1_def", {{"CF_rapid1_n1ratios_", {8, 14}}}}}},
+//		{"CF_rapid08_0", {{"rapid08_def", {{"CF_rapid08_n1ratios_", {0, 7}}}}}},
+//		{"CF_rapid08_1", {{"rapid08_def", {{"CF_rapid08_n1ratios_", {8, 14}}}}}},
+//		{"CF_rapid06_0", {{"rapid06_def", {{"CF_rapid06_n1ratios_", {0, 7}}}}}},
+//		{"CF_rapid06_1", {{"rapid06_def", {{"CF_rapid06_n1ratios_", {8, 14}}}}}},
+//		{"CF_rapid04_0", {{"rapid04_def", {{"CF_rapid04_n1ratios_", {0, 7}}}}}},
+//		{"CF_rapid04_1", {{"rapid04_def", {{"CF_rapid04_n1ratios_", {8, 14}}}}}},
+//		{"CF_rapid03_0", {{"rapid03_def", {{"CF_rapid03_n1ratios_", {0, 7}}}}}},
+//		{"CF_rapid03_1", {{"rapid03_def", {{"CF_rapid03_n1ratios_", {8, 14}}}}}},
+//		{"CF_rapid02_0", {{"rapid02_def", {{"CF_rapid02_n1ratios_", {0, 7}}}}}},
+//		{"CF_rapid02_1", {{"rapid02_def", {{"CF_rapid02_n1ratios_", {8, 14}}}}}},
+//		{"CF_rapid01_0", {{"rapid01_def", {{"CF_rapid01_n1ratios_", {0, 7}}}}}},
+//		{"CF_rapid01_1", {{"rapid01_def", {{"CF_rapid01_n1ratios_", {8, 14}}}}}},
+//		{"CF_Eff1_0", {{"Eff1_def", {{"CF_rapid05_n1ratios_Efficiency1_", {0, 7}}}}}},
+//		{"CF_Eff1_1", {{"Eff1_def", {{"CF_rapid05_n1ratios_Efficiency1_", {8, 14}}}}}},
+//		{"CF_Eff2_0", {{"Eff2_def", {{"CF_rapid05_n1ratios_Efficiency2_", {0, 7}}}}}},
+//		{"CF_Eff2_1", {{"Eff2_def", {{"CF_rapid05_n1ratios_Efficiency2_", {8, 14}}}}}},
+//		{"CF_Eff3_0", {{"Eff3_def", {{"CF_rapid05_n1ratios_Efficiency3_", {0, 7}}}}}},
+//		{"CF_Eff3_1", {{"Eff3_def", {{"CF_rapid05_n1ratios_Efficiency3_", {8, 14}}}}}},
+//		{"CF_Eff05_0", {{"Eff05_def", {{"CF_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
+//		{"CF_Eff05_1", {{"Eff05_def", {{"CF_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
+//		{"CF_Eff15_0", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
+//		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
+//	};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"CF_rapid1_0", {{"rapid1_def", {{"CF_rapid1_n1ratios_", {0, 7}}}}}},
-		{"CF_rapid1_1", {{"rapid1_def", {{"CF_rapid1_n1ratios_", {8, 14}}}}}},
-		{"CF_rapid08_0", {{"rapid08_def", {{"CF_rapid08_n1ratios_", {0, 7}}}}}},
-		{"CF_rapid08_1", {{"rapid08_def", {{"CF_rapid08_n1ratios_", {8, 14}}}}}},
-		{"CF_rapid06_0", {{"rapid06_def", {{"CF_rapid06_n1ratios_", {0, 7}}}}}},
-		{"CF_rapid06_1", {{"rapid06_def", {{"CF_rapid06_n1ratios_", {8, 14}}}}}},
-		{"CF_rapid04_0", {{"rapid04_def", {{"CF_rapid04_n1ratios_", {0, 7}}}}}},
-		{"CF_rapid04_1", {{"rapid04_def", {{"CF_rapid04_n1ratios_", {8, 14}}}}}},
-		{"CF_rapid03_0", {{"rapid03_def", {{"CF_rapid03_n1ratios_", {0, 7}}}}}},
-		{"CF_rapid03_1", {{"rapid03_def", {{"CF_rapid03_n1ratios_", {8, 14}}}}}},
-		{"CF_rapid02_0", {{"rapid02_def", {{"CF_rapid02_n1ratios_", {0, 7}}}}}},
-		{"CF_rapid02_1", {{"rapid02_def", {{"CF_rapid02_n1ratios_", {8, 14}}}}}},
-		{"CF_rapid01_0", {{"rapid01_def", {{"CF_rapid01_n1ratios_", {0, 7}}}}}},
-		{"CF_rapid01_1", {{"rapid01_def", {{"CF_rapid01_n1ratios_", {8, 14}}}}}},
-		{"CF_Eff1_0", {{"Eff1_def", {{"CF_rapid05_n1ratios_Efficiency1_", {0, 7}}}}}},
-		{"CF_Eff1_1", {{"Eff1_def", {{"CF_rapid05_n1ratios_Efficiency1_", {8, 14}}}}}},
-		{"CF_Eff2_0", {{"Eff2_def", {{"CF_rapid05_n1ratios_Efficiency2_", {0, 7}}}}}},
-		{"CF_Eff2_1", {{"Eff2_def", {{"CF_rapid05_n1ratios_Efficiency2_", {8, 14}}}}}},
-		{"CF_Eff3_0", {{"Eff3_def", {{"CF_rapid05_n1ratios_Efficiency3_", {0, 7}}}}}},
-		{"CF_Eff3_1", {{"Eff3_def", {{"CF_rapid05_n1ratios_Efficiency3_", {8, 14}}}}}},
-		{"CF_Eff05_0", {{"Eff05_def", {{"CF_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
-		{"CF_Eff05_1", {{"Eff05_def", {{"CF_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
-		{"CF_Eff15_0", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
-		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
+		{"Sim_single10_p0s5", {{"single10_pgroup0_spread5", {{"Sim_pgroup0_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p02s5", {{"single10_pgroup02_spread5", {{"Sim_test_pgroup02_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p04s5", {{"single10_pgroup04_spread5", {{"Sim_pgroup04_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p06s5", {{"single10_pgroup06_spread5", {{"Sim_pgroup06_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p08s5", {{"single10_pgroup08_spread5", {{"Sim_pgroup08_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p1s5", {{"single10_pgroup1_spread5", {{"Sim_pgroup1_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p12s5", {{"single10_pgroup12_spread5", {{"Sim_pgroup12_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p14s5", {{"single10_pgroup14_spread5", {{"Sim_pgroup14_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p16s5", {{"single10_pgroup16_spread5", {{"Sim_pgroup16_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p18s5", {{"single10_pgroup18_spread5", {{"Sim_pgroup18_spread5_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p2s5", {{"single10_pgroup2_spread5", {{"Sim_pgroup2_spread5_single10_n1ratios_", {0, 10}}}}}}
 	};
 
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
@@ -481,6 +495,60 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			mkdir(out_dir);  // Create set-group directory if it does not already exist.
 			mkdir(mix_out_dir);
 
+			// Set Simulator params
+			cout << set.first << endl;
+			if (in_string(set.first, { "Sim", "pgroup" }, true)) {
+				reader.sim.set_p_group(str_num_dec(get_flag_trail(set.first, "pgroup", "_")[0], 0));
+			}
+			if (in_string(set.first, { "Sim", "spread" }, true)) {
+				reader.sim.set_spread_sigma(str_num_dec(get_flag_trail(set.first, "spread", "_")[0], 0));
+			}
+			if (in_string(set.first, { "Sim", "poisson" }, true)) {
+				reader.sim.set_proton_dist("poisson");
+				reader.sim.set_particle_mean(str_num_dec(get_flag_trail(set.first, "poisson", "_")[0], 0));
+			}
+			if (in_string(set.first, { "Sim", "single" }, true)) {
+				reader.sim.set_proton_dist("single");
+				reader.sim.set_particle_mean(stof(get_flag_trail(set.first, "single", "_")[0]));
+			}
+//			if (in_string(set.first, { "Sim", "0p0s" }, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
+//			else if (in_string(set.first, { "Sim", "05p002s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
+//			else if (in_string(set.first, { "Sim", "05p05s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
+//			else if (in_string(set.first, { "Sim", "01p002s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.002); }
+//			else if (in_string(set.first, { "Sim", "01p05s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.5); }
+//			else if (in_string(set.first, { "Sim", "002p002s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.002); }
+//			else if (in_string(set.first, { "Sim", "002p05s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.5); }
+//			else if (in_string(set.first, { "Sim", "15p002s" }, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
+//			else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
+
+			if (in_string(set.first, "Sim")) {
+				reader.sim.set_hom_eff(1.0);
+				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default/rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
+			}
+			if (in_string(set.first, { "Sim", "Eff" }, true)) {
+				reader.set_sim_eff(true);
+			}
+			else {
+				reader.set_sim_eff(false);
+			}
+			if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
+				reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
+			}
+			if (in_string(set.first, { "Sim", "Flow" }, true)) {
+				reader.set_sim_flow(true);
+				if (in_string(set.first, { "08res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
+				else if (in_string(set.first, { "05res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
+				else if (in_string(set.first, { "099res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
+				else if (in_string(set.first, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
+			}
+			else {
+				reader.set_sim_flow(false);
+			}
+			if (in_string(set.first, { "Sim", "Flat1000" }, true)) { reader.sim.set_flat_dist(1000); }
+			else if (in_string(set.first, { "Sim", "Flat500" }, true)) { reader.sim.set_flat_dist(500); }
+			else if (in_string(set.first, { "Sim", "Flat100" }, true)) { reader.sim.set_flat_dist(100); }
+
+
 			vector<int> set_nums;
 			for (int num = set.second.first; num <= set.second.second; num++) { set_nums.push_back(num); }
 
@@ -596,42 +664,42 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				else { binner.set_efficiency(false); binner.set_efficiency_prob(0); }
 
 
-				if (in_string(set.first, { "Sim", "0p0s" }, true)) { binner.sim.set_p_group(0.0); binner.sim.set_spread_sigma(0.0); }
-				else if (in_string(set.first, { "Sim", "05p002s" }, true)) { binner.sim.set_p_group(0.05); binner.sim.set_spread_sigma(0.002); }
-				else if (in_string(set.first, { "Sim", "05p05s" }, true)) { binner.sim.set_p_group(0.05); binner.sim.set_spread_sigma(0.5); }
-				else if (in_string(set.first, { "Sim", "01p002s" }, true)) { binner.sim.set_p_group(0.01); binner.sim.set_spread_sigma(0.002); }
-				else if (in_string(set.first, { "Sim", "01p05s" }, true)) { binner.sim.set_p_group(0.01); binner.sim.set_spread_sigma(0.5); }
-				else if (in_string(set.first, { "Sim", "002p002s" }, true)) { binner.sim.set_p_group(0.002); binner.sim.set_spread_sigma(0.002); }
-				else if (in_string(set.first, { "Sim", "002p05s" }, true)) { binner.sim.set_p_group(0.002); binner.sim.set_spread_sigma(0.5); }
-				else if (in_string(set.first, { "Sim", "15p002s" }, true)) { binner.sim.set_p_group(0.15); binner.sim.set_spread_sigma(0.002); }
-				else { binner.sim.set_p_group(0.0); binner.sim.set_spread_sigma(0.0); }
-
-				if (in_string(set.first, { "Sim", "Eff" }, true)) {
-					binner.set_sim_eff(true);
-				}
-				else {
-					binner.set_sim_eff(false);
-				}
-				if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
-					binner.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
-				}
-				if (in_string(set.first, "Sim")) {
-					binner.sim.set_hom_eff(1.0);
-					binner.set_sim_proton_dist_dataset(in_base_path + "Data/eta05_n1ratios_dca30/");
-				}
-				if (in_string(set.first, { "Sim", "Flow" }, true)) {
-					binner.set_sim_flow(true);
-					if (in_string(set.first, { "08res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.8, 0.0001); }
-					else if (in_string(set.first, { "05res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.5, 0.0001); }
-					else if (in_string(set.first, { "099res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.99, 0.0001); }
-					else if (in_string(set.first, "05v2")) { binner.sim.set_flow(0.05, 0.0, 0.0001); }
-				}
-				else {
-					binner.set_sim_flow(false);
-				}
-				if (in_string(set.first, { "Sim", "Flat1000" }, true)) { binner.sim.set_flat_dist(1000); binner.set_particle_dist_hist_max(1000); }
-				else if (in_string(set.first, { "Sim", "Flat500" }, true)) { binner.sim.set_flat_dist(500); binner.set_particle_dist_hist_max(500); }
-				else if (in_string(set.first, { "Sim", "Flat100" }, true)) { binner.sim.set_flat_dist(100); binner.set_particle_dist_hist_max(100); }
+//				if (in_string(set.first, { "Sim", "0p0s" }, true)) { binner.sim.set_p_group(0.0); binner.sim.set_spread_sigma(0.0); }
+//				else if (in_string(set.first, { "Sim", "05p002s" }, true)) { binner.sim.set_p_group(0.05); binner.sim.set_spread_sigma(0.002); }
+//				else if (in_string(set.first, { "Sim", "05p05s" }, true)) { binner.sim.set_p_group(0.05); binner.sim.set_spread_sigma(0.5); }
+//				else if (in_string(set.first, { "Sim", "01p002s" }, true)) { binner.sim.set_p_group(0.01); binner.sim.set_spread_sigma(0.002); }
+//				else if (in_string(set.first, { "Sim", "01p05s" }, true)) { binner.sim.set_p_group(0.01); binner.sim.set_spread_sigma(0.5); }
+//				else if (in_string(set.first, { "Sim", "002p002s" }, true)) { binner.sim.set_p_group(0.002); binner.sim.set_spread_sigma(0.002); }
+//				else if (in_string(set.first, { "Sim", "002p05s" }, true)) { binner.sim.set_p_group(0.002); binner.sim.set_spread_sigma(0.5); }
+//				else if (in_string(set.first, { "Sim", "15p002s" }, true)) { binner.sim.set_p_group(0.15); binner.sim.set_spread_sigma(0.002); }
+//				else { binner.sim.set_p_group(0.0); binner.sim.set_spread_sigma(0.0); }
+//
+//				if (in_string(set.first, { "Sim", "Eff" }, true)) {
+//					binner.set_sim_eff(true);
+//				}
+//				else {
+//					binner.set_sim_eff(false);
+//				}
+//				if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
+//					binner.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
+//				}
+//				if (in_string(set.first, "Sim")) {
+//					binner.sim.set_hom_eff(1.0);
+//					binner.set_sim_proton_dist_dataset(in_base_path + "Data/eta05_n1ratios_dca30/");
+//				}
+//				if (in_string(set.first, { "Sim", "Flow" }, true)) {
+//					binner.set_sim_flow(true);
+//					if (in_string(set.first, { "08res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.8, 0.0001); }
+//					else if (in_string(set.first, { "05res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.5, 0.0001); }
+//					else if (in_string(set.first, { "099res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.99, 0.0001); }
+//					else if (in_string(set.first, "05v2")) { binner.sim.set_flow(0.05, 0.0, 0.0001); }
+//				}
+//				else {
+//					binner.set_sim_flow(false);
+//				}
+//				if (in_string(set.first, { "Sim", "Flat1000" }, true)) { binner.sim.set_flat_dist(1000); binner.set_particle_dist_hist_max(1000); }
+//				else if (in_string(set.first, { "Sim", "Flat500" }, true)) { binner.sim.set_flat_dist(500); binner.set_particle_dist_hist_max(500); }
+//				else if (in_string(set.first, { "Sim", "Flat100" }, true)) { binner.sim.set_flat_dist(100); binner.set_particle_dist_hist_max(100); }
 
 				if (in_string(set.first, "Ampt")) {
 					if (in_string(set.first, "_default_")) {
@@ -671,6 +739,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, "hadrontotal")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 2212, 2112, 211, 111, -211, -2212, -2112 }); }
 				if (in_string(set.first, "hadronobs")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 2212, 211, -211, -2212 }); }
 
+				// Sim
+				if (in_string(set.first, { "Sim", "Flat1000" }, true)) { binner.set_particle_dist_hist_max(1000); }
+				else if (in_string(set.first, { "Sim", "Flat500" }, true)) { binner.set_particle_dist_hist_max(500); }
+				else if (in_string(set.first, { "Sim", "Flat100" }, true)) { binner.set_particle_dist_hist_max(100); }
+
 				binner.set_mixed_sets(false);
 				binner.set_rand_data(false);
 
@@ -691,52 +764,51 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 		}
 	}
 
-	//if (in_string(set_name, "Sim")) {
-	//	reader.sim_events(sim_cent_events);
-	//}
-	//else {
-	//	reader.read_trees();
-	//}
-	reader.read_trees();
-}
-
-
-void read_sim() {
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
-		{"Ampt_Eff05_1", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
-		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
-		{"Ampt_Eff15_1", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
-	};
-
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-
-	int set_sleep = 1;
-	int energy_sleep = 1;
-	int free_threads = 0;
-
-	int jobs = sets.size() * energy_list.size();
-
-	mutex* mtx = new mutex;
-	vector<string>* file_list = new vector<string>;
-	ROOT::EnableThreadSafety();
-	{
-		int job_num = 0;
-		ThreadPool pool(thread::hardware_concurrency() - free_threads);
-
-		for (int energy : energy_list) {
-			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
-				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-				this_thread::sleep_for(chrono::seconds(set_sleep));
-			}
-			this_thread::sleep_for(chrono::seconds(energy_sleep));
-		}
+	if (in_string(job_type, "Sim")) {
+		reader.sim_events(sim_cent_events);
+	}
+	else {
+		reader.read_trees();
 	}
 }
 
 
-void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
+//void read_sim() {
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
+//		{"Ampt_Eff05_1", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
+//		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
+//		{"Ampt_Eff15_1", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
+//	};
+//
+//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+//
+//	int set_sleep = 1;
+//	int energy_sleep = 1;
+//	int free_threads = 0;
+//
+//	int jobs = sets.size() * energy_list.size();
+//
+//	mutex* mtx = new mutex;
+//	vector<string>* file_list = new vector<string>;
+//	ROOT::EnableThreadSafety();
+//	{
+//		int job_num = 0;
+//		ThreadPool pool(thread::hardware_concurrency() - free_threads);
+//
+//		for (int energy : energy_list) {
+//			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+//				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+//				pool.enqueue(run_job_sim, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+//				this_thread::sleep_for(chrono::seconds(set_sleep));
+//			}
+//			this_thread::sleep_for(chrono::seconds(energy_sleep));
+//		}
+//	}
+//}
+//
+//
+//void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
 //	bool replace_existing = true;  // If folder for job exists, overwrite if true, skip job if false
 //	int ref = 3;
 //	TreeReader reader(energy, ref, mtx);
@@ -799,6 +871,47 @@ void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int j
 //			}
 //			mkdir(out_dir);  // Create set-group directory if it does not already exist.
 //			mkdir(mix_out_dir);
+//
+//			// Set Simulator params
+//			if (in_string(set.first, { "Sim", "0p0s" }, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
+//			else if (in_string(set.first, { "Sim", "05p002s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
+//			else if (in_string(set.first, { "Sim", "05p05s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
+//			else if (in_string(set.first, { "Sim", "01p002s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.002); }
+//			else if (in_string(set.first, { "Sim", "01p05s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.5); }
+//			else if (in_string(set.first, { "Sim", "002p002s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.002); }
+//			else if (in_string(set.first, { "Sim", "002p05s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.5); }
+//			else if (in_string(set.first, { "Sim", "15p002s" }, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
+//			else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
+//
+//			if (in_string(set.first, "Sim")) {
+//				reader.sim.set_hom_eff(1.0);
+//				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default/rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
+//			}
+//			if (in_string(set.first, { "Sim", "Eff" }, true)) {
+//				reader.set_sim_eff(true);
+//			}
+//			else {
+//				reader.set_sim_eff(false);
+//			}
+//			if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
+//				reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
+//			}
+//			if (in_string(set.first, { "Sim", "Flow" }, true)) {
+//				reader.set_sim_flow(true);
+//				if (in_string(set.first, { "08res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
+//				else if (in_string(set.first, { "05res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
+//				else if (in_string(set.first, { "099res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
+//				else if (in_string(set.first, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
+//			}
+//			else {
+//				reader.set_sim_flow(false);
+//			}
+//			if (in_string(set.first, { "Sim", "Flat1000" }, true)) { reader.sim.set_flat_dist(1000); reader.set_particle_dist_hist_max(1000); }
+//			else if (in_string(set.first, { "Sim", "Flat500" }, true)) { reader.sim.set_flat_dist(500); reader.set_particle_dist_hist_max(500); }
+//			else if (in_string(set.first, { "Sim", "Flat100" }, true)) { reader.sim.set_flat_dist(100); reader.set_particle_dist_hist_max(100); }
+//
+//
+//
 //
 //			vector<int> set_nums;
 //			for (int num = set.second.first; num <= set.second.second; num++) { set_nums.push_back(num); }
@@ -913,44 +1026,6 @@ void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int j
 //				}
 //				else { binner.set_efficiency(false); binner.set_efficiency_prob(0); }
 //
-//
-//				if (in_string(set.first, { "Sim", "0p0s" }, true)) { binner.sim.set_p_group(0.0); binner.sim.set_spread_sigma(0.0); }
-//				else if (in_string(set.first, { "Sim", "05p002s" }, true)) { binner.sim.set_p_group(0.05); binner.sim.set_spread_sigma(0.002); }
-//				else if (in_string(set.first, { "Sim", "05p05s" }, true)) { binner.sim.set_p_group(0.05); binner.sim.set_spread_sigma(0.5); }
-//				else if (in_string(set.first, { "Sim", "01p002s" }, true)) { binner.sim.set_p_group(0.01); binner.sim.set_spread_sigma(0.002); }
-//				else if (in_string(set.first, { "Sim", "01p05s" }, true)) { binner.sim.set_p_group(0.01); binner.sim.set_spread_sigma(0.5); }
-//				else if (in_string(set.first, { "Sim", "002p002s" }, true)) { binner.sim.set_p_group(0.002); binner.sim.set_spread_sigma(0.002); }
-//				else if (in_string(set.first, { "Sim", "002p05s" }, true)) { binner.sim.set_p_group(0.002); binner.sim.set_spread_sigma(0.5); }
-//				else if (in_string(set.first, { "Sim", "15p002s" }, true)) { binner.sim.set_p_group(0.15); binner.sim.set_spread_sigma(0.002); }
-//				else { binner.sim.set_p_group(0.0); binner.sim.set_spread_sigma(0.0); }
-//
-//				if (in_string(set.first, { "Sim", "Eff" }, true)) {
-//					binner.set_sim_eff(true);
-//				}
-//				else {
-//					binner.set_sim_eff(false);
-//				}
-//				if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
-//					binner.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
-//				}
-//				if (in_string(set.first, "Sim")) {
-//					binner.sim.set_hom_eff(1.0);
-//					binner.set_sim_proton_dist_dataset(in_base_path + "Data/eta05_n1ratios_dca30/");
-//				}
-//				if (in_string(set.first, { "Sim", "Flow" }, true)) {
-//					binner.set_sim_flow(true);
-//					if (in_string(set.first, { "08res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.8, 0.0001); }
-//					else if (in_string(set.first, { "05res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.5, 0.0001); }
-//					else if (in_string(set.first, { "099res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.99, 0.0001); }
-//					else if (in_string(set.first, "05v2")) { binner.sim.set_flow(0.05, 0.0, 0.0001); }
-//				}
-//				else {
-//					binner.set_sim_flow(false);
-//				}
-//				if (in_string(set.first, { "Sim", "Flat1000" }, true)) { binner.sim.set_flat_dist(1000); binner.set_particle_dist_hist_max(1000); }
-//				else if (in_string(set.first, { "Sim", "Flat500" }, true)) { binner.sim.set_flat_dist(500); binner.set_particle_dist_hist_max(500); }
-//				else if (in_string(set.first, { "Sim", "Flat100" }, true)) { binner.sim.set_flat_dist(100); binner.set_particle_dist_hist_max(100); }
-//
 //				if (in_string(set.first, "Ampt")) {
 //					if (in_string(set.first, "_default_")) {
 //						binner.set_ampt_type("default");
@@ -1011,7 +1086,7 @@ void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int j
 //
 //
 //	reader.sim_events(sim_cent_events);
-}
+//}
 
 
 //void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
