@@ -29,20 +29,20 @@ using namespace std;
 
 
 struct simulation_pars {
-		double p_group = 0.05;
-		double spread_sigma = 0.0;
+	double p_group = 0.05;
+	double spread_sigma = 0.0;
 
-		int min_protons = 2;
+	int min_protons = 2;
 
-		string proton_dist = "poisson";
-		double particle_mean = 20.0;
-		int particle_max = 20;
+	string proton_dist = "poisson";  // poisson, flat, hist, single
+	double particle_mean = 20.0;  // For Poisson and single
+	int particle_max = 20;  // For flat distributuion
 
-		double hom_eff = 1.0;
+	double hom_eff = 1.0;
 
-		double v2 = 0.0;
-		double ep_res = 0.0;
-	};
+	double v2 = 0.0;
+	double ep_res = 0.0;
+};
 
 
 class Simulator {
@@ -73,6 +73,7 @@ public:
 	double get_spread_sigma();
 	string get_proton_dist_type();
 	TH1D* get_efficiency_dist();
+	simulation_pars get_sim_pars();
 
 	// Setters
 	void set_p_group(double p_group);
