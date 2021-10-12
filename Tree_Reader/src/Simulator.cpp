@@ -451,7 +451,7 @@ int Simulator::get_protons() {
 	} else if (pars.proton_dist == "flat") {
 		n = (int)(sim_rand->Rndm() * pars.particle_max + 0.5);
 	} else if (pars.proton_dist == "single") {
-		n = pars.particle_mean;
+		n = (int)pars.particle_mean;
 	}
 
 	return n;

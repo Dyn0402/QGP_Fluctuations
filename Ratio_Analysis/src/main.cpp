@@ -122,7 +122,7 @@ void azimuth_bin_analyze_fig() {
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
 	analyzer.set_out_root_name("10-9-21_sim.root");
-	analyzer.set_out_sys_name("sys_vals_10-9-21_sim.txt");
+	analyzer.set_out_sys_name("sys_vals_10-11-21_sim.txt");
 	analyzer.set_write_sys(true);
 	analyzer.set_write_append(false);
 //	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
@@ -194,7 +194,7 @@ void azimuth_bin_analyze_fig() {
 	vector<string> effs{ "05", "1", "15", "2", "3" };
 	vector<string> pgroups{ "0", "02", "04", "06", "08", "1", "12", "14", "16", "18", "2" };
 	vector<string> spreads{ "002", "5" };
-	vector<string> dists{ "single10" };
+	vector<string> dists{ "poisson10", "single10" };
 
 	map<string, pair<string, vector<string>>> combos;
 	vector<map<string, vector<int>>> sets;
@@ -261,7 +261,7 @@ void azimuth_bin_analyze_fig() {
 	for (string pgroup : pgroups) {
 		for (string spread : spreads) {
 			for (string dist : dists) {
-				if (dist == "single10" && spread != "5") { continue; }
+//				if (dist == "single10" && spread != "5") { continue; }
 				string pgroup_name = "pgroup" + pgroup;
 				string spread_name = "spread" + spread;
 				string set_name_full = dist + "_" + pgroup_name + "_" + spread_name + "/";;

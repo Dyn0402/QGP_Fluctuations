@@ -296,6 +296,18 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_single10_p0s002", {{"single10_pgroup0_spread002", {{"Sim_pgroup0_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p02s002", {{"single10_pgroup02_spread002", {{"Sim_test_pgroup02_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p04s002", {{"single10_pgroup04_spread002", {{"Sim_pgroup04_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p06s002", {{"single10_pgroup06_spread002", {{"Sim_pgroup06_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p08s002", {{"single10_pgroup08_spread002", {{"Sim_pgroup08_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p1s002", {{"single10_pgroup1_spread002", {{"Sim_pgroup1_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p12s002", {{"single10_pgroup12_spread002", {{"Sim_pgroup12_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p14s002", {{"single10_pgroup14_spread002", {{"Sim_pgroup14_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p16s002", {{"single10_pgroup16_spread002", {{"Sim_pgroup16_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p18s002", {{"single10_pgroup18_spread002", {{"Sim_pgroup18_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p2s002", {{"single10_pgroup2_spread002", {{"Sim_pgroup2_spread002_single10_n1ratios_", {0, 10}}}}}},
+
 		{"Sim_single10_p0s5", {{"single10_pgroup0_spread5", {{"Sim_pgroup0_spread5_single10_n1ratios_", {0, 10}}}}}},
 		{"Sim_single10_p02s5", {{"single10_pgroup02_spread5", {{"Sim_test_pgroup02_spread5_single10_n1ratios_", {0, 10}}}}}},
 		{"Sim_single10_p04s5", {{"single10_pgroup04_spread5", {{"Sim_pgroup04_spread5_single10_n1ratios_", {0, 10}}}}}},
@@ -306,7 +318,31 @@ void read_new() {
 		{"Sim_single10_p14s5", {{"single10_pgroup14_spread5", {{"Sim_pgroup14_spread5_single10_n1ratios_", {0, 10}}}}}},
 		{"Sim_single10_p16s5", {{"single10_pgroup16_spread5", {{"Sim_pgroup16_spread5_single10_n1ratios_", {0, 10}}}}}},
 		{"Sim_single10_p18s5", {{"single10_pgroup18_spread5", {{"Sim_pgroup18_spread5_single10_n1ratios_", {0, 10}}}}}},
-		{"Sim_single10_p2s5", {{"single10_pgroup2_spread5", {{"Sim_pgroup2_spread5_single10_n1ratios_", {0, 10}}}}}}
+		{"Sim_single10_p2s5", {{"single10_pgroup2_spread5", {{"Sim_pgroup2_spread5_single10_n1ratios_", {0, 10}}}}}},
+
+		{"Sim_poisson10_p0s002", {{"poisson10_pgroup0_spread002", {{"Sim_test_pgroup0_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p02s002", {{"poisson10_pgroup02_spread002", {{"Sim_test_pgroup02_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p04s002", {{"poisson10_pgroup04_spread002", {{"Sim_pgroup04_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p06s002", {{"poisson10_pgroup06_spread002", {{"Sim_pgroup06_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p08s002", {{"poisson10_pgroup08_spread002", {{"Sim_pgroup08_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p1s002", {{"poisson10_pgroup1_spread002", {{"Sim_pgroup1_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p12s002", {{"poisson10_pgroup12_spread002", {{"Sim_pgroup12_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p14s002", {{"poisson10_pgroup14_spread002", {{"Sim_pgroup14_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p16s002", {{"poisson10_pgroup16_spread002", {{"Sim_pgroup16_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p18s002", {{"poisson10_pgroup18_spread002", {{"Sim_pgroup18_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p2s002", {{"poisson10_pgroup2_spread002", {{"Sim_pgroup2_spread002_poisson10_n1ratios_", {0, 10}}}}}},
+
+		{"Sim_poisson10_p0s5", {{"poisson10_pgroup0_spread5", {{"Sim_test_pgroup0_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p02s5", {{"poisson10_pgroup02_spread5", {{"Sim_test_pgroup02_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p04s5", {{"poisson10_pgroup04_spread5", {{"Sim_pgroup04_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p06s5", {{"poisson10_pgroup06_spread5", {{"Sim_pgroup06_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p08s5", {{"poisson10_pgroup08_spread5", {{"Sim_pgroup08_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p1s5", {{"poisson10_pgroup1_spread5", {{"Sim_pgroup1_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p12s5", {{"poisson10_pgroup12_spread5", {{"Sim_pgroup12_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p14s5", {{"poisson10_pgroup14_spread5", {{"Sim_pgroup14_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p16s5", {{"poisson10_pgroup16_spread5", {{"Sim_pgroup16_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p18s5", {{"poisson10_pgroup18_spread5", {{"Sim_pgroup18_spread5_poisson10_n1ratios_", {0, 10}}}}}},
+		{"Sim_poisson10_p2s5", {{"poisson10_pgroup2_spread5", {{"Sim_pgroup2_spread5_poisson10_n1ratios_", {0, 10}}}}}},
 	};
 
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
@@ -314,7 +350,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 2;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -480,7 +516,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	//}
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
-	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000000} };
+	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 8000000} };
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {
@@ -505,7 +541,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			}
 			if (in_string(set.first, { "Sim", "poisson" }, true)) {
 				reader.sim.set_proton_dist("poisson");
-				reader.sim.set_particle_mean(str_num_dec(get_flag_trail(set.first, "poisson", "_")[0], 0));
+				reader.sim.set_particle_mean(stof(get_flag_trail(set.first, "poisson", "_")[0]));
 			}
 			if (in_string(set.first, { "Sim", "single" }, true)) {
 				reader.sim.set_proton_dist("single");
