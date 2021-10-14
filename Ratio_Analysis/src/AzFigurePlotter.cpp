@@ -2633,10 +2633,10 @@ void AzFigurePlotter::moments_vs_energy_cf_plot(vector<int> energies, map<string
 		energy_cf.push_back(energy + 0.6);
 	}
 
-	map<string, int> color{ {"raw_bes", kBlue}, {"raw_ampt", kBlue}, {"raw_cf", kBlue}, {"mix_bes", kGreen+2}, {"mix_ampt", kGreen+2}, {"mix_cf", kGreen+2}, {"div_bes", kBlack}, {"div_ampt", kRed}, {"div_cf", kBlue} };
+	map<string, int> color{ {"raw_bes", kRed}, {"raw_ampt", kBlue}, {"raw_cf", kGreen+2}, {"mix_bes", kRed}, {"mix_ampt", kBlue}, {"mix_cf", kGreen+2}, {"div_bes", kRed}, {"div_ampt", kBlue}, {"div_cf", kGreen+2} };
 	map<string, int> marker_size{ {"raw", 2}, {"mix", 2}, {"divide", 2} };
 //	map<string, int> marker_style{ {"raw_bes", 29}, {"raw_ampt", 22}, {"mix_bes", 30}, {"mix_ampt", 26}, {"div_bes", 29}, {"div_ampt", 22} };
-	map<string, int> marker_style{ {"raw_bes", 20}, {"raw_ampt", 24}, {"raw_cf", 26}, {"mix_bes", 20}, {"mix_ampt", 24}, {"mix_cf", 26}, {"div_bes", 20}, {"div_ampt", 24}, {"div_cf", 26} };
+	map<string, int> marker_style{ {"raw_bes", 29}, {"raw_ampt", 20}, {"raw_cf", 22}, {"mix_bes", 30}, {"mix_ampt", 24}, {"mix_cf", 26}, {"div_bes", 29}, {"div_ampt", 20}, {"div_cf", 22} };
 	map<string, string> stat_title{ {"mean", "Mean"}, {"standard_deviation", "Standard Deviation"}, {"skewness", "Skewness"}, {"non_excess_kurtosis", "Kurtosis"} };
 //	int bes_marker_style = 29;
 //	int ampt_marker_style = 22;

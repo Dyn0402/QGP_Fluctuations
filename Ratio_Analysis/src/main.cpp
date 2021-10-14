@@ -67,8 +67,8 @@ int main() {
 //	}
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 //	azimuth_bin_analyze();
-	azimuth_bin_analyze_fig();
-//	fig_read_plot();
+//	azimuth_bin_analyze_fig();
+	fig_read_plot();
 	//cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
 	//binomial_analyze();
 
@@ -85,10 +85,10 @@ void fig_read_plot() {
 	analyzer.set_out_path("/home/dylan/Research/Results/Azimuth_Analysis/");
 //	analyzer.set_out_path("/home/dylan/Downloads/");
 	analyzer.read_systematics(analyzer.get_out_path() + "sys_vals_9-22-21_current.txt");
-	analyzer.set_out_root_name("10-7-21_Preliminaries.root");
+	analyzer.set_out_root_name("10-13-21_Paper_figs.root");
 
-//	analyzer.plot_paper_figs();
-	analyzer.plot_pres_figs();
+	analyzer.plot_paper_figs();
+//	analyzer.plot_pres_figs();
 }
 
 
