@@ -67,8 +67,8 @@ int main() {
 //	}
 	cout << "Running AzimuthBinAnalyzer" << endl << endl;
 //	azimuth_bin_analyze();
-//	azimuth_bin_analyze_fig();
-	fig_read_plot();
+	azimuth_bin_analyze_fig();
+//	fig_read_plot();
 	//cout << endl << endl << "Running BinomialAnalyzer" << endl << endl;
 	//binomial_analyze();
 
@@ -124,7 +124,7 @@ void azimuth_bin_analyze_fig() {
 	analyzer.set_out_root_name("10-9-21_sim.root");
 	analyzer.set_out_sys_name("sys_vals_10-11-21_sim.txt");
 	analyzer.set_write_sys(true);
-	analyzer.set_write_append(false);
+	analyzer.set_write_append(true);
 //	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
 	analyzer.set_energies({ 62 });
 //	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
@@ -192,9 +192,9 @@ void azimuth_bin_analyze_fig() {
 
 	vector<string> rapids{ "01", "02", "03", "04", "06", "08", "1" };
 	vector<string> effs{ "05", "1", "15", "2", "3" };
-	vector<string> pgroups{ "0", "02", "04", "06", "08", "1", "12", "14", "16", "18", "2" };
-	vector<string> spreads{ "002", "5" };
-	vector<string> dists{ "poisson10", "single10" };
+	vector<string> pgroups{ "0", "002", "004", "006", "008", "01" };
+	vector<string> spreads{ "002" };
+	vector<string> dists{ "single4", "single8", "single12", "single16", "single20", "single24", "single28", "single32", "single36", "single40", "single44", "single48" };
 
 	map<string, pair<string, vector<string>>> combos;
 	vector<map<string, vector<int>>> sets;
