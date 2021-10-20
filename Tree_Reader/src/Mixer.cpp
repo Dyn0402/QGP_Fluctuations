@@ -217,7 +217,7 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 	vz_ep_appended_hists[cent].Fill(event_plane, vz);
 
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
-		int index = trand->Rndm() * max_events;
+		int index = trand->Rndm() * max_events;  // Now shuffled each get_mixed so could just replace first.
 		this->angles[cent][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
 		this->angles[cent][ep_bin][vz_bin].push_back(angles);
@@ -235,49 +235,33 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 // Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
-	vector<pair<int, int>> used_angles;
-	pair<int, int> index;
 	double rand_angle = trand->Rndm() * 2 * M_PI;
-	while((int)mix_angles.size() < num_protons) {
-		index = generate_index(used_angles, cent, ep_bin, vz_bin);
-		double new_angle = angles[cent][ep_bin][vz_bin][index.first][index.second];
+
+	// Shuffle all events in class and then sample from shuffled pool in order.
+	random_shuffle(angles[cent][ep_bin][vz_bin].begin(), angles[cent][ep_bin][vz_bin].end());
+
+	if (num_protons > (int)angles[cent][ep_bin][vz_bin].size()) {
+		cout << "Not enough mixed events " << angles[cent][ep_bin][vz_bin].size() << "  for num_protons " << num_protons << endl;
+	}
+
+	for (int event=0; event < num_protons; event++) {
+		int angle_index = trand->Rndm() * angles[cent][ep_bin][vz_bin][event].size();
+		double new_angle = angles[cent][ep_bin][vz_bin][event][angle_index];
 		if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
 		mix_angles.push_back(new_angle);
-		used_angles.push_back(index);
 	}
 	for(auto &div:divs) {
 		int bin_num = (int) 360 / div;
 		double div_rads = (double)div / 180 * M_PI;
 		if(single_ratio) { bin_num = 1; }
 		else if(bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
-		vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert proton angles in event to ratio values.
+		vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 		// Save ratio values to data
 		for(int protons_in_bin:event_ratios) {
 			data[div][cent][mix_angles.size()][protons_in_bin]++;
 		}
 	}
-}
-
-
-// Ensure same angle is not used twice for a single mixed event.
-pair<int, int> Mixer::generate_index(const vector<pair<int, int>>& used_angles, int cent_ref, int ep_bin, int vz_bin) {
-	bool unique = false;
-	int event_index, angle_index;
-	while(!unique){
-		event_index = trand->Rndm() * angles[cent_ref][ep_bin][vz_bin].size();
-		angle_index = trand->Rndm() * angles[cent_ref][ep_bin][vz_bin][event_index].size();
-		unique = true;
-		for(const pair<int, int>& angle:used_angles) {
-			if(angle.first == event_index && angle.second == angle_index) { unique = false; }
-		}
-	}
-
-	pair<int, int> index;
-	index.first = event_index;
-	index.second = angle_index;
-
-	return(index);
 }
 
 

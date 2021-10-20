@@ -89,7 +89,6 @@ private:
 	void get_mixed(int cent, int num_protons, int ep_bin, int vz_bin);
 	int get_ep_bin(double event_plane);
 	int get_vz_bin(double vz);
-	pair<int, int> generate_index(const vector<pair<int, int>>& used_angles, int cent, int ep_bin, int vz_bin);
 	void define_hists(int cent);
 
 
