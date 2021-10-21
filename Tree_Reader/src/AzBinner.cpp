@@ -495,7 +495,7 @@ void AzBinner::process_event(const Event& event) {
 			float ep_angle = 0.5 * q.Phi();
 			post_ep_hist.Fill(ep_angle);
 
-			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmunt n in place of centrality from here on.
+			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on.
 
 			if (ampt || cooper_frye) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
 				double rand_angle = trand->Rndm() * 2 * M_PI;

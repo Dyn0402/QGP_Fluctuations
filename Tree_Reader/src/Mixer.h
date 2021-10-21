@@ -10,6 +10,7 @@
 
 #include <map>
 #include <vector>
+#include <numeric>
 
 #include <TRandom3.h>
 #include <TH2.h>

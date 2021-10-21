@@ -217,7 +217,7 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 	vz_ep_appended_hists[cent].Fill(event_plane, vz);
 
 	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
-		int index = trand->Rndm() * max_events;  // Now shuffled each get_mixed so could just replace first.
+		int index = trand->Rndm() * max_events;
 		this->angles[cent][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
 		this->angles[cent][ep_bin][vz_bin].push_back(angles);
@@ -236,20 +236,22 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
 	double rand_angle = trand->Rndm() * 2 * M_PI;
+	int pool_events = (int)angles[cent][ep_bin][vz_bin].size();
 
-	// Shuffle all events in class and then sample from shuffled pool in order.
-	random_shuffle(angles[cent][ep_bin][vz_bin].begin(), angles[cent][ep_bin][vz_bin].end());
-
-	if (num_protons > (int)angles[cent][ep_bin][vz_bin].size()) {
-		cout << "Not enough mixed events " << angles[cent][ep_bin][vz_bin].size() << "  for num_protons " << num_protons << endl;
+	if (num_protons > pool_events) {
+		cout << "Not enough mixed events " << pool_events << "  for num_protons " << num_protons << endl;
 	}
 
-	for (int event=0; event < num_protons; event++) {
-		int angle_index = trand->Rndm() * angles[cent][ep_bin][vz_bin][event].size();
-		double new_angle = angles[cent][ep_bin][vz_bin][event][angle_index];
+	vector<int> event_indices(pool_events);
+	iota(begin(event_indices), end(event_indices), 0);
+	random_shuffle(event_indices.begin(), event_indices.end());
+	for (int i=0; i < num_protons; i++) {
+		int angle_index = trand->Rndm() * angles[cent][ep_bin][vz_bin][event_indices[i]].size();
+		double new_angle = angles[cent][ep_bin][vz_bin][event_indices[i]][angle_index];
 		if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
 		mix_angles.push_back(new_angle);
 	}
+
 	for(auto &div:divs) {
 		int bin_num = (int) 360 / div;
 		double div_rads = (double)div / 180 * M_PI;
