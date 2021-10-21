@@ -299,43 +299,43 @@ void read_new() {
 		{"Sim_single10_p0s002", {{"single10_pgroup0_spread002", {{"Sim_pgroup0_spread002_single10_n1ratios_", {0, 10}}}}}},
 		{"Sim_single10_p02s002", {{"single10_pgroup02_spread002", {{"Sim_pgroup02_spread002_single10_n1ratios_", {0, 10}}}}}},
 		{"Sim_single10_p04s002", {{"single10_pgroup04_spread002", {{"Sim_pgroup04_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p06s002", {{"single10_pgroup06_spread002", {{"Sim_pgroup06_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p08s002", {{"single10_pgroup08_spread002", {{"Sim_pgroup08_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p1s002", {{"single10_pgroup1_spread002", {{"Sim_pgroup1_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p12s002", {{"single10_pgroup12_spread002", {{"Sim_pgroup12_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p14s002", {{"single10_pgroup14_spread002", {{"Sim_pgroup14_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p16s002", {{"single10_pgroup16_spread002", {{"Sim_pgroup16_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p18s002", {{"single10_pgroup18_spread002", {{"Sim_pgroup18_spread002_single10_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single10_p2s002", {{"single10_pgroup2_spread002", {{"Sim_pgroup2_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p06s002", {{"single10_pgroup06_spread002", {{"Sim_pgroup06_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p08s002", {{"single10_pgroup08_spread002", {{"Sim_pgroup08_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p1s002", {{"single10_pgroup1_spread002", {{"Sim_pgroup1_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p12s002", {{"single10_pgroup12_spread002", {{"Sim_pgroup12_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p14s002", {{"single10_pgroup14_spread002", {{"Sim_pgroup14_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p16s002", {{"single10_pgroup16_spread002", {{"Sim_pgroup16_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p18s002", {{"single10_pgroup18_spread002", {{"Sim_pgroup18_spread002_single10_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_p2s002", {{"single10_pgroup2_spread002", {{"Sim_pgroup2_spread002_single10_n1ratios_", {0, 10}}}}}},
 
-//		{"Sim_single4_p0s002", {{"single4_pgroup0_spread002", {{"Sim_pgroup0_spread002_single4_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single4_p002s002", {{"single4_pgroup002_spread002", {{"Sim_pgroup002_spread002_single4_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single4_p004s002", {{"single4_pgroup004_spread002", {{"Sim_pgroup004_spread002_single4_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single4_p006s002", {{"single4_pgroup006_spread002", {{"Sim_pgroup006_spread002_single4_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single4_p008s002", {{"single4_pgroup008_spread002", {{"Sim_pgroup008_spread002_single4_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single4_p01s002", {{"single4_pgroup01_spread002", {{"Sim_pgroup01_spread002_single4_n1ratios_", {0, 10}}}}}},
-//
-//		{"Sim_single8_p0s002", {{"single8_pgroup0_spread002", {{"Sim_pgroup0_spread002_single8_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single8_p002s002", {{"single8_pgroup002_spread002", {{"Sim_pgroup002_spread002_single8_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single8_p004s002", {{"single8_pgroup004_spread002", {{"Sim_pgroup004_spread002_single8_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single8_p006s002", {{"single8_pgroup006_spread002", {{"Sim_pgroup006_spread002_single8_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single8_p008s002", {{"single8_pgroup008_spread002", {{"Sim_pgroup008_spread002_single8_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single8_p01s002", {{"single8_pgroup01_spread002", {{"Sim_pgroup01_spread002_single8_n1ratios_", {0, 10}}}}}},
-//
-//		{"Sim_single12_p0s002", {{"single12_pgroup0_spread002", {{"Sim_pgroup0_spread002_single12_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single12_p002s002", {{"single12_pgroup002_spread002", {{"Sim_pgroup002_spread002_single12_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single12_p004s002", {{"single12_pgroup004_spread002", {{"Sim_pgroup004_spread002_single12_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single12_p006s002", {{"single12_pgroup006_spread002", {{"Sim_pgroup006_spread002_single12_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single12_p008s002", {{"single12_pgroup008_spread002", {{"Sim_pgroup008_spread002_single12_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single12_p01s002", {{"single12_pgroup01_spread002", {{"Sim_pgroup01_spread002_single12_n1ratios_", {0, 10}}}}}},
-//
-//		{"Sim_single16_p0s002", {{"single16_pgroup0_spread002", {{"Sim_pgroup0_spread002_single16_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single16_p002s002", {{"single16_pgroup002_spread002", {{"Sim_pgroup002_spread002_single16_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single16_p004s002", {{"single16_pgroup004_spread002", {{"Sim_pgroup004_spread002_single16_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single16_p006s002", {{"single16_pgroup006_spread002", {{"Sim_pgroup006_spread002_single16_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single16_p008s002", {{"single16_pgroup008_spread002", {{"Sim_pgroup008_spread002_single16_n1ratios_", {0, 10}}}}}},
-//		{"Sim_single16_p01s002", {{"single16_pgroup01_spread002", {{"Sim_pgroup01_spread002_single16_n1ratios_", {0, 10}}}}}},
-//
+		{"Sim_single4_p0s002", {{"single4_pgroup0_spread002", {{"Sim_pgroup0_spread002_single4_n1ratios_", {0, 10}}}}}},
+		{"Sim_single4_p002s002", {{"single4_pgroup002_spread002", {{"Sim_pgroup002_spread002_single4_n1ratios_", {0, 10}}}}}},
+		{"Sim_single4_p004s002", {{"single4_pgroup004_spread002", {{"Sim_pgroup004_spread002_single4_n1ratios_", {0, 10}}}}}},
+		{"Sim_single4_p006s002", {{"single4_pgroup006_spread002", {{"Sim_pgroup006_spread002_single4_n1ratios_", {0, 10}}}}}},
+		{"Sim_single4_p008s002", {{"single4_pgroup008_spread002", {{"Sim_pgroup008_spread002_single4_n1ratios_", {0, 10}}}}}},
+		{"Sim_single4_p01s002", {{"single4_pgroup01_spread002", {{"Sim_pgroup01_spread002_single4_n1ratios_", {0, 10}}}}}},
+
+		{"Sim_single8_p0s002", {{"single8_pgroup0_spread002", {{"Sim_pgroup0_spread002_single8_n1ratios_", {0, 10}}}}}},
+		{"Sim_single8_p002s002", {{"single8_pgroup002_spread002", {{"Sim_pgroup002_spread002_single8_n1ratios_", {0, 10}}}}}},
+		{"Sim_single8_p004s002", {{"single8_pgroup004_spread002", {{"Sim_pgroup004_spread002_single8_n1ratios_", {0, 10}}}}}},
+		{"Sim_single8_p006s002", {{"single8_pgroup006_spread002", {{"Sim_pgroup006_spread002_single8_n1ratios_", {0, 10}}}}}},
+		{"Sim_single8_p008s002", {{"single8_pgroup008_spread002", {{"Sim_pgroup008_spread002_single8_n1ratios_", {0, 10}}}}}},
+		{"Sim_single8_p01s002", {{"single8_pgroup01_spread002", {{"Sim_pgroup01_spread002_single8_n1ratios_", {0, 10}}}}}},
+
+		{"Sim_single12_p0s002", {{"single12_pgroup0_spread002", {{"Sim_pgroup0_spread002_single12_n1ratios_", {0, 10}}}}}},
+		{"Sim_single12_p002s002", {{"single12_pgroup002_spread002", {{"Sim_pgroup002_spread002_single12_n1ratios_", {0, 10}}}}}},
+		{"Sim_single12_p004s002", {{"single12_pgroup004_spread002", {{"Sim_pgroup004_spread002_single12_n1ratios_", {0, 10}}}}}},
+		{"Sim_single12_p006s002", {{"single12_pgroup006_spread002", {{"Sim_pgroup006_spread002_single12_n1ratios_", {0, 10}}}}}},
+		{"Sim_single12_p008s002", {{"single12_pgroup008_spread002", {{"Sim_pgroup008_spread002_single12_n1ratios_", {0, 10}}}}}},
+		{"Sim_single12_p01s002", {{"single12_pgroup01_spread002", {{"Sim_pgroup01_spread002_single12_n1ratios_", {0, 10}}}}}},
+
+		{"Sim_single16_p0s002", {{"single16_pgroup0_spread002", {{"Sim_pgroup0_spread002_single16_n1ratios_", {0, 10}}}}}},
+		{"Sim_single16_p002s002", {{"single16_pgroup002_spread002", {{"Sim_pgroup002_spread002_single16_n1ratios_", {0, 10}}}}}},
+		{"Sim_single16_p004s002", {{"single16_pgroup004_spread002", {{"Sim_pgroup004_spread002_single16_n1ratios_", {0, 10}}}}}},
+		{"Sim_single16_p006s002", {{"single16_pgroup006_spread002", {{"Sim_pgroup006_spread002_single16_n1ratios_", {0, 10}}}}}},
+		{"Sim_single16_p008s002", {{"single16_pgroup008_spread002", {{"Sim_pgroup008_spread002_single16_n1ratios_", {0, 10}}}}}},
+		{"Sim_single16_p01s002", {{"single16_pgroup01_spread002", {{"Sim_pgroup01_spread002_single16_n1ratios_", {0, 10}}}}}},
+
 //		{"Sim_single20_p0s002", {{"single20_pgroup0_spread002", {{"Sim_pgroup0_spread002_single20_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single20_p002s002", {{"single20_pgroup002_spread002", {{"Sim_pgroup002_spread002_single20_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single20_p004s002", {{"single20_pgroup004_spread002", {{"Sim_pgroup004_spread002_single20_n1ratios_", {0, 10}}}}}},
@@ -565,7 +565,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 80000} };
+	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 5000000} };
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {
