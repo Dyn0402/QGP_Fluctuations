@@ -10,6 +10,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <limits>
 
 #include <TCanvas.h>
 
@@ -36,6 +37,7 @@ Mixer::Mixer() {
 	ep_range.second = M_PI;
 	vz_bins = 10;
 	ep_bins = 10;
+	c_rand = mt19937(trand->Integer(numeric_limits<int>::max()));
 }
 
 Mixer::Mixer(int energy) {
@@ -58,6 +60,7 @@ Mixer::Mixer(int energy) {
 	ep_range.second = M_PI;
 	vz_bins = 10;
 	ep_bins = 10;
+	c_rand = mt19937(trand->Integer(numeric_limits<int>::max()));
 }
 
 Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
@@ -80,7 +83,9 @@ Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
 	ep_range.second = M_PI;
 	vz_bins = 10;
 	ep_bins = 10;
+	c_rand = mt19937(trand->Integer(numeric_limits<int>::max()));
 }
+
 
 // Getters
 
@@ -244,7 +249,7 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 
 	vector<int> event_indices(pool_events);
 	iota(begin(event_indices), end(event_indices), 0);
-	random_shuffle(event_indices.begin(), event_indices.end());
+	shuffle(event_indices.begin(), event_indices.end(), c_rand);
 	for (int i=0; i < num_protons; i++) {
 		int angle_index = trand->Rndm() * angles[cent][ep_bin][vz_bin][event_indices[i]].size();
 		double new_angle = angles[cent][ep_bin][vz_bin][event_indices[i]][angle_index];

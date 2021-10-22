@@ -322,20 +322,20 @@ void read_new() {
 		{"Sim_single8_p008s002", {{"single8_pgroup008_spread002", {{"Sim_pgroup008_spread002_single8_n1ratios_", {0, 10}}}}}},
 		{"Sim_single8_p01s002", {{"single8_pgroup01_spread002", {{"Sim_pgroup01_spread002_single8_n1ratios_", {0, 10}}}}}},
 
-		{"Sim_single12_p0s002", {{"single12_pgroup0_spread002", {{"Sim_pgroup0_spread002_single12_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_p002s002", {{"single12_pgroup002_spread002", {{"Sim_pgroup002_spread002_single12_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_p004s002", {{"single12_pgroup004_spread002", {{"Sim_pgroup004_spread002_single12_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_p006s002", {{"single12_pgroup006_spread002", {{"Sim_pgroup006_spread002_single12_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_p008s002", {{"single12_pgroup008_spread002", {{"Sim_pgroup008_spread002_single12_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_p01s002", {{"single12_pgroup01_spread002", {{"Sim_pgroup01_spread002_single12_n1ratios_", {0, 10}}}}}},
-
-		{"Sim_single16_p0s002", {{"single16_pgroup0_spread002", {{"Sim_pgroup0_spread002_single16_n1ratios_", {0, 10}}}}}},
-		{"Sim_single16_p002s002", {{"single16_pgroup002_spread002", {{"Sim_pgroup002_spread002_single16_n1ratios_", {0, 10}}}}}},
-		{"Sim_single16_p004s002", {{"single16_pgroup004_spread002", {{"Sim_pgroup004_spread002_single16_n1ratios_", {0, 10}}}}}},
-		{"Sim_single16_p006s002", {{"single16_pgroup006_spread002", {{"Sim_pgroup006_spread002_single16_n1ratios_", {0, 10}}}}}},
-		{"Sim_single16_p008s002", {{"single16_pgroup008_spread002", {{"Sim_pgroup008_spread002_single16_n1ratios_", {0, 10}}}}}},
-		{"Sim_single16_p01s002", {{"single16_pgroup01_spread002", {{"Sim_pgroup01_spread002_single16_n1ratios_", {0, 10}}}}}},
-
+//		{"Sim_single12_p0s002", {{"single12_pgroup0_spread002", {{"Sim_pgroup0_spread002_single12_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single12_p002s002", {{"single12_pgroup002_spread002", {{"Sim_pgroup002_spread002_single12_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single12_p004s002", {{"single12_pgroup004_spread002", {{"Sim_pgroup004_spread002_single12_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single12_p006s002", {{"single12_pgroup006_spread002", {{"Sim_pgroup006_spread002_single12_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single12_p008s002", {{"single12_pgroup008_spread002", {{"Sim_pgroup008_spread002_single12_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single12_p01s002", {{"single12_pgroup01_spread002", {{"Sim_pgroup01_spread002_single12_n1ratios_", {0, 10}}}}}},
+//
+//		{"Sim_single16_p0s002", {{"single16_pgroup0_spread002", {{"Sim_pgroup0_spread002_single16_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single16_p002s002", {{"single16_pgroup002_spread002", {{"Sim_pgroup002_spread002_single16_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single16_p004s002", {{"single16_pgroup004_spread002", {{"Sim_pgroup004_spread002_single16_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single16_p006s002", {{"single16_pgroup006_spread002", {{"Sim_pgroup006_spread002_single16_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single16_p008s002", {{"single16_pgroup008_spread002", {{"Sim_pgroup008_spread002_single16_n1ratios_", {0, 10}}}}}},
+//		{"Sim_single16_p01s002", {{"single16_pgroup01_spread002", {{"Sim_pgroup01_spread002_single16_n1ratios_", {0, 10}}}}}},
+//
 //		{"Sim_single20_p0s002", {{"single20_pgroup0_spread002", {{"Sim_pgroup0_spread002_single20_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single20_p002s002", {{"single20_pgroup002_spread002", {{"Sim_pgroup002_spread002_single20_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single20_p004s002", {{"single20_pgroup004_spread002", {{"Sim_pgroup004_spread002_single20_n1ratios_", {0, 10}}}}}},
@@ -349,7 +349,7 @@ void read_new() {
 //		{"Sim_single24_p006s002", {{"single24_pgroup006_spread002", {{"Sim_pgroup006_spread002_single24_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single24_p008s002", {{"single24_pgroup008_spread002", {{"Sim_pgroup008_spread002_single24_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single24_p01s002", {{"single24_pgroup01_spread002", {{"Sim_pgroup01_spread002_single24_n1ratios_", {0, 10}}}}}},
-//
+
 //		{"Sim_single28_p0s002", {{"single28_pgroup0_spread002", {{"Sim_pgroup0_spread002_single28_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single28_p002s002", {{"single28_pgroup002_spread002", {{"Sim_pgroup002_spread002_single28_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single28_p004s002", {{"single28_pgroup004_spread002", {{"Sim_pgroup004_spread002_single28_n1ratios_", {0, 10}}}}}},
@@ -396,9 +396,9 @@ void read_new() {
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	vector<int> energy_list{ 62 };
 
-	int set_sleep = 1;
+	int set_sleep = 0;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 13;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -565,7 +565,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 5000000} };
+	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000} };
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {

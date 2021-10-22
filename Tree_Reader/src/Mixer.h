@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <numeric>
+#include <random>
 
 #include <TRandom3.h>
 #include <TH2.h>
@@ -85,6 +86,7 @@ private:
 	vector<int> divs;
 	string out_path;
 	TRandom3 *trand = new TRandom3(0);
+	mt19937 c_rand;
 
 	// Doers
 	void get_mixed(int cent, int num_protons, int ep_bin, int vz_bin);
