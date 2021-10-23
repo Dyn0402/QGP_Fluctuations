@@ -396,9 +396,9 @@ void read_new() {
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	vector<int> energy_list{ 62 };
 
-	int set_sleep = 0;
+	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 13;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -565,7 +565,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000} };
+	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 5000000} };
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {
