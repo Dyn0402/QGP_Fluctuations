@@ -121,10 +121,10 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("10-22-21_sim.root");
-	analyzer.set_out_sys_name("sys_vals_10-22-21_sim.txt");
+	analyzer.set_out_root_name("10-25-21_sim.root");
+	analyzer.set_out_sys_name("sys_vals_10-25-21_sim.txt");
 	analyzer.set_write_sys(true);
-	analyzer.set_write_append(false);
+	analyzer.set_write_append(true);
 //	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
 	analyzer.set_energies({ 62 });
 //	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
@@ -193,10 +193,10 @@ void azimuth_bin_analyze_fig() {
 	vector<string> rapids{ "01", "02", "03", "04", "06", "08", "1" };
 	vector<string> effs{ "05", "1", "15", "2", "3" };
 //	vector<string> pgroups{ "0", "02", "04", "06", "08", "1", "12", "14", "16", "18", "2" };  // "0", "002", "004", "006", "008", "01"
-	vector<string> pgroups{ "0", "002", "004", "006", "008", "01"};
+	vector<string> pgroups{ "02" };
 	vector<string> spreads{ "002" };
-//	vector<string> dists{ "single4", "single8", "single12", "single16", "single20", "single24", "single28", "single32", "single36", "single40", "single44", "single48" };
-	vector<string> dists{ "single4", "single8", "single12" };
+	vector<string> dists{ "single8", "single12", "single16", "single20", "single24", "single28", "single32", "single36", "single40", "single44", "single48" };
+//	vector<string> dists{ "poisson4", "poisson8", "poisson12", "poisson16", "poisson20", "poisson24", "poisson28", "poisson32", "poisson36", "poisson40", "poisson44", "poisson48" };
 
 	map<string, pair<string, vector<string>>> combos;
 	vector<map<string, vector<int>>> sets;
