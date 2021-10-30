@@ -14,6 +14,7 @@
 #include <TRandom3.h>
 #include <TCanvas.h>
 #include <TH1.h>
+#include <TF1.h>
 
 #include "ratio_methods.h"
 #include "Simulator.h"
@@ -139,6 +140,10 @@ void Simulator::set_eff_flow() {
 	simulate_event = bind(&Simulator::sim_event_eff_flow, this, placeholders::_1);
 }
 
+void Simulator::set_anti_clust() {
+	simulate_event = bind(&Simulator::sim_event_anticlust, this, placeholders::_1);
+}
+
 void Simulator::set_hom_eff(double eff) {
 	pars.hom_eff = eff;
 }
@@ -160,6 +165,10 @@ void Simulator::set_flow(double v2, double res, double chi_acc, int event_plane_
 		ep_dist->SetBinContent(bin, event_plane(res, event_plane_n*ep_dist->GetBinCenter(bin), chi_acc));
 	}
 
+}
+
+void Simulator::set_job_energy(int num) {
+	job_energy = num;
 }
 
 
@@ -191,6 +200,50 @@ void Simulator::sim_event(Event &event) {
 
 	vector<Track> tracks;
 	for(double& angle:proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
+// Simulate single event with anti-clustering and return simulated proton angles.
+void Simulator::sim_event_anticlust(Event& event) {
+	double group_angle, new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	if (n_protons > 0) while ((int)proton_angles.size() < 1) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		proton_angles.push_back(new_angle);
+	}
+
+	while ((int)proton_angles.size() < n_protons) {
+		if (sim_rand->Rndm() < pars.p_group) {
+			// Need unique names
+			string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
+			string prob_name = "anti_clust_prob_" + to_string(job_energy);
+			double last_proton = proton_angles.back();
+			TF1 gaus_wrap1 = TF1(gaus_wrap1_name.data(), "gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI);
+			gaus_wrap1.SetParameters(1, last_proton, pars.spread_sigma, 1, last_proton - 2 * M_PI, pars.spread_sigma, 1, last_proton + 2 * M_PI, pars.spread_sigma);
+			double amp = gaus_wrap1.Eval(last_proton);
+			TF1 prob = TF1(prob_name.data(), "1 - gaus(0) - gaus(3) - gaus(6)", 0, 2 * M_PI);
+			prob.SetParameters(1 / amp, last_proton, pars.spread_sigma, 1 / amp, last_proton - 2 * M_PI, pars.spread_sigma, 1 / amp, last_proton + 2 * M_PI, pars.spread_sigma);
+			group_angle = prob.GetRandom();
+			//group_angle = fmod(group_angle, 2 * M_PI);  // Force to range [0, 2*pi)
+			//if (group_angle < 0) { group_angle += 2 * M_PI; }
+			proton_angles.push_back(group_angle);
+		}
+		else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+			proton_angles.push_back(new_angle);
+		}
+	}
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
 		Track track(track_defs);
 		track.set_phi(angle);
 		tracks.push_back(track);
