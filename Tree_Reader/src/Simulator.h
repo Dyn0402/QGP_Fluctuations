@@ -56,6 +56,7 @@ public:
 	double wrap_gaus(double x, double mu, double sigma, double lower_bound, double upper_bound);
 
 	void sim_event(Event &event);
+	void sim_event_anticlust(Event& event);
 	void sim_event_pairs(Event &event);
 	void sim_event_eff(Event &event);
 	void sim_event_eff_flow(Event &event);
@@ -89,10 +90,12 @@ public:
 	void set_eff();
 	void set_flow();
 	void set_eff_flow();
+	void set_anti_clust();
 	void set_hom_eff(double eff);
 	void set_v2(double v2);
 	void set_ep_res(double res);
 	void set_flow(double v2, double res, double chi_acc = 0.0001, int event_plane_n = 2);
+	void set_job_energy(int num);
 
 	// Attributes
 	track_defaults track_defs;
@@ -101,6 +104,7 @@ private:
 	// Attributes
 	double flow_res = 0.;
 	int flow_res_n = 0;
+	int job_energy = 0;  // Unique number for TF1 names
 
 	simulation_pars pars;
 	TRandom3 *sim_rand;
