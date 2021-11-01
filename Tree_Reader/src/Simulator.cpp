@@ -142,6 +142,14 @@ void Simulator::set_eff_flow() {
 
 void Simulator::set_anti_clust() {
 	simulate_event = bind(&Simulator::sim_event_anticlust, this, placeholders::_1);
+	string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
+	string prob_name = "anti_clust_prob_" + to_string(job_energy);
+	gaus_wrap1 = new TF1(gaus_wrap1_name.data(), "gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI);
+	prob = new TF1(prob_name.data(), "1 - gaus(0) - gaus(3) - gaus(6)", 0, 2 * M_PI);
+	gaus_wrap1->SetParameters(1, M_PI, pars.spread_sigma, 1, M_PI - 2 * M_PI, pars.spread_sigma, 1, M_PI + 2 * M_PI, pars.spread_sigma);
+	double amp = gaus_wrap1->Eval(M_PI);
+	prob->SetParameters(1 / amp, M_PI, pars.spread_sigma, 1 / amp, M_PI - 2 * M_PI, pars.spread_sigma, 1 / amp, M_PI + 2 * M_PI, pars.spread_sigma);
+	prob->GetRandom(sim_rand);
 }
 
 void Simulator::set_hom_eff(double eff) {
@@ -223,17 +231,14 @@ void Simulator::sim_event_anticlust(Event& event) {
 	while ((int)proton_angles.size() < n_protons) {
 		if (sim_rand->Rndm() < pars.p_group) {
 			// Need unique names
-			string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
-			string prob_name = "anti_clust_prob_" + to_string(job_energy);
 			double last_proton = proton_angles.back();
-			TF1 gaus_wrap1 = TF1(gaus_wrap1_name.data(), "gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI);
-			gaus_wrap1.SetParameters(1, last_proton, pars.spread_sigma, 1, last_proton - 2 * M_PI, pars.spread_sigma, 1, last_proton + 2 * M_PI, pars.spread_sigma);
-			double amp = gaus_wrap1.Eval(last_proton);
-			TF1 prob = TF1(prob_name.data(), "1 - gaus(0) - gaus(3) - gaus(6)", 0, 2 * M_PI);
-			prob.SetParameters(1 / amp, last_proton, pars.spread_sigma, 1 / amp, last_proton - 2 * M_PI, pars.spread_sigma, 1 / amp, last_proton + 2 * M_PI, pars.spread_sigma);
-			group_angle = prob.GetRandom();
-			//group_angle = fmod(group_angle, 2 * M_PI);  // Force to range [0, 2*pi)
-			//if (group_angle < 0) { group_angle += 2 * M_PI; }
+//			gaus_wrap1->SetParameters(1, last_proton, pars.spread_sigma, 1, last_proton - 2 * M_PI, pars.spread_sigma, 1, last_proton + 2 * M_PI, pars.spread_sigma);
+//			double amp = gaus_wrap1->Eval(last_proton);
+//			prob->SetParameters(1 / amp, last_proton, pars.spread_sigma, 1 / amp, last_proton - 2 * M_PI, pars.spread_sigma, 1 / amp, last_proton + 2 * M_PI, pars.spread_sigma);
+//			prob.SetNpx(10);
+			group_angle = prob->GetRandom(0, 2 * M_PI, sim_rand) - (M_PI - last_proton);  // Generate at center then shift
+			group_angle = fmod(group_angle, 2 * M_PI);  // Force to range [0, 2*pi)
+			if (group_angle < 0) { group_angle += 2 * M_PI; }
 			proton_angles.push_back(group_angle);
 		}
 		else {

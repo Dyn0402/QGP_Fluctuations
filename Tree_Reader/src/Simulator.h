@@ -113,6 +113,9 @@ private:
 	TH1D *norm_eff_dist;
 	TH1D *ep_dist;
 
+	TF1 *gaus_wrap1;
+	TF1 *prob;
+
 	// Doers
 	int get_protons();
 	double get_group_angle(double center);
