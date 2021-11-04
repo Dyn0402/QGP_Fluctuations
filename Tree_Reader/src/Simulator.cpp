@@ -235,7 +235,6 @@ void Simulator::sim_event_anticlust(Event& event) {
 //			gaus_wrap1->SetParameters(1, last_proton, pars.spread_sigma, 1, last_proton - 2 * M_PI, pars.spread_sigma, 1, last_proton + 2 * M_PI, pars.spread_sigma);
 //			double amp = gaus_wrap1->Eval(last_proton);
 //			prob->SetParameters(1 / amp, last_proton, pars.spread_sigma, 1 / amp, last_proton - 2 * M_PI, pars.spread_sigma, 1 / amp, last_proton + 2 * M_PI, pars.spread_sigma);
-//			prob.SetNpx(10);
 			group_angle = prob->GetRandom(0, 2 * M_PI, sim_rand) - (M_PI - last_proton);  // Generate at center then shift
 			group_angle = fmod(group_angle, 2 * M_PI);  // Force to range [0, 2*pi)
 			if (group_angle < 0) { group_angle += 2 * M_PI; }

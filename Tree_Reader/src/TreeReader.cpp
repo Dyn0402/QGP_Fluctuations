@@ -416,7 +416,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 			sim.simulate_event(event);
 
 			for (AzBinner& binner : binners) {
-				binner.process_event(event);
+//				binner.process_event(event);
 			}
 		}
 	}
