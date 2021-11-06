@@ -298,22 +298,22 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_single10_anticlust_p04s002", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {0, 10}}}}}},
-		{"Sim_single10_anticlust_p04s002_1", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {11, 21}}}}}},
-		{"Sim_single10_anticlust_p04s002_2", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {22, 32}}}}}},
-		{"Sim_single10_anticlust_p04s002_3", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {33, 43}}}}}},
-		{"Sim_single10_anticlust_p04s002_4", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {44, 54}}}}}},
-		{"Sim_single10_anticlust_p04s002_5", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {55, 65}}}}}},
-		{"Sim_single10_anticlust_p04s002_6", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {66, 76}}}}}},
-		{"Sim_single10_anticlust_p04s002_7", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {77, 87}}}}}},
-		{"Sim_single10_anticlust_p04s002_8", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {88, 98}}}}}},
-		{"Sim_single10_anticlust_p04s002_9", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {99, 109}}}}}},
-		{"Sim_single10_anticlust_p04s002_10", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {110, 120}}}}}},
-		{"Sim_single10_anticlust_p04s002_11", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {121, 131}}}}}},
-		{"Sim_single10_anticlust_p04s002_12", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {132, 142}}}}}},
-		{"Sim_single10_anticlust_p04s002_13", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {143, 153}}}}}},
-		{"Sim_single10_anticlust_p04s002_14", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {154, 164}}}}}},
-		{"Sim_single10_anticlust_p04s002_15", {{"single10_anticlust_pgroup04_spread002_test", {{"Sim_pgroup04_spread002_single10_anticlust_n1ratios_", {165, 175}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_1", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {11, 21}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_2", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {22, 32}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_3", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {33, 43}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_4", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {44, 54}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_5", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {55, 65}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_6", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {66, 76}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_7", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {77, 87}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_8", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {88, 98}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_9", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {99, 109}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_10", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {110, 120}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_11", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {121, 131}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_12", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {132, 142}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_13", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {143, 153}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_14", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {154, 164}}}}}},
+		{"Sim_single10_anticlmulti_p04s002a4_15", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {165, 175}}}}}},
 
 //		{"Sim_single10_anticlust_p0s5", {{"single10_anticlust_pgroup0_spread5", {{"Sim_pgroup0_spread5_single10_anticlust_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlust_p02s5", {{"single10_anticlust_pgroup02_spread5", {{"Sim_pgroup02_spread5_single10_anticlust_n1ratios_", {0, 10}}}}}},
@@ -625,6 +625,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			if (in_string(set.first, { "Sim", "spread" }, true)) {
 				reader.sim.set_spread_sigma(str_num_dec(get_flag_trail(set.first, "spread", "_")[0], 0));
 			}
+			if (in_string(set.first, { "Sim", "amp" }, true)) {
+				reader.sim.set_amp_group(str_num_dec(get_flag_trail(set.first, "amp", "_")[0], 0));
+			}
 			if (in_string(set.first, { "Sim", "poisson" }, true)) {
 				reader.sim.set_proton_dist("poisson");
 				reader.sim.set_particle_mean(stof(get_flag_trail(set.first, "poisson", "_")[0]));
@@ -671,6 +674,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			else if (in_string(set.first, { "Sim", "Flat500" }, true)) { reader.sim.set_flat_dist(500); }
 			else if (in_string(set.first, { "Sim", "Flat100" }, true)) { reader.sim.set_flat_dist(100); }
 			if (in_string(set.first, { "Sim", "anticlust" }, true)) { reader.sim.set_anti_clust(); }
+			if (in_string(set.first, { "Sim", "anticlmulti" }, true)) { reader.sim.set_anti_clust_multi(); }
 
 
 			vector<int> set_nums;

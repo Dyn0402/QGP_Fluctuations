@@ -56,6 +56,10 @@ double Simulator::get_spread_sigma() {
 	return pars.spread_sigma;
 }
 
+double Simulator::get_amp_group() {
+	return pars.amp_group;
+}
+
 string Simulator::get_proton_dist_type() {
 	return pars.proton_dist;
 }
@@ -76,6 +80,10 @@ void Simulator::set_p_group(double p_group) {
 
 void Simulator::set_spread_sigma(double sig) {
 	pars.spread_sigma = sig;
+}
+
+void Simulator::set_amp_group(double amp) {
+	pars.amp_group = amp;
 }
 
 void Simulator::set_min_protons(int protons) {
@@ -152,6 +160,21 @@ void Simulator::set_anti_clust() {
 	prob->GetRandom(sim_rand);
 }
 
+void Simulator::set_anti_clust_multi() {
+	simulate_event = bind(&Simulator::sim_event_anticlust_multi, this, placeholders::_1);
+	string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
+	string prob_name = "anti_clust_prob_" + to_string(job_energy);
+	for (int i=1; i<=100; i++) {  // 100 max number of particles, need to make dynamic or add warning if this stays
+		gaus_kernels.push_back(new TF1((gaus_wrap1_name + "_" + to_string(i)).data(), "1 + gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI));
+		string prob_string;
+		for (int j=0; j<i; j++) {
+			prob_string += (string)gaus_kernels[j]->GetName() + " * ";
+		}
+		prob_string.erase(prob_string.end() - 3, prob_string.end());
+		prob_multis.push_back(new TF1((prob_name + "_" + to_string(i)).data(), prob_string.data(), -2 * M_PI, 4 * M_PI));
+	}
+}
+
 void Simulator::set_hom_eff(double eff) {
 	pars.hom_eff = eff;
 }
@@ -223,7 +246,7 @@ void Simulator::sim_event_anticlust(Event& event) {
 
 	int n_protons = get_protons();
 
-	if (n_protons > 0) while ((int)proton_angles.size() < 1) {
+	if (n_protons > 0) {
 		new_angle = sim_rand->Rndm() * 2 * M_PI;
 		proton_angles.push_back(new_angle);
 	}
@@ -245,6 +268,54 @@ void Simulator::sim_event_anticlust(Event& event) {
 			proton_angles.push_back(new_angle);
 		}
 	}
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
+// Simulate single event with multi-particle anti-clustering and return simulated proton angles.
+void Simulator::sim_event_anticlust_multi(Event& event) {
+	double new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	if (n_protons > 0) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		proton_angles.push_back(new_angle);
+	}
+
+	string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
+	string prob_name = "anti_clust_prob_" + to_string(job_energy);
+
+//	vector<TF1*> gaus_kernels;
+//	gaus_kernels.push_back(new TF1((gaus_wrap1_name + "_1").data(), "1 + gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI));
+	gaus_kernels[0]->SetParameters(pars.amp_group, new_angle, pars.spread_sigma, pars.amp_group, new_angle - 2 * M_PI, pars.spread_sigma, pars.amp_group, new_angle + 2 * M_PI, pars.spread_sigma);
+
+	while ((int)proton_angles.size() < n_protons) {
+		string prob_string;
+		for (int i = 0; i < (int)proton_angles.size(); i++) {
+			prob_string += (string)gaus_kernels[i]->GetName() + " * ";
+		}
+		prob_string.erase(prob_string.end() - 3, prob_string.end());
+		TF1 *prob_multi = new TF1(prob_name.data(), prob_string.data(), -2 * M_PI, 4 * M_PI);
+		new_angle = 0.5;  // prob.GetRandom(0, 2 * M_PI, sim_rand);
+		proton_angles.push_back(new_angle);
+
+//		gaus_kernels.push_back(new TF1((gaus_wrap1_name + "_" + to_string(proton_angles.size())).data(), "1 + gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI));
+		gaus_kernels[(int)proton_angles.size() - 1]->SetParameters(pars.amp_group, new_angle, pars.spread_sigma, pars.amp_group, new_angle - 2 * M_PI, pars.spread_sigma, pars.amp_group, new_angle + 2 * M_PI, pars.spread_sigma);
+		delete prob_multi;
+	}
+
+//	for (TF1 *kernel : gaus_kernels) {
+//		delete kernel;
+//	}
 
 	vector<Track> tracks;
 	for (double& angle : proton_angles) {

@@ -29,8 +29,9 @@ using namespace std;
 
 
 struct simulation_pars {
-	double p_group = 0.05;
+	double p_group = 0.0;
 	double spread_sigma = 0.0;
+	double amp_group = 0.0;
 
 	int min_protons = 2;
 
@@ -57,6 +58,7 @@ public:
 
 	void sim_event(Event &event);
 	void sim_event_anticlust(Event& event);
+	void sim_event_anticlust_multi(Event& event);
 	void sim_event_pairs(Event &event);
 	void sim_event_eff(Event &event);
 	void sim_event_eff_flow(Event &event);
@@ -72,6 +74,7 @@ public:
 	// Getters
 	double get_p_group();
 	double get_spread_sigma();
+	double get_amp_group();
 	string get_proton_dist_type();
 	TH1D* get_efficiency_dist();
 	simulation_pars get_sim_pars();
@@ -79,6 +82,7 @@ public:
 	// Setters
 	void set_p_group(double p_group);
 	void set_spread_sigma(double sig);
+	void set_amp_group(double amp);
 	void set_min_protons(int protons);
 	void set_proton_dist(string dist);
 	void set_particle_mean(double mean);
@@ -91,6 +95,7 @@ public:
 	void set_flow();
 	void set_eff_flow();
 	void set_anti_clust();
+	void set_anti_clust_multi();
 	void set_hom_eff(double eff);
 	void set_v2(double v2);
 	void set_ep_res(double res);
@@ -115,6 +120,8 @@ private:
 
 	TF1 *gaus_wrap1;
 	TF1 *prob;
+	vector<TF1*> gaus_kernels;
+	vector<TF1*> prob_multis;
 
 	// Doers
 	int get_protons();
