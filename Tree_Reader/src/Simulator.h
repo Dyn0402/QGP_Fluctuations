@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <random>
 
 #include <thread>
 #include <chrono>
@@ -113,6 +114,7 @@ private:
 
 	simulation_pars pars;
 	TRandom3 *sim_rand;
+	default_random_engine c_rand;
 	TH1D *proton_dist_hist;
 	TH1D *efficiency_dist;
 	TH1D *norm_eff_dist;
@@ -120,8 +122,6 @@ private:
 
 	TF1 *gaus_wrap1;
 	TF1 *prob;
-	vector<TF1*> gaus_kernels;
-	vector<TF1*> prob_multis;
 
 	// Doers
 	int get_protons();
@@ -129,5 +129,13 @@ private:
 
 };
 
+
+template <typename T>
+T gaus_kernel(T x, T m, T s)
+{
+    T a = (x - m) / s;
+
+    return std::exp(-T(0.5) * a * a);
+}
 
 #endif /* SIMULATOR_H_ */

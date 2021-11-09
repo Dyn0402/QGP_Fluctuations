@@ -10,6 +10,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+//#include <random>
 
 #include <TRandom3.h>
 #include <TCanvas.h>
@@ -162,17 +163,6 @@ void Simulator::set_anti_clust() {
 
 void Simulator::set_anti_clust_multi() {
 	simulate_event = bind(&Simulator::sim_event_anticlust_multi, this, placeholders::_1);
-	string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
-	string prob_name = "anti_clust_prob_" + to_string(job_energy);
-	for (int i=1; i<=100; i++) {  // 100 max number of particles, need to make dynamic or add warning if this stays
-		gaus_kernels.push_back(new TF1((gaus_wrap1_name + "_" + to_string(i)).data(), "1 + gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI));
-		string prob_string;
-		for (int j=0; j<i; j++) {
-			prob_string += (string)gaus_kernels[j]->GetName() + " * ";
-		}
-		prob_string.erase(prob_string.end() - 3, prob_string.end());
-		prob_multis.push_back(new TF1((prob_name + "_" + to_string(i)).data(), prob_string.data(), -2 * M_PI, 4 * M_PI));
-	}
 }
 
 void Simulator::set_hom_eff(double eff) {
@@ -291,31 +281,49 @@ void Simulator::sim_event_anticlust_multi(Event& event) {
 		proton_angles.push_back(new_angle);
 	}
 
-	string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
-	string prob_name = "anti_clust_prob_" + to_string(job_energy);
-
-//	vector<TF1*> gaus_kernels;
-//	gaus_kernels.push_back(new TF1((gaus_wrap1_name + "_1").data(), "1 + gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI));
-	gaus_kernels[0]->SetParameters(pars.amp_group, new_angle, pars.spread_sigma, pars.amp_group, new_angle - 2 * M_PI, pars.spread_sigma, pars.amp_group, new_angle + 2 * M_PI, pars.spread_sigma);
-
+	int points = 1000;
+	int x_index_low, x_index_up;
+	double x_low = 0;
+	double x_up = 2 * M_PI;
+	double x_range = x_up - x_low;
+	vector<double> prob_vec(points, 1);
+	double x, x_index, p_interp, x_val_low, x_val_up;
 	while ((int)proton_angles.size() < n_protons) {
-		string prob_string;
-		for (int i = 0; i < (int)proton_angles.size(); i++) {
-			prob_string += (string)gaus_kernels[i]->GetName() + " * ";
+		vector<double> cdf(points + 1, 0);
+		int cdf_index = 0;
+		for (int i=0; i<points; i++) {
+			x = x_low + (i + 0.5) * x_range / points;  // Generate prob points in middle of bins
+			prob_vec[i] *= 1 - pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma) -
+					pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI, pars.spread_sigma) -
+					pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI, pars.spread_sigma);
+			cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
+			cdf_index++;
 		}
-		prob_string.erase(prob_string.end() - 3, prob_string.end());
-		TF1 *prob_multi = new TF1(prob_name.data(), prob_string.data(), -2 * M_PI, 4 * M_PI);
-		new_angle = 0.5;  // prob.GetRandom(0, 2 * M_PI, sim_rand);
-		proton_angles.push_back(new_angle);
 
-//		gaus_kernels.push_back(new TF1((gaus_wrap1_name + "_" + to_string(proton_angles.size())).data(), "1 + gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI));
-		gaus_kernels[(int)proton_angles.size() - 1]->SetParameters(pars.amp_group, new_angle, pars.spread_sigma, pars.amp_group, new_angle - 2 * M_PI, pars.spread_sigma, pars.amp_group, new_angle + 2 * M_PI, pars.spread_sigma);
-		delete prob_multi;
+		double norm = cdf[points];  // Last point is max, full integral
+		for (double &x : cdf) {
+			x /= norm;
+		}
+
+		double x_rand = sim_rand->Rndm();
+		int i = 1;  // cdf[0] = 0 and rand > 0 so no need to check.
+		while (cdf[i] < x_rand) { i++; }
+		x_val_up = x_low + i * x_range / points;  // Upper bin edge
+		new_angle = x_val_up - x_range / (cdf[i] - cdf[i - 1]) * (cdf[i] - x_rand);
+
+//		do {
+//			new_angle = sim_rand->Rndm() * 2 * M_PI;
+//			x_index = (new_angle - x_low) / x_range * (points - 1);
+//			x_index_low = floor(x_index);
+//			x_index_up = ceil(x_index);
+//			x_val_low = x_low + x_index_low * x_range / (points - 1);
+//			x_val_up = x_low + x_index_up * x_range / (points - 1);
+//			p_interp = prob_vec[x_index_low] + (prob_vec[x_index_up] - prob_vec[x_index_low]) / (x_range / (points - 1)) * (new_angle - x_low);
+//		} while (sim_rand->Rndm() < p_interp);  // Regenerate
+
+		proton_angles.push_back(new_angle);
 	}
 
-//	for (TF1 *kernel : gaus_kernels) {
-//		delete kernel;
-//	}
 
 	vector<Track> tracks;
 	for (double& angle : proton_angles) {
