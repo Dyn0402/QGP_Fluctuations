@@ -124,7 +124,7 @@ void azimuth_bin_analyze_fig() {
 	analyzer.set_out_root_name("11-10-21_clustmulti_sim.root");
 	analyzer.set_out_sys_name("sys_vals_11-10-21_clustmulti_sim.txt");
 	analyzer.set_write_sys(true);
-	analyzer.set_write_append(false);
+	analyzer.set_write_append(true);
 //	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
 	analyzer.set_energies({ 62 });
 //	analyzer.set_all_centralities({ 8, 7, 6, 5, 4, 3, 2, 1 });
@@ -194,10 +194,10 @@ void azimuth_bin_analyze_fig() {
 	vector<string> effs{ "05", "1", "15", "2", "3" };
 	vector<string> pgroups{ "0", "02", "04", "06", "08", "1", "12", "14", "16", "18", "2", "3", "4", "6", "8" };  // "0", "002", "004", "006", "008", "01"
 //	vector<string> pgroups{ "02" };
-	vector<string> amps{ "0", "05", "1", "2", "3", "4", "5", "6", "7", "8", "9", "99" };
-	vector<string> spreads{ "3" };
-	vector<string> dists{ "single10" };
-//	vector<string> dists{ "single8", "single12", "single16", "single20", "single24", "single28", "single32", "single36", "single40", "single44", "single48" };
+	vector<string> amps{ "05" };  // "0", "05", "1", "2", "3", "4", "5", "6", "7", "8", "9", "99" };
+	vector<string> spreads{ "1" };  // "01", "05", "1", "15", "2", "25", "3", "35", "4", "45", "5", "55", "6", "65", "7", "8" };
+//	vector<string> dists{ "single10" };
+	vector<string> dists{ "single3", "single4", "single5", "single6", "single8", "single12", "single14", "single16", "single18", "single20", "single22", "single24", "single26", "single28", "single30", "single32", "single34", "single36", "single38", "single40", "single42", "single44", "single46", "single48" };
 //	vector<string> dists{ "poisson4", "poisson8", "poisson12", "poisson16", "poisson20", "poisson24", "poisson28", "poisson32", "poisson36", "poisson40", "poisson44", "poisson48" };
 	string clust = "anticlmulti_";
 
