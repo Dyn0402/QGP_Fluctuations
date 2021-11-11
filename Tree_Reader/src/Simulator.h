@@ -31,8 +31,13 @@ using namespace std;
 
 struct simulation_pars {
 	double p_group = 0.0;
-	double spread_sigma = 0.0;
-	double amp_group = 0.0;
+	double spread_sigma = 0.0;  // Sigma of gaussian kernels
+	double amp_group = 0.0;  // Amplitude of gaussian kernels for cluter multi. Negative for anticluster postitive for cluster
+	double base = 1.0;  // Base value for cluster multi on top of which gaussian kernels superimposed
+
+	int points = 1000;  // Points in probability vector for cluster multi
+	double x_low = 0;  // Lower support for probability vector for cluster multi
+	double x_up = 2 * M_PI;  // Upper support for probability vector for cluster multi
 
 	int min_protons = 2;
 
@@ -59,7 +64,7 @@ public:
 
 	void sim_event(Event &event);
 	void sim_event_anticlust(Event& event);
-	void sim_event_anticlust_multi(Event& event);
+	void sim_event_clust_multi(Event& event);
 	void sim_event_pairs(Event &event);
 	void sim_event_eff(Event &event);
 	void sim_event_eff_flow(Event &event);
@@ -96,7 +101,7 @@ public:
 	void set_flow();
 	void set_eff_flow();
 	void set_anti_clust();
-	void set_anti_clust_multi();
+	void set_clust_multi();
 	void set_hom_eff(double eff);
 	void set_v2(double v2);
 	void set_ep_res(double res);

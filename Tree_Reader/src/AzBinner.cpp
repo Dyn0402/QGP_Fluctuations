@@ -953,6 +953,11 @@ void AzBinner::write_info_file() {
 
 		out << "sim p_group: " << to_string(sim_pars.p_group) << endl;
 		out << "sim spread_sigma: " << to_string(sim_pars.spread_sigma) << endl;
+		out << "sim amp_group: " << to_string(sim_pars.amp_group) << endl;
+		out << "sim base: " << to_string(sim_pars.base) << endl;
+		out << "sim points: " << to_string(sim_pars.points) << endl;
+		out << "sim x_low: " << to_string(sim_pars.x_low) << endl;
+		out << "sim x_up: " << to_string(sim_pars.x_up) << endl;
 		out << "sim min_protons: " << to_string(sim_pars.min_protons) << endl;
 		out << "sim proton_dist: " << sim_pars.proton_dist << endl;
 		out << "sim particle_mean: " << to_string(sim_pars.particle_mean) << endl;

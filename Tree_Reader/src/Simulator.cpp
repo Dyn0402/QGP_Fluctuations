@@ -161,8 +161,8 @@ void Simulator::set_anti_clust() {
 	prob->GetRandom(sim_rand);
 }
 
-void Simulator::set_anti_clust_multi() {
-	simulate_event = bind(&Simulator::sim_event_anticlust_multi, this, placeholders::_1);
+void Simulator::set_clust_multi() {
+	simulate_event = bind(&Simulator::sim_event_clust_multi, this, placeholders::_1);
 }
 
 void Simulator::set_hom_eff(double eff) {
@@ -270,7 +270,7 @@ void Simulator::sim_event_anticlust(Event& event) {
 
 
 // Simulate single event with multi-particle anti-clustering and return simulated proton angles.
-void Simulator::sim_event_anticlust_multi(Event& event) {
+void Simulator::sim_event_clust_multi(Event& event) {
 	double new_angle;
 	vector<double> proton_angles;
 
@@ -281,35 +281,31 @@ void Simulator::sim_event_anticlust_multi(Event& event) {
 		proton_angles.push_back(new_angle);
 	}
 
-	int points = 1000;
-	int x_index_low, x_index_up;
-	double x_low = 0;
-	double x_up = 2 * M_PI;
-	double x_range = x_up - x_low;
-	vector<double> prob_vec(points, 1);
-	double x, x_index, p_interp, x_val_low, x_val_up;
+	double x_range = pars.x_up - pars.x_low;
+	vector<double> prob_vec(pars.points, 1);
+	double x, x_val_up;
 	while ((int)proton_angles.size() < n_protons) {
-		vector<double> cdf(points + 1, 0);
+		vector<double> cdf(pars.points + 1, 0);
 		int cdf_index = 0;
-		for (int i=0; i<points; i++) {
-			x = x_low + (i + 0.5) * x_range / points;  // Generate prob points in middle of bins
-			prob_vec[i] *= 1 - pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma) -
-					pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI, pars.spread_sigma) -
-					pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI, pars.spread_sigma);
+		for (int i=0; i<pars.points; i++) {
+			x = pars.x_low + (i + 0.5) * x_range / pars.points;  // Generate prob points in middle of bins
+			prob_vec[i] *= pars.base + pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma) +
+					pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI, pars.spread_sigma) +  // wrap once to deal with
+					pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI, pars.spread_sigma);  // periodic boundary
 			cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
 			cdf_index++;
 		}
 
-		double norm = cdf[points];  // Last point is max, full integral
+		double norm = cdf[pars.points];  // Last point is max, full integral
 		for (double &x : cdf) {
 			x /= norm;
 		}
 
-		double x_rand = sim_rand->Rndm();
+		double cdf_rand = sim_rand->Rndm();
 		int i = 1;  // cdf[0] = 0 and rand > 0 so no need to check.
-		while (cdf[i] < x_rand) { i++; }
-		x_val_up = x_low + i * x_range / points;  // Upper bin edge
-		new_angle = x_val_up - x_range / (cdf[i] - cdf[i - 1]) * (cdf[i] - x_rand);
+		while (cdf[i] < cdf_rand) { i++; }
+		x_val_up = pars.x_low + i * x_range / pars.points;  // Upper bin edge
+		new_angle = x_val_up - x_range / pars.points / (cdf[i] - cdf[i - 1]) * (cdf[i] - cdf_rand);  // Linear interpolation
 
 //		do {
 //			new_angle = sim_rand->Rndm() * 2 * M_PI;

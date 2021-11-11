@@ -121,8 +121,8 @@ void azimuth_bin_analyze_fig() {
 	}
 	//	analyzer.set_out_root_name("10-2-20_BES1_eta_05_1_dca_1_3.root");
 	//	analyzer.set_def_set("rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_def_");
-	analyzer.set_out_root_name("11-1-21_anticlust_sim.root");
-	analyzer.set_out_sys_name("sys_vals_11-1-21_anticlust_sim.txt");
+	analyzer.set_out_root_name("11-10-21_clustmulti_sim.root");
+	analyzer.set_out_sys_name("sys_vals_11-10-21_clustmulti_sim.txt");
 	analyzer.set_write_sys(true);
 	analyzer.set_write_append(false);
 //	analyzer.set_energies({ 7, 11, 19, 27, 39, 62 });
@@ -194,11 +194,12 @@ void azimuth_bin_analyze_fig() {
 	vector<string> effs{ "05", "1", "15", "2", "3" };
 	vector<string> pgroups{ "0", "02", "04", "06", "08", "1", "12", "14", "16", "18", "2", "3", "4", "6", "8" };  // "0", "002", "004", "006", "008", "01"
 //	vector<string> pgroups{ "02" };
-	vector<string> spreads{ "002", "5" };
+	vector<string> amps{ "0", "05", "1", "2", "3", "4", "5", "6", "7", "8", "9", "99" };
+	vector<string> spreads{ "3" };
 	vector<string> dists{ "single10" };
 //	vector<string> dists{ "single8", "single12", "single16", "single20", "single24", "single28", "single32", "single36", "single40", "single44", "single48" };
 //	vector<string> dists{ "poisson4", "poisson8", "poisson12", "poisson16", "poisson20", "poisson24", "poisson28", "poisson32", "poisson36", "poisson40", "poisson44", "poisson48" };
-	string clust = "anticlust_";
+	string clust = "anticlmulti_";
 
 	map<string, pair<string, vector<string>>> combos;
 	vector<map<string, vector<int>>> sets;
@@ -262,16 +263,17 @@ void azimuth_bin_analyze_fig() {
 //	}
 
 	// Simulation
-	for (string pgroup : pgroups) {
+	for (string amp : amps) {
 		for (string spread : spreads) {
 			for (string dist : dists) {
 //				if (dist == "single10" && spread != "5") { continue; }
-				string pgroup_name = "pgroup" + pgroup;
+//				string pgroup_name = "pgroup" + pgroup;
+				string amp_name = "amp" + amp;
 				string spread_name = "spread" + spread;
-				string set_name_full = dist + "_" + clust + pgroup_name + "_" + spread_name + "/";;
+				string set_name_full = dist + "_" + clust + amp_name + "_" + spread_name + "/";;
 				map<string, vector<int>> ps_sim_def = prepend_sets(get_sets(analyzer.get_sim_in_path() + set_name_full), set_name_full);
 				sets.push_back(ps_sim_def);
-				combos["Sim_" + dist + "_" + clust + pgroup_name + "_" + spread_name] = make_pair(get_set_names(ps_sim_def)[0], get_set_names(ps_sim_def));
+				combos["Sim_" + dist + "_" + clust + amp_name + "_" + spread_name] = make_pair(get_set_names(ps_sim_def)[0], get_set_names(ps_sim_def));
 
 			}
 		}
