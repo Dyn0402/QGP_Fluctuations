@@ -60,6 +60,7 @@ AzBinner::AzBinner(int energy, int ref_num) {
 	n1_ratios = false;
 	check_charge = true;
 	rapidity = false;
+	resample = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -92,6 +93,7 @@ AzBinner::AzBinner(int energy) {
 	n1_ratios = false;
 	check_charge = true;
 	rapidity = false;
+	resample = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -124,6 +126,7 @@ AzBinner::AzBinner() {
 	n1_ratios = false;
 	check_charge = true;
 	rapidity = false;
+	resample = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -340,6 +343,10 @@ void AzBinner::set_rapidity(bool rapidity) {
 	this->rapidity = rapidity;
 }
 
+void AzBinner::set_resample(bool resample) {
+	this->resample = resample;
+}
+
 void AzBinner::set_pile_up_prob(double pile_up_prob) {
 	this->pile_up_prob = pile_up_prob;
 }
@@ -356,6 +363,14 @@ void AzBinner::set_ref_num(int ref_num) {
 	this->ref_num = ref_num;
 	if (refmultCorrUtil) { delete refmultCorrUtil; }
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+}
+
+void AzBinner::set_n_resamples(int n) {
+	n_resamples = n;
+}
+
+void AzBinner::set_n_bootstraps(int n) {
+	n_bootstraps = n;
 }
 
 void AzBinner::set_particle(string particle) {
@@ -523,17 +538,39 @@ void AzBinner::process_event(const Event& event) {
 				//event.set_event_plane(rotate_angle(event_plane, rand_angle));  // Need to rotate event plane if it's used after this point. Currently is not.
 			}
 
+			if (resample) {
+				sort(good_particle_angles.begin(), good_particle_angles.end());
+				for (auto& div : divs) {
+					double div_rads = (double)div / 180 * M_PI;
+					map<int, int> binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
 
-			for (auto& div : divs) {
-				int bin_num = (int)360 / div;
-				double div_rads = (double)div / 180 * M_PI;
-				if (single_ratio) { bin_num = 1; }
-				else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
-				vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+					// Save binned values to data
+					for (pair<int, int> num_in_bin : binned_event) {
+						data[div][cent][good_particle_angles.size()][num_in_bin.first] += num_in_bin.second;
+					}
 
-				// Save ratio values to data
-				for (int particles_in_bin : event_ratios) {
-					data[div][cent][good_particle_angles.size()][particles_in_bin]++;
+					// Save binned values to bootstraps
+					for (int i = 0; i < n_bootstraps; i++) {
+						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+							for (pair<int, int> num_in_bin : binned_event) {
+								data_bs[div][cent][i][good_particle_angles.size()][num_in_bin.first] += num_in_bin.second;
+							}
+						}
+					}
+				}
+			}
+			else {
+				for (auto& div : divs) {
+					int bin_num = (int)360 / div;
+					double div_rads = (double)div / 180 * M_PI;
+					if (single_ratio) { bin_num = 1; }
+					else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+					vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+
+					// Save ratio values to data
+					for (int particles_in_bin : event_ratios) {
+						data[div][cent][good_particle_angles.size()][particles_in_bin]++;
+					}
 				}
 			}
 		}
@@ -874,7 +911,12 @@ void AzBinner::fill_post_event_qa(const Event& event) {
 
 // Write binned data to histogram text files, raw and mixed
 void AzBinner::write_binner_data() {
-	write_tree_data("local", data, out_path + to_string(energy) + "GeV/");
+	if (resample) {
+		write_tree_data_bootstrap("local", data, data_bs, out_path + to_string(energy) + "GeV/");
+	}
+	else {
+		write_tree_data("local", data, out_path + to_string(energy) + "GeV/");
+	}
 	if (mixed) { mix.write_mixed_data(); }
 	if (mixed_sets) { mix_sets.write_mixed_data(); }
 	if (rand_data) { random.write_random_data(); }

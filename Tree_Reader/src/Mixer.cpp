@@ -27,6 +27,7 @@ Mixer::Mixer() {
 	n1_ratios = false;
 	rand_rotate = false;
 	event_plane_rotate = false;
+	resample = false;
 	energy = 0;
 	min_events = 150;
 	max_events = 250;
@@ -44,7 +45,8 @@ Mixer::Mixer(int energy) {
 	single_ratio = false;
 	n1_ratios = false;
 	rand_rotate = false;
-	event_plane_rotate = false;
+	event_plane_rotate = false; 
+	resample = false;
 	this->energy = energy;
 	min_events = 150;
 	max_events = 250;
@@ -68,6 +70,7 @@ Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
 	n1_ratios = false;
 	this->rand_rotate = rand_rotate;
 	event_plane_rotate = false;
+	resample = false;
 	this->energy = energy;
 	min_events = 150;
 	max_events = 250;
@@ -164,6 +167,10 @@ void Mixer::set_event_plane_rotate(bool event_plane_rotate) {
 	this->event_plane_rotate = event_plane_rotate;
 }
 
+void Mixer::set_resample(bool resample) {
+	this->resample = resample;
+}
+
 void Mixer::set_energy(int energy) {
 	this->energy = energy;
 }
@@ -208,6 +215,14 @@ void Mixer::set_divs(vector<int> divs) {
 
 void Mixer::set_rand_seed(int seed) {
 	trand = new TRandom3(seed);
+}
+
+void Mixer::set_n_resamples(int n) {
+	n_resamples = n;
+}
+
+void Mixer::set_n_bootstraps(int n) {
+	n_bootstraps = n;
 }
 
 
@@ -294,7 +309,12 @@ void Mixer::define_hists(int cent) {
 // Write data to output directory
 void Mixer::write_mixed_data() {
 	reset_out_dir();
-	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
+	if (resample) {
+		write_tree_data_bootstrap("local", data, data_bs, out_path + to_string(energy) + "GeV/");
+	}
+	else {
+		write_tree_data("local", data, out_path + to_string(energy) + "GeV/");
+	}
 }
 
 // Write QA plots to open TFile

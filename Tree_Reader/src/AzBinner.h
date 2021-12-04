@@ -87,10 +87,13 @@ public:
 	void set_sim_eff(bool sim_eff);
 	void set_sim_flow(bool sim_flow);
 	void set_rapidity(bool rapidity);
+	void set_resample(bool resample);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
 	void set_ref_num(int ref_num);
+	void set_n_resamples(int n);
+	void set_n_bootstraps(int n);
 	void set_particle(string particle);
 	void set_particle_dist_hist_max(int max);
 	void set_ampt_particle_pid(vector<int> pid);
@@ -123,7 +126,8 @@ public:
 
 private:
 	// Attributes
-	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
+	map<int, map<int, map<int, map<int, long>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
+	map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
 	StRefMultCorr* refmultCorrUtil;
 	TRandom3* trand = new TRandom3(0);
 	tree_branches branches;
@@ -176,12 +180,16 @@ private:
 	bool sim_flow;
 	bool check_charge;
 	bool rapidity;
+	bool resample;
 
 	double pile_up_prob;
 	double efficiency_prob;
 
 	int cent_binning;
 	int ref_num;
+
+	int n_resamples = 100;
+	int n_bootstraps = 100;
 
 	int particle_dist_hist_max = 100;
 

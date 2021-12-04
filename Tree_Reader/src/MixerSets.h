@@ -42,7 +42,7 @@ private:
 	// Attributes
 	int max_events;
 	bool use_leftover;
-	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+	map<int, map<int, map<int, map<int, long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
 	map<int, vector<double>> angles;
 	map<int, vector<int>> num_angles;
 	vector<int> divs;

@@ -38,7 +38,7 @@ public:
 
 private:
 	// Attributes
-	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+	map<int, map<int, map<int, map<int, long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
 	vector<int> divs;
 	string out_path;
 

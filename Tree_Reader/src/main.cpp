@@ -298,6 +298,8 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_single10_anticlmulti_resample_s2a4", {{"single10_anticlmulti_resample_spread2_amp5_test", {{"Sim_spread2_amp5_single10_anticlmulti_resample_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_anticlmulti_s2a4", {{"single10_anticlmulti_spread2_amp5_test", {{"Sim_spread2_amp5_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4_1", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {11, 21}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4_2", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {22, 32}}}}}},
@@ -363,41 +365,41 @@ void read_new() {
 //		{"Sim_single62_anticlmulti_s8a01", {{"single62_anticlmulti_amp01_spread8", {{"Sim_amp01_spread8_single62_anticlmulti_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single66_anticlmulti_s8a01", {{"single66_anticlmulti_amp01_spread8", {{"Sim_amp01_spread8_single66_anticlmulti_n1ratios_", {0, 10}}}}}},
 
-		{"Sim_single48_anticlmulti_s1a01", {{"single48_anticlmulti_amp01_spread1", {{"Sim_amp01_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single48_anticlmulti_s1a02", {{"single48_anticlmulti_amp02_spread1", {{"Sim_amp02_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single48_anticlmulti_s1a03", {{"single48_anticlmulti_amp03_spread1", {{"Sim_amp03_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single48_anticlmulti_s1a04", {{"single48_anticlmulti_amp04_spread1", {{"Sim_amp04_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single48_anticlmulti_s15a01", {{"single48_anticlmulti_amp01_spread15", {{"Sim_amp01_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single48_anticlmulti_s15a02", {{"single48_anticlmulti_amp02_spread15", {{"Sim_amp02_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single48_anticlmulti_s15a03", {{"single48_anticlmulti_amp03_spread15", {{"Sim_amp03_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single48_anticlmulti_s15a04", {{"single48_anticlmulti_amp04_spread15", {{"Sim_amp04_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s1a01", {{"single48_anticlmulti_amp01_spread1", {{"Sim_amp01_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s1a02", {{"single48_anticlmulti_amp02_spread1", {{"Sim_amp02_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s1a03", {{"single48_anticlmulti_amp03_spread1", {{"Sim_amp03_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s1a04", {{"single48_anticlmulti_amp04_spread1", {{"Sim_amp04_spread1_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s15a01", {{"single48_anticlmulti_amp01_spread15", {{"Sim_amp01_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s15a02", {{"single48_anticlmulti_amp02_spread15", {{"Sim_amp02_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s15a03", {{"single48_anticlmulti_amp03_spread15", {{"Sim_amp03_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single48_anticlmulti_s15a04", {{"single48_anticlmulti_amp04_spread15", {{"Sim_amp04_spread15_single48_anticlmulti_n1ratios_", {0, 10}}}}}},
 
-		{"Sim_single12_anticlmulti_s1a01", {{"single12_anticlmulti_amp01_spread1", {{"Sim_amp01_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_anticlmulti_s1a02", {{"single12_anticlmulti_amp02_spread1", {{"Sim_amp02_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_anticlmulti_s1a03", {{"single12_anticlmulti_amp03_spread1", {{"Sim_amp03_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_anticlmulti_s1a04", {{"single12_anticlmulti_amp04_spread1", {{"Sim_amp04_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_anticlmulti_s15a01", {{"single12_anticlmulti_amp01_spread15", {{"Sim_amp01_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_anticlmulti_s15a02", {{"single12_anticlmulti_amp02_spread15", {{"Sim_amp02_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_anticlmulti_s15a03", {{"single12_anticlmulti_amp03_spread15", {{"Sim_amp03_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single12_anticlmulti_s15a04", {{"single12_anticlmulti_amp04_spread15", {{"Sim_amp04_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s1a01", {{"single12_anticlmulti_amp01_spread1", {{"Sim_amp01_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s1a02", {{"single12_anticlmulti_amp02_spread1", {{"Sim_amp02_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s1a03", {{"single12_anticlmulti_amp03_spread1", {{"Sim_amp03_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s1a04", {{"single12_anticlmulti_amp04_spread1", {{"Sim_amp04_spread1_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s15a01", {{"single12_anticlmulti_amp01_spread15", {{"Sim_amp01_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s15a02", {{"single12_anticlmulti_amp02_spread15", {{"Sim_amp02_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s15a03", {{"single12_anticlmulti_amp03_spread15", {{"Sim_amp03_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single12_anticlmulti_s15a04", {{"single12_anticlmulti_amp04_spread15", {{"Sim_amp04_spread15_single12_anticlmulti_n1ratios_", {0, 10}}}}}},
 
-		{"Sim_single24_anticlmulti_s1a01", {{"single24_anticlmulti_amp01_spread1", {{"Sim_amp01_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single24_anticlmulti_s1a02", {{"single24_anticlmulti_amp02_spread1", {{"Sim_amp02_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single24_anticlmulti_s1a03", {{"single24_anticlmulti_amp03_spread1", {{"Sim_amp03_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single24_anticlmulti_s1a04", {{"single24_anticlmulti_amp04_spread1", {{"Sim_amp04_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single24_anticlmulti_s15a01", {{"single24_anticlmulti_amp01_spread15", {{"Sim_amp01_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single24_anticlmulti_s15a02", {{"single24_anticlmulti_amp02_spread15", {{"Sim_amp02_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single24_anticlmulti_s15a03", {{"single24_anticlmulti_amp03_spread15", {{"Sim_amp03_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single24_anticlmulti_s15a04", {{"single24_anticlmulti_amp04_spread15", {{"Sim_amp04_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s1a01", {{"single24_anticlmulti_amp01_spread1", {{"Sim_amp01_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s1a02", {{"single24_anticlmulti_amp02_spread1", {{"Sim_amp02_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s1a03", {{"single24_anticlmulti_amp03_spread1", {{"Sim_amp03_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s1a04", {{"single24_anticlmulti_amp04_spread1", {{"Sim_amp04_spread1_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s15a01", {{"single24_anticlmulti_amp01_spread15", {{"Sim_amp01_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s15a02", {{"single24_anticlmulti_amp02_spread15", {{"Sim_amp02_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s15a03", {{"single24_anticlmulti_amp03_spread15", {{"Sim_amp03_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single24_anticlmulti_s15a04", {{"single24_anticlmulti_amp04_spread15", {{"Sim_amp04_spread15_single24_anticlmulti_n1ratios_", {0, 10}}}}}},
 
-		{"Sim_single32_anticlmulti_s08a01", {{"single32_anticlmulti_amp01_spread08", {{"Sim_amp01_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single32_anticlmulti_s08a02", {{"single32_anticlmulti_amp02_spread08", {{"Sim_amp02_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single32_anticlmulti_s08a03", {{"single32_anticlmulti_amp03_spread08", {{"Sim_amp03_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single32_anticlmulti_s08a04", {{"single32_anticlmulti_amp04_spread08", {{"Sim_amp04_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single32_anticlmulti_s2a01", {{"single32_anticlmulti_amp01_spread2", {{"Sim_amp01_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single32_anticlmulti_s2a02", {{"single32_anticlmulti_amp02_spread2", {{"Sim_amp02_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single32_anticlmulti_s2a03", {{"single32_anticlmulti_amp03_spread2", {{"Sim_amp03_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
-		{"Sim_single32_anticlmulti_s2a04", {{"single32_anticlmulti_amp04_spread2", {{"Sim_amp04_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s08a01", {{"single32_anticlmulti_amp01_spread08", {{"Sim_amp01_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s08a02", {{"single32_anticlmulti_amp02_spread08", {{"Sim_amp02_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s08a03", {{"single32_anticlmulti_amp03_spread08", {{"Sim_amp03_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s08a04", {{"single32_anticlmulti_amp04_spread08", {{"Sim_amp04_spread08_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s2a01", {{"single32_anticlmulti_amp01_spread2", {{"Sim_amp01_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s2a02", {{"single32_anticlmulti_amp02_spread2", {{"Sim_amp02_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s2a03", {{"single32_anticlmulti_amp03_spread2", {{"Sim_amp03_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
+		//{"Sim_single32_anticlmulti_s2a04", {{"single32_anticlmulti_amp04_spread2", {{"Sim_amp04_spread2_single32_anticlmulti_n1ratios_", {0, 10}}}}}},
 // ^ Laptop
 
 
@@ -857,6 +859,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
 				if (in_string(set.first, "CF")) { reader.set_cooper_frye(true); binner.set_cooper_frye(true); }
+
+				if (in_string(set.first, "resample")) { binner.set_resample(true); }
 
 				if (in_string(set.first, "cbwc")) { binner.set_cbwc(true); }
 				else { binner.set_cbwc(false); }

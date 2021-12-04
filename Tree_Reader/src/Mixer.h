@@ -47,6 +47,7 @@ public:
 	void set_n1_ratios(bool n1_ratios);
 	void set_rand_rotate(bool rand_rotate);
 	void set_event_plane_rotate(bool event_plane_rotate);
+	void set_resample(bool resample);
 	void set_energy(int energy);
 	void set_max_events(int max_events);
 	void set_min_events(int min_events);
@@ -58,6 +59,8 @@ public:
 	void set_out_path(string path);
 	void set_divs(vector<int> divs);
 	void set_rand_seed(int seed=0);
+	void set_n_resamples(int n);
+	void set_n_bootstraps(int n);
 
 	// Doers
 	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);
@@ -73,6 +76,7 @@ private:
 	bool n1_ratios;
 	bool rand_rotate;
 	bool event_plane_rotate;  // It doesn't look like this does anything
+	bool resample;
 	int energy;
 	int min_events;
 	int max_events;
@@ -81,12 +85,16 @@ private:
 	int ep_bins;
 	pair<double, double> vz_range;
 	pair<double, double> ep_range;
-	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+	map<int, map<int, map<int, map<int, long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+	map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
 	map<int, map<int, map<int, vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
 	vector<int> divs;
 	string out_path;
 	TRandom3 *trand = new TRandom3(0);
 	mt19937 c_rand;
+
+	int n_resamples = 100;
+	int n_bootstraps = 100;
 
 	// Doers
 	void get_mixed(int cent, int num_protons, int ep_bin, int vz_bin);
