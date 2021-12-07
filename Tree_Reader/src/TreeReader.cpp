@@ -282,7 +282,7 @@ void TreeReader::read_trees() {
 		ampt_cent = AmptCentralityMaker(energy, in_path + "min_bias/" + ampt_type + "/", ampt_cent_path + ampt_type + "/", "ref" + to_string(ref_num));
 		ampt_cent.make_centrality(false);  // Usually just reads from file unless it can't find it.
 
-		in_files = get_files_in_dir(in_path + "most_central/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
+		in_files = get_files_in_dir(in_path + "slim_most_central/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
 		vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
 		in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
 	}

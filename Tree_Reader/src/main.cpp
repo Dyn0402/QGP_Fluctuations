@@ -203,12 +203,9 @@ void read_new() {
 //		{"BES1_Eff15_sys_2", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}}
 //	};
 
-//	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//	{"Ampt_def_0", {{"default", {{"Ampt_rapid05_n1ratios_", {0, 14}}}}}},
-//	{"Ampt_def_1", {{"default", {{"Ampt_rapid05_n1ratios_", {15, 29}}}}}},
-//	{"Ampt_def_2", {{"default", {{"Ampt_rapid05_n1ratios_", {30, 44}}}}}},
-//	{"Ampt_def_3", {{"default", {{"Ampt_rapid05_n1ratios_", {45, 59}}}}}}
-//	};
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_n1ratios_", {0, 100}}}}}}
+	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
@@ -297,9 +294,9 @@ void read_new() {
 //		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single10_anticlmulti_resample_n1ratios_", {0, 0}}}}}},
-		{"Sim_single10_anticlmulti_s0a0", {{"single10_anticlmulti_spread0_amp0_test", {{"Sim_spread0_amp0_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single10_anticlmulti_resample_n1ratios_", {0, 0}}}}}},
+//		{"Sim_single10_anticlmulti_s0a0", {{"single10_anticlmulti_spread0_amp0_test", {{"Sim_spread0_amp0_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4_1", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {11, 21}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4_2", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {22, 32}}}}}},
@@ -594,10 +591,10 @@ void read_new() {
 //		{"Sim_single10_anticlust_s3a8", {{"single10_anticlust_amp8_spread3", {{"Sim_amp8_spread3_single10_anticlust_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlust_s3a9", {{"single10_anticlust_amp9_spread3", {{"Sim_amp9_spread3_single10_anticlust_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlust_s3a99", {{"single10_anticlust_amp99_spread3", {{"Sim_amp99_spread3_single10_anticlust_n1ratios_", {0, 10}}}}}},
-	};
+//	};
 
-//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 62 };
+	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+//	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -803,15 +800,6 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				reader.sim.set_proton_dist("single");
 				reader.sim.set_particle_mean(stof(get_flag_trail(set.first, "single", "_")[0]));
 			}
-//			if (in_string(set.first, { "Sim", "0p0s" }, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
-//			else if (in_string(set.first, { "Sim", "05p002s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
-//			else if (in_string(set.first, { "Sim", "05p05s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
-//			else if (in_string(set.first, { "Sim", "01p002s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.002); }
-//			else if (in_string(set.first, { "Sim", "01p05s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.5); }
-//			else if (in_string(set.first, { "Sim", "002p002s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.002); }
-//			else if (in_string(set.first, { "Sim", "002p05s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.5); }
-//			else if (in_string(set.first, { "Sim", "15p002s" }, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
-//			else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
 
 			if (in_string(set.first, "Sim")) {
 				reader.sim.set_hom_eff(1.0);
