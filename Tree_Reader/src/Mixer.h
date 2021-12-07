@@ -31,12 +31,15 @@ public:
 	bool get_n1_ratios();
 	bool get_rand_rotate();
 	bool get_event_plane_rotate();
+	bool get_resample();
 	int get_energy();
 	int get_max_events();
 	int get_min_events();
 	int get_mixes_per_event();
 	int get_vz_bins();
 	int get_ep_bins();
+	int get_n_resamples();
+	int get_n_bootstraps();
 	pair<double, double> get_vz_range();
 	pair<double, double> get_ep_range();
 	string get_out_path();

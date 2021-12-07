@@ -298,8 +298,8 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_single10_anticlmulti_resample_s2a4", {{"single10_anticlmulti_resample_spread2_amp5_test", {{"Sim_spread2_amp5_single10_anticlmulti_resample_n1ratios_", {0, 10}}}}}},
-		{"Sim_single10_anticlmulti_s2a4", {{"single10_anticlmulti_spread2_amp5_test", {{"Sim_spread2_amp5_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
+		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single10_anticlmulti_resample_n1ratios_", {0, 0}}}}}},
+		{"Sim_single10_anticlmulti_s0a0", {{"single10_anticlmulti_spread0_amp0_test", {{"Sim_spread0_amp0_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {0, 10}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4_1", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {11, 21}}}}}},
 //		{"Sim_single10_anticlmulti_p04s002a4_2", {{"single10_anticlmulti_pgroup04_spread002_amp5_test", {{"Sim_pgroup04_spread002_amp5_single10_anticlmulti_n1ratios_", {22, 32}}}}}},
@@ -769,7 +769,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 1000000} };
+	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000} };
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {

@@ -93,59 +93,71 @@ Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
 // Getters
 
 bool Mixer::get_single_ratio() {
-	return(single_ratio);
+	return single_ratio;
 }
 
 bool Mixer::get_n1_ratios() {
-	return(n1_ratios);
+	return n1_ratios;
 }
 
 bool Mixer::get_rand_rotate() {
-	return(rand_rotate);
+	return rand_rotate;
 }
 
 bool Mixer::get_event_plane_rotate() {
-	return(event_plane_rotate);
+	return event_plane_rotate;
+}
+
+bool Mixer::get_resample() {
+	return resample;
 }
 
 int Mixer::get_energy() {
-	return(energy);
+	return energy;
 }
 
 int Mixer::get_max_events() {
-	return(max_events);
+	return max_events;
 }
 
 int Mixer::get_min_events() {
-	return(min_events);
+	return min_events;
 }
 
 int Mixer::get_mixes_per_event() {
-	return(mixes_per_event);
+	return mixes_per_event;
 }
 
 int Mixer::get_vz_bins() {
-	return(vz_bins);
+	return vz_bins;
 }
 
 int Mixer::get_ep_bins() {
-	return(ep_bins);
+	return ep_bins;
+}
+
+int Mixer::get_n_resamples() {
+	return n_resamples;
+}
+
+int Mixer::get_n_bootstraps() {
+	return n_bootstraps;
 }
 
 pair<double, double> Mixer::get_vz_range() {
-	return(vz_range);
+	return vz_range;
 }
 
 pair<double, double> Mixer::get_ep_range() {
-	return(ep_range);
+	return ep_range;
 }
 
 string Mixer::get_out_path() {
-	return(out_path);
+	return out_path;
 }
 
 vector<int> Mixer::get_divs() {
-	return(divs);
+	return divs;
 }
 
 
@@ -272,16 +284,38 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 		mix_angles.push_back(new_angle);
 	}
 
-	for(auto &div:divs) {
-		int bin_num = (int) 360 / div;
-		double div_rads = (double)div / 180 * M_PI;
-		if(single_ratio) { bin_num = 1; }
-		else if(bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
-		vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+	if (resample) {
+		sort(mix_angles.begin(), mix_angles.end());
+		for (auto& div : divs) {
+			double div_rads = (double)div / 180 * M_PI;
+			map<int, int> binned_event = get_resamples(mix_angles, div_rads, n_resamples);
 
-		// Save ratio values to data
-		for(int protons_in_bin:event_ratios) {
-			data[div][cent][mix_angles.size()][protons_in_bin]++;
+			// Save binned values to data
+			for (pair<int, int> num_in_bin : binned_event) {
+				data[div][cent][mix_angles.size()][num_in_bin.first] += num_in_bin.second;
+			}
+
+			// Save binned values to bootstraps
+			for (int i = 0; i < n_bootstraps; i++) {
+				for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+					for (pair<int, int> num_in_bin : binned_event) {
+						data_bs[div][cent][i][mix_angles.size()][num_in_bin.first] += num_in_bin.second;
+					}
+				}
+			}
+		}
+	} else {
+		for(auto &div:divs) {
+			int bin_num = (int) 360 / div;
+			double div_rads = (double)div / 180 * M_PI;
+			if(single_ratio) { bin_num = 1; }
+			else if(bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+			vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+
+			// Save ratio values to data
+			for(int protons_in_bin:event_ratios) {
+				data[div][cent][mix_angles.size()][protons_in_bin]++;
+			}
 		}
 	}
 }
@@ -290,13 +324,13 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 // Bin event plane
 int Mixer::get_ep_bin(double event_plane) {
 	int bin = ep_bins * (event_plane  + ep_range.first) / (ep_range.second - ep_range.first);
-	return(bin);
+	return bin;
 }
 
 // Bin vz
 int Mixer::get_vz_bin(double vz) {
 	int bin = vz_bins * (vz + vz_range.first) / (vz_range.second - vz_range.first);
-	return(bin);
+	return bin;
 }
 
 // Initialize all QA histograms

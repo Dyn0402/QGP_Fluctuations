@@ -420,6 +420,9 @@ void AzBinner::prep_read() {
 	mix.set_single_ratio(single_ratio);
 	mix.set_n1_ratios(n1_ratios);
 	mix.set_rand_rotate(rotate_random);
+	mix.set_resample(resample);
+	mix.set_n_resamples(n_resamples);
+	mix.set_n_bootstraps(n_bootstraps);
 }
 
 
@@ -969,6 +972,14 @@ void AzBinner::write_info_file() {
 		out << "mixer_seed: " << mixer_seed << endl;
 		out << "file_shuffle_seed: " << file_shuffle_seed << endl;
 		out << "stref_seed: " << stref_seed << endl;
+
+		out << "resample: " << boolalpha << resample << endl;
+		out << "n_resamples: " << to_string(n_resamples) << endl;
+		out << "n_bootstraps: " << to_string(n_bootstraps) << endl;
+		out << "mix resample: " << boolalpha << mix.get_resample() << endl;
+		out << "mix n_resamples: " << to_string(mix.get_n_resamples()) << endl;
+		out << "mix n_bootstraps: " << to_string(mix.get_n_bootstraps()) << endl;
+
 
 		out << "min_beta: " << to_string(cut.min_beta) << endl;
 		out << "max_beta: " << to_string(cut.max_beta) << endl;
