@@ -112,14 +112,14 @@ int main(int argc, char** argv) {
 	//read_class();
 
 	//cout << check_dir("/home/dylan/Research/Data_Ampt/default/Ampt_rapid05_n1ratios_0/"+to_string(7)+"GeV") << endl;
-	read_new();
+//	read_new();
 //	read_sim();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
 	//ampt_cent_opt();
-//	ampt_cent_make();
+	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -1670,18 +1670,18 @@ void ampt_cent_opt() {
 }
 
 void ampt_cent_make() {
-	vector<int> energy_list {7, 11};
-	string min_bias_path = "/media/ssd/Research/AMPT_Trees/min_bias/default/";
-	string qa_path = "/home/dylan/Research/Ampt_Centralities/default/";
+	vector<int> energy_list {7, 11, 19, 27, 39, 62};
+	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/string_melting/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	for(int energy:energy_list) {
 		AmptCentralityMaker cent_maker(energy, min_bias_path, qa_path, ref_quantity);
-		cout << "Make energy " << energy << "GeV" << endl;
-		cent_maker.make_centrality(true);
-//		cout << "Read energy " << energy << "GeV" << endl;
-//		vector<int> edges = cent_maker.get_ref_bin9_edges();
-//		for(int edge:edges) { cout << edge << " " << flush; }
-//		cout << endl;
+//		cout << "Make energy " << energy << "GeV" << endl;
+//		cent_maker.make_centrality(true);
+		cout << "Read energy " << energy << "GeV" << endl;
+		vector<int> edges = cent_maker.get_ref_bin9_edges();
+		for(int edge:edges) { cout << edge << " " << flush; }
+		cout << endl;
 	}
 }
 
