@@ -57,7 +57,6 @@ using namespace std;
 
 //void read_class();
 void read_new();
-void read_sim();
 //void read_comb_sys();
 //void real_event_tree_test();
 //void speed_test();
@@ -112,14 +111,13 @@ int main(int argc, char** argv) {
 	//read_class();
 
 	//cout << check_dir("/home/dylan/Research/Data_Ampt/default/Ampt_rapid05_n1ratios_0/"+to_string(7)+"GeV") << endl;
-//	read_new();
-//	read_sim();
+	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
 	//ampt_cent_opt();
-	ampt_cent_make();
+//	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -204,7 +202,7 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_n1ratios_", {0, 100}}}}}}
+	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}}
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -593,7 +591,7 @@ void read_new() {
 //		{"Sim_single10_anticlust_s3a99", {{"single10_anticlust_amp99_spread3", {{"Sim_amp99_spread3_single10_anticlust_n1ratios_", {0, 10}}}}}},
 //	};
 
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
@@ -1060,322 +1058,6 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 		reader.read_trees();
 	}
 }
-
-
-//void read_sim() {
-//	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//		{"Ampt_Eff05_0", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {0, 7}}}}}},
-//		{"Ampt_Eff05_1", {{"Eff05_def", {{"Ampt_rapid05_n1ratios_Efficiency05_", {8, 14}}}}}},
-//		{"Ampt_Eff15_0", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
-//		{"Ampt_Eff15_1", {{"Eff15_def", {{"Ampt_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
-//	};
-//
-//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-//
-//	int set_sleep = 1;
-//	int energy_sleep = 1;
-//	int free_threads = 0;
-//
-//	int jobs = sets.size() * energy_list.size();
-//
-//	mutex* mtx = new mutex;
-//	vector<string>* file_list = new vector<string>;
-//	ROOT::EnableThreadSafety();
-//	{
-//		int job_num = 0;
-//		ThreadPool pool(thread::hardware_concurrency() - free_threads);
-//
-//		for (int energy : energy_list) {
-//			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
-//				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-//				pool.enqueue(run_job_sim, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-//				this_thread::sleep_for(chrono::seconds(set_sleep));
-//			}
-//			this_thread::sleep_for(chrono::seconds(energy_sleep));
-//		}
-//	}
-//}
-//
-//
-//void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
-//	bool replace_existing = true;  // If folder for job exists, overwrite if true, skip job if false
-//	int ref = 3;
-//	TreeReader reader(energy, ref, mtx);
-//	reader.set_file_list(file_list);
-//
-//	string base_path, in_base_path, in_base_ampt_path;
-//	if (platform == "lin") {
-//		base_path = "/home/dylan/Research/";
-//		in_base_path = "/media/ucla/Research/";
-//		in_base_ampt_path = "/media/ucla/Research/";
-//	}
-//	else if (platform == "win") {
-//		base_path = "C:/Users/Dylan/Desktop/Research/";
-//		in_base_path = "C:/Users/Dylan/Desktop/Research/";
-//		in_base_ampt_path = "E:/Research/";
-//	}
-//	string out_base_path = base_path;
-//	string in_path = in_base_path;
-//	string out_job_dir = out_base_path;
-//	string mix_out_job_dir = out_base_path;
-//
-//	if (in_string(job_type, "Ampt")) {
-//		in_path = in_base_ampt_path + "AMPT_Trees/";
-//		out_job_dir += "Data_Ampt/";
-//		mix_out_job_dir += "Data_Ampt_Mix/";
-//	}
-//	else if (in_string(job_type, "Sim")) {
-//		in_path += "BES1_Trees/";
-//		out_job_dir += "Data_Sim/";
-//		mix_out_job_dir += "Data_Sim_Mix/";
-//	}
-//	else {
-//		in_path += "BES1_Trees/";
-//		out_job_dir += "Data/";
-//		mix_out_job_dir += "Data_Mix/";
-//	}
-//
-//	reader.set_in_path(in_path);
-//	reader.set_tree_name("tree");
-//	reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
-//
-//	// Pile up not implemented, need to think about it
-//	//if (in_string(set_name, "PileUp")) {
-//	//	reader.set_pile_up(true);
-//	//	reader.set_pile_up_prob(str_num_dec(get_flag_trail(set_name, "PileUp", "_")[0], 1));
-//	//}
-//
-//	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
-//	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000000} };
-//
-//	for (pair<string, map<string, pair<int, int>>> set_group : job) {
-//		for (pair<string, pair<int, int>> set : set_group.second) {
-//			string out_dir = out_job_dir;
-//			string mix_out_dir = mix_out_job_dir;
-//
-//			out_dir += set_group.first + "/";  // Add set-group directory to end of path
-//			mix_out_dir += set_group.first + "/";
-//			if (!replace_existing) {
-//				if (check_dir(out_dir+to_string(energy)+"GeV") && check_dir(mix_out_dir+to_string(energy)+"GeV")) { return; }  // Skip job if folders already exist.
-//			}
-//			mkdir(out_dir);  // Create set-group directory if it does not already exist.
-//			mkdir(mix_out_dir);
-//
-//			// Set Simulator params
-//			if (in_string(set.first, { "Sim", "0p0s" }, true)) { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
-//			else if (in_string(set.first, { "Sim", "05p002s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.002); }
-//			else if (in_string(set.first, { "Sim", "05p05s" }, true)) { reader.sim.set_p_group(0.05); reader.sim.set_spread_sigma(0.5); }
-//			else if (in_string(set.first, { "Sim", "01p002s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.002); }
-//			else if (in_string(set.first, { "Sim", "01p05s" }, true)) { reader.sim.set_p_group(0.01); reader.sim.set_spread_sigma(0.5); }
-//			else if (in_string(set.first, { "Sim", "002p002s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.002); }
-//			else if (in_string(set.first, { "Sim", "002p05s" }, true)) { reader.sim.set_p_group(0.002); reader.sim.set_spread_sigma(0.5); }
-//			else if (in_string(set.first, { "Sim", "15p002s" }, true)) { reader.sim.set_p_group(0.15); reader.sim.set_spread_sigma(0.002); }
-//			else { reader.sim.set_p_group(0.0); reader.sim.set_spread_sigma(0.0); }
-//
-//			if (in_string(set.first, "Sim")) {
-//				reader.sim.set_hom_eff(1.0);
-//				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default/rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
-//			}
-//			if (in_string(set.first, { "Sim", "Eff" }, true)) {
-//				reader.set_sim_eff(true);
-//			}
-//			else {
-//				reader.set_sim_eff(false);
-//			}
-//			if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
-//				reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
-//			}
-//			if (in_string(set.first, { "Sim", "Flow" }, true)) {
-//				reader.set_sim_flow(true);
-//				if (in_string(set.first, { "08res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
-//				else if (in_string(set.first, { "05res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
-//				else if (in_string(set.first, { "099res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
-//				else if (in_string(set.first, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
-//			}
-//			else {
-//				reader.set_sim_flow(false);
-//			}
-//			if (in_string(set.first, { "Sim", "Flat1000" }, true)) { reader.sim.set_flat_dist(1000); reader.set_particle_dist_hist_max(1000); }
-//			else if (in_string(set.first, { "Sim", "Flat500" }, true)) { reader.sim.set_flat_dist(500); reader.set_particle_dist_hist_max(500); }
-//			else if (in_string(set.first, { "Sim", "Flat100" }, true)) { reader.sim.set_flat_dist(100); reader.set_particle_dist_hist_max(100); }
-//
-//
-//
-//
-//			vector<int> set_nums;
-//			for (int num = set.second.first; num <= set.second.second; num++) { set_nums.push_back(num); }
-//
-//			for (int set_num : set_nums) {
-//				// Add new AzBinner and set parameters
-//				AzBinner& binner = reader.add_binner();
-//				binner.set_divs(divs);
-//				binner.set_cent_binning(9);
-//
-//				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
-//
-//				if (in_string(set.first, "cbwc")) { binner.set_cbwc(true); }
-//				else { binner.set_cbwc(false); }
-//
-//				string set_dir = set.first + to_string(set_num) + "/";
-//
-//				binner.set_out_path(out_dir + set_dir);
-//				binner.set_qa_path(out_dir + set_dir + to_string(energy) + "GeV/");
-//				binner.set_qa_name("QA_");
-//				binner.set_set_name(set.first + to_string(set_num));
-//
-//				binner.cut.set_dcaqa_path(base_path + "Dca_xy_QA/");
-//				binner.cut.set_pileupqa_path(base_path + "Pile_Up_QA/");
-//
-//				binner.cut.set_values(energy, reader.get_particle());  // Setting here for now since it needs updated dca/pileup paths, think of better solution.
-//
-//				if (in_string(set.first, "_seed")) {
-//					binner.set_tree_reader_rand_seed(42);
-//					binner.set_mixer_rand_seed(42);
-//					binner.set_file_shuffle_rand_seed(42);
-//					binner.set_stref_rand_seed(42);
-//				}
-//				else if (in_string(set.first, "_mixseed")) {
-//					binner.set_tree_reader_rand_seed(0);
-//					binner.set_mixer_rand_seed(42);
-//					binner.set_file_shuffle_rand_seed(time(NULL));
-//					binner.set_stref_rand_seed(0);
-//				}
-//				else if (in_string(set.first, "_mixnoseed")) {
-//					binner.set_tree_reader_rand_seed(42);
-//					binner.set_mixer_rand_seed(0);
-//					binner.set_file_shuffle_rand_seed(42);
-//					binner.set_stref_rand_seed(42);
-//				}
-//				else {
-//					binner.set_tree_reader_rand_seed(0);
-//					binner.set_mixer_rand_seed(0);
-//					binner.set_file_shuffle_rand_seed(time(NULL));
-//					binner.set_stref_rand_seed(0);
-//				}
-//
-//				if (in_string(set.first, "EP_Rotate")) { binner.set_event_plane(true); }
-//				else { binner.set_event_plane(false); }
-//
-//				if (in_string(set.first, { "No_Rotate", "EP_Rotate" }, false)) { binner.set_rotate_random(false); }
-//				else { binner.set_rotate_random(true); }
-//
-//				if (in_string(set.first, { "Ampt", "ReactionPlane" }, true)) { binner.set_ampt_reaction_plane(true); }
-//
-//				// Pile up not implemented, need to think about it
-//				//if (in_string(set.first, "PileUp")) {
-//				//	binner.set_pile_up(true);
-//				//	binner.set_pile_up_prob(str_num_dec(get_flag_trail(set.first, "PileUp", "_")[0], 1));
-//				//}
-//
-//				if (in_string(set.first, "_n1ratios")) { binner.set_n1_ratios(true); binner.set_single_ratio(false); }
-//				else if (in_string(set.first, "_allratios")) { binner.set_n1_ratios(false); binner.set_single_ratio(false); }
-//				else { binner.set_n1_ratios(false); binner.set_single_ratio(true); }
-//
-//				if (in_string(set.first, "dca")) {
-//					binner.cut.max_dca = str_num_dec(get_flag_trail(set.first, "dca", "_")[0], 1);
-//				}
-//
-//				if (in_string(set.first, "nsprx")) {  // Multiplier for nsigmaproton cuts. Because of 27GeV can't do values, need scale factor.
-//					float nsigmaprx = str_num_dec(get_flag_trail(set.first, "nsprx", "_")[0], 1);
-//					binner.cut.min_nsigma *= nsigmaprx;
-//					binner.cut.max_nsigma *= nsigmaprx;
-//				}
-//
-//				if (in_string(set.first, { "m2r", "m2s" }, false)) {  // Set m^2 cut range
-//					float m2_mid = (binner.cut.max_m2 + binner.cut.min_m2) / 2;
-//					float m2_range = binner.cut.max_m2 - binner.cut.min_m2;
-//
-//					if (in_string(set.first, "m2s")) {  // m^2 shift to the mid point
-//						m2_mid += str_num_dec(get_flag_trail(set.first, "m2s", "_")[0], 0);
-//					}
-//					if (in_string(set.first, "m2r")) { m2_range = str_num_dec(get_flag_trail(set.first, "m2r", "_")[0], 0); }
-//					binner.cut.min_m2 = m2_mid - m2_range / 2;
-//					binner.cut.max_m2 = m2_mid + m2_range / 2;
-//				}
-//
-//				if (in_string(set.first, "nhfit")) {
-//					binner.cut.min_nhits_fit = str_num_dec(get_flag_trail(set.first, "nhfit", "_")[0], 2);
-//				}
-//
-//				if (in_string(set.first, "eta")) {
-//					binner.set_rapidity(false);
-//					float eta_cut = str_num_dec(get_flag_trail(set.first, "eta", "_")[0], 1);
-//					binner.cut.min_eta = -eta_cut;
-//					binner.cut.max_eta = eta_cut;
-//				} else if (in_string(set.first, "rapid")) {
-//					binner.set_rapidity(true);
-//					float rap_cut = str_num_dec(get_flag_trail(set.first, "rapid", "_")[0], 1);
-//					binner.cut.min_rapid = -rap_cut;
-//					binner.cut.max_rapid = rap_cut;
-//				}
-//
-//				if (in_string(set.first, "Efficiency")) {
-//					binner.set_efficiency(true);
-//					binner.set_efficiency_prob(str_num_dec(get_flag_trail(set.first, "Efficiency", "_")[0], 0));
-//				}
-//				else { binner.set_efficiency(false); binner.set_efficiency_prob(0); }
-//
-//				if (in_string(set.first, "Ampt")) {
-//					if (in_string(set.first, "_default_")) {
-//						binner.set_ampt_type("default");
-//					}
-//					else {
-//						binner.set_ampt_type("string_melting");
-//					}
-//					binner.set_ampt_cent_path(base_path + "Ampt_Centralities/");
-//				}
-//
-//				if (in_string(set.first, "p+")) { binner.cut.charge = +1; binner.set_ampt_particle_pid({ 2212 }); }
-//				if (in_string(set.first, "p-")) { binner.cut.charge = -1; binner.set_ampt_particle_pid({ -2212 }); }
-//				if (in_string(set.first, "ptotal")) { binner.set_check_charge(false); }
-//
-//				if (!in_string(set.first, "Ampt") && in_string(set.first, "pion")) {
-//					binner.set_particle("pion");
-//				}
-//				if (in_string(set.first, "pion+")) { binner.cut.charge = 1; binner.set_ampt_particle_pid({ 211 }); }
-//				if (in_string(set.first, "pion-")) { binner.cut.charge = -1; binner.set_ampt_particle_pid({ -211 }); }
-//				if (in_string(set.first, "pion0")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 111 }); }
-//				if (in_string(set.first, "piontotal")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 211, -211 }); }
-//				if (in_string(set.first, "pionall")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 211, 111, -211 }); }
-//
-//				if (in_string(set.first, "e+")) { binner.cut.charge = +1; binner.set_ampt_particle_pid({ -11 }); }
-//				else if (in_string(set.first, "e-")) { binner.cut.charge = -1; binner.set_ampt_particle_pid({ 11 }); }
-//				else if (in_string(set.first, "etotal")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 11, -11 }); }
-//
-//				if (in_string(set.first, "neutron")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 2112 }); }
-//				if (in_string(set.first, "neutronbar")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ -2112 }); }
-//				if (in_string(set.first, "neutrontotal")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 2112, -2112 }); }
-//
-//				if (in_string(set.first, "gamma")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 22 }); }
-//
-//				if (in_string(set.first, "baryontotal")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 2212, 2112, -2212, -2112 }); }
-//				if (in_string(set.first, "mesontotal")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 211, 111, -211 }); }
-//				if (in_string(set.first, "hadrontotal")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 2212, 2112, 211, 111, -211, -2212, -2112 }); }
-//				if (in_string(set.first, "hadronobs")) { binner.set_check_charge(false); binner.set_ampt_particle_pid({ 2212, 211, -211, -2212 }); }
-//
-//				binner.set_mixed_sets(false);
-//				binner.set_rand_data(false);
-//
-//				binner.set_mixed(true);
-//				binner.mix.set_divs(divs);
-//				binner.mix.set_out_path(mix_out_dir + set_dir);
-//				binner.mix.set_max_events(250);
-//				binner.mix.set_min_events(150);
-//				binner.mix.set_vz_bins(5);
-//				binner.mix.set_ep_bins(20);
-//				if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
-//				else { binner.mix.set_mixes_per_event(10); }
-//				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
-//
-//				cout << "Added " << set.first << " set " << set_num << " " << energy << "GeV, job " << job_num << " of " << jobs << endl << endl;
-//			}
-//
-//		}
-//	}
-//
-//
-//	reader.sim_events(sim_cent_events);
-//}
 
 
 //void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
