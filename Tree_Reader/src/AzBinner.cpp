@@ -490,7 +490,8 @@ void AzBinner::process_event(const Event& event) {
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
 		// If there are enough good particles, calculate ratios for each division and save to data.
-		if (good_particle_angles.size() >= (unsigned)cut.min_multi) {
+		int num_particles = (int)good_particle_angles.size();
+		if (num_particles >= (unsigned)cut.min_multi) {
 			cent16_events.Fill(cent16_corr);
 			cent9_events.Fill(cent9_corr);
 			event_cut_hist.Fill("Enough Good Particles", 1);
@@ -502,7 +503,7 @@ void AzBinner::process_event(const Event& event) {
 			else {
 				cent = cent9_corr;
 			}
-			post_n_particles[cent].Fill((int)good_particle_angles.size());
+			post_n_particles[cent].Fill(num_particles);
 
 			TVector2 q(event.get_qx(), event.get_qy());
 			pre_ep_hist.Fill(0.5 * q.Phi());
@@ -528,7 +529,7 @@ void AzBinner::process_event(const Event& event) {
 			// If mixed/rand flagged append event to mix/rand object.
 			if (mixed) { mix.append_event(good_particle_angles, cent, ep_angle, event.get_vz()); }
 			if (mixed_sets) { mix_sets.append_event(good_particle_angles, event.get_refn()); }
-			if (rand_data) { random.append_event((int)good_particle_angles.size(), event.get_refn(), trand); }
+			if (rand_data) { random.append_event(num_particles, event.get_refn(), trand); }
 
 
 			if (event_plane) { // If event_plane flag then rotate all angles by -event_plane.
@@ -548,15 +549,15 @@ void AzBinner::process_event(const Event& event) {
 					map<int, int> binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
 
 					// Save binned values to data
-					for (pair<int, int> num_in_bin : binned_event) {
-						data[div][cent][good_particle_angles.size()][num_in_bin.first] += num_in_bin.second;
+					for (const pair<int, int> &num_in_bin : binned_event) {
+						data[div][cent][num_particles][num_in_bin.first] += num_in_bin.second;
 					}
 
 					// Save binned values to bootstraps
 					for (int i = 0; i < n_bootstraps; i++) {
 						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
-							for (pair<int, int> num_in_bin : binned_event) {
-								data_bs[div][cent][i][good_particle_angles.size()][num_in_bin.first] += num_in_bin.second;
+							for (const pair<int, int> &num_in_bin : binned_event) {
+								data_bs[div][cent][i][num_particles][num_in_bin.first] += num_in_bin.second;
 							}
 						}
 					}
@@ -572,7 +573,7 @@ void AzBinner::process_event(const Event& event) {
 
 					// Save ratio values to data
 					for (int particles_in_bin : event_ratios) {
-						data[div][cent][good_particle_angles.size()][particles_in_bin]++;
+						data[div][cent][num_particles][particles_in_bin]++;
 					}
 				}
 			}
