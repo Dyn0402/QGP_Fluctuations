@@ -194,7 +194,7 @@ private:
 	int cent_binning;
 	int ref_num;
 
-	int n_resamples = 720;
+	int n_resamples = 1440;
 	int n_bootstraps = 250;
 
 	int particle_dist_hist_max = 100;
