@@ -22,8 +22,6 @@
 
 #include "AmptCentralityMaker.h"
 #include "Mixer.h"
-#include "MixerSets.h"
-#include "Randomizer.h"
 #include "Simulator.h"
 #include "TreeBranches.h"
 #include "TreeCuts.h"
@@ -47,9 +45,7 @@ public:
 	bool get_cbwc();
 	bool get_rotate_random();
 	bool get_event_plane();
-	bool get_mixed_sets();
 	bool get_mixed();
-	bool get_rand_data();
 	bool get_pile_up();
 	bool get_efficiency();
 	bool get_single_ratio();
@@ -57,6 +53,10 @@ public:
 	double get_efficiency_prob();
 	int get_cent_binning();
 	int get_ref_num();
+	int get_cent_bins();
+	int get_cent_min();
+	int get_particle_bins();
+	int get_particle_min();
 
 	// Setters
 	void set_in_path(string path);
@@ -76,9 +76,7 @@ public:
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
-	void set_mixed_sets(bool mixed);
 	void set_mixed(bool mixed_roli);
-	void set_rand_data(bool rand_data);
 	void set_pile_up(bool pile_up);
 	void set_efficiency(bool efficiency);
 	void set_single_ratio(bool single_ratio);
@@ -104,6 +102,11 @@ public:
 	void set_file_shuffle_rand_seed(int seed = 0);
 	void set_stref_rand_seed(int seed = 0);
 
+	void set_cent_bins(int bins);
+	void set_cent_min(int min);
+	void set_particle_bins(int bins);
+	void set_particle_min(int min);
+
 	// Doers
 	void prep_read();
 	void define_qa();
@@ -118,16 +121,16 @@ public:
 	TreeCuts cut;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
-	MixerSets mix_sets;
 	Mixer mix;
-	Randomizer random;
 
 	AmptCentralityMaker ampt_cent;
 
 private:
 	// Attributes
-	map<int, map<int, map<int, map<int, long>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
-	map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
+//	map<int, map<int, map<int, vector<long>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
+//	map<int, map<int, map<int, map<int, vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
+	vector<vector<vector<vector<long>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
+	vector<vector<vector<vector<vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
 	StRefMultCorr* refmultCorrUtil;
 	TRandom3* trand = new TRandom3(0);
 	tree_branches branches;
@@ -163,15 +166,18 @@ private:
 	int file_shuffle_seed = 0;
 	int stref_seed = 0;
 
+	int cent_bins = 10;
+	int cent_min = -1;
+	int particle_bins = 100;
+	int particle_min = 1;
+
 	bool ampt;
 	bool cooper_frye;
 	bool ampt_reaction_plane;
 	bool cbwc;
 	bool rotate_random;
 	bool event_plane;
-	bool mixed_sets;
 	bool mixed;
-	bool rand_data;
 	bool pile_up;
 	bool efficiency;
 	bool single_ratio;
@@ -203,6 +209,8 @@ private:
 	bool check_good_run(int run);
 	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
 	bool check_particle_good(const Track& particle);
+
+	void init_data();
 
 	void fill_pre_track_qa(const Track& particle);
 	void fill_post_track_qa(const Track& particle);

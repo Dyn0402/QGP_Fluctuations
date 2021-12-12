@@ -202,8 +202,8 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
-//	{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
+//	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
+	{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -1031,9 +1031,6 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, { "Sim", "Flat1000" }, true)) { binner.set_particle_dist_hist_max(1000); }
 				else if (in_string(set.first, { "Sim", "Flat500" }, true)) { binner.set_particle_dist_hist_max(500); }
 				else if (in_string(set.first, { "Sim", "Flat100" }, true)) { binner.set_particle_dist_hist_max(100); }
-
-				binner.set_mixed_sets(false);
-				binner.set_rand_data(false);
 
 				binner.set_mixed(true);
 				binner.mix.set_divs(divs);

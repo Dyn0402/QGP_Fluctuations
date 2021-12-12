@@ -40,6 +40,10 @@ public:
 	int get_ep_bins();
 	int get_n_resamples();
 	int get_n_bootstraps();
+	int get_cent_bins();
+	int get_cent_min();
+	int get_particle_bins();
+	int get_particle_min();
 	pair<double, double> get_vz_range();
 	pair<double, double> get_ep_range();
 	string get_out_path();
@@ -64,8 +68,13 @@ public:
 	void set_rand_seed(int seed=0);
 	void set_n_resamples(int n);
 	void set_n_bootstraps(int n);
+	void set_cent_bins(int bins);
+	void set_cent_min(int min);
+	void set_particle_bins(int bins);
+	void set_particle_min(int min);
 
 	// Doers
+	void init_data();
 	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);
 	void reset_out_dir();
 	void write_mixed_data();
@@ -88,9 +97,18 @@ private:
 	int ep_bins;
 	pair<double, double> vz_range;
 	pair<double, double> ep_range;
-	map<int, map<int, map<int, map<int, long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
-	map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
-	map<int, map<int, map<int, vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
+
+	int cent_bins = 10;
+	int cent_min = -1;
+	int particle_bins = 100;
+	int particle_min = 1;
+
+	vector<vector<vector<vector<long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+	vector<vector<vector<vector<vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
+	vector<vector<vector<vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
+//	map<int, map<int, map<int, vector<long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+//	map<int, map<int, map<int, map<int, vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
+//	map<int, map<int, map<int, vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
 	vector<int> divs;
 	string out_path;
 	TRandom3 *trand = new TRandom3(0);
@@ -100,7 +118,7 @@ private:
 	int n_bootstraps = 100;
 
 	// Doers
-	void get_mixed(int cent, int num_protons, int ep_bin, int vz_bin);
+	void get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin);
 	int get_ep_bin(double event_plane);
 	int get_vz_bin(double vz);
 	void define_hists(int cent);

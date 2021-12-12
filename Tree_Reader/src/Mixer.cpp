@@ -144,6 +144,22 @@ int Mixer::get_n_bootstraps() {
 	return n_bootstraps;
 }
 
+int Mixer::get_cent_bins() {
+	return cent_bins;
+}
+
+int Mixer::get_cent_min() {
+	return cent_min;
+}
+
+int Mixer::get_particle_bins() {
+	return particle_bins;
+}
+
+int Mixer::get_particle_min() {
+	return particle_min;
+}
+
 pair<double, double> Mixer::get_vz_range() {
 	return vz_range;
 }
@@ -237,38 +253,85 @@ void Mixer::set_n_bootstraps(int n) {
 	n_bootstraps = n;
 }
 
+void Mixer::set_cent_bins(int bins) {
+	cent_bins = bins;
+}
+
+void Mixer::set_cent_min(int min) {
+	cent_min = min;
+}
+
+void Mixer::set_particle_bins(int bins) {
+	particle_bins = bins;
+}
+
+void Mixer::set_particle_min(int min) {
+	particle_min = min;
+}
+
 
 // Doers
+
+void Mixer::init_data() {
+	for (unsigned div_i=0; div_i < divs.size(); div_i++) {
+		data.push_back(vector<vector<vector<long>>> ());
+		data_bs.push_back(vector<vector<vector<vector<long>>>> ());
+		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
+			data[div_i].push_back(vector<vector<long>> ());
+			data_bs[div_i].push_back(vector<vector<vector<long>>> ());
+			for (int bs_i=0; bs_i < n_bootstraps; bs_i++) {
+				data_bs[div_i][cent_i].push_back(vector<vector<long>> ());
+				for (int num_particles=0; num_particles < particle_bins; num_particles++) {
+					data_bs[div_i][cent_i][bs_i].push_back(vector<long> (num_particles + particle_min, 0));
+				}
+			}
+			for (int num_particles=0; num_particles < particle_bins; num_particles++) {
+				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min, 0));
+			}
+		}
+
+		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
+			angles.push_back(vector<vector<vector<vector<double>>>> ());
+			for (int ep_i=0; ep_i < ep_bins; ep_i++) {
+				angles[cent_i].push_back(vector<vector<vector<double>>> ());
+				for (int vz_i=0; vz_i < vz_bins; vz_i++) {
+					angles[cent_i][ep_i].push_back(vector<vector<double>> ());
+				}
+			}
+		}
+	}
+}
 
 // Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::append_event(const vector<double>& angles, int cent, double event_plane, double vz) {
 	int ep_bin = get_ep_bin(event_plane);
 	int vz_bin = get_vz_bin(vz);
+	int cent_bin = cent - cent_min;
 
 	if (vz_ep_appended_hists.count(cent) == 0) { define_hists(cent); }
 	vz_ep_appended_hists[cent].Fill(event_plane, vz);
 
-	if((int)this->angles[cent][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
+	if((int)this->angles[cent_bin][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
 		int index = trand->Rndm() * max_events;
-		this->angles[cent][ep_bin][vz_bin][index] = angles;
+		this->angles[cent_bin][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
-		this->angles[cent][ep_bin][vz_bin].push_back(angles);
+		this->angles[cent_bin][ep_bin][vz_bin].push_back(angles);
 	}
 
-	if((int)this->angles[cent][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
+	if((int)this->angles[cent_bin][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
 		vz_ep_generated_hists[cent].Fill(event_plane, vz, mixes_per_event);
 		for(int i=0; i<mixes_per_event; i++) {
-			get_mixed(cent, (int)angles.size(), ep_bin, vz_bin);
+			get_mixed(cent_bin, (int)angles.size(), ep_bin, vz_bin);
 		}
 	}
 }
 
 
 // Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
-void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
+void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
 	double rand_angle = trand->Rndm() * 2 * M_PI;
-	int pool_events = (int)angles[cent][ep_bin][vz_bin].size();
+	int pool_events = (int)angles[cent_bin][ep_bin][vz_bin].size();
 
 	if (num_protons > pool_events) {
 		cout << "Not enough mixed events " << pool_events << "  for num_protons " << num_protons << endl;
@@ -278,43 +341,46 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 	iota(begin(event_indices), end(event_indices), 0);
 	shuffle(event_indices.begin(), event_indices.end(), c_rand);
 	for (int i=0; i < num_protons; i++) {
-		int angle_index = trand->Rndm() * angles[cent][ep_bin][vz_bin][event_indices[i]].size();
-		double new_angle = angles[cent][ep_bin][vz_bin][event_indices[i]][angle_index];
+		int angle_index = trand->Rndm() * angles[cent_bin][ep_bin][vz_bin][event_indices[i]].size();
+		double new_angle = angles[cent_bin][ep_bin][vz_bin][event_indices[i]][angle_index];
 		if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
 		mix_angles.push_back(new_angle);
 	}
 
 	if (resample) {
 		sort(mix_angles.begin(), mix_angles.end());
-		for (auto& div : divs) {
-			double div_rads = (double)div / 180 * M_PI;
-			map<int, int> binned_event = get_resamples(mix_angles, div_rads, n_resamples);
+		for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
+			double div_rads = (double)divs[div_bin] / 180 * M_PI;
+			vector<int> binned_event = get_resamples(mix_angles, div_rads, n_resamples);
 
 			// Save binned values to data
-			for (pair<int, int> num_in_bin : binned_event) {
-				data[div][cent][mix_angles.size()][num_in_bin.first] += num_in_bin.second;
+			vector<long> &data_event = data[div_bin][cent_bin][mix_angles.size()];  // Reduce map traversal
+			for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
+				data_event[num_in_bin] += binned_event[num_in_bin];
 			}
 
 			// Save binned values to bootstraps
 			for (int i = 0; i < n_bootstraps; i++) {
+				vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][mix_angles.size()];
 				for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
-					for (pair<int, int> num_in_bin : binned_event) {
-						data_bs[div][cent][i][mix_angles.size()][num_in_bin.first] += num_in_bin.second;
+					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
+						data_event_bs[num_in_bin] += binned_event[num_in_bin];
 					}
 				}
 			}
 		}
 	} else {
-		for(auto &div:divs) {
-			int bin_num = (int) 360 / div;
-			double div_rads = (double)div / 180 * M_PI;
+		for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
+			int bin_num = (int) 360 / divs[div_bin];
+			double div_rads = (double)divs[div_bin] / 180 * M_PI;
 			if(single_ratio) { bin_num = 1; }
 			else if(bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
 			vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 			// Save ratio values to data
-			for(int protons_in_bin:event_ratios) {
-				data[div][cent][mix_angles.size()][protons_in_bin]++;
+			vector<long> &data_event = data[div_bin][cent_bin][mix_angles.size()];  // Reduce map traversal
+			for (int particles_in_bin : event_ratios) {
+				data_event[particles_in_bin]++;
 			}
 		}
 	}
@@ -323,13 +389,13 @@ void Mixer::get_mixed(int cent, int num_protons, int ep_bin, int vz_bin) {
 
 // Bin event plane
 int Mixer::get_ep_bin(double event_plane) {
-	int bin = ep_bins * (event_plane  + ep_range.first) / (ep_range.second - ep_range.first);
+	int bin = ep_bins * (event_plane - ep_range.first) / (ep_range.second - ep_range.first);
 	return bin;
 }
 
 // Bin vz
 int Mixer::get_vz_bin(double vz) {
-	int bin = vz_bins * (vz + vz_range.first) / (vz_range.second - vz_range.first);
+	int bin = vz_bins * (vz - vz_range.first) / (vz_range.second - vz_range.first);
 	return bin;
 }
 
@@ -344,10 +410,10 @@ void Mixer::define_hists(int cent) {
 void Mixer::write_mixed_data() {
 	reset_out_dir();
 	if (resample) {
-		write_tree_data_bootstrap("local", data, data_bs, out_path + to_string(energy) + "GeV/");
+		write_tree_data_bootstrap("local", data, data_bs, divs, cent_min, particle_min, out_path + to_string(energy) + "GeV/");
 	}
 	else {
-		write_tree_data("local", data, out_path + to_string(energy) + "GeV/");
+		write_tree_data("local", data, divs, cent_min, particle_min, out_path + to_string(energy) + "GeV/");
 	}
 }
 

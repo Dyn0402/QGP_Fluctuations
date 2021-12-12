@@ -38,7 +38,6 @@
 #include "Track.h"
 
 #include "Mixer.h"
-#include "MixerSets.h"
 
 using namespace std;
 
