@@ -95,7 +95,7 @@ private:
 	mutex *mtx = NULL;
 	vector<string> *file_list;
 	int file_wait_sleep = 1;  // Seconds to wait for path to clear up
-	float percent_print = 1;  // Percentage of files interval at which to print update
+	float percent_print = 0.2;  // Percentage of files interval at which to print update
 
 	TRandom3* trand = new TRandom3(0);
 

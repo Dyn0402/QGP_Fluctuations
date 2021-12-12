@@ -201,15 +201,15 @@ void read_new() {
 //		{"BES1_Eff15_sys_2", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}}
 //	};
 
-//	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
-//	{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
-//	};
-
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
-		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
+//	{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
 	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
+//		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
@@ -597,8 +597,8 @@ void read_new() {
 //		{"Sim_single10_anticlust_s3a99", {{"single10_anticlust_amp99_spread3", {{"Sim_amp99_spread3_single10_anticlust_n1ratios_", {0, 10}}}}}},
 //	};
 
-	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-//	vector<int> energy_list{ 62 };
+//	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -771,6 +771,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
 	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000} };
+	map<string, map<int, int>> particle_bins { {"BES1", { {7, 60}, {11, 50}, {19, 45}, {27, 40}, {39, 35}, {62, 35} } },
+		{"AMPT", { {7, 80}, {11, 70}, {19, 60}, {27, 55}, {39, 50}, {62, 45} } },
+		{"CF", { {7, 80}, {11, 70}, {19, 60}, {27, 55}, {39, 50}, {62, 45} } },
+	};
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {
@@ -848,6 +852,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				AzBinner& binner = reader.add_binner();
 				binner.set_divs(divs);
 				binner.set_cent_binning(9);
+
+				if (in_string(set.first, "Ampt")) { binner.set_particle_bins(particle_bins["AMPT"][energy]); }
+				else if (in_string(set.first, "CF")) { binner.set_particle_bins(particle_bins["CF"][energy]); }
+				else { binner.set_particle_bins(particle_bins["BES1"][energy]); }
+
 
 				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
 				if (in_string(set.first, "CF")) { reader.set_cooper_frye(true); binner.set_cooper_frye(true); }
