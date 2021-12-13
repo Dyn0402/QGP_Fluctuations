@@ -43,7 +43,8 @@ struct simulation_pars {
 
 	string proton_dist = "poisson";  // poisson, flat, hist, single
 	double particle_mean = 20.0;  // For Poisson and single
-	int particle_max = 20;  // For flat distributuion
+	int particle_max = 20;  // For flat distributuion, inclusive
+	int particle_min = 2;  // For flat distribution, inclusive
 
 	double hom_eff = 1.0;
 

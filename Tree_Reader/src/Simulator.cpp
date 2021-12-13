@@ -250,7 +250,7 @@ void Simulator::sim_event_anticlust(Event& event) {
 //			double amp = gaus_wrap1->Eval(last_proton);
 //			prob->SetParameters(1 / amp, last_proton, pars.spread_sigma, 1 / amp, last_proton - 2 * M_PI, pars.spread_sigma, 1 / amp, last_proton + 2 * M_PI, pars.spread_sigma);
 //			UNCOMMENT BELOW
-//			group_angle = prob->GetRandom(0, 2 * M_PI, sim_rand) - (M_PI - last_proton);  // Generate at center then shift
+			group_angle = prob->GetRandom(0, 2 * M_PI, sim_rand) - (M_PI - last_proton);  // Generate at center then shift
 			group_angle = fmod(group_angle, 2 * M_PI);  // Force to range [0, 2*pi)
 			if (group_angle < 0) { group_angle += 2 * M_PI; }
 			proton_angles.push_back(group_angle);
@@ -583,7 +583,7 @@ int Simulator::get_protons() {
 	}else if (pars.proton_dist == "poisson") {
 		n = sim_rand->Poisson(pars.particle_mean);
 	} else if (pars.proton_dist == "flat") {
-		n = (int)(sim_rand->Rndm() * pars.particle_max + 0.5);
+		n = (int)(sim_rand->Rndm() * (pars.particle_max - pars.particle_min + 1)) + pars.particle_min;
 	} else if (pars.proton_dist == "single") {
 		n = (int)pars.particle_mean;
 	}

@@ -206,10 +206,10 @@ void read_new() {
 //		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
-		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
+//		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
@@ -297,6 +297,28 @@ void read_new() {
 //		{"CF_Eff15_0", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {0, 7}}}}}},
 //		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
 //	};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_anticlmulti_s25a01", {{"flat80_anticlmulti_spread25_amp01_resample", {{"Sim_spread25_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s25a02", {{"flat80_anticlmulti_spread25_amp02_resample", {{"Sim_spread25_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s25a03", {{"flat80_anticlmulti_spread25_amp03_resample", {{"Sim_spread25_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s25a04", {{"flat80_anticlmulti_spread25_amp04_resample", {{"Sim_spread25_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s15a01", {{"flat80_anticlmulti_spread15_amp01_resample", {{"Sim_spread15_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s15a02", {{"flat80_anticlmulti_spread15_amp02_resample", {{"Sim_spread15_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s15a03", {{"flat80_anticlmulti_spread15_amp03_resample", {{"Sim_spread15_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s15a04", {{"flat80_anticlmulti_spread15_amp04_resample", {{"Sim_spread15_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s1a01", {{"flat80_anticlmulti_spread1_amp01_resample", {{"Sim_spread1_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a02", {{"flat80_anticlmulti_spread1_amp02_resample", {{"Sim_spread1_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a03", {{"flat80_anticlmulti_spread1_amp03_resample", {{"Sim_spread1_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a04", {{"flat80_anticlmulti_spread1_amp04_resample", {{"Sim_spread1_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s05a01", {{"flat80_anticlmulti_spread05_amp01_resample", {{"Sim_spread05_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a02", {{"flat80_anticlmulti_spread05_amp02_resample", {{"Sim_spread05_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a03", {{"flat80_anticlmulti_spread05_amp03_resample", {{"Sim_spread05_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a04", {{"flat80_anticlmulti_spread05_amp04_resample", {{"Sim_spread05_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single10_anticlmulti_resample_n1ratios_", {0, 0}}}}}},
@@ -597,8 +619,8 @@ void read_new() {
 //		{"Sim_single10_anticlust_s3a99", {{"single10_anticlust_amp99_spread3", {{"Sim_amp99_spread3_single10_anticlust_n1ratios_", {0, 10}}}}}},
 //	};
 
-	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-//	vector<int> energy_list{ 7 };
+//	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -770,11 +792,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000} };
+	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 80 * 100000} };
 
-	map<string, map<int, int>> particle_bins { {"BES1", { {7, 60}, {11, 50}, {19, 45}, {27, 40}, {39, 35}, {62, 35} } },
-		{"AMPT", { {7, 80}, {11, 70}, {19, 60}, {27, 55}, {39, 50}, {62, 45} } },
-		{"CF", { {7, 80}, {11, 70}, {19, 60}, {27, 55}, {39, 50}, {62, 45} } },
+	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
+		{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },
+		{"CF", { {7, 79}, {19, 65}, {27, 58}, {39, 51}, {62, 48} } },
 	};
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
@@ -808,6 +830,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			if (in_string(set.first, { "Sim", "single" }, true)) {
 				reader.sim.set_proton_dist("single");
 				reader.sim.set_particle_mean(stof(get_flag_trail(set.first, "single", "_")[0]));
+			}
+			if (in_string(set.first, { "Sim", "flat" }, true)) {
+				reader.sim.set_proton_dist("flat");
+				reader.sim.set_particle_max(stoi(get_flag_trail(set.first, "flat", "_")[0]));
 			}
 
 			if (in_string(set.first, "Sim")) {
@@ -856,7 +882,15 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 				if (in_string(set.first, "Ampt")) { binner.set_particle_bins(particle_bins["AMPT"][energy]); }
 				else if (in_string(set.first, "CF")) { binner.set_particle_bins(particle_bins["CF"][energy]); }
-				else if (in_string(set.first, "Sim")) { binner.set_particle_bins(100); }  // Placeholder for now
+				else if (in_string(set.first, "Sim")) {
+					if (in_string(set.first, "single")) {
+						binner.set_particle_min(stoi(get_flag_trail(set.first, "single", "_")[0]));
+						binner.set_particle_bins(1);
+					}
+					else if (in_string(set.first, "flat")) {
+						binner.set_particle_bins(stoi(get_flag_trail(set.first, "flat", "_")[0]));
+					}
+					binner.set_particle_bins(100); }  // Placeholder for now
 				else { binner.set_particle_bins(particle_bins["BES1"][energy]); }
 
 
@@ -1057,7 +1091,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.mix.set_ep_bins(20);
 				if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
 				else { binner.mix.set_mixes_per_event(10); }
-				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
+				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); binner.set_n_bootstraps(160); }
 
 				cout << "Added " << set.first << " set " << set_num << " " << energy << "GeV, job " << job_num << " of " << jobs << endl << endl;
 			}
