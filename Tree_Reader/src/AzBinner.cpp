@@ -537,7 +537,11 @@ void AzBinner::process_event(const Event& event) {
 
 		// If there are enough good particles, calculate ratios for each division and save to data.
 		int num_particles = (int)good_particle_angles.size();
-		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
+		if (num_particles - particle_min >= particle_bins) {
+			cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl;
+			cout << event.get_event_id() << endl;
+		}
+		return;
 		if (num_particles >= cut.min_multi) {
 			cent16_events.Fill(cent16_corr);
 			cent9_events.Fill(cent9_corr);
