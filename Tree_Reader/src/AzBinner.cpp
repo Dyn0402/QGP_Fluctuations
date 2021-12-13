@@ -71,6 +71,9 @@ AzBinner::AzBinner(int energy, int ref_num) {
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 	mix = Mixer(energy);
+
+//	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = poisson_distribution<int> (1);
 }
 
 
@@ -102,6 +105,9 @@ AzBinner::AzBinner(int energy) {
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 	mix = Mixer(energy);
+
+//	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = poisson_distribution<int> (1);
 }
 
 
@@ -134,6 +140,9 @@ AzBinner::AzBinner() {
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
 	mix = Mixer(energy);
+
+//	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = poisson_distribution<int> (1);
 }
 
 
@@ -453,11 +462,11 @@ void AzBinner::init_data() {
 			for (int bs_i=0; bs_i < n_bootstraps; bs_i++) {
 				data_bs[div_i][cent_i].push_back(vector<vector<long>> ());
 				for (int num_particles=0; num_particles < particle_bins; num_particles++) {
-					data_bs[div_i][cent_i][bs_i].push_back(vector<long> (num_particles + particle_min, 0));
+					data_bs[div_i][cent_i][bs_i].push_back(vector<long> (num_particles + particle_min + 1, 0));
 				}
 			}
 			for (int num_particles=0; num_particles < particle_bins; num_particles++) {
-				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min, 0));
+				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min + 1, 0));
 			}
 		}
 	}
@@ -506,7 +515,6 @@ TH1D* AzBinner::get_sim_efficiency_dist() {
 
 //  For good events/tracks, azimuthally bin particles and save to data
 void AzBinner::process_event(const Event& event) {
-
 	// Check if each event is good. Analyze if so, continue if not.
 	if (check_event(event)) {
 		vector<double> good_particle_angles = {};
@@ -529,6 +537,7 @@ void AzBinner::process_event(const Event& event) {
 
 		// If there are enough good particles, calculate ratios for each division and save to data.
 		int num_particles = (int)good_particle_angles.size();
+		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
 		if (num_particles >= cut.min_multi) {
 			cent16_events.Fill(cent16_corr);
 			cent9_events.Fill(cent9_corr);
@@ -595,6 +604,7 @@ void AzBinner::process_event(const Event& event) {
 					for (int i = 0; i < n_bootstraps; i++) {
 						vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles];
 						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+//						for (int j = 0; j < pois_dist(c_rand); j++) {
 							for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 								data_event_bs[num_in_bin] += binned_event[num_in_bin];
 							}
@@ -617,7 +627,6 @@ void AzBinner::process_event(const Event& event) {
 					}
 				}
 			}
-//			cout << "here-1" << endl;
 		}
 	}
 }

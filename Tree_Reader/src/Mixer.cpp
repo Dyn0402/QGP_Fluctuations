@@ -38,7 +38,8 @@ Mixer::Mixer() {
 	ep_range.second = M_PI;
 	vz_bins = 10;
 	ep_bins = 10;
-	c_rand = mt19937(trand->Integer(numeric_limits<int>::max()));
+	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = new poisson_distribution<int> (1);
 }
 
 Mixer::Mixer(int energy) {
@@ -62,7 +63,8 @@ Mixer::Mixer(int energy) {
 	ep_range.second = M_PI;
 	vz_bins = 10;
 	ep_bins = 10;
-	c_rand = mt19937(trand->Integer(numeric_limits<int>::max()));
+	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = new poisson_distribution<int> (1);
 }
 
 Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
@@ -86,7 +88,8 @@ Mixer::Mixer(int energy, bool single_ratio, bool rand_rotate) {
 	ep_range.second = M_PI;
 	vz_bins = 10;
 	ep_bins = 10;
-	c_rand = mt19937(trand->Integer(numeric_limits<int>::max()));
+	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = new poisson_distribution<int> (1);
 }
 
 
@@ -282,11 +285,11 @@ void Mixer::init_data() {
 			for (int bs_i=0; bs_i < n_bootstraps; bs_i++) {
 				data_bs[div_i][cent_i].push_back(vector<vector<long>> ());
 				for (int num_particles=0; num_particles < particle_bins; num_particles++) {
-					data_bs[div_i][cent_i][bs_i].push_back(vector<long> (num_particles + particle_min, 0));
+					data_bs[div_i][cent_i][bs_i].push_back(vector<long> (num_particles + particle_min + 1, 0));
 				}
 			}
 			for (int num_particles=0; num_particles < particle_bins; num_particles++) {
-				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min, 0));
+				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min + 1, 0));
 			}
 		}
 
@@ -363,6 +366,7 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 			for (int i = 0; i < n_bootstraps; i++) {
 				vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][mix_angles.size()];
 				for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+//				for (int j = 0; j < pois_dist(c_rand); j++) {
 					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 						data_event_bs[num_in_bin] += binned_event[num_in_bin];
 					}

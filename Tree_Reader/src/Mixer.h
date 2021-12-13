@@ -112,7 +112,8 @@ private:
 	vector<int> divs;
 	string out_path;
 	TRandom3 *trand = new TRandom3(0);
-	mt19937 c_rand;
+	mt19937_64 c_rand;
+//	poisson_distribution<int> pois_dist;
 
 	int n_resamples = 100;
 	int n_bootstraps = 100;

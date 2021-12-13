@@ -5,6 +5,7 @@
 #include <ctime>
 #include <chrono>
 #include <mutex>
+#include <random>
 
 #include <TTree.h>
 #include <TLeaf.h>
@@ -133,6 +134,9 @@ private:
 	vector<vector<vector<vector<vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
 	StRefMultCorr* refmultCorrUtil;
 	TRandom3* trand = new TRandom3(0);
+//	mt19937_64 c_rand;
+//	poisson_distribution<int> pois_dist;
+
 	tree_branches branches;
 	ampt_tree_branches ampt_branches;
 	simulation_pars sim_pars;

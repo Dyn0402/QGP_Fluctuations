@@ -202,8 +202,8 @@ void read_new() {
 //	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
-//	{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
+//		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
+//		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -771,6 +771,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
 	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 100000} };
+
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 60}, {11, 50}, {19, 45}, {27, 40}, {39, 35}, {62, 35} } },
 		{"AMPT", { {7, 80}, {11, 70}, {19, 60}, {27, 55}, {39, 50}, {62, 45} } },
 		{"CF", { {7, 80}, {11, 70}, {19, 60}, {27, 55}, {39, 50}, {62, 45} } },
@@ -855,6 +856,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 				if (in_string(set.first, "Ampt")) { binner.set_particle_bins(particle_bins["AMPT"][energy]); }
 				else if (in_string(set.first, "CF")) { binner.set_particle_bins(particle_bins["CF"][energy]); }
+				else if (in_string(set.first, "Sim")) { binner.set_particle_bins(100); }  // Placeholder for now
 				else { binner.set_particle_bins(particle_bins["BES1"][energy]); }
 
 
