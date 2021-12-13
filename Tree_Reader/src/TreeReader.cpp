@@ -336,7 +336,6 @@ void TreeReader::read_trees() {
 			cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 		}
 
-		cout << path << endl;
 		TFile *file = new TFile(path.data(), "READ");
 		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
 		TTree *tree = (TTree*)file->Get(tree_name.data());

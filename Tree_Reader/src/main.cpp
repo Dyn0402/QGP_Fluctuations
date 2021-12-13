@@ -207,8 +207,8 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
-//		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
+		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -597,8 +597,8 @@ void read_new() {
 //		{"Sim_single10_anticlust_s3a99", {{"single10_anticlust_amp99_spread3", {{"Sim_amp99_spread3_single10_anticlust_n1ratios_", {0, 10}}}}}},
 //	};
 
-//	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+//	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -908,7 +908,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, "EP_Rotate")) { binner.set_event_plane(true); }
 				else { binner.set_event_plane(false); }
 
-				if (in_string(set.first, { "No_Rotate", "EP_Rotate" }, false)) { binner.set_rotate_random(false); }
+				if (in_string(set.first, { "_norotate", "EP_Rotate" }, false)) { binner.set_rotate_random(false); }
 				else { binner.set_rotate_random(true); }
 
 				if (in_string(set.first, { "Ampt", "ReactionPlane" }, true)) { binner.set_ampt_reaction_plane(true); }
