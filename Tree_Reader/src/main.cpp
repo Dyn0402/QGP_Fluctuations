@@ -299,25 +299,27 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_anticlmulti_s25a01", {{"flat80_anticlmulti_spread25_amp01_resample", {{"Sim_spread25_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s25a02", {{"flat80_anticlmulti_spread25_amp02_resample", {{"Sim_spread25_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s25a03", {{"flat80_anticlmulti_spread25_amp03_resample", {{"Sim_spread25_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s25a04", {{"flat80_anticlmulti_spread25_amp04_resample", {{"Sim_spread25_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s25a05", {{"flat80_anticlmulti_spread25_amp05_resample", {{"Sim_spread25_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s25a06", {{"flat80_anticlmulti_spread25_amp06_resample", {{"Sim_spread25_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 
-		{"Sim_flat80_anticlmulti_s15a01", {{"flat80_anticlmulti_spread15_amp01_resample", {{"Sim_spread15_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s15a02", {{"flat80_anticlmulti_spread15_amp02_resample", {{"Sim_spread15_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s15a03", {{"flat80_anticlmulti_spread15_amp03_resample", {{"Sim_spread15_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s15a04", {{"flat80_anticlmulti_spread15_amp04_resample", {{"Sim_spread15_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s15a05", {{"flat80_anticlmulti_spread15_amp05_resample", {{"Sim_spread15_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s15a06", {{"flat80_anticlmulti_spread15_amp06_resample", {{"Sim_spread15_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 
-		{"Sim_flat80_anticlmulti_s1a01", {{"flat80_anticlmulti_spread1_amp01_resample", {{"Sim_spread1_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a02", {{"flat80_anticlmulti_spread1_amp02_resample", {{"Sim_spread1_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a03", {{"flat80_anticlmulti_spread1_amp03_resample", {{"Sim_spread1_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a04", {{"flat80_anticlmulti_spread1_amp04_resample", {{"Sim_spread1_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a05", {{"flat80_anticlmulti_spread1_amp05_resample", {{"Sim_spread1_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a06", {{"flat80_anticlmulti_spread1_amp06_resample", {{"Sim_spread1_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 
-		{"Sim_flat80_anticlmulti_s05a01", {{"flat80_anticlmulti_spread05_amp01_resample", {{"Sim_spread05_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a02", {{"flat80_anticlmulti_spread05_amp02_resample", {{"Sim_spread05_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a03", {{"flat80_anticlmulti_spread05_amp03_resample", {{"Sim_spread05_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a04", {{"flat80_anticlmulti_spread05_amp04_resample", {{"Sim_spread05_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a05", {{"flat80_anticlmulti_spread05_amp05_resample", {{"Sim_spread05_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a06", {{"flat80_anticlmulti_spread05_amp06_resample", {{"Sim_spread05_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s02a01", {{"flat80_anticlmulti_spread02_amp01_resample", {{"Sim_spread02_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s02a02", {{"flat80_anticlmulti_spread02_amp02_resample", {{"Sim_spread02_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s02a05", {{"flat80_anticlmulti_spread02_amp03_resample", {{"Sim_spread02_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s02a04", {{"flat80_anticlmulti_spread02_amp04_resample", {{"Sim_spread02_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s02a05", {{"flat80_anticlmulti_spread02_amp05_resample", {{"Sim_spread02_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s02a06", {{"flat80_anticlmulti_spread02_amp06_resample", {{"Sim_spread02_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s2a01", {{"flat80_anticlmulti_spread2_amp01_resample", {{"Sim_spread2_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s2a02", {{"flat80_anticlmulti_spread2_amp02_resample", {{"Sim_spread2_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
