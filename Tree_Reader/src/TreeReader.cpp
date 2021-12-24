@@ -378,6 +378,8 @@ void TreeReader::read_trees() {
 
 void TreeReader::sim_events(map<int, int> cent_num_events) {
 	for (AzBinner& binner : binners) {
+		binner.set_cent_bins(cent_num_events.size());
+		binner.set_cent_min(cent_num_events.begin()->first);  // Clunky, can't account for gaps. Maybe do better job later if more general simulation needed
 		binner.prep_read();
 		binner.define_qa();
 	}

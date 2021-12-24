@@ -321,6 +321,41 @@ void read_new() {
 //
 //		{"Sim_flat80_anticlmulti_s2a01", {{"flat80_anticlmulti_spread2_amp01_resample", {{"Sim_spread2_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s2a02", {{"flat80_anticlmulti_spread2_amp02_resample", {{"Sim_spread2_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s25a05", {{"flat80_anticlmulti_spread25_amp05_resample", {{"Sim_spread25_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s25a06", {{"flat80_anticlmulti_spread25_amp06_resample", {{"Sim_spread25_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		//{"Sim_flat80_anticlmulti_s15a05", {{"flat80_anticlmulti_spread15_amp05_resample", {{"Sim_spread15_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s15a06", {{"flat80_anticlmulti_spread15_amp06_resample", {{"Sim_spread15_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		//{"Sim_flat80_anticlmulti_s1a05", {{"flat80_anticlmulti_spread1_amp05_resample", {{"Sim_spread1_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s1a06", {{"flat80_anticlmulti_spread1_amp06_resample", {{"Sim_spread1_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		//{"Sim_flat80_anticlmulti_s05a05", {{"flat80_anticlmulti_spread05_amp05_resample", {{"Sim_spread05_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s05a06", {{"flat80_anticlmulti_spread05_amp06_resample", {{"Sim_spread05_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		//{"Sim_flat80_anticlmulti_s02a01", {{"flat80_anticlmulti_spread02_amp01_resample", {{"Sim_spread02_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s02a02", {{"flat80_anticlmulti_spread02_amp02_resample", {{"Sim_spread02_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s02a05", {{"flat80_anticlmulti_spread02_amp03_resample", {{"Sim_spread02_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s02a04", {{"flat80_anticlmulti_spread02_amp04_resample", {{"Sim_spread02_amp04_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s02a05", {{"flat80_anticlmulti_spread02_amp05_resample", {{"Sim_spread02_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s02a06", {{"flat80_anticlmulti_spread02_amp06_resample", {{"Sim_spread02_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		//{"Sim_flat80_anticlmulti_s2a01", {{"flat80_anticlmulti_spread2_amp01_resample", {{"Sim_spread2_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s2a02", {{"flat80_anticlmulti_spread2_amp02_resample", {{"Sim_spread2_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s02a08", {{"flat80_anticlmulti_spread02_amp08_resample", {{"Sim_spread02_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a08", {{"flat80_anticlmulti_spread05_amp08_resample", {{"Sim_spread05_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a08", {{"flat80_anticlmulti_spread1_amp08_resample", {{"Sim_spread1_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s15a08", {{"flat80_anticlmulti_spread15_amp08_resample", {{"Sim_spread15_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s2a08", {{"flat80_anticlmulti_spread2_amp08_resample", {{"Sim_spread2_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s25a08", {{"flat80_anticlmulti_spread25_amp08_resample", {{"Sim_spread25_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s02a15", {{"flat80_anticlmulti_spread02_amp15_resample", {{"Sim_spread02_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a15", {{"flat80_anticlmulti_spread05_amp15_resample", {{"Sim_spread05_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a15", {{"flat80_anticlmulti_spread1_amp15_resample", {{"Sim_spread1_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s15a15", {{"flat80_anticlmulti_spread15_amp15_resample", {{"Sim_spread15_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s2a15", {{"flat80_anticlmulti_spread2_amp15_resample", {{"Sim_spread2_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s25a15", {{"flat80_anticlmulti_spread25_amp15_resample", {{"Sim_spread25_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -795,7 +830,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 80 * 100000 / 1000} };
+	map<int, int> sim_cent_events = { {8, 80 * 100000 / 1000} };
 
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
 		{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },
@@ -1096,7 +1131,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.mix.set_ep_bins(20);
 				if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
 				else { binner.mix.set_mixes_per_event(10); }
-				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); binner.set_n_bootstraps(160); }
+				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); binner.set_n_bootstraps(250); }
 
 				cout << "Added " << set.first << " set " << set_num << " " << energy << "GeV, job " << job_num << " of " << jobs << endl << endl;
 			}
