@@ -299,7 +299,7 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_single8_anticlmulti_s25a05", {{"single8_anticlmulti_spread25_amp05_resample_test", {{"Sim_spread25_amp05_single8_anticlmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_single8_anticlmulti_s25a05", {{"single8_anticlmulti_spread25_amp05_resample_test", {{"Sim_spread25_amp05_single8_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s25a05", {{"flat80_anticlmulti_spread25_amp05_resample", {{"Sim_spread25_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s25a06", {{"flat80_anticlmulti_spread25_amp06_resample", {{"Sim_spread25_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //
@@ -830,7 +830,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {8, 80 * 100000 / 1000} };
+	map<int, int> sim_cent_events = { {8, 80 * 100000} };
 
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
 		{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },

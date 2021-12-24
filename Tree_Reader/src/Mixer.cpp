@@ -350,6 +350,7 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 		mix_angles.push_back(new_angle);
 	}
 
+	int num_particles_bin = mix_angles.size() - particle_min;
 	if (resample) {
 		sort(mix_angles.begin(), mix_angles.end());
 		for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
@@ -357,14 +358,14 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 			vector<int> binned_event = get_resamples(mix_angles, div_rads, n_resamples);
 
 			// Save binned values to data
-			vector<long> &data_event = data[div_bin][cent_bin][mix_angles.size() - particle_min];  // Reduce map traversal
+			vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
 			for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 				data_event[num_in_bin] += binned_event[num_in_bin];
 			}
 
 			// Save binned values to bootstraps
 			for (int i = 0; i < n_bootstraps; i++) {
-				vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][mix_angles.size() - particle_min];
+				vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
 				for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
 //				for (int j = 0; j < pois_dist(c_rand); j++) {
 					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
@@ -382,7 +383,7 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 			vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 			// Save ratio values to data
-			vector<long> &data_event = data[div_bin][cent_bin][mix_angles.size()];  // Reduce map traversal
+			vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
 			for (int particles_in_bin : event_ratios) {
 				data_event[particles_in_bin]++;
 			}

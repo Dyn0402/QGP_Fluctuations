@@ -588,6 +588,7 @@ void AzBinner::process_event(const Event& event) {
 				//event.set_event_plane(rotate_angle(event_plane, rand_angle));  // Need to rotate event plane if it's used after this point. Currently is not.
 			}
 
+			int num_particles_bin = num_particles - particle_min;
 			if (resample) {
 				sort(good_particle_angles.begin(), good_particle_angles.end());
 				for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
@@ -595,14 +596,14 @@ void AzBinner::process_event(const Event& event) {
 					vector<int> binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
 
 					// Save binned values to data
-					vector<long> &data_event = data[div_bin][cent_bin - cent_min][num_particles - particle_min];  // Reduce map traversal
+					vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
 					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 						data_event[num_in_bin] += binned_event[num_in_bin];
 					}
 
 					// Save binned values to bootstraps
 					for (int i = 0; i < n_bootstraps; i++) {
-						vector<long> &data_event_bs = data_bs[div_bin][cent_bin - cent_min][i][num_particles - particle_min];
+						vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
 						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
 							for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 								data_event_bs[num_in_bin] += binned_event[num_in_bin];
@@ -620,7 +621,7 @@ void AzBinner::process_event(const Event& event) {
 					vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
 
 					// Save ratio values to data
-					vector<long> &data_event = data[div_bin][cent_bin][num_particles];  // Reduce map traversal
+					vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
 					for (int particles_in_bin : event_ratios) {
 						data_event[particles_in_bin]++;
 					}
