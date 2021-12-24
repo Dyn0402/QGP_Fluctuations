@@ -595,14 +595,14 @@ void AzBinner::process_event(const Event& event) {
 					vector<int> binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
 
 					// Save binned values to data
-					vector<long> &data_event = data[div_bin][cent_bin][num_particles - particle_min];  // Reduce map traversal
+					vector<long> &data_event = data[div_bin][cent_bin - cent_min][num_particles - particle_min];  // Reduce map traversal
 					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 						data_event[num_in_bin] += binned_event[num_in_bin];
 					}
 
 					// Save binned values to bootstraps
 					for (int i = 0; i < n_bootstraps; i++) {
-						vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles];
+						vector<long> &data_event_bs = data_bs[div_bin][cent_bin - cent_min][i][num_particles];
 						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
 //						for (int j = 0; j < pois_dist(c_rand); j++) {
 							for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
