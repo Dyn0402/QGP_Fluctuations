@@ -57,6 +57,7 @@ using namespace std;
 
 //void read_class();
 void read_new();
+void read_rcf_sim(string set_group, string set_name);
 //void read_comb_sys();
 //void real_event_tree_test();
 //void speed_test();
@@ -83,7 +84,7 @@ void tree_read_speed();
 
 //void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list);
 void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list);
-void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list);
+//void run_job_sim(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list);
 
 clock_t start = clock();
 auto start_sys = chrono::system_clock::now();
@@ -111,7 +112,14 @@ int main(int argc, char** argv) {
 	//read_class();
 
 	//cout << check_dir("/home/dylan/Research/Data_Ampt/default/Ampt_rapid05_n1ratios_0/"+to_string(7)+"GeV") << endl;
-	read_new();
+	if (argc == 3) {
+		read_rcf_sim((string)argv[1], (string)argv[2]);
+	}
+	else {
+		cout << "Bad command line input!" << endl;
+	}
+
+	//read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
@@ -686,6 +694,21 @@ void read_new() {
 }
 
 
+void read_rcf_sim(string set_group, string set_name) {
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Sim_single8_anticlmulti_s25a05", {{"single8_anticlmulti_spread25_amp05_resample_test", {{"Sim_spread25_amp05_single8_anticlmulti_norotate_resample_", {0, 0}}}}}},
+	//};
+
+	map<string, map<string, pair<int, int>>> job{
+		{set_group, {{set_name, {0, 0}}}}
+	};
+
+	mutex* mtx = new mutex;
+	vector<string>* file_list = new vector<string>;
+	ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("GaussLegendre");
+	run_job(62, job, 1, "Sim_RCF", 1, mtx, file_list);
+}
+
 //void read_class() {
 ////	map<string, pair<int, int>> set_pairs = {{"Ampt_baryontotal", {0, 2}}, {"Ampt_mesontotal", {0, 2}}, {"Ampt_hadrontotal", {0, 2}}};
 ////	map<string, pair<int, int>> set_pairs = {{"Ampt_p+_n1ratios_Efficiency8", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency5", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency3", {0, 2}}, {"Ampt_p+_n1ratios_Efficiency1", {0, 2}}, {"Ampt_p+_n1ratios", {1, 4}}};
@@ -780,7 +803,15 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	reader.set_file_list(file_list);
 
 	string base_path, in_base_path, in_base_ampt_path, in_base_cf_path;
-	if (platform == "lin") {
+	if (in_string(job_type, "RCF")) {
+		base_path = "./";
+		in_base_path = "./";
+		in_base_ampt_path = "./";
+		in_base_cf_path = "./";
+		mkdir("Data_Sim");
+		mkdir("Data_Sim_Mix");
+	}
+	else if (platform == "lin") {
 		base_path = "/home/dylan/Research/";
 		in_base_path = "/media/ucla/Research/";
 		in_base_ampt_path = "/media/ucla/Research/";
@@ -830,7 +861,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {8, 80 * 100000} };
+	map<int, int> sim_cent_events = { {8, 80 * 100000 / 1000} };
 
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
 		{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },
