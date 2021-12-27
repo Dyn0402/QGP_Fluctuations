@@ -91,7 +91,11 @@ auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-	if (platform == "lin") {
+	if (argc == 3) {  // Running on RCF
+		gROOT->ProcessLine(".L Track.h");
+		gROOT->ProcessLine(".L Event.h");
+	}
+	else if (platform == "lin") {
 		gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
 		gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
 	} else if (platform == "win") {
@@ -118,6 +122,11 @@ int main(int argc, char** argv) {
 	else {
 		cout << "Bad command line input!" << endl;
 	}
+
+//	gROOT->ProcessLine(".L /star/u/dneff/git/QGP_Fluctuations/Tree_Reader/src/Track.h");
+//	gROOT->ProcessLine(".L /star/u/dneff/git/QGP_Fluctuations/Tree_Reader/src/Event.h");
+//	read_rcf_sim("single8_anticlmulti_spread25_amp05_resample_test",
+//			"Sim_spread25_amp05_single8_anticlmulti_norotate_resample_");
 
 	//read_new();
 
@@ -804,7 +813,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	string base_path, in_base_path, in_base_ampt_path, in_base_cf_path;
 	if (in_string(job_type, "RCF")) {
-		base_path = "./";
+		base_path = "./";  //"/star/u/dneff/Documents/";
 		in_base_path = "./";
 		in_base_ampt_path = "./";
 		in_base_cf_path = "./";
@@ -861,7 +870,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {8, 80 * 100000 / 1000} };
+	map<int, int> sim_cent_events = { {8, 80 * 100000 / 2} };
 
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
 		{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },

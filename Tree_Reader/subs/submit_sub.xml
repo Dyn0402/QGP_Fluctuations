@@ -6,17 +6,31 @@
   
 	<command>
 		source /star/u/dneff/Software/root/root-6.14.06/obj/bin/thisroot.csh
-		./Release/Tree_Reader single8_anticlmulti_spread25_amp05_resample_test Sim_spread25_amp05_single8_anticlmulti_norotate_resample_;
+		./Release/Tree_Reader flat80_anticlmulti_spread12_amp03_resample Sim_spread12_amp03_flat80_anticlmulti_norotate_resample_;
 	</command>
+
+	<ResourceUsage>
+		<Times>
+			<MinWallTime>15</MinWallTime>
+			<MaxWallTime>30</MaxWallTime>
+		</Times>
+		<Memory>
+			<MinMemory>200</MinMemory>
+			<MaxMemory>1000</MaxMemory>
+		</Memory>
+	</ResourceUsage>
   
 	<SandBox>
 		<Package>
-			<File>file:./Release</File>
+			<File>file:/star/u/dneff/git/QGP_Fluctuations/Tree_Reader/Release</File>
+			<File>file:/star/u/dneff/git/QGP_Fluctuations/Tree_Reader/src/Track.h</File>
+			<File>file:/star/u/dneff/git/QGP_Fluctuations/Tree_Reader/src/Event.h</File>			<File>file:/star/u/dneff/Documents/Dca_xy_QA</File>
+			<File>file:/star/u/dneff/Documents/Pile_Up_QA</File>
 		</Package>
 	</SandBox>
 
-	<stderr URL="file:/gpfs01/star/pwg/dneff/scratch/ratios/log/&energy;GeV/err_&energy;GeV$JOBID.err"/>
-	<stdout URL="file:/gpfs01/star/pwg/dneff/scratch/ratios/log/&energy;GeV/log_&energy;GeV$JOBID.out" />
+	<stderr URL="file:/gpfs01/star/pwg/dneff/tree_reader_data/log/err_$JOBID.err"/>
+	<stdout URL="file:/gpfs01/star/pwg/dneff/tree_reader_data/log/log_$JOBID.out" />
 
 	<output fromScratch="Data_Sim/*" toURL="file:/gpfs01/star/pwg/dneff/tree_reader_data/Data_Sim/" />
 	<output fromScratch="Data_Sim_Mix/*" toURL="file:/gpfs01/star/pwg/dneff/tree_reader_data/Data_Sim_Mix/" />
