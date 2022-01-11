@@ -11,8 +11,8 @@
 
 	<ResourceUsage>
 		<Times>
-			<MinWallTime>15</MinWallTime>
-			<MaxWallTime>30</MaxWallTime>
+			<MinWallTime>30</MinWallTime>
+			<MaxWallTime>48</MaxWallTime>
 		</Times>
 		<Memory>
 			<MinMemory>200</MinMemory>
