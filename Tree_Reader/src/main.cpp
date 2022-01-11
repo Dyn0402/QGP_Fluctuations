@@ -115,20 +115,14 @@ int main(int argc, char** argv) {
 	//cout << rot_angle << endl;
 	//read_class();
 
-	//cout << check_dir("/home/dylan/Research/Data_Ampt/default/Ampt_rapid05_n1ratios_0/"+to_string(7)+"GeV") << endl;
-	if (argc == 3) {
-		read_rcf_sim((string)argv[1], (string)argv[2]);
-	}
-	else {
-		cout << "Bad command line input!" << endl;
-	}
+//	if (argc == 3) {
+//		read_rcf_sim((string)argv[1], (string)argv[2]);
+//	}
+//	else {
+//		cout << "Bad command line input!" << endl;
+//	}
 
-//	gROOT->ProcessLine(".L /star/u/dneff/git/QGP_Fluctuations/Tree_Reader/src/Track.h");
-//	gROOT->ProcessLine(".L /star/u/dneff/git/QGP_Fluctuations/Tree_Reader/src/Event.h");
-//	read_rcf_sim("single8_anticlmulti_spread25_amp05_resample_test",
-//			"Sim_spread25_amp05_single8_anticlmulti_norotate_resample_");
-
-	//read_new();
+	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
@@ -360,19 +354,19 @@ void read_new() {
 		//{"Sim_flat80_anticlmulti_s2a01", {{"flat80_anticlmulti_spread2_amp01_resample", {{"Sim_spread2_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 		//{"Sim_flat80_anticlmulti_s2a02", {{"flat80_anticlmulti_spread2_amp02_resample", {{"Sim_spread2_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 
-		{"Sim_flat80_anticlmulti_s02a08", {{"flat80_anticlmulti_spread02_amp08_resample", {{"Sim_spread02_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a08", {{"flat80_anticlmulti_spread05_amp08_resample", {{"Sim_spread05_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a08", {{"flat80_anticlmulti_spread1_amp08_resample", {{"Sim_spread1_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s15a08", {{"flat80_anticlmulti_spread15_amp08_resample", {{"Sim_spread15_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s2a08", {{"flat80_anticlmulti_spread2_amp08_resample", {{"Sim_spread2_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s25a08", {{"flat80_anticlmulti_spread25_amp08_resample", {{"Sim_spread25_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s0a0", {{"flat80_anticlmulti_spread0_amp0_resample", {{"Sim_spread0_amp0_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s0a01", {{"flat80_anticlmulti_spread0_amp01_resample", {{"Sim_spread0_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s0a03", {{"flat80_anticlmulti_spread0_amp03_resample", {{"Sim_spread0_amp03_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s0a08", {{"flat80_anticlmulti_spread0_amp08_resample", {{"Sim_spread0_amp08_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s0a15", {{"flat80_anticlmulti_spread0_amp15_resample", {{"Sim_spread0_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s0a2", {{"flat80_anticlmulti_spread0_amp2_resample", {{"Sim_spread0_amp2_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 
-		{"Sim_flat80_anticlmulti_s02a15", {{"flat80_anticlmulti_spread02_amp15_resample", {{"Sim_spread02_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a15", {{"flat80_anticlmulti_spread05_amp15_resample", {{"Sim_spread05_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a15", {{"flat80_anticlmulti_spread1_amp15_resample", {{"Sim_spread1_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s15a15", {{"flat80_anticlmulti_spread15_amp15_resample", {{"Sim_spread15_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s2a15", {{"flat80_anticlmulti_spread2_amp15_resample", {{"Sim_spread2_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s25a15", {{"flat80_anticlmulti_spread25_amp15_resample", {{"Sim_spread25_amp15_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s3a0", {{"flat80_anticlmulti_spread3_amp0_resample", {{"Sim_spread3_amp0_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s35a0", {{"flat80_anticlmulti_spread35_amp0_resample", {{"Sim_spread35_amp0_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s45a0", {{"flat80_anticlmulti_spread45_amp0_resample", {{"Sim_spread45_amp0_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s12a0", {{"flat80_anticlmulti_spread12_amp0_resample", {{"Sim_spread12_amp0_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s12a005", {{"flat80_anticlmulti_spread12_amp005_resample", {{"Sim_spread12_amp005_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s12a01", {{"flat80_anticlmulti_spread12_amp01_resample", {{"Sim_spread12_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
