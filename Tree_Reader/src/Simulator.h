@@ -139,6 +139,8 @@ private:
 template <typename T>
 T gaus_kernel(T x, T m, T s)
 {
+	if (s == 0) { return 0; }
+
     T a = (x - m) / s;
 
     return std::exp(-T(0.5) * a * a);
