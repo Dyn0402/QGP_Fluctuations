@@ -115,12 +115,13 @@ int main(int argc, char** argv) {
 	//cout << rot_angle << endl;
 	//read_class();
 
-//	if (argc == 3) {
-//		read_rcf_sim((string)argv[1], (string)argv[2]);
-//	}
-//	else {
-//		cout << "Bad command line input!" << endl;
-//	}
+	if (argc == 3) {
+		read_rcf_sim((string)argv[1], (string)argv[2]);
+		return;
+	}
+	else {
+		cout << "No commandline input, assume not rcf. Doing other things." << endl;
+	}
 
 	read_new();
 
