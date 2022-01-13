@@ -140,7 +140,7 @@ private:
 template <typename T>
 T gaus_kernel(T x, T m, T s)
 {
-	if (s == 0) { return 0; }
+	if (s == 0) { return x == m; }
 
     T a = (x - m) / s;
 
