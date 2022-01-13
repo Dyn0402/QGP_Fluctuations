@@ -144,9 +144,7 @@
     <ClCompile Include="src\Event.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mixer.cpp" />
-    <ClCompile Include="src\MixerSets.cpp" />
     <ClCompile Include="src\PileUpQAer.cpp" />
-    <ClCompile Include="src\Randomizer.cpp" />
     <ClCompile Include="src\res_calc_test.cpp" />
     <ClCompile Include="src\Simulator.cpp" />
     <ClCompile Include="src\speed_tests.cpp" />
@@ -166,9 +164,7 @@
     <ClInclude Include="src\DcaxyQAer.h" />
     <ClInclude Include="src\Event.h" />
     <ClInclude Include="src\Mixer.h" />
-    <ClInclude Include="src\MixerSets.h" />
     <ClInclude Include="src\PileUpQAer.h" />
-    <ClInclude Include="src\Randomizer.h" />
     <ClInclude Include="src\Simulator.h" />
     <ClInclude Include="src\Track.h" />
     <ClInclude Include="src\TreeBranches.h" />
