@@ -283,6 +283,7 @@ void Simulator::sim_event_clust_multi(Event& event) {
 		proton_angles.push_back(new_angle);
 	}
 
+	int wrap_num = ceil(pars.wrap_sigmas * pars.spread_sigma / (2 * M_PI));  // Wrap out to at least wrap_sigmas
 	double x_range = pars.x_up - pars.x_low;
 	vector<double> prob_vec(pars.points, 1);
 	double x, x_val_up;
@@ -291,9 +292,15 @@ void Simulator::sim_event_clust_multi(Event& event) {
 		int cdf_index = 0;
 		for (int i=0; i<pars.points; i++) {
 			x = pars.x_low + (i + 0.5) * x_range / pars.points;  // Generate prob points in middle of bins
-			prob_vec[i] *= pars.base + pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma) +
-					pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI, pars.spread_sigma) +  // wrap once to deal with
-					pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI, pars.spread_sigma);  // periodic boundary
+			//prob_vec[i] *= pars.base + pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma) +
+			//		pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI, pars.spread_sigma) +  // wrap once to deal with
+			//		pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI, pars.spread_sigma);  // periodic boundary
+			double prob_update = pars.base + pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma);
+			for (int wrap_i = 1; wrap_i <= wrap_num; wrap_i++) {
+				prob_update += pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI * wrap_i, pars.spread_sigma) +  // wrap pdf to deal with
+					pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI * wrap_i, pars.spread_sigma);  // periodic boundary
+			}
+			prob_vec[i] *= prob_update;
 			cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
 			cdf_index++;
 		}

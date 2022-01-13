@@ -36,6 +36,7 @@ struct simulation_pars {
 	double base = 1.0;  // Base value for cluster multi on top of which gaussian kernels superimposed
 
 	int points = 1000;  // Points in probability vector for cluster multi
+	int wrap_sigmas = 8;  // Wrap kernel until at least this many sigmas of pdf are summed.
 	double x_low = 0;  // Lower support for probability vector for cluster multi
 	double x_up = 2 * M_PI;  // Upper support for probability vector for cluster multi
 
