@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 
 	if (argc == 3) {
 		read_rcf_sim((string)argv[1], (string)argv[2]);
-		return;
+		return 0;
 	}
 	else {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
