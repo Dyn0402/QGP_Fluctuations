@@ -16,12 +16,12 @@ T gaus_kernel(T x, T m, T s)
 void sim_anticlmulti_test() {
 	TRandom3 *sim_rand = new TRandom3(0);
 	double new_angle;
-	double amp = -0.04;
+	double amp = -0.2;
 	double sig = 3.3;
 	double base = 1.0;
 	float wrap_sigmas = 8.0;
 
-	int n_protons = 60;
+	int n_protons = 80;
 
 	if (n_protons > 0) {
 		new_angle = sim_rand->Rndm() * 2 * M_PI;
