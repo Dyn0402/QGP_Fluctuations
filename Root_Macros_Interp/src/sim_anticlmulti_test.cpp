@@ -16,9 +16,10 @@ T gaus_kernel(T x, T m, T s)
 void sim_anticlmulti_test() {
 	TRandom3 *sim_rand = new TRandom3(0);
 	double new_angle;
-	double amp = -0.1;
-	double sig = 0.3;
+	double amp = -0.04;
+	double sig = 3.3;
 	double base = 1.0;
+	float wrap_sigmas = 8.0;
 
 	int n_protons = 60;
 
@@ -30,6 +31,9 @@ void sim_anticlmulti_test() {
 	int points = 1000;
 	double x_low = 0;
 	double x_up = 2 * M_PI;
+	int wrap_num = ceil(wrap_sigmas * sig / (2 * M_PI));
+	cout << "wrap_num: " << wrap_num << endl;
+//	wrap_num = 1;
 	double x_range = x_up - x_low;
 	vector<double> prob_vec(points, 1);
 	double x, x_val_up;
@@ -41,9 +45,15 @@ void sim_anticlmulti_test() {
 		vector<double> cdf(points + 1, 0);
 		for (int i=0; i<points; i++) {
 			x = x_low + (i + 0.5) * x_range / points;  // Generate prob points in middle of bins
-			prob_vec[i] *= base + amp * gaus_kernel(x, new_angle, sig) +
-					amp * gaus_kernel(x, new_angle - 2 * M_PI, sig) +
-					amp * gaus_kernel(x, new_angle + 2 * M_PI, sig);
+			double prob_update = base + amp * gaus_kernel(x, new_angle, sig);
+			for (int wrap_i = 1; wrap_i <= wrap_num; wrap_i++) {
+				prob_update += amp * gaus_kernel(x, new_angle - 2 * M_PI * wrap_i, sig) +
+						amp * gaus_kernel(x, new_angle + 2 * M_PI * wrap_i, sig);
+			}
+			prob_vec[i] *= prob_update;
+//			prob_vec[i] *= base + amp * gaus_kernel(x, new_angle, sig) +
+//					amp * gaus_kernel(x, new_angle - 2 * M_PI, sig) +
+//					amp * gaus_kernel(x, new_angle + 2 * M_PI, sig);
 			cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
 			cdf_index++;
 		}
