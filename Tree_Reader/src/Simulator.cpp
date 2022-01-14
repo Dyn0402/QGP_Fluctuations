@@ -316,16 +316,6 @@ void Simulator::sim_event_clust_multi(Event& event) {
 		x_val_up = pars.x_low + i * x_range / pars.points;  // Upper bin edge
 		new_angle = x_val_up - x_range / pars.points / (cdf[i] - cdf[i - 1]) * (cdf[i] - cdf_rand);  // Linear interpolation
 
-//		do {
-//			new_angle = sim_rand->Rndm() * 2 * M_PI;
-//			x_index = (new_angle - x_low) / x_range * (points - 1);
-//			x_index_low = floor(x_index);
-//			x_index_up = ceil(x_index);
-//			x_val_low = x_low + x_index_low * x_range / (points - 1);
-//			x_val_up = x_low + x_index_up * x_range / (points - 1);
-//			p_interp = prob_vec[x_index_low] + (prob_vec[x_index_up] - prob_vec[x_index_low]) / (x_range / (points - 1)) * (new_angle - x_low);
-//		} while (sim_rand->Rndm() < p_interp);  // Regenerate
-
 		proton_angles.push_back(new_angle);
 	}
 

@@ -355,18 +355,18 @@ void read_new() {
 		//{"Sim_flat80_anticlmulti_s2a01", {{"flat80_anticlmulti_spread2_amp01_resample", {{"Sim_spread2_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 		//{"Sim_flat80_anticlmulti_s2a02", {{"flat80_anticlmulti_spread2_amp02_resample", {{"Sim_spread2_amp02_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 
-		{"Sim_flat80_anticlmulti_s02a2_test", {{"flat80_anticlmulti_spread02_amp2_resample_test", {{"Sim_spread02_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a2_test", {{"flat80_anticlmulti_spread05_amp2_resample_test", {{"Sim_spread05_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a2_test", {{"flat80_anticlmulti_spread1_amp2_resample_test", {{"Sim_spread1_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s15a2_test", {{"flat80_anticlmulti_spread15_amp2_resample_test", {{"Sim_spread15_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s2a2_test", {{"flat80_anticlmulti_spread2_amp2_resample_test", {{"Sim_spread2_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-
-		{"Sim_flat80_anticlmulti_s25a2_test", {{"flat80_anticlmulti_spread25_amp2_resample_test", {{"Sim_spread25_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s3a2_test", {{"flat80_anticlmulti_spread3_amp2_resample_test", {{"Sim_spread3_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s35a2_test", {{"flat80_anticlmulti_spread35_amp2_resample_test", {{"Sim_spread35_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s4a2_test", {{"flat80_anticlmulti_spread4_amp2_resample_test", {{"Sim_spread4_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s45a2_test", {{"flat80_anticlmulti_spread45_amp2_resample_test", {{"Sim_spread45_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s5a2_test", {{"flat80_anticlmulti_spread5_amp2_resample_test", {{"Sim_spread5_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s02a2_test", {{"flat80_anticlmulti_spread02_amp2_resample_test", {{"Sim_spread02_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s05a2_test", {{"flat80_anticlmulti_spread05_amp2_resample_test", {{"Sim_spread05_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s1a2_test", {{"flat80_anticlmulti_spread1_amp2_resample_test", {{"Sim_spread1_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s15a2_test", {{"flat80_anticlmulti_spread15_amp2_resample_test", {{"Sim_spread15_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s2a2_test", {{"flat80_anticlmulti_spread2_amp2_resample_test", {{"Sim_spread2_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//
+//		{"Sim_flat80_anticlmulti_s25a2_test", {{"flat80_anticlmulti_spread25_amp2_resample_test", {{"Sim_spread25_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s3a2_test", {{"flat80_anticlmulti_spread3_amp2_resample_test", {{"Sim_spread3_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s35a2_test", {{"flat80_anticlmulti_spread35_amp2_resample_test", {{"Sim_spread35_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s4a2_test", {{"flat80_anticlmulti_spread4_amp2_resample_test", {{"Sim_spread4_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s45a2_test", {{"flat80_anticlmulti_spread45_amp2_resample_test", {{"Sim_spread45_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s5a2_test", {{"flat80_anticlmulti_spread5_amp2_resample_test", {{"Sim_spread5_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
 		{"Sim_flat80_anticlmulti_s6a2_test", {{"flat80_anticlmulti_spread6_amp2_resample_test", {{"Sim_spread6_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
 	};
 
