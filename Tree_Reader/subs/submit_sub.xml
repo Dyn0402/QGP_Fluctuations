@@ -15,8 +15,8 @@
 			<MaxWallTime>48</MaxWallTime>
 		</Times>
 		<Memory>
-			<MinMemory>200</MinMemory>
-			<MaxMemory>1000</MaxMemory>
+			<MinMemory>300</MinMemory>
+			<MaxMemory>600</MaxMemory>
 		</Memory>
 	</ResourceUsage>
   
