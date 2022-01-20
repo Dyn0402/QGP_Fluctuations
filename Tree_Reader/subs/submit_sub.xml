@@ -12,7 +12,6 @@
 	<ResourceUsage>
 		<Times>
 			<MinWallTime>30</MinWallTime>
-			<MaxWallTime>48</MaxWallTime>
 		</Times>
 		<Memory>
 			<MinMemory>300</MinMemory>
