@@ -11,7 +11,7 @@
 
 	<ResourceUsage>
 		<Times>
-			<MinWallTime>30</MinWallTime>
+			<MinWallTime>50</MinWallTime>
 		</Times>
 		<Memory>
 			<MinMemory>300</MinMemory>
