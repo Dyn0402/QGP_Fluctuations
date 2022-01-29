@@ -311,6 +311,20 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_anticlmulti_s45a0125", {{"flat80_anticlmulti_spread45_amp0125_resample", {{"Sim_spread45_amp0125_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s45a6", {{"flat80_anticlmulti_spread45_amp6_resample", {{"Sim_spread45_amp6_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s45a7", {{"flat80_anticlmulti_spread45_amp7_resample", {{"Sim_spread45_amp7_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s45a8", {{"flat80_anticlmulti_spread45_amp8_resample", {{"Sim_spread45_amp8_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s45a9", {{"flat80_anticlmulti_spread45_amp9_resample", {{"Sim_spread45_amp9_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s45a99", {{"flat80_anticlmulti_spread45_amp99_resample", {{"Sim_spread45_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+		{"Sim_flat80_anticlmulti_s5a0125", {{"flat80_anticlmulti_spread5_amp0125_resample", {{"Sim_spread5_amp0125_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s5a6", {{"flat80_anticlmulti_spread5_amp6_resample", {{"Sim_spread5_amp6_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s5a7", {{"flat80_anticlmulti_spread5_amp7_resample", {{"Sim_spread5_amp7_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s5a8", {{"flat80_anticlmulti_spread5_amp8_resample", {{"Sim_spread5_amp8_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s5a9", {{"flat80_anticlmulti_spread5_amp9_resample", {{"Sim_spread5_amp9_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s5a99", {{"flat80_anticlmulti_spread5_amp99_resample", {{"Sim_spread5_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
 //		{"Sim_single8_anticlmulti_s25a05", {{"single8_anticlmulti_spread25_amp05_resample_test", {{"Sim_spread25_amp05_single8_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s25a05", {{"flat80_anticlmulti_spread25_amp05_resample", {{"Sim_spread25_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s25a06", {{"flat80_anticlmulti_spread25_amp06_resample", {{"Sim_spread25_amp06_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
@@ -367,7 +381,7 @@ void read_new() {
 //		{"Sim_flat80_anticlmulti_s4a2_test", {{"flat80_anticlmulti_spread4_amp2_resample_test", {{"Sim_spread4_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s45a2_test", {{"flat80_anticlmulti_spread45_amp2_resample_test", {{"Sim_spread45_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s5a2_test", {{"flat80_anticlmulti_spread5_amp2_resample_test", {{"Sim_spread5_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s6a2_test", {{"flat80_anticlmulti_spread6_amp2_resample_test", {{"Sim_spread6_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s6a2_test", {{"flat80_anticlmulti_spread6_amp2_resample_test", {{"Sim_spread6_amp2_flat80_anticlmulti_norotate_resample_test_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
