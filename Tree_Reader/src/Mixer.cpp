@@ -316,6 +316,7 @@ void Mixer::init_data() {
 
 // Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::append_event(const vector<double>& angles, int cent, double event_plane, double vz) {
+	cout << "cent: " << cent << " event_plane: " << event_plane << " vz: " << vz << endl;
 	int ep_bin = get_ep_bin(event_plane);
 	int vz_bin = get_vz_bin(vz);
 	int cent_bin = cent - cent_min;
