@@ -68,6 +68,7 @@ void speed_test_class();
 void ref_mult_test();
 void ampt_cent_opt();
 void ampt_cent_make();
+void ampt_ref_b_plot();
 void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pile_up_qa_path);
 void run_dca_xy_qa();
 void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path);
@@ -123,12 +124,13 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	read_new();
+//	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
-	//ampt_cent_opt();
+	ampt_ref_b_plot();
+//	ampt_cent_opt();
 //	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
@@ -1110,9 +1112,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 
 void ampt_cent_opt() {
-	string min_bias_path = "/media/ssd/Research/AMPT_Trees/min_bias/default/";
-	string star_data_path = "/media/ucla/Research/BES1_Trees/";
-	string qa_path = "/home/dylan/Research/Ampt_Centralities/default/";
+	string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
+	string star_data_path = "/home/dylan/Research/BES1_Trees/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	AmptCentralityMaker cent_maker;
 
@@ -1121,18 +1123,34 @@ void ampt_cent_opt() {
 	cent_maker.set_qa_path(qa_path);
 	cent_maker.set_mult_quantity(ref_quantity);
 
-	cent_maker.run_b_opt({7, 11});
+	cent_maker.run_b_opt({7, 11, 19, 27, 39, 62});
+	cent_maker.plot_ref_vs_b({7, 11, 19, 27, 39, 62});
+}
+
+void ampt_ref_b_plot() {
+	string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
+	string star_data_path = "/home/dylan/Research/BES1_Trees/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
+	string ref_quantity = "ref3";
+	AmptCentralityMaker cent_maker;
+
+	cent_maker.set_min_bias_path(min_bias_path);
+	cent_maker.set_star_data_path(star_data_path);
+	cent_maker.set_qa_path(qa_path);
+	cent_maker.set_mult_quantity(ref_quantity);
+
+	cent_maker.plot_ref_vs_b({7, 11, 19, 27, 39, 62});
 }
 
 void ampt_cent_make() {
 	vector<int> energy_list {7, 11, 19, 27, 39, 62};
-	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/string_melting/";
+	string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
 	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	for(int energy:energy_list) {
 		AmptCentralityMaker cent_maker(energy, min_bias_path, qa_path, ref_quantity);
-//		cout << "Make energy " << energy << "GeV" << endl;
-//		cent_maker.make_centrality(true);
+		cout << "Make energy " << energy << "GeV" << endl;
+		cent_maker.make_centrality(true);
 		cout << "Read energy " << energy << "GeV" << endl;
 		vector<int> edges = cent_maker.get_ref_bin9_edges();
 		for(int edge:edges) { cout << edge << " " << flush; }

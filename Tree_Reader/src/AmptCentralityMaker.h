@@ -68,6 +68,7 @@ public:
 	// Doers
 	void run_b_opt(vector<int> energy_vec);
 	void make_centrality(bool make_new = false);
+	void plot_ref_vs_b(vector<int> energy_vec);
 
 private:
 	// Attributes
