@@ -226,8 +226,8 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_", {0, 10}}}}}},
-		//{"BES1_def_single", {{"default_single", {{"rapid05_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 10}}}}}},
+		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_", {0, 40}}}}}},
+//		{"BES1_def_single", {{"default_single", {{"rapid05_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 10}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -333,7 +333,7 @@ void read_new() {
 	//	{"Sim_flat80_anticlmulti_s5a99", {{"flat80_anticlmulti_spread5_amp99_resample", {{"Sim_spread5_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//};
 
-	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+//	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;

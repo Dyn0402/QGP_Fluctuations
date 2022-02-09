@@ -46,6 +46,7 @@ using namespace std;
 
 TreeReader::TreeReader(int energy, int ref_num) {
 	start_sys = chrono::system_clock::now();
+	sysinfo (&mem_info);
 
 	ampt = false;
 	cooper_frye = false;
@@ -63,6 +64,7 @@ TreeReader::TreeReader(int energy, int ref_num) {
 
 TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 	start_sys = chrono::system_clock::now();
+	sysinfo (&mem_info);
 
 	this->mtx = mtx;
 
@@ -82,6 +84,7 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 
 TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
+	sysinfo (&mem_info);
 
 	ampt = false;
 	cooper_frye = false;
@@ -99,6 +102,7 @@ TreeReader::TreeReader(int energy) {
 
 TreeReader::TreeReader(int energy, mutex *mtx) {
 	start_sys = chrono::system_clock::now();
+	sysinfo (&mem_info);
 
 	this->mtx = mtx;
 
@@ -118,6 +122,7 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 
 TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
+	sysinfo (&mem_info);
 
 	ampt = false;
 	cooper_frye = false;
@@ -333,7 +338,7 @@ void TreeReader::read_trees() {
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
 			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-			cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+			cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | Free RAM: " << mem_info.freeram << endl;
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
