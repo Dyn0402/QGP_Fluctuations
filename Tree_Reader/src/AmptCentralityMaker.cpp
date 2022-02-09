@@ -122,6 +122,10 @@ int AmptCentralityMaker::get_cent_bin9(int mult) {
 
 // Setters
 
+void AmptCentralityMaker::set_energy(int energy) {
+	this->energy = energy;
+}
+
 void AmptCentralityMaker::set_qa_path(string qa_path) {
 	this->qa_path = qa_path;
 }
@@ -411,6 +415,36 @@ void AmptCentralityMaker::get_distribution() {
 			append_dist_val();
 		}
 		file.Close();
+	}
+}
+
+void AmptCentralityMaker::plot_ref_vs_b(vector<int> energy_vec) {
+	TFile out_file((qa_path+"ref_b_plots.root").data(), "RECREATE");
+
+	for(int energy:energy_vec) {
+		string name = "Ref3 vs b " + to_string(energy) + "GeV";
+		TH2D ref3_b(name.data(), name.data(), 500, 0, 22, 801, -0.5, 800.5);
+		cout << "Reading " << energy << "GeV Ampt min bias data..." << endl;
+		get_imp_ref(energy);
+		for(event_imp_ref const &event:events) {
+			ref3_b.Fill(event.b, event.ref);
+		}
+
+		set_energy(energy);
+		make_centrality();
+
+		out_file.cd();
+		TCanvas can((name + "_canvas").data());
+		ref3_b.GetXaxis()->SetTitle("Impact Parameter");
+		ref3_b.GetYaxis()->SetTitle("Refmult 3");
+		ref3_b.Draw("colz");
+		for(int bin_edge:ref_bin_edges) {
+			auto *line = new TLine(0, bin_edge, 22, bin_edge);
+			line->Draw();
+		}
+
+
+		can.Write();
 	}
 }
 
