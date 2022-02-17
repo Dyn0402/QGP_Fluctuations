@@ -452,28 +452,49 @@ void AzBinner::prep_read() {
 }
 
 
-void AzBinner::init_data() {
-	for (unsigned div_i=0; div_i < divs.size(); div_i++) {
-		data.push_back(vector<vector<vector<long>>> ());
-		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
-			data[div_i].push_back(vector<vector<long>> ());
-			for (int num_particles=0; num_particles < particle_bins; num_particles++) {
-				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min + 1, 0));
-			}
-		}
-	}
+//void AzBinner::init_data() {
+//	for (unsigned div_i=0; div_i < divs.size(); div_i++) {
+//		data.push_back(vector<vector<vector<long>>> ());
+//		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
+//			data[div_i].push_back(vector<vector<long>> ());
+//			for (int num_particles=0; num_particles < particle_bins; num_particles++) {
+//				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min + 1, 0));
+//			}
+//		}
+//	}
+//
+//	if (resample && n_bootstraps > 0) {
+//		for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
+//			data_bs.push_back(vector<vector<vector<vector<long>>>>());
+//			for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
+//				data_bs[div_i].push_back(vector<vector<vector<long>>>());
+//				for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
+//					data_bs[div_i][cent_i].push_back(vector<vector<long>>());
+//					for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+//						data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
+//					}
+//				}
+//			}
+//		}
+//	}
+//}
 
-	if (resample && n_bootstraps > 0) {
-		for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
-			data_bs.push_back(vector<vector<vector<vector<long>>>>());
-			for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
-				data_bs[div_i].push_back(vector<vector<vector<long>>>());
-				for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
-					data_bs[div_i][cent_i].push_back(vector<vector<long>>());
-					for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
-						data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
-					}
+
+void AzBinner::init_data() {  // Old implementation, see if it still crashes
+	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
+		data.push_back(vector<vector<vector<long>>>());
+		data_bs.push_back(vector<vector<vector<vector<long>>>>());
+		for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
+			data[div_i].push_back(vector<vector<long>>());
+			data_bs[div_i].push_back(vector<vector<vector<long>>>());
+			for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
+				data_bs[div_i][cent_i].push_back(vector<vector<long>>());
+				for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+					data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
 				}
+			}
+			for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+				data[div_i][cent_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
 			}
 		}
 	}
