@@ -75,6 +75,7 @@ private:
 	int bins = 20;
 	float max_b = 20.0;
 	int ref_num = 3;
+	bool b_check = false;  // No longer set or check maximum impact parameter, not correct!
 
 	float acc = 0.0001;
 	map<int, int> energy_color {{7, 1}, {11, 2}, {19, 4}, {27, 6}, {39, 8}, {62, 9}};

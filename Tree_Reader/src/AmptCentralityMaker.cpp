@@ -389,8 +389,8 @@ void AmptCentralityMaker::set_star_branches(TTree *tree) {
 void AmptCentralityMaker::make_centrality(bool make_new) {
 	if(!make_new) { read_bin_edges(); }
 	if((!make_new && ref_bin_edges.size() == 0) || make_new) {
-		if(opt_b_max.count(energy) == 0) { read_b_opt(); }
-		if(opt_b_max.count(energy) == 0) { cout << "No optimal b found for energy " << energy << endl; }
+		if(b_check && opt_b_max.count(energy) == 0) { read_b_opt(); }
+		if(b_check && opt_b_max.count(energy) == 0) { cout << "No optimal b found for energy " << energy << endl; }
 		else {
 			cout << "Make " << energy << "GeV centrality" << endl;
 			get_distribution();
@@ -449,13 +449,23 @@ void AmptCentralityMaker::plot_ref_vs_b(vector<int> energy_vec) {
 }
 
 void AmptCentralityMaker::get_ref2() {
-	if(branches.imp <= opt_b_max[energy]) {
+	if (b_check) {
+		if (branches.imp <= opt_b_max[energy]) {
+			ref_dist.push_back(branches.refmult2);
+		}
+	}
+	else {
 		ref_dist.push_back(branches.refmult2);
 	}
 }
 
 void AmptCentralityMaker::get_ref3() {
-	if(branches.imp <= opt_b_max[energy]) {
+	if (b_check) {
+		if (branches.imp <= opt_b_max[energy]) {
+			ref_dist.push_back(branches.refmult3);
+		}
+	}
+	else {
 		ref_dist.push_back(branches.refmult3);
 	}
 }
