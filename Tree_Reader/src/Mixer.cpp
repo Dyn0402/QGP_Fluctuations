@@ -386,8 +386,6 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 		cout << "Not enough mixed events " << pool_events << "  for num_protons " << num_protons << endl;
 	}
 
-	if (mix_angles.size() - particle_min >= particle_bins) { cout << "num_particles: " << mix_angles.size() << " too big for particle_bins: " << particle_bins << " !!! mix" << endl; }
-
 	vector<int> event_indices(pool_events);
 	iota(begin(event_indices), end(event_indices), 0);
 	shuffle(event_indices.begin(), event_indices.end(), c_rand);
@@ -397,6 +395,8 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 		if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
 		mix_angles.push_back(new_angle);
 	}
+
+	if ((int)mix_angles.size() - particle_min >= particle_bins) { cout << "num_particles: " << mix_angles.size() << " too big for particle_bins: " << particle_bins << " !!! mix" << endl; }
 
 	int num_particles_bin = mix_angles.size() - particle_min;
 	if (resample) {
