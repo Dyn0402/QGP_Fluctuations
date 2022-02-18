@@ -275,44 +275,44 @@ void Mixer::set_particle_min(int min) {
 
 // Doers
 
-//void Mixer::init_data() {
-//	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
-//		data.push_back(vector<vector<vector<long>>>());
-//		for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
-//			data[div_i].push_back(vector<vector<long>>());
-//			for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
-//				data[div_i][cent_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
-//			}
-//		}
-//	}
-//
-//	if (resample && n_bootstraps > 0) {
-//		for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
-//			data_bs.push_back(vector<vector<vector<vector<long>>>>());
-//			for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
-//				data_bs[div_i].push_back(vector<vector<vector<long>>>());
-//				for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
-//					data_bs[div_i][cent_i].push_back(vector<vector<long>>());
-//					for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
-//						data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
-//		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
-//			angles.push_back(vector<vector<vector<vector<double>>>> ());
-//			for (int ep_i=0; ep_i < ep_bins; ep_i++) {
-//				angles[cent_i].push_back(vector<vector<vector<double>>> ());
-//				for (int vz_i=0; vz_i < vz_bins; vz_i++) {
-//					angles[cent_i][ep_i].push_back(vector<vector<double>> ());
-//				}
-//			}
-//		}
-//	}
-//}
+void Mixer::init_data() {
+	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
+		data.push_back(vector<vector<vector<long>>>());
+		for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
+			data[div_i].push_back(vector<vector<long>>());
+			for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+				data[div_i][cent_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
+			}
+		}
+	}
+
+	if (resample && n_bootstraps > 0) {
+		for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
+			data_bs.push_back(vector<vector<vector<vector<long>>>>());
+			for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
+				data_bs[div_i].push_back(vector<vector<vector<long>>>());
+				for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
+					data_bs[div_i][cent_i].push_back(vector<vector<long>>());
+					for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+						data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
+					}
+				}
+			}
+		}
+	}
+
+	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
+		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
+			angles.push_back(vector<vector<vector<vector<double>>>> ());
+			for (int ep_i=0; ep_i < ep_bins; ep_i++) {
+				angles[cent_i].push_back(vector<vector<vector<double>>> ());
+				for (int vz_i=0; vz_i < vz_bins; vz_i++) {
+					angles[cent_i][ep_i].push_back(vector<vector<double>> ());
+				}
+			}
+		}
+	}
+}
 
 void Mixer::init_data() {  // Old implementation, see if it still crashes
 	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
@@ -351,11 +351,16 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 	int vz_bin = get_vz_bin(vz);
 	int cent_bin = cent - cent_min;
 
-	if (vz_ep_appended_hists.count(cent) == 0) { define_hists(cent); }
+	if (vz_ep_appended_hists.count(cent) == 0) { cout << "New centrality: " << cent << endl;  define_hists(cent); }
 	vz_ep_appended_hists[cent].Fill(event_plane, vz);
 
+	if (cent_bin >= this->angles.size()) { cout << "cent_bin " << cent_bin << " out of range for angles size " << this->angles.size() << endl; }
+	else if (ep_bin >= this->angles[cent_bin].size()) { cout << "ep_bin " << ep_bin << " out of range for angles[cent_bin] size " << this->angles[cent_bin].size() << " cent_bin: " << cent_bin << endl; }
+	else if (vz_bin >= this->angles[cent_bin][ep_bin].size()) { cout << "vz_bin " << vz_bin << " out of range for angles[cent_bin][ep_bin] size " << this->angles[cent_bin][ep_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << endl; }
+	
 	if((int)this->angles[cent_bin][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
 		int index = trand->Rndm() * max_events;
+		if (index >= this->angles[cent_bin][ep_bin][vz_bin][index].size()) { cout << "index " << index << " out of range for angles[cent_bin][ep_bin][vz_bin] size " << this->angles[cent_bin][ep_bin][vz_bin][index].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << " vz_bin: " << vz_bin << endl; }
 		this->angles[cent_bin][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
 		this->angles[cent_bin][ep_bin][vz_bin].push_back(angles);
@@ -379,6 +384,8 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	if (num_protons > pool_events) {
 		cout << "Not enough mixed events " << pool_events << "  for num_protons " << num_protons << endl;
 	}
+
+	if (mix_angles.size() - particle_min >= particle_bins) { cout << "num_particles: " << mix_angles.size() << " too big for particle_bins: " << particle_bins << " !!! mix" << endl; }
 
 	vector<int> event_indices(pool_events);
 	iota(begin(event_indices), end(event_indices), 0);
