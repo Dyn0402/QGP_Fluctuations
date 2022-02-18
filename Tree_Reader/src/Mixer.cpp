@@ -276,7 +276,6 @@ void Mixer::set_particle_min(int min) {
 // Doers
 
 void Mixer::init_data() {
-<<<<<<< Upstream, based on branch 'master' of git@github.com:Dyn0402/QGP_Fluctuations.git
 	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
 		data.push_back(vector<vector<vector<long>>>());
 		for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
@@ -315,46 +314,6 @@ void Mixer::init_data() {
 	}
 }
 
-void Mixer::init_data() {  // Old implementation, see if it still crashes
-=======
->>>>>>> a48d373 Tree_Reader set AzBinner and Mixer to use new init_data instead of old
-	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
-		data.push_back(vector<vector<vector<long>>>());
-		for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
-			data[div_i].push_back(vector<vector<long>>());
-			for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
-				data[div_i][cent_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
-			}
-		}
-	}
-
-	if (resample && n_bootstraps > 0) {
-		for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
-			data_bs.push_back(vector<vector<vector<vector<long>>>>());
-			for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
-				data_bs[div_i].push_back(vector<vector<vector<long>>>());
-				for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
-					data_bs[div_i][cent_i].push_back(vector<vector<long>>());
-					for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
-						data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
-					}
-				}
-			}
-		}
-	}
-
-	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
-		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
-			angles.push_back(vector<vector<vector<vector<double>>>> ());
-			for (int ep_i=0; ep_i < ep_bins; ep_i++) {
-				angles[cent_i].push_back(vector<vector<vector<double>>> ());
-				for (int vz_i=0; vz_i < vz_bins; vz_i++) {
-					angles[cent_i][ep_i].push_back(vector<vector<double>> ());
-				}
-			}
-		}
-	}
-}
 
 //void Mixer::init_data() {  // Old implementation, see if it still crashes
 //	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
