@@ -124,14 +124,14 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	//read_new();
+	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
 //	ampt_ref_b_plot();
 //	ampt_cent_opt();
-	ampt_cent_make();
+//	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
