@@ -355,13 +355,18 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 	if (vz_ep_appended_hists.count(cent) == 0) { define_hists(cent); }
 	vz_ep_appended_hists[cent].Fill(event_plane, vz);
 
-	//if (cent_bin >= (int)this->angles.size()) { cout << "cent_bin " << cent_bin << " out of range for angles size " << this->angles.size() << endl; }
-	//else if (ep_bin >= (int)this->angles[cent_bin].size()) { cout << "ep_bin " << ep_bin << " out of range for angles[cent_bin] size " << this->angles[cent_bin].size() << " cent_bin: " << cent_bin << endl; }
-	//else if (vz_bin >= (int)this->angles[cent_bin][ep_bin].size()) { cout << "vz_bin " << vz_bin << " out of range for angles[cent_bin][ep_bin] size " << this->angles[cent_bin][ep_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << endl; }
+//	if (cent_bin >= (int)this->angles.size()) { cout << "cent_bin " << cent_bin << " out of range for angles size " << this->angles.size() << endl; }
+//	else if (ep_bin >= (int)this->angles[cent_bin].size()) { cout << "ep_bin " << ep_bin << " out of range for angles[cent_bin] size " << this->angles[cent_bin].size() << " cent_bin: " << cent_bin << endl; }
+//	else if (vz_bin >= (int)this->angles[cent_bin][ep_bin].size()) {
+//		cout << "vz_bin " << vz_bin << " out of range for angles[cent_bin][ep_bin] size " << this->angles[cent_bin][ep_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << endl;
+//		cout << "cent: " << cent << " event_plane: " << event_plane << " vz: " << vz << endl;
+//		cout << "ep_bins: " << ep_bins << " vz_bins: " << vz_bins << " cent_bins: " << cent_bins << endl;
+//		cout << "ep_bin: " << ep_bin << " vz_bin: " << vz_bin << " cent_bin: " << cent_bin << endl;
+//	}
 	
 	if((int)this->angles[cent_bin][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
 		int index = trand->Rndm() * max_events;
-		//if (index >= (int)this->angles[cent_bin][ep_bin][vz_bin].size()) { cout << "index " << index << " out of range for angles[cent_bin][ep_bin][vz_bin] size " << this->angles[cent_bin][ep_bin][vz_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << " vz_bin: " << vz_bin << endl; }
+//		if (index >= (int)this->angles[cent_bin][ep_bin][vz_bin].size()) { cout << "index " << index << " out of range for angles[cent_bin][ep_bin][vz_bin] size " << this->angles[cent_bin][ep_bin][vz_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << " vz_bin: " << vz_bin << endl; }
 		this->angles[cent_bin][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
 		this->angles[cent_bin][ep_bin][vz_bin].push_back(angles);
