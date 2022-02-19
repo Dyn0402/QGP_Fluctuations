@@ -442,12 +442,14 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 // Bin event plane
 int Mixer::get_ep_bin(double event_plane) {
 	int bin = ep_bins * (event_plane - ep_range.first) / (ep_range.second - ep_range.first);
+	bin = (bin == ep_bins ? bin - 1 : bin);
 	return bin;
 }
 
 // Bin vz
 int Mixer::get_vz_bin(double vz) {
 	int bin = vz_bins * (vz - vz_range.first) / (vz_range.second - vz_range.first);
+	bin = (bin == vz_bins ? bin - 1 : bin);
 	return bin;
 }
 
