@@ -124,14 +124,14 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	read_new();
+//	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
 //	ampt_ref_b_plot();
 //	ampt_cent_opt();
-//	ampt_cent_make();
+	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -1162,10 +1162,10 @@ void ampt_ref_b_plot() {
 
 void ampt_cent_make() {
 	vector<int> energy_list {7, 11, 19, 27, 39, 62};
-	//string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
-	//string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
-	string min_bias_path = "D:/Research/AMPT_Trees/min_bias/string_melting/";
-	string qa_path = "D:/Research/Ampt_Centralities/string_melting/";
+	string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
+	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
+//	string min_bias_path = "D:/Research/AMPT_Trees/min_bias/string_melting/";
+//	string qa_path = "D:/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	for(int energy:energy_list) {
 		AmptCentralityMaker cent_maker(energy, min_bias_path, qa_path, ref_quantity);
