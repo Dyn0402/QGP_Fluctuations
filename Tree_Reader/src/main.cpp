@@ -225,9 +225,18 @@ void read_new() {
 //		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
 //	};
 
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_", {0, 10}}}}}},
+	//	{"BES1_def_single", {{"default_single", {{"rapid05_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 10}}}}}},
+	//};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_", {0, 10}}}}}},
-//		{"BES1_def_single", {{"default_single", {{"rapid05_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 10}}}}}},
+		{"Ampt_Eff1_resample", {{"Eff1_resample", {{"Ampt_rapid05_resample_norotate_Efficiency1_", {0, 2}}}}}},
+		{"Ampt_Eff2_resample", {{"Eff2_resample", {{"Ampt_rapid05_resample_norotate_Efficiency2_", {0, 2}}}}}},
+		{"Ampt_Eff3_resample", {{"Eff3_resample", {{"Ampt_rapid05_resample_norotate_Efficiency3_", {0, 2}}}}}},
+		{"Ampt_Old_Eff1_resample", {{"Eff1_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency1_", {0, 2}}}}}},
+		{"Ampt_Old_Eff2_resample", {{"Eff2_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency2_", {0, 2}}}}}},
+		{"Ampt_Old_Eff3_resample", {{"Eff3_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency3_", {0, 2}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -497,9 +506,16 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	string mix_out_job_dir = out_base_path;
 
 	if (in_string(job_type, "Ampt")) {
-		in_path = in_base_ampt_path + "AMPT_Trees/";
-		out_job_dir += "Data_Ampt/";
-		mix_out_job_dir += "Data_Ampt_Mix/";
+		if (in_string(job_type, "Ampt_Old")) {
+			in_path = in_base_ampt_path + "AMPT_Old_Trees/";
+			out_job_dir += "Data_Ampt_Old/";
+			mix_out_job_dir += "Data_Ampt_Old_Mix/";
+		}
+		else {
+			in_path = in_base_ampt_path + "AMPT_Trees/";
+			out_job_dir += "Data_Ampt/";
+			mix_out_job_dir += "Data_Ampt_Mix/";
+		}
 	}
 	else if (in_string(job_type, "Sim")) {
 		in_path += "BES1_Trees/";
