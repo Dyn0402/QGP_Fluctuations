@@ -124,14 +124,14 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-//	read_new();
+	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
 //	ampt_ref_b_plot();
 //	ampt_cent_opt();
-	ampt_cent_make();
+//	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -231,12 +231,12 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_Eff1_resample", {{"Eff1_resample", {{"Ampt_rapid05_resample_norotate_Efficiency1_", {0, 2}}}}}},
-		{"Ampt_Eff2_resample", {{"Eff2_resample", {{"Ampt_rapid05_resample_norotate_Efficiency2_", {0, 2}}}}}},
-		{"Ampt_Eff3_resample", {{"Eff3_resample", {{"Ampt_rapid05_resample_norotate_Efficiency3_", {0, 2}}}}}},
-		{"Ampt_Old_Eff1_resample", {{"Eff1_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency1_", {0, 2}}}}}},
-		{"Ampt_Old_Eff2_resample", {{"Eff2_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency2_", {0, 2}}}}}},
-		{"Ampt_Old_Eff3_resample", {{"Eff3_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency3_", {0, 2}}}}}},
+		{"Ampt_Eff1_resample", {{"Eff1_resample", {{"Ampt_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
+		{"Ampt_Eff2_resample", {{"Eff2_resample", {{"Ampt_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
+		{"Ampt_Eff3_resample", {{"Eff3_resample", {{"Ampt_rapid05_resample_norotate_Efficiency3_", {0, 0}}}}}},
+		{"Ampt_Old_Eff1_resample", {{"Eff1_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
+		{"Ampt_Old_Eff2_resample", {{"Eff2_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
+		{"Ampt_Old_Eff3_resample", {{"Eff3_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency3_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -347,7 +347,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 3;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -510,11 +510,13 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			in_path = in_base_ampt_path + "AMPT_Old_Trees/";
 			out_job_dir += "Data_Ampt_Old/";
 			mix_out_job_dir += "Data_Ampt_Old_Mix/";
+			reader.set_ampt_cent_path(base_path + "Ampt_Old_Centralities/");
 		}
 		else {
 			in_path = in_base_ampt_path + "AMPT_Trees/";
 			out_job_dir += "Data_Ampt/";
 			mix_out_job_dir += "Data_Ampt_Mix/";
+			reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
 		}
 	}
 	else if (in_string(job_type, "Sim")) {
@@ -535,7 +537,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	reader.set_in_path(in_path);
 	reader.set_tree_name("tree");
-	reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
+//	reader.set_ampt_cent_path(base_path + "Ampt_Centralities/");
 
 	// Pile up not implemented, need to think about it
 	//if (in_string(set_name, "PileUp")) {
@@ -550,7 +552,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	// Might fail on Mixer::append_event if these are too low?
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
 		//{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },
-		{"AMPT", { {7, 100}, {11, 100}, {19, 100}, {27, 100}, {39, 100}, {62, 100} } },
+		{"AMPT", { {7, 76}, {11, 68}, {19, 57}, {27, 53}, {39, 47}, {62, 43} } },
 		{"CF", { {7, 79}, {19, 65}, {27, 58}, {39, 51}, {62, 48} } },
 	};
 
@@ -1162,8 +1164,10 @@ void ampt_ref_b_plot() {
 
 void ampt_cent_make() {
 	vector<int> energy_list {7, 11, 19, 27, 39, 62};
-	string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
-	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
+	string min_bias_path = "/media/ucla/Research/AMPT_Old_Trees/min_bias/string_melting/";
+	string qa_path = "/home/dylan/Research/Ampt_Old_Centralities/string_melting/";
+//	string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
+//	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
 //	string min_bias_path = "D:/Research/AMPT_Trees/min_bias/string_melting/";
 //	string qa_path = "D:/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
