@@ -230,14 +230,14 @@ void read_new() {
 	//	{"BES1_def_single", {{"default_single", {{"rapid05_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 10}}}}}},
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_Eff1_resample", {{"Eff1_resample", {{"Ampt_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
-		{"Ampt_Eff2_resample", {{"Eff2_resample", {{"Ampt_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
-		{"Ampt_Eff3_resample", {{"Eff3_resample", {{"Ampt_rapid05_resample_norotate_Efficiency3_", {0, 0}}}}}},
-		{"Ampt_Old_Eff1_resample", {{"Eff1_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
-		{"Ampt_Old_Eff2_resample", {{"Eff2_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
-		{"Ampt_Old_Eff3_resample", {{"Eff3_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency3_", {0, 0}}}}}},
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Ampt_Eff1_resample", {{"Eff1_resample", {{"Ampt_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
+	//	{"Ampt_Eff2_resample", {{"Eff2_resample", {{"Ampt_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
+	//	{"Ampt_Eff3_resample", {{"Eff3_resample", {{"Ampt_rapid05_resample_norotate_Efficiency3_", {0, 0}}}}}},
+	//	{"Ampt_Old_Eff1_resample", {{"Eff1_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
+	//	{"Ampt_Old_Eff2_resample", {{"Eff2_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
+	//	{"Ampt_Old_Eff3_resample", {{"Eff3_resample", {{"Ampt_Old_rapid05_resample_norotate_Efficiency3_", {0, 0}}}}}},
+	//};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_rapid1", {{"rapid1_def", {{"Ampt_rapid1_n1ratios_", {0, 14}}}}}},
@@ -326,6 +326,19 @@ void read_new() {
 //		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
 //	};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {};
+	vector<string> spreads = { "5" };
+	vector<string> amps = { "0", "005", "01", "0125", "015", "0175", "02", "0225", "025", "03", "035", "04", "045", "05", "06", "07", "08", "09", "1", "125", "15", "175", "2", "225", "25", "3", "35", "4", "45", "5", "6", "7", "8", "9", "99" };
+
+	for (string spread : spreads) {
+		for (string amp : amps) {
+			string job_name = "Sim_flat80_anticlflat_s" + spread + "a" + amp;
+			string group_name = "flat80_anticlflat_spread" + spread + "_amp" + amp + "_resample";
+			string set_name = "Sim_spread" + spread + "_amp" + amp + "_flat80_anticlflat_norotate_resample_";
+			sets[job_name][group_name][set_name] = { 0, 0 };
+		}
+	}
+
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Sim_flat80_anticlmulti_s45a0125", {{"flat80_anticlmulti_spread45_amp0125_resample", {{"Sim_spread45_amp0125_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//	{"Sim_flat80_anticlmulti_s45a6", {{"flat80_anticlmulti_spread45_amp6_resample", {{"Sim_spread45_amp6_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
@@ -347,7 +360,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 3;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -489,16 +502,21 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 		mkdir("Data_Sim_Mix");
 	}
 	else if (platform == "lin") {
-		base_path = "/home/dylan/Research/";
+		//base_path = "/home/dylan/Research/";
+		base_path = "/media/ucla/Research/";
 		in_base_path = "/media/ucla/Research/";
 		in_base_ampt_path = "/media/ucla/Research/";
 		in_base_cf_path = "/media/ucla/Research/";
 	}
 	else if (platform == "win") {
-		base_path = "C:/Users/Dylan/Desktop/Research/";
-		in_base_path = "C:/Users/Dylan/Desktop/Research/";
-		in_base_ampt_path = "E:/Research/";
-		in_base_cf_path = "E:/Research/";
+		//base_path = "C:/Users/Dylan/Desktop/Research/";
+		//in_base_path = "C:/Users/Dylan/Desktop/Research/";
+		//in_base_ampt_path = "E:/Research/";
+		//in_base_cf_path = "E:/Research/";
+		base_path = "F:/Research/";
+		in_base_path = "F:/Research/";
+		in_base_ampt_path = "F:/Research/";
+		in_base_cf_path = "F:/Research/";
 	}
 	string out_base_path = base_path;
 	string in_path = in_base_path;
@@ -624,7 +642,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			if (in_string(set.first, { "Sim", "clmulti" }, true)) { reader.sim.set_clust_multi(); }
 			if (in_string(set.first, { "Sim", "anticlmulti" }, true)) {
 				reader.sim.set_clust_multi();
-				reader.sim.set_amp_group(-reader.sim.get_amp_group());
+				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
+			}
+			if (in_string(set.first, { "Sim", "anticlfinal" }, true)) {
+				reader.sim.set_clust_final();
+				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
 			}
 
 
