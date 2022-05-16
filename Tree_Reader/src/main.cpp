@@ -225,6 +225,12 @@ void read_new() {
 //		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
 //	};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
+		{"CF_Eff1_resample", {{"Eff1_resample", {{"CF_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
+		{"CF_Eff2_resample", {{"Eff2_resample", {{"CF_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
+	};
+
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_", {0, 10}}}}}},
 	//	{"BES1_def_single", {{"default_single", {{"rapid05_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 10}}}}}},
@@ -326,18 +332,18 @@ void read_new() {
 //		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {};
-	vector<string> spreads = { "5" };
-	vector<string> amps = { "0", "005", "01", "0125", "015", "0175", "02", "0225", "025", "03", "035", "04", "045", "05", "06", "07", "08", "09", "1", "125", "15", "175", "2", "225", "25", "3", "35", "4", "45", "5", "6", "7", "8", "9", "99" };
-
-	for (string spread : spreads) {
-		for (string amp : amps) {
-			string job_name = "Sim_flat80_anticlflat_s" + spread + "a" + amp;
-			string group_name = "flat80_anticlflat_spread" + spread + "_amp" + amp + "_resample";
-			string set_name = "Sim_spread" + spread + "_amp" + amp + "_flat80_anticlflat_norotate_resample_";
-			sets[job_name][group_name][set_name] = { 0, 0 };
-		}
-	}
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {};
+//	vector<string> spreads = { "5" };
+//	vector<string> amps = { "0", "005", "01", "0125", "015", "0175", "02", "0225", "025", "03", "035", "04", "045", "05", "06", "07", "08", "09", "1", "125", "15", "175", "2", "225", "25", "3", "35", "4", "45", "5", "6", "7", "8", "9", "99" };
+//
+//	for (string spread : spreads) {
+//		for (string amp : amps) {
+//			string job_name = "Sim_flat80_anticlflat_s" + spread + "a" + amp;
+//			string group_name = "flat80_anticlflat_spread" + spread + "_amp" + amp + "_resample";
+//			string set_name = "Sim_spread" + spread + "_amp" + amp + "_flat80_anticlflat_norotate_resample_";
+//			sets[job_name][group_name][set_name] = { 0, 0 };
+//		}
+//	}
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Sim_flat80_anticlmulti_s45a0125", {{"flat80_anticlmulti_spread45_amp0125_resample", {{"Sim_spread45_amp0125_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
@@ -355,7 +361,7 @@ void read_new() {
 	//	{"Sim_flat80_anticlmulti_s5a99", {{"flat80_anticlmulti_spread5_amp99_resample", {{"Sim_spread5_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//};
 
-	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+	vector<int> energy_list{ 7, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
