@@ -225,11 +225,11 @@ void read_new() {
 //		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
-		{"CF_Eff1_resample", {{"Eff1_resample", {{"CF_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
-		{"CF_Eff2_resample", {{"Eff2_resample", {{"CF_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
+//		{"CF_Eff1_resample", {{"Eff1_resample", {{"CF_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
+//		{"CF_Eff2_resample", {{"Eff2_resample", {{"CF_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_", {0, 10}}}}}},
@@ -361,8 +361,15 @@ void read_new() {
 	//	{"Sim_flat80_anticlmulti_s5a99", {{"flat80_anticlmulti_spread5_amp99_resample", {{"Sim_spread5_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//};
 
-	vector<int> energy_list{ 7, 19, 27, 39, 62 };
-//	vector<int> energy_list{ 62 };
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_clmulti_s1a1", {{"flat80_clmulti_spread1_amp1_resample", {{"Sim_spread1_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s1a5", {{"flat80_clmulti_spread1_amp5_resample", {{"Sim_spread1_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s05a1", {{"flat80_clmulti_spread05_amp1_resample", {{"Sim_spread05_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s05a5", {{"flat80_clmulti_spread05_amp5_resample", {{"Sim_spread05_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	};
+
+//	vector<int> energy_list{ 7, 19, 27, 39, 62 };
+	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -571,7 +578,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {8, 80 * 100000} };
+//	map<int, int> sim_cent_events = { {8, 80 * 100000} };
+	map<int, int> sim_cent_events = { {8, 80 * 10000} };
 
 	// Might fail on Mixer::append_event if these are too low?
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
