@@ -157,6 +157,7 @@
     <ClCompile Include="strefmultcorr\StRefMultCorr.cxx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PtCorr.h" />
     <ClInclude Include="src\AmptCentralityMaker.h" />
     <ClInclude Include="src\AmptConverter.h" />
     <ClInclude Include="src\AzBinner.h" />

@@ -660,6 +660,127 @@ void AzBinner::process_event(const Event& event) {
 }
 
 
+//  For good events/tracks, azimuthally bin particles and save to data
+void AzBinner::process_event_pt_n(const Event& event) {
+	// Check if each event is good. Analyze if so, continue if not.
+	if (check_event(event)) {
+		vector<double> good_particle_angles = {};
+		vector<double> good_particle_pts = {};
+
+		// Iterate over particles in event and add corresponding phi to good_particle_angles if particle good.
+		for (const Track& particle : event.get_particles()) {
+			if (check_particle_good(particle)) {
+				if (efficiency) {  // Skip good particle with chance efficiency_prob
+					if (trand->Rndm() < efficiency_prob) { continue; }
+				}
+				good_particle_angles.push_back(particle.get_phi());
+				good_particle_pts.push_back(particle.get_pt());
+			}
+		}
+
+		// Get centrality bin for event from ref_multn value
+		refmultCorrUtil->init(event.get_run());
+		refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+		int cent16_corr = refmultCorrUtil->getCentralityBin16();
+		int cent9_corr = refmultCorrUtil->getCentralityBin9();
+
+		// If there are enough good particles, calculate ratios for each division and save to data.
+		int num_particles = (int)good_particle_angles.size();
+		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
+		if (num_particles >= cut.min_multi) {
+			cent16_events.Fill(cent16_corr);
+			cent9_events.Fill(cent9_corr);
+			event_cut_hist.Fill("Enough Good Particles", 1);
+
+			int cent;
+			if (cent_binning == 16) {
+				cent = cent16_corr;
+			}
+			else {
+				cent = cent9_corr;
+			}
+			post_n_particles[cent].Fill(num_particles);
+			int cent_bin = cent - cent_min;
+
+			TVector2 q(event.get_qx(), event.get_qy());
+			pre_ep_hist.Fill(0.5 * q.Phi());
+			for (double& angle : good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
+				TVector2 q_new(cos(2 * angle), sin(2 * angle));
+				q -= q_new;
+			}
+			float ep_angle = 0.5 * q.Phi();
+			post_ep_hist.Fill(ep_angle);
+
+			//			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
+
+			if (ampt || cooper_frye) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
+				double rand_angle = trand->Rndm() * 2 * M_PI;
+				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
+				if (ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
+				double ep_rotate = rotate_angle(ep_angle, rand_angle);
+				while (ep_rotate >= M_PI) { ep_rotate -= M_PI; }  // Force into range of [0, pi)
+				while (ep_rotate < 0) { ep_rotate += M_PI; }
+				ep_angle = ep_rotate;
+			}
+
+			// If mixed/rand flagged append event to mix/rand object.
+			if (mixed) { mix.append_event(good_particle_angles, cent, ep_angle, event.get_vz()); }
+
+
+			if (event_plane) { // If event_plane flag then rotate all angles by -event_plane.
+				good_particle_angles = rotate_angles(good_particle_angles, -ep_angle);
+			}
+			else if (rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
+				double rand_angle = trand->Rndm() * 2 * M_PI;
+				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
+				//q.Rotate(rand_angle);  // Untested
+				//event.set_event_plane(rotate_angle(event_plane, rand_angle));  // Need to rotate event plane if it's used after this point. Currently is not.
+			}
+
+			int num_particles_bin = num_particles - particle_min;
+			if (resample) {
+				sort(good_particle_angles.begin(), good_particle_angles.end());
+				for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
+					double div_rads = (double)divs[div_bin] / 180 * M_PI;
+					vector<int> binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
+
+					// Save binned values to data
+					vector<long>& data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+					for (unsigned num_in_bin = 0; num_in_bin < binned_event.size(); num_in_bin++) {
+						data_event[num_in_bin] += binned_event[num_in_bin];
+					}
+
+					// Save binned values to bootstraps
+					for (int i = 0; i < n_bootstraps; i++) {
+						vector<long>& data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
+						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+							for (unsigned num_in_bin = 0; num_in_bin < binned_event.size(); num_in_bin++) {
+								data_event_bs[num_in_bin] += binned_event[num_in_bin];
+							}
+						}
+					}
+				}
+			}
+			else {
+				for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
+					int bin_num = (int)360 / divs[div_bin];
+					double div_rads = (double)divs[div_bin] / 180 * M_PI;
+					if (single_ratio) { bin_num = 1; }
+					else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+					vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+
+					// Save ratio values to data
+					vector<long>& data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+					for (int particles_in_bin : event_ratios) {
+						data_event[particles_in_bin]++;
+					}
+				}
+			}
+		}
+	}
+}
+
+
 // Add file's event/track cut hists to corresponding collected histogram for energy.
 void AzBinner::add_cut_hists(TFile* file) {
 	TH1D* event_hist = (TH1D*)file->Get(event_cut_hist_name.data());

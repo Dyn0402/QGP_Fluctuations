@@ -128,5 +128,8 @@
     <ClInclude Include="src\AzBinner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PtCorr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
