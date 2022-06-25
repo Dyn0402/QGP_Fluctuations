@@ -124,13 +124,13 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	//read_new();
+	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
-	ampt_ref_b_plot();
-	ampt_cent_opt();
+	//ampt_ref_b_plot();
+	//ampt_cent_opt();
 	//ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
@@ -225,11 +225,11 @@ void read_new() {
 //		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
 //	};
 
-//	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
-//		{"CF_Eff1_resample", {{"Eff1_resample", {{"CF_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
-//		{"CF_Eff2_resample", {{"Eff2_resample", {{"CF_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
-//	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
+	//	{"CF_Eff1_resample", {{"Eff1_resample", {{"CF_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
+	//	{"CF_Eff2_resample", {{"Eff2_resample", {{"CF_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
+	//};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_", {0, 10}}}}}},
@@ -361,15 +361,20 @@ void read_new() {
 	//	{"Sim_flat80_anticlmulti_s5a99", {{"flat80_anticlmulti_spread5_amp99_resample", {{"Sim_spread5_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//};
 
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Sim_flat80_clmulti_s1a1", {{"flat80_clmulti_spread1_amp1_resample", {{"Sim_spread1_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//	{"Sim_flat80_clmulti_s1a5", {{"flat80_clmulti_spread1_amp5_resample", {{"Sim_spread1_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//	{"Sim_flat80_clmulti_s05a1", {{"flat80_clmulti_spread05_amp1_resample", {{"Sim_spread05_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//	{"Sim_flat80_clmulti_s05a5", {{"flat80_clmulti_spread05_amp5_resample", {{"Sim_spread05_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_clmulti_s1a1", {{"flat80_clmulti_spread1_amp1_resample", {{"Sim_spread1_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s1a5", {{"flat80_clmulti_spread1_amp5_resample", {{"Sim_spread1_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s05a1", {{"flat80_clmulti_spread05_amp1_resample", {{"Sim_spread05_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s05a5", {{"flat80_clmulti_spread05_amp5_resample", {{"Sim_spread05_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+			{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
+			//{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
 	};
 
-//	vector<int> energy_list{ 7, 19, 27, 39, 62 };
-	vector<int> energy_list{ 62 };
+	vector<int> energy_list{ 7, 19, 27, 39, 62 };
+	//vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -1171,9 +1176,9 @@ void ampt_cent_opt() {
 	//string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
 	//string star_data_path = "/home/dylan/Research/BES1_Trees/";
 	//string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
-	string min_bias_path = "F:/Research/AMPT_Trees_Baryon_First/min_bias/string_melting/";
+	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
 	string star_data_path = "F:/Research/BES1_Trees/";
-	string qa_path = "F:/Research/Ampt_Centralities_Baryon_First/string_melting/";
+	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	AmptCentralityMaker cent_maker;
 
@@ -1190,9 +1195,9 @@ void ampt_ref_b_plot() {
 	//string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
 	//string star_data_path = "/home/dylan/Research/BES1_Trees/";
 	//string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
-	string min_bias_path = "F:/Research/AMPT_Trees_Baryon_First/min_bias/string_melting/";
+	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
 	string star_data_path = "F:/Research/BES1_Trees/";
-	string qa_path = "F:/Research/Ampt_Centralities_Baryon_First/string_melting/";
+	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	AmptCentralityMaker cent_maker;
 
