@@ -124,14 +124,14 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	//read_new();
+	read_new();
 
 	//run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
 	//ampt_ref_b_plot();
 	//ampt_cent_opt();
-	ampt_cent_make();
+//	ampt_cent_make();
 //	ref_mult_test();
 //	res_plot();
 //	real_event_tree_test();
@@ -370,7 +370,7 @@ void read_new() {
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
 			{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
-			//{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
+//			{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
 	};
 
 	vector<int> energy_list{ 7, 19, 27, 39, 62 };
@@ -378,7 +378,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 7;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -589,8 +589,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	// Might fail on Mixer::append_event if these are too low?
 	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
 		//{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },
-		{"AMPT", { {7, 76}, {11, 68}, {19, 57}, {27, 53}, {39, 47}, {62, 43} } },
-		{"CF", { {7, 79}, {19, 65}, {27, 58}, {39, 51}, {62, 48} } },
+//		{"AMPT", { {7, 76}, {11, 68}, {19, 57}, {27, 53}, {39, 47}, {62, 43} } },
+//		{"CF", { {7, 79}, {19, 65}, {27, 58}, {39, 51}, {62, 48} } },
+		{"AMPT", { {7, 100}, {11, 100}, {19, 100}, {27, 100}, {39, 90}, {62, 80} } },
+		{"CF", { {7, 80}, {19, 80}, {27, 70}, {39, 70}, {62, 70} } },
 	};
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
