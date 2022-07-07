@@ -560,10 +560,20 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 		out_job_dir += "Data_Sim/";
 		mix_out_job_dir += "Data_Sim_Mix/";
 	}
-	else if (in_string(job_type, "CF")) {
+	else if (in_string(job_type, "CF_")) {
 		in_path = in_base_cf_path + "Cooper_Frye_Trees/";
 		out_job_dir += "Data_CF/";
 		mix_out_job_dir += "Data_CF_Mix/";
+	}
+	else if (in_string(job_type, "CFEV_")) {
+		in_path = in_base_cf_path + "Cooper_Frye_EV_Trees/";
+		out_job_dir += "Data_CFEV/";
+		mix_out_job_dir += "Data_CFEV_Mix/";
+	}
+	else if (in_string(job_type, "CFEVb342_")) {
+		in_path = in_base_cf_path + "Cooper_Frye_EVb342_Trees/";
+		out_job_dir += "Data_CFEVb342/";
+		mix_out_job_dir += "Data_CFEVb342_Mix/";
 	}
 	else {
 		in_path += "BES1_Trees/";
