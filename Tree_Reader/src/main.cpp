@@ -369,17 +369,17 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-			{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_", {0, 0}}}}}},
-			{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
-//			{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
+//			{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_", {0, 0}}}}}},
+//			{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
+			{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
 	};
 
-	vector<int> energy_list{ 7, 19, 27, 39, 62 };
+	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 7;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -1186,12 +1186,12 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 
 void ampt_cent_opt() {
-	//string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
-	//string star_data_path = "/home/dylan/Research/BES1_Trees/";
-	//string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
-	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
-	string star_data_path = "F:/Research/BES1_Trees/";
-	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
+	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/string_melting/";
+	string star_data_path = "/media/ucla/Research/BES1_Trees/";
+	string qa_path = "/media/ucla/Research/Ampt_Centralities/string_melting/";
+//	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
+//	string star_data_path = "F:/Research/BES1_Trees/";
+//	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	AmptCentralityMaker cent_maker;
 
@@ -1205,12 +1205,12 @@ void ampt_cent_opt() {
 }
 
 void ampt_ref_b_plot() {
-	//string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
-	//string star_data_path = "/home/dylan/Research/BES1_Trees/";
-	//string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
-	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
-	string star_data_path = "F:/Research/BES1_Trees/";
-	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
+	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/string_melting/";
+	string star_data_path = "/media/ucla/Research/BES1_Trees/";
+	string qa_path = "/media/ucla/Research/Ampt_Centralities/string_melting/";
+//	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
+//	string star_data_path = "F:/Research/BES1_Trees/";
+//	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	AmptCentralityMaker cent_maker;
 
@@ -1224,12 +1224,12 @@ void ampt_ref_b_plot() {
 
 void ampt_cent_make() {
 	vector<int> energy_list {7, 11, 19, 27, 39, 62};
-	//string min_bias_path = "/media/ucla/Research/AMPT_Old_Trees/min_bias/string_melting/";
-	//string qa_path = "/home/dylan/Research/Ampt_Old_Centralities/string_melting/";
+	string min_bias_path = "/media/ucla/Research/AMPT_Trees/min_bias/string_melting/";
+	string qa_path = "/media/ucla/Research/Ampt_Centralities/string_melting/";
 //	string min_bias_path = "/home/dylan/Research/AMPT_Trees/min_bias/string_melting/";
 //	string qa_path = "/home/dylan/Research/Ampt_Centralities/string_melting/";
-	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
-	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
+//	string min_bias_path = "F:/Research/AMPT_Trees/min_bias/string_melting/";
+//	string qa_path = "F:/Research/Ampt_Centralities/string_melting/";
 	string ref_quantity = "ref3";
 	for(int energy:energy_list) {
 		AmptCentralityMaker cent_maker(energy, min_bias_path, qa_path, ref_quantity);
