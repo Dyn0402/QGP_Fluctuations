@@ -139,6 +139,10 @@ int Mixer::get_ep_bins() {
 	return ep_bins;
 }
 
+int Mixer::get_resample_alg() {
+	return resample_alg;
+}
+
 int Mixer::get_n_resamples() {
 	return n_resamples;
 }
@@ -246,6 +250,10 @@ void Mixer::set_divs(vector<int> divs) {
 
 void Mixer::set_rand_seed(int seed) {
 	trand = new TRandom3(seed);
+}
+
+void Mixer::set_resample_alg(int alg_num) {
+	resample_alg = alg_num;
 }
 
 void Mixer::set_n_resamples(int n) {
@@ -408,7 +416,14 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 		sort(mix_angles.begin(), mix_angles.end());
 		for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
 			double div_rads = (double)divs[div_bin] / 180 * M_PI;
-			vector<int> binned_event = get_resamples(mix_angles, div_rads, n_resamples);
+			vector<int> binned_event;
+			if (resample_alg == 4) {
+				binned_event = get_resamples4(mix_angles, div_rads, n_resamples, trand);
+			}
+			else if (resample_alg == 3) {
+				binned_event = get_resamples(mix_angles, div_rads, n_resamples);
+			}
+			else { cout << "Didn't find matching resample algorithm for #" << resample_alg << endl; }
 
 			// Save binned values to data
 			vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal

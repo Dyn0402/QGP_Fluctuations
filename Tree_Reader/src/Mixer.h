@@ -38,6 +38,7 @@ public:
 	int get_mixes_per_event();
 	int get_vz_bins();
 	int get_ep_bins();
+	int get_resample_alg();
 	int get_n_resamples();
 	int get_n_bootstraps();
 	int get_cent_bins();
@@ -66,6 +67,7 @@ public:
 	void set_out_path(string path);
 	void set_divs(vector<int> divs);
 	void set_rand_seed(int seed=0);
+	void set_resample_alg(int alg_num);
 	void set_n_resamples(int n);
 	void set_n_bootstraps(int n);
 	void set_cent_bins(int bins);
@@ -115,6 +117,7 @@ private:
 	mt19937_64 c_rand;
 //	poisson_distribution<int> pois_dist;
 
+	int resample_alg = 4;  // Which resampling algorithm to use. 4 is default stochastic algorithm
 	int n_resamples = 100;
 	int n_bootstraps = 100;
 

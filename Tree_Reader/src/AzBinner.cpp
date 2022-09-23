@@ -369,6 +369,10 @@ void AzBinner::set_ref_num(int ref_num) {
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 }
 
+void AzBinner::set_resample_alg(int alg_num) {
+	resample_alg = alg_num;
+}
+
 void AzBinner::set_n_resamples(int n) {
 	n_resamples = n;
 }
@@ -442,6 +446,7 @@ void AzBinner::prep_read() {
 	mix.set_n1_ratios(n1_ratios);
 	mix.set_rand_rotate(rotate_random);
 	mix.set_resample(resample);
+	mix.set_resample_alg(resample_alg);
 	mix.set_n_resamples(n_resamples);
 	mix.set_n_bootstraps(n_bootstraps);
 	mix.set_cent_bins(cent_bins);
@@ -621,7 +626,13 @@ void AzBinner::process_event(const Event& event) {
 				sort(good_particle_angles.begin(), good_particle_angles.end());
 				for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
 					double div_rads = (double)divs[div_bin] / 180 * M_PI;
-					vector<int> binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
+					vector<int> binned_event;
+					if (resample_alg == 4) {
+						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, trand);
+					} else if (resample_alg == 3) {
+						binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
+					}
+					else { cout << "Didn't find matching resample algorithm for #" << resample_alg << endl; }
 
 					// Save binned values to data
 					vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
@@ -1175,6 +1186,7 @@ void AzBinner::write_info_file() {
 		out << "stref_seed: " << stref_seed << endl;
 
 		out << "resample: " << boolalpha << resample << endl;
+		out << "resample algorithm: " << to_string(resample_alg) << endl;
 		out << "n_resamples: " << to_string(n_resamples) << endl;
 		out << "n_bootstraps: " << to_string(n_bootstraps) << endl;
 		out << "mix resample: " << boolalpha << mix.get_resample() << endl;
@@ -1224,6 +1236,10 @@ void AzBinner::write_info_file() {
 		out << "mix single_ratio: " << boolalpha << mix.get_single_ratio() << endl;
 		out << "mix n1_ratios: " << boolalpha << mix.get_n1_ratios() << endl;
 		out << "mix rand_rotate: " << boolalpha << mix.get_rand_rotate() << endl;
+		out << "mix resample: " << boolalpha << mix.get_resample() << endl;
+		out << "mix resample algorithm: " << to_string(mix.get_resample_alg()) << endl;
+		out << "mix n_resamples: " << mix.get_n_resamples() << endl;
+		out << "mix n_bootstraps: " << mix.get_n_bootstraps() << endl;
 		out << "mix event_plane_rotate: " << boolalpha << mix.get_event_plane_rotate() << endl;
 		out << "mix max_events: " << to_string(mix.get_max_events()) << endl;
 		out << "mix min_events: " << to_string(mix.get_min_events()) << endl;

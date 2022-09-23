@@ -91,6 +91,7 @@ public:
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
 	void set_ref_num(int ref_num);
+	void set_resample_alg(int alg_num);
 	void set_n_resamples(int n);
 	void set_n_bootstraps(int n);
 	void set_particle(string particle);
@@ -199,7 +200,8 @@ private:
 	int cent_binning;
 	int ref_num;
 
-	int n_resamples = 1440;
+	int resample_alg = 4;  // Which resampling algorithm to use. 4 is default stochastic algorithm
+	int n_resamples = 72;  // With stochastic resampling (algs 4,5) computational time increases linearly with #resamples
 	int n_bootstraps = 250;
 
 	int particle_dist_hist_max = 100;
