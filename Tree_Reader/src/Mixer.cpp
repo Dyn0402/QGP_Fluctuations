@@ -421,7 +421,7 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 				binned_event = get_resamples4(mix_angles, div_rads, n_resamples, trand);
 			}
 			else if (resample_alg == 3) {
-				binned_event = get_resamples(mix_angles, div_rads, n_resamples);
+				binned_event = get_resamples3(mix_angles, div_rads, n_resamples);
 			}
 			else { cout << "Didn't find matching resample algorithm for #" << resample_alg << endl; }
 

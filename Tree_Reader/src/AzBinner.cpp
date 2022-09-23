@@ -630,7 +630,7 @@ void AzBinner::process_event(const Event& event) {
 					if (resample_alg == 4) {
 						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, trand);
 					} else if (resample_alg == 3) {
-						binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
+						binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);
 					}
 					else { cout << "Didn't find matching resample algorithm for #" << resample_alg << endl; }
 
@@ -753,7 +753,7 @@ void AzBinner::process_event_pt_n(const Event& event) {
 				sort(good_particle_angles.begin(), good_particle_angles.end());
 				for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
 					double div_rads = (double)divs[div_bin] / 180 * M_PI;
-					vector<int> binned_event = get_resamples(good_particle_angles, div_rads, n_resamples);
+					vector<int> binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);
 
 					// Save binned values to data
 					vector<long>& data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
