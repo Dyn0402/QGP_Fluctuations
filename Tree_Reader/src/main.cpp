@@ -221,8 +221,11 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
 		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+		{"c_Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
+		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
+		{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_", {0, 0}}}}}},
+		{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
 	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -379,7 +382,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 6;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -391,8 +394,16 @@ void read_new() {
 		int job_num = 0;
 		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 
-		for (int energy : energy_list) {
-			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+//		for (int energy : energy_list) {
+//			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+//				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+//				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+//				this_thread::sleep_for(chrono::seconds(set_sleep));
+//			}
+//			this_thread::sleep_for(chrono::seconds(energy_sleep));
+//		}
+		for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+			for (int energy : energy_list) {
 				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
 				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
 				this_thread::sleep_for(chrono::seconds(set_sleep));
