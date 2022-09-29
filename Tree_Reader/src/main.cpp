@@ -220,16 +220,16 @@ void read_new() {
 //		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
 //		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
-//		{"Ampt_Eff1_resample", {{"eff1_resample", {{"Ampt_rapid05_resample_norotate_Efficiency1_", {0, 0}}}}}},
-		{"Ampt_Eff2_resample", {{"eff2_resample", {{"Ampt_rapid05_resample_norotate_Efficiency2_", {0, 0}}}}}},
-		{"Ampt_Eff3_resample", {{"eff3_resample", {{"Ampt_rapid05_resample_norotate_Efficiency3_", {0, 0}}}}}},
-		{"Ampt_Eff4_resample", {{"eff4_resample", {{"Ampt_rapid05_resample_norotate_Efficiency4_", {0, 0}}}}}},
 //		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
 //		{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_", {0, 0}}}}}},
 //		{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
+//	};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_single_", {0, 0}}}}}},
 	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
