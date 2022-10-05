@@ -228,9 +228,9 @@ void read_new() {
 //		{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_single_", {0, 0}}}}}},
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_single_", {0, 0}}}}}},
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
@@ -282,21 +282,6 @@ void read_new() {
 	//	{"BES1_def_sys_0", {{"default_sys", get_rand_set_pairs(10, "rapid1")}}},
 	//	{"BES1_def_sys_1", {{"default_sys", get_rand_set_pairs(10, "rapid08")}}},
 	//	{"BES1_def_sys_2", {{"default_sys", get_rand_set_pairs(10, "rapid02")}}}
-	//};
-
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"Ampt_test0", {{"test", {{"Ampt_rapid05_n1ratios_test0_", {0, 0}}}}}},
-	//	{"Ampt_test1", {{"test", {{"Ampt_rapid05_n1ratios_test1_", {0, 0}}}}}},
-	//	{"Ampt_test2", {{"test", {{"Ampt_rapid05_n1ratios_test2_", {0, 0}}}}}},
-	//	{"Ampt_test3", {{"test", {{"Ampt_rapid05_n1ratios_test3_", {0, 0}}}}}},
-	//	{"Ampt_test4", {{"test", {{"Ampt_rapid05_n1ratios_test4_", {0, 0}}}}}},
-	//	{"Ampt_test5", {{"test", {{"Ampt_rapid05_n1ratios_test5_", {0, 0}}}}}},
-	//	{"Ampt_test6", {{"test", {{"Ampt_rapid05_n1ratios_test6_", {0, 0}}}}}},
-	//	{"Ampt_test7", {{"test", {{"Ampt_rapid05_n1ratios_test7_", {0, 0}}}}}},
-	//	{"Ampt_test8", {{"test", {{"Ampt_rapid05_n1ratios_test8_", {0, 0}}}}}},
-	//	{"Ampt_test9", {{"test", {{"Ampt_rapid05_n1ratios_test9_", {0, 0}}}}}},
-	//	{"Ampt_test10", {{"test", {{"Ampt_rapid05_n1ratios_test10_", {0, 0}}}}}},
-	//	{"Ampt_test11", {{"test", {{"Ampt_rapid05_n1ratios_test11_", {0, 0}}}}}},
 	//};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -352,6 +337,21 @@ void read_new() {
 //		}
 //	}
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_clmulti_s1a002", {{"flat80_clmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s1a004", {{"flat80_clmulti_spread1_amp004_resample_test", {{"Sim_spread1_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s1a006", {{"flat80_clmulti_spread1_amp006_resample_test", {{"Sim_spread1_amp006_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s1a008", {{"flat80_clmulti_spread1_amp008_resample_test", {{"Sim_spread1_amp008_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s05a002", {{"flat80_clmulti_spread05_amp002_resample_test", {{"Sim_spread05_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s05a004", {{"flat80_clmulti_spread05_amp004_resample_test", {{"Sim_spread05_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a002", {{"flat80_anticlmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a004", {{"flat80_anticlmulti_spread1_amp004_resample_test", {{"Sim_spread1_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a006", {{"flat80_anticlmulti_spread1_amp006_resample_test", {{"Sim_spread1_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a008", {{"flat80_anticlmulti_spread1_amp008_resample_test", {{"Sim_spread1_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a002", {{"flat80_anticlmulti_spread05_amp002_resample_test", {{"Sim_spread05_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a004", {{"flat80_anticlmulti_spread05_amp004_resample_test", {{"Sim_spread05_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+	};
+
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Sim_flat80_anticlmulti_s45a0125", {{"flat80_anticlmulti_spread45_amp0125_resample", {{"Sim_spread45_amp0125_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//	{"Sim_flat80_anticlmulti_s45a6", {{"flat80_anticlmulti_spread45_amp6_resample", {{"Sim_spread45_amp6_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
@@ -381,12 +381,12 @@ void read_new() {
 //			{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
 //	};
 
-	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-//	vector<int> energy_list{ 7 };
+//	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 7;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
