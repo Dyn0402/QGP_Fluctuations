@@ -324,18 +324,31 @@ void read_new() {
 //		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
 //	};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_clmulti_s04a002_test", {{"flat80_clmulti_spread04_amp002_resample_test", {{"Sim_spread04_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s04a004_test", {{"flat80_clmulti_spread04_amp004_resample_test", {{"Sim_spread04_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s04a006_test", {{"flat80_clmulti_spread04_amp006_resample_test", {{"Sim_spread04_amp006_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s04a008_test", {{"flat80_clmulti_spread04_amp008_resample_test", {{"Sim_spread04_amp008_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_clmulti_s04a01_test", {{"flat80_clmulti_spread04_amp01_resample_test", {{"Sim_spread04_amp01_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	};
+
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {};
-//	vector<string> spreads = { "5" };
+	vector<string> spreads = { "03", "11", "12" };
 //	vector<string> amps = { "0", "005", "01", "0125", "015", "0175", "02", "0225", "025", "03", "035", "04", "045", "05", "06", "07", "08", "09", "1", "125", "15", "175", "2", "225", "25", "3", "35", "4", "45", "5", "6", "7", "8", "9", "99" };
-//
-//	for (string spread : spreads) {
-//		for (string amp : amps) {
-//			string job_name = "Sim_flat80_anticlflat_s" + spread + "a" + amp;
-//			string group_name = "flat80_anticlflat_spread" + spread + "_amp" + amp + "_resample";
-//			string set_name = "Sim_spread" + spread + "_amp" + amp + "_flat80_anticlflat_norotate_resample_";
-//			sets[job_name][group_name][set_name] = { 0, 0 };
-//		}
-//	}
+	vector<string> amps = { "002", "004", "006", "008", "01"};
+	vector<string> cl_types = { "anticlmulti", "clmulti" };
+
+
+	for (string spread : spreads) {
+		for (string amp : amps) {
+			for (string cl_type : cl_types){
+				string job_name = "Sim_flat80_" + cl_type + "_s" + spread + "a" + amp + "_test";
+				string group_name = "flat80_" + cl_type + "_spread" + spread + "_amp" + amp + "_resample_test";
+				string set_name = "Sim_spread" + spread + "_amp" + amp + "_flat80_" + cl_type + "_norotate_resample_";
+				sets[job_name][group_name][set_name] = { 0, 0 };
+			}
+		}
+	}
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Sim_flat80_clmulti_s1a002", {{"flat80_clmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
@@ -351,28 +364,6 @@ void read_new() {
 //		{"Sim_flat80_anticlmulti_s05a002", {{"flat80_anticlmulti_spread05_amp002_resample_test", {{"Sim_spread05_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //		{"Sim_flat80_anticlmulti_s05a004", {{"flat80_anticlmulti_spread05_amp004_resample_test", {{"Sim_spread05_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 //	};
-
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-			{"Sim_flat80_anticlmulti_s08a002_test", {{"flat80_anticlmulti_spread08_amp002_resample_test", {{"Sim_spread08_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s08a004_test", {{"flat80_anticlmulti_spread08_amp004_resample_test", {{"Sim_spread08_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s08a006_test", {{"flat80_anticlmulti_spread08_amp006_resample_test", {{"Sim_spread08_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s08a008_test", {{"flat80_anticlmulti_spread08_amp008_resample_test", {{"Sim_spread08_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s08a01_test", {{"flat80_anticlmulti_spread08_amp01_resample_test", {{"Sim_spread08_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-
-			{"Sim_flat80_anticlmulti_s07a002_test", {{"flat80_anticlmulti_spread07_amp002_resample_test", {{"Sim_spread07_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s07a004_test", {{"flat80_anticlmulti_spread07_amp004_resample_test", {{"Sim_spread07_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s07a006_test", {{"flat80_anticlmulti_spread07_amp006_resample_test", {{"Sim_spread07_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s07a008_test", {{"flat80_anticlmulti_spread07_amp008_resample_test", {{"Sim_spread07_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s07a01_test", {{"flat80_anticlmulti_spread07_amp01_resample_test", {{"Sim_spread07_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-
-			{"Sim_flat80_anticlmulti_s06a002_test", {{"flat80_anticlmulti_spread06_amp002_resample_test", {{"Sim_spread06_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s06a004_test", {{"flat80_anticlmulti_spread06_amp004_resample_test", {{"Sim_spread06_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s06a006_test", {{"flat80_anticlmulti_spread06_amp006_resample_test", {{"Sim_spread06_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s06a008_test", {{"flat80_anticlmulti_spread06_amp008_resample_test", {{"Sim_spread06_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-			{"Sim_flat80_anticlmulti_s06a01_test", {{"flat80_anticlmulti_spread06_amp01_resample_test", {{"Sim_spread06_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-
-			{"Sim_flat80_anticlmulti_s05a006_test", {{"flat80_anticlmulti_spread05_amp006_resample_test", {{"Sim_spread05_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Sim_flat80_anticlmulti_s45a0125", {{"flat80_anticlmulti_spread45_amp0125_resample", {{"Sim_spread45_amp0125_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
