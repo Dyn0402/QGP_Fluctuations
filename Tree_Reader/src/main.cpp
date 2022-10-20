@@ -337,20 +337,42 @@ void read_new() {
 //		}
 //	}
 
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Sim_flat80_clmulti_s1a002", {{"flat80_clmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_clmulti_s1a004", {{"flat80_clmulti_spread1_amp004_resample_test", {{"Sim_spread1_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_clmulti_s1a006", {{"flat80_clmulti_spread1_amp006_resample_test", {{"Sim_spread1_amp006_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_clmulti_s1a008", {{"flat80_clmulti_spread1_amp008_resample_test", {{"Sim_spread1_amp008_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_clmulti_s05a002", {{"flat80_clmulti_spread05_amp002_resample_test", {{"Sim_spread05_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_clmulti_s05a004", {{"flat80_clmulti_spread05_amp004_resample_test", {{"Sim_spread05_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s1a002", {{"flat80_anticlmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s1a004", {{"flat80_anticlmulti_spread1_amp004_resample_test", {{"Sim_spread1_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s1a006", {{"flat80_anticlmulti_spread1_amp006_resample_test", {{"Sim_spread1_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s1a008", {{"flat80_anticlmulti_spread1_amp008_resample_test", {{"Sim_spread1_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s05a002", {{"flat80_anticlmulti_spread05_amp002_resample_test", {{"Sim_spread05_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flat80_anticlmulti_s05a004", {{"flat80_anticlmulti_spread05_amp004_resample_test", {{"Sim_spread05_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+//	};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_clmulti_s1a002", {{"flat80_clmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s1a004", {{"flat80_clmulti_spread1_amp004_resample_test", {{"Sim_spread1_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s1a006", {{"flat80_clmulti_spread1_amp006_resample_test", {{"Sim_spread1_amp006_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s1a008", {{"flat80_clmulti_spread1_amp008_resample_test", {{"Sim_spread1_amp008_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s05a002", {{"flat80_clmulti_spread05_amp002_resample_test", {{"Sim_spread05_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s05a004", {{"flat80_clmulti_spread05_amp004_resample_test", {{"Sim_spread05_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a002", {{"flat80_anticlmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a004", {{"flat80_anticlmulti_spread1_amp004_resample_test", {{"Sim_spread1_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a006", {{"flat80_anticlmulti_spread1_amp006_resample_test", {{"Sim_spread1_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a008", {{"flat80_anticlmulti_spread1_amp008_resample_test", {{"Sim_spread1_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a002", {{"flat80_anticlmulti_spread05_amp002_resample_test", {{"Sim_spread05_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a004", {{"flat80_anticlmulti_spread05_amp004_resample_test", {{"Sim_spread05_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-	};
+			{"Sim_flat80_anticlmulti_s08a002_test", {{"flat80_anticlmulti_spread08_amp002_resample_test", {{"Sim_spread08_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s08a004_test", {{"flat80_anticlmulti_spread08_amp004_resample_test", {{"Sim_spread08_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s08a006_test", {{"flat80_anticlmulti_spread08_amp006_resample_test", {{"Sim_spread08_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s08a008_test", {{"flat80_anticlmulti_spread08_amp008_resample_test", {{"Sim_spread08_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s08a01_test", {{"flat80_anticlmulti_spread08_amp01_resample_test", {{"Sim_spread08_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+			{"Sim_flat80_anticlmulti_s07a002_test", {{"flat80_anticlmulti_spread07_amp002_resample_test", {{"Sim_spread07_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s07a004_test", {{"flat80_anticlmulti_spread07_amp004_resample_test", {{"Sim_spread07_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s07a006_test", {{"flat80_anticlmulti_spread07_amp006_resample_test", {{"Sim_spread07_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s07a008_test", {{"flat80_anticlmulti_spread07_amp008_resample_test", {{"Sim_spread07_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s07a01_test", {{"flat80_anticlmulti_spread07_amp01_resample_test", {{"Sim_spread07_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+			{"Sim_flat80_anticlmulti_s06a002_test", {{"flat80_anticlmulti_spread06_amp002_resample_test", {{"Sim_spread06_amp002_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s06a004_test", {{"flat80_anticlmulti_spread06_amp004_resample_test", {{"Sim_spread06_amp004_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s06a006_test", {{"flat80_anticlmulti_spread06_amp006_resample_test", {{"Sim_spread06_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s06a008_test", {{"flat80_anticlmulti_spread06_amp008_resample_test", {{"Sim_spread06_amp008_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+			{"Sim_flat80_anticlmulti_s06a01_test", {{"flat80_anticlmulti_spread06_amp01_resample_test", {{"Sim_spread06_amp01_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+
+			{"Sim_flat80_anticlmulti_s05a006_test", {{"flat80_anticlmulti_spread05_amp006_resample_test", {{"Sim_spread05_amp006_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	{"Sim_flat80_anticlmulti_s45a0125", {{"flat80_anticlmulti_spread45_amp0125_resample", {{"Sim_spread45_amp0125_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
@@ -523,6 +545,7 @@ void read_rcf_sim(string set_group, string set_name) {
 void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_num, string job_type, int jobs, mutex* mtx, vector<string>* file_list) {
 //	bool replace_existing = false;  // If folder for job exists, overwrite if true, skip job if false // Logic doesn't work. Rework a more complicated implementation if wanted
 	int ref = 3;
+	int sim_events_per_total_proton = 100000;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
 
@@ -573,8 +596,15 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	}
 	else if (in_string(job_type, "Sim")) {
 		in_path += "BES1_Trees/";
-		out_job_dir += "Data_Sim/";
-		mix_out_job_dir += "Data_Sim_Mix/";
+		if (in_string(job_type, "_test")) {
+			sim_events_per_total_proton = 10000;
+			out_job_dir += "Data_Sim_tests/";
+			mix_out_job_dir += "Data_Sim_tests_Mix/";
+		}
+		else {
+			out_job_dir += "Data_Sim/";
+			mix_out_job_dir += "Data_Sim_Mix/";
+		}
 	}
 	else if (in_string(job_type, "CF_")) {
 		in_path = in_base_cf_path + "Cooper_Frye_Trees/";
@@ -609,7 +639,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 	vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 //	vector<int> divs{ 60 };
-	map<int, int> sim_cent_events = { {8, 80 * 100000} };
+	map<int, int> sim_cent_events = { {8, 80 * sim_events_per_total_proton} };
 	//map<int, int> sim_cent_events = { {8, 80 * 10000} };
 
 	// Might fail on Mixer::append_event if these are too low?
