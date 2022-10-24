@@ -311,8 +311,8 @@ void AzBinner::set_event_plane(bool event_plane) {
 	this->event_plane = event_plane;
 }
 
-void AzBinner::set_mixed(bool mixed_roli) {
-	this->mixed = mixed_roli;
+void AzBinner::set_mixed(bool mixed) {
+	this->mixed = mixed;
 }
 
 void AzBinner::set_pile_up(bool pile_up) {
@@ -584,6 +584,8 @@ void AzBinner::process_event(const Event& event) {
 				cent = cent9_corr;
 			}
 			post_n_particles[cent].Fill(num_particles);
+			post_ref[cent].Fill(event.get_ref());
+			post_refn[cent].Fill(event.get_refn());
 			int cent_bin = cent - cent_min;
 
 			TVector2 q(event.get_qx(), event.get_qy());
@@ -609,7 +611,6 @@ void AzBinner::process_event(const Event& event) {
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if (mixed) { mix.append_event(good_particle_angles, cent, ep_angle, event.get_vz()); }
-
 
 			if (event_plane) { // If event_plane flag then rotate all angles by -event_plane.
 				good_particle_angles = rotate_angles(good_particle_angles, -ep_angle);
@@ -1062,6 +1063,8 @@ void AzBinner::define_qa() {
 
 	for (int i = -1; i < cent_binning; i++) {
 		post_n_particles[i] = TH1D(("Particle_Dist_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Particle Distribution", particle_dist_hist_max + 1, -0.5, particle_dist_hist_max + 0.5);
+		post_ref[i] = TH1D(("RefMult_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Reference Multiplicity", 801, -0.5, 800.5);
+		post_refn[i] = TH1D(("RefMultn_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Reference Multiplicity N", 801, -0.5, 800.5);
 	}
 
 }
@@ -1376,10 +1379,9 @@ void AzBinner::write_qa() {
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
 
-	for (auto hist : post_n_particles) {
-		hist.second.Write();
-	}
-
+	for (auto hist : post_n_particles) { hist.second.Write(); }
+	for (auto hist : post_ref) { hist.second.Write(); }
+	for (auto hist : post_refn) { hist.second.Write(); }
 
 	// Make bar plots for event/track cut histograms
 	TCanvas event_cut_maker_can("event_cut_maker_can");

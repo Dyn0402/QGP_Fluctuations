@@ -77,7 +77,7 @@ public:
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
-	void set_mixed(bool mixed_roli);
+	void set_mixed(bool mixed);
 	void set_pile_up(bool pile_up);
 	void set_efficiency(bool efficiency);
 	void set_single_ratio(bool single_ratio);
@@ -288,5 +288,6 @@ private:
 	TH1I post_m2_hist;
 
 	map<int, TH1D> post_n_particles;
-
+	map<int, TH1D> post_ref;
+	map<int, TH1D> post_refn;
 };

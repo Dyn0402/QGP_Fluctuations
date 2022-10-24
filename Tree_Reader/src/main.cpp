@@ -324,31 +324,31 @@ void read_new() {
 //		{"CF_Eff15_1", {{"Eff15_def", {{"CF_rapid05_n1ratios_Efficiency15_", {8, 14}}}}}}
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_clmulti_s04a002_test", {{"flat80_clmulti_spread04_amp002_resample_test", {{"Sim_spread04_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s04a004_test", {{"flat80_clmulti_spread04_amp004_resample_test", {{"Sim_spread04_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s04a006_test", {{"flat80_clmulti_spread04_amp006_resample_test", {{"Sim_spread04_amp006_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s04a008_test", {{"flat80_clmulti_spread04_amp008_resample_test", {{"Sim_spread04_amp008_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_clmulti_s04a01_test", {{"flat80_clmulti_spread04_amp01_resample_test", {{"Sim_spread04_amp01_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Sim_flat80_clmulti_s04a002_test", {{"flat80_clmulti_spread04_amp002_resample_test", {{"Sim_spread04_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//	{"Sim_flat80_clmulti_s04a004_test", {{"flat80_clmulti_spread04_amp004_resample_test", {{"Sim_spread04_amp004_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//	{"Sim_flat80_clmulti_s04a006_test", {{"flat80_clmulti_spread04_amp006_resample_test", {{"Sim_spread04_amp006_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//	{"Sim_flat80_clmulti_s04a008_test", {{"flat80_clmulti_spread04_amp008_resample_test", {{"Sim_spread04_amp008_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//	{"Sim_flat80_clmulti_s04a01_test", {{"flat80_clmulti_spread04_amp01_resample_test", {{"Sim_spread04_amp01_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+	//};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {};
-	vector<string> spreads = { "03", "11", "12" };
+	//vector<string> spreads = { "03", "11", "12" };
 //	vector<string> amps = { "0", "005", "01", "0125", "015", "0175", "02", "0225", "025", "03", "035", "04", "045", "05", "06", "07", "08", "09", "1", "125", "15", "175", "2", "225", "25", "3", "35", "4", "45", "5", "6", "7", "8", "9", "99" };
-	vector<string> amps = { "002", "004", "006", "008", "01"};
-	vector<string> cl_types = { "anticlmulti", "clmulti" };
+	//vector<string> amps = { "002", "004", "006", "008", "01"};
+	//vector<string> cl_types = { "anticlmulti", "clmulti" };
 
 
-	for (string spread : spreads) {
-		for (string amp : amps) {
-			for (string cl_type : cl_types){
-				string job_name = "Sim_flat80_" + cl_type + "_s" + spread + "a" + amp + "_test";
-				string group_name = "flat80_" + cl_type + "_spread" + spread + "_amp" + amp + "_resample_test";
-				string set_name = "Sim_spread" + spread + "_amp" + amp + "_flat80_" + cl_type + "_norotate_resample_";
-				sets[job_name][group_name][set_name] = { 0, 0 };
-			}
-		}
-	}
+	//for (string spread : spreads) {
+	//	for (string amp : amps) {
+	//		for (string cl_type : cl_types){
+	//			string job_name = "Sim_flat80_" + cl_type + "_s" + spread + "a" + amp + "_test";
+	//			string group_name = "flat80_" + cl_type + "_spread" + spread + "_amp" + amp + "_resample_test";
+	//			string set_name = "Sim_spread" + spread + "_amp" + amp + "_flat80_" + cl_type + "_norotate_resample_";
+	//			sets[job_name][group_name][set_name] = { 0, 0 };
+	//		}
+	//	}
+	//}
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Sim_flat80_clmulti_s1a002", {{"flat80_clmulti_spread1_amp002_resample_test", {{"Sim_spread1_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
@@ -394,8 +394,13 @@ void read_new() {
 //			{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
 //	};
 
-//	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 62 };
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Ampt_qaonly", {{"qaonly", {{"Ampt_rapid05_qaonly_", {0, 0}}}}}},
+		{"BES1_qaonly", {{"qaonly", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_qaonly_", {0, 0}}}}}},
+	};
+
+	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+	//vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -938,6 +943,12 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.mix.set_min_events(150);
 				binner.mix.set_vz_bins(5);
 				binner.mix.set_ep_bins(20);
+
+				if (in_string(set.first, "qaonly")) {  // If qa only don't do any binning or mixing, just run though data for qa plots
+					binner.set_divs({});
+					binner.set_mixed(false);
+				}
+
 				if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
 				else { binner.mix.set_mixes_per_event(10); }
 				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); binner.set_n_bootstraps(250); }
