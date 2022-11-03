@@ -39,13 +39,7 @@
     <ClCompile Include="src\Mixer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MixerSets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\PileUpQAer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Randomizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\res_calc_test.cpp">
@@ -101,13 +95,7 @@
     <ClInclude Include="src\Mixer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\MixerSets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\PileUpQAer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Randomizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Simulator.h">
@@ -138,6 +126,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\AzBinner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PtCorr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

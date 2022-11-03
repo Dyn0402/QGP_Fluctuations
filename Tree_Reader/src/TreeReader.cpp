@@ -11,6 +11,7 @@
 #include <fstream>
 #include <algorithm>
 #include <vector>
+#include <queue>
 #include <cmath>
 #include <thread>
 #include <ctime>
@@ -37,7 +38,6 @@
 #include "Track.h"
 
 #include "Mixer.h"
-#include "MixerSets.h"
 
 using namespace std;
 
@@ -46,12 +46,14 @@ using namespace std;
 
 TreeReader::TreeReader(int energy, int ref_num) {
 	start_sys = chrono::system_clock::now();
+	//sysinfo (&mem_info);
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
-	//sim_eff = false;
-	//sim_flow = false;
+	sim_eff = false;
+	sim_flow = false;
 
 	pile_up = false;
 	pile_up_prob = 0;
@@ -62,14 +64,16 @@ TreeReader::TreeReader(int energy, int ref_num) {
 
 TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 	start_sys = chrono::system_clock::now();
+	//sysinfo (&mem_info);
 
 	this->mtx = mtx;
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
-	//sim_eff = false;
-	//sim_flow = false;
+	sim_eff = false;
+	sim_flow = false;
 
 	pile_up = false;
 	pile_up_prob = 0;
@@ -80,12 +84,14 @@ TreeReader::TreeReader(int energy, int ref_num, mutex *mtx) {
 
 TreeReader::TreeReader(int energy) {
 	start_sys = chrono::system_clock::now();
+	//sysinfo (&mem_info);
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
-	//sim_eff = false;
-	//sim_flow = false;
+	sim_eff = false;
+	sim_flow = false;
 
 	pile_up = false;
 	pile_up_prob = 0;
@@ -96,14 +102,16 @@ TreeReader::TreeReader(int energy) {
 
 TreeReader::TreeReader(int energy, mutex *mtx) {
 	start_sys = chrono::system_clock::now();
+	//sysinfo (&mem_info);
 
 	this->mtx = mtx;
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
-	//sim_eff = false;
-	//sim_flow = false;
+	sim_eff = false;
+	sim_flow = false;
 
 	pile_up = false;
 	pile_up_prob = 0;
@@ -114,12 +122,14 @@ TreeReader::TreeReader(int energy, mutex *mtx) {
 
 TreeReader::TreeReader() {
 	start_sys = chrono::system_clock::now();
+	//sysinfo (&mem_info);
 
 	ampt = false;
+	cooper_frye = false;
 	file_list = NULL;
 
-	//sim_eff = false;
-	//sim_flow = false;
+	sim_eff = false;
+	sim_flow = false;
 
 	pile_up = false;
 	pile_up_prob = 0;
@@ -154,6 +164,10 @@ string TreeReader::get_event_cut_hist_name() {
 
 string TreeReader::get_track_cut_hist_name() {
 	return(track_cut_hist_name);
+}
+
+string TreeReader::get_particle() {
+	return particle;
 }
 
 
@@ -201,17 +215,21 @@ void TreeReader::set_ampt(bool ampt) {
 	this->ampt = ampt;
 }
 
+void TreeReader::set_cooper_frye(bool cf) {
+	this->cooper_frye = cf;
+}
+
 void TreeReader::set_pile_up(bool pile_up) {
 	this->pile_up = pile_up;
 }
 
-//void TreeReader::set_sim_eff(bool sim_eff) {
-//	this->sim_eff = sim_eff;
-//}
-//
-//void TreeReader::set_sim_flow(bool sim_flow) {
-//	this->sim_flow = sim_flow;
-//}
+void TreeReader::set_sim_eff(bool sim_eff) {
+	this->sim_eff = sim_eff;
+}
+
+void TreeReader::set_sim_flow(bool sim_flow) {
+	this->sim_flow = sim_flow;
+}
 
 void TreeReader::set_pile_up_prob(double pile_up_prob) {
 	this->pile_up_prob = pile_up_prob;
@@ -226,7 +244,7 @@ void TreeReader::set_particle(string particle) {
 //}
 
 void TreeReader::set_ampt_particle_pid(vector<int> pid) {
-	ampt_particle_pid = pid;
+	pdg_particle_pid = pid;
 }
 
 void TreeReader::set_file_list(vector<string> *file_list) {
@@ -268,7 +286,7 @@ void TreeReader::read_trees() {
 		ampt_cent = AmptCentralityMaker(energy, in_path + "min_bias/" + ampt_type + "/", ampt_cent_path + ampt_type + "/", "ref" + to_string(ref_num));
 		ampt_cent.make_centrality(false);  // Usually just reads from file unless it can't find it.
 
-		in_files = get_files_in_dir(in_path + "most_central/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
+		in_files = get_files_in_dir(in_path + "slim_most_central/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
 		vector<string> min_bias_files = get_files_in_dir(in_path + "min_bias/" + ampt_type + "/" + to_string(energy) + "GeV/", "root", "path");
 		in_files.insert(in_files.end(), min_bias_files.begin(), min_bias_files.end());
 	}
@@ -281,36 +299,54 @@ void TreeReader::read_trees() {
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
 
-	for(string path:in_files) {
+	queue<string> in_files_queue;
+	for (const string& path : in_files) { in_files_queue.push(path); }
+
+	while (!in_files_queue.empty()) {
+		string path = in_files_queue.front();
 
 		if(file_list != NULL) {  // If file_list passed, check if path is being read on another thread before continuing
 			bool wait = true;
+			bool skip = false;
 			while(wait) {
 				if(mtx) { mtx->lock(); }
 				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {
+					in_files_queue.pop();
 					file_list->push_back(path);
 					wait = false;
 				}
 				if(mtx) { mtx->unlock(); }
 				if(wait) {
-					cout << "Waiting for path: " << path << endl;
-					this_thread::sleep_for(chrono::seconds(file_wait_sleep));
+					if (in_files_queue.size() == 1) {  // Last file in queue, just have to wait for it to open up
+						cout << "Waiting for path: " << path << endl;
+						this_thread::sleep_for(chrono::seconds(file_wait_sleep));
+					}
+					else {  // Put current file at end of queue and move on to next file
+						cout << "Pushing to back of queue path: " << path << endl;
+						in_files_queue.push(path);
+						in_files_queue.pop();
+						skip = true;
+						break;
+					}
 				}
 			}
+			if (skip) { continue; }  // Skip to next file and return to current (busy one) at the end.
 		}
 
 		// Display progress and time while running.
-		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
+		if(!(file_index % (unsigned)(num_files*percent_print/100+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
 			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-			cout << " " << energy << "GeV " << (int)(100.0*file_index/num_files+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+			//cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | Free RAM: " << mem_info.freeram << endl;
+			cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
-		if (!ampt) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
+		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
 		TTree *tree = (TTree*)file->Get(tree_name.data());
 		if (ampt) { read_ampt_tree(tree); }  // Read tree from file into data
+		else if (cooper_frye) { read_cooper_frye_tree(tree); }
 		else { read_tree(tree); }  // Read tree from file into data
 		tree->ResetBranchAddresses();
 		file->Close();
@@ -346,55 +382,64 @@ void TreeReader::read_trees() {
 }
 
 
-//void TreeReader::sim_events(map<int, int> cent_num_events) {
-//	prep_read();
-//	define_qa();
-//
-//	if(sim_eff) {
-//		if((int)sim_eff_dist_path.size() == 0)  {
-//			sim.set_efficiency_dist_hist(get_sim_efficiency_dist());
-//		} else {
-//			sim.set_efficiency_dist_hist(sim_eff_dist_path[0], sim_eff_dist_path[1]);
-//		}
-//	}
-//
-//	if(sim_eff) {
-//		if(sim_flow) { sim.set_eff_flow(); }
-//		else { sim.set_eff(); }
-//	} else if(sim_flow) { sim.set_flow(); }
-//
-//	sim.track_defs = track_defs;
-//
-//	int total_events = 0;
-//	for(auto cent:cent_num_events) {
-//		total_events += cent.second;
-//		if(sim.get_proton_dist_type() == "hist") { sim.set_proton_dist_hist(get_sim_proton_dist(cent.first)); }
-//		for(int i=0; i<cent.second; i++) {
-//			if(!(i % (int)(cent.second/10.0+0.5))) {
-//				chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-//				auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-//				vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-//				cout << " " << set_name << " " << energy << "GeV Centrality " << cent.first << " " << (int)(100.0*i/cent.second+0.5) << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-//			}
-//			Event event(event_defs, energy, ref_num, cent.first);
-//			sim.simulate_event(event);
-//
-//			process_event(event);
-//		}
-//	}
-//
-//	reset_out_dir();
-//	write_info_file();
-//	write_qa();
-//	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-//	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-//	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-//	cout << endl << "Writing " + set_name + " " + to_string(energy) + "GeV " << total_events << " simulated events. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
-//	write_tree_data("local", data, out_path+to_string(energy)+"GeV/");
-//	if(mixed) { mix.write_mixed_data(); }
-//	if(mixed_sets) { mix_sets.write_mixed_data(); }
-//	if(rand_data) {random.write_random_data(); }
-//}
+void TreeReader::sim_events(map<int, int> cent_num_events) {
+	for (AzBinner& binner : binners) {
+		binner.set_cent_bins(cent_num_events.size());
+		binner.set_cent_min(cent_num_events.begin()->first);  // Clunky, can't account for gaps. Maybe do better job later if more general simulation needed
+		binner.prep_read();
+		binner.define_qa();
+	}
+
+	if(sim_eff) {
+		if((int)sim_eff_dist_path.size() == 0)  {
+			sim.set_efficiency_dist_hist(get_sim_efficiency_dist());
+		} else {
+			sim.set_efficiency_dist_hist(sim_eff_dist_path[0], sim_eff_dist_path[1]);
+		}
+	}
+
+	if(sim_eff) {
+		if(sim_flow) { sim.set_eff_flow(); }
+		else { sim.set_eff(); }
+	} else if(sim_flow) { sim.set_flow(); }
+
+	sim.track_defs = track_defs;
+
+	int total_events = 0;
+	for(auto cent:cent_num_events) {
+		total_events += cent.second;
+		if(sim.get_proton_dist_type() == "hist") { cout << "hist" << endl; sim.set_proton_dist_hist(get_sim_proton_dist(cent.first)); }
+		for(int i=0; i<cent.second; i++) {
+			if(!(i % (int)(cent.second*percent_print/100+0.5))) {
+				chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+				auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+				vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+				cout << " " << energy << "GeV Centrality " << cent.first << " " << (float)((int)(1000.0*i/cent.second+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+			}
+			Event event(event_defs, energy, ref_num, cent.first);
+			sim.simulate_event(event);
+
+			for (AzBinner& binner : binners) {
+				binner.process_event(event);
+			}
+		}
+	}
+
+	for (AzBinner& binner : binners) {
+		binner.set_sim_pars(sim.get_sim_pars());  // Only needed in order to write values to info file
+		binner.reset_out_dir();
+		binner.write_info_file();
+		if (mtx) mtx->lock();
+		binner.write_qa();
+		if (mtx) mtx->unlock();
+		binner.write_binner_data();
+	}
+
+	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << endl << "Writing " + to_string(energy) + "GeV " << total_events << " simulated events. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+}
 
 
 // Read individual tree. Read out and then process each event.
@@ -451,7 +496,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 
 		vector<Track> particles;
 		for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
-			if (!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
+			if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
 			TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
 			Track new_particle(track_defs);
 			new_particle.set_p(p.Mag());
@@ -474,7 +519,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 
 					particles.clear();
 					for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
-						if (!count(ampt_particle_pid.begin(), ampt_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
+						if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), ampt_branches.pid->at(particle_index))) { continue; }
 						TVector3 p(ampt_branches.px->at(particle_index), ampt_branches.py->at(particle_index), ampt_branches.pz->at(particle_index));
 						Track new_particle(track_defs);
 						new_particle.set_p(p.Mag());
@@ -482,6 +527,82 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 						new_particle.set_phi(p.Phi() + M_PI);
 						new_particle.set_eta(p.PseudoRapidity());
 						new_particle.set_charge(ampt_branches.pid->at(particle_index) / fabs(ampt_branches.pid->at(particle_index)));
+						new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+						particles.push_back(new_particle);
+					}
+					event2.set_particles(particles);
+
+					event.pile_up(event2);
+				}
+			}
+		}
+
+		for (AzBinner& binner : binners) {
+			binner.process_event(event);
+		}
+
+		event_index++;
+	}
+}
+
+
+
+void TreeReader::read_cooper_frye_tree(TTree* tree) {
+	set_cooper_frye_tree_branches(tree, cooper_frye_branches);
+	set_cooper_frye_branches(tree);
+
+	int* ref_n = NULL;
+	switch (ref_num) {
+	case 1:
+		ref_n = &cooper_frye_branches.refmult; break;
+	case 2:
+		ref_n = &cooper_frye_branches.refmult2; break;
+	case 3:
+		ref_n = &cooper_frye_branches.refmult3; break;
+	default:
+		cout << "Unknown ref_num value!" << endl;
+	}
+
+	int cent_9bin = 8;
+	int event_index = 0;
+	while (tree->GetEvent(event_index)) {
+
+		Event event(event_defs, energy, ref_num, cent_9bin);
+		event.set_qx(cooper_frye_branches.qx); event.set_qy(cooper_frye_branches.qy);
+
+		vector<Track> particles;
+		for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
+			if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), cooper_frye_branches.pid->at(particle_index))) { continue; }
+			TVector3 p(cooper_frye_branches.px->at(particle_index), cooper_frye_branches.py->at(particle_index), cooper_frye_branches.pz->at(particle_index));
+			Track new_particle(track_defs);
+			new_particle.set_p(p.Mag());
+			new_particle.set_pt(p.Perp());
+			new_particle.set_phi(p.Phi() + M_PI);
+			new_particle.set_eta(p.PseudoRapidity());
+			new_particle.set_charge(cooper_frye_branches.pid->at(particle_index) / fabs(cooper_frye_branches.pid->at(particle_index)));
+			new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
+			particles.push_back(new_particle);
+		}
+		event.set_particles(particles);
+
+		if (pile_up) {
+			if (trand->Rndm() < pile_up_prob) {  // Pile up next two events
+				event_index++;
+				if (tree->GetEntry(event_index)) {
+					cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
+					Event event2(event_defs, energy, ref_num, cent_9bin);
+					event2.set_qx(cooper_frye_branches.qx); event.set_qy(cooper_frye_branches.qy);
+
+					particles.clear();
+					for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
+						if (!count(pdg_particle_pid.begin(), pdg_particle_pid.end(), cooper_frye_branches.pid->at(particle_index))) { continue; }
+						TVector3 p(cooper_frye_branches.px->at(particle_index), cooper_frye_branches.py->at(particle_index), cooper_frye_branches.pz->at(particle_index));
+						Track new_particle(track_defs);
+						new_particle.set_p(p.Mag());
+						new_particle.set_pt(p.Perp());
+						new_particle.set_phi(p.Phi() + M_PI);
+						new_particle.set_eta(p.PseudoRapidity());
+						new_particle.set_charge(cooper_frye_branches.pid->at(particle_index) / fabs(cooper_frye_branches.pid->at(particle_index)));
 						new_particle.set_beta(pow((cut.max_m2 + cut.min_m2) / (2 * pow(p.Mag(), 2)) + 1, -0.5));  // Pass m^2 cut
 						particles.push_back(new_particle);
 					}
@@ -545,12 +666,34 @@ void TreeReader::set_ampt_branches(TTree* tree) {
 }
 
 
+void TreeReader::set_cooper_frye_branches(TTree* tree) {
+	tree->SetBranchStatus("*", 0);
+	tree->SetBranchStatus("qx", 1);
+	tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus("pid", 1);
+	tree->SetBranchStatus("px", 1);
+	tree->SetBranchStatus("py", 1);
+	tree->SetBranchStatus("pz", 1);
+
+	switch(ref_num) {
+	case 1 :
+		tree->SetBranchStatus("refmult", 1); break;
+	case 2 :
+		tree->SetBranchStatus("refmult2", 1); break;
+	case 3 :
+		tree->SetBranchStatus("refmult3", 1); break;
+	default :
+		cout << "Unknown ref_num value!" << endl;
+	}
+}
+
+
 // Pass TreeReader attributes down to AzBinner, if for no other reason than to write to info file.
 void TreeReader::set_binner(AzBinner& binner) {
 	binner.set_energy(energy);
 	binner.set_ref_num(ref_num);
 	binner.set_particle(particle);
-	binner.set_ampt_particle_pid(ampt_particle_pid);
+	binner.set_ampt_particle_pid(pdg_particle_pid);
 	binner.set_ampt(ampt);
 	binner.set_pile_up(pile_up);
 	binner.set_pile_up_prob(pile_up_prob);
@@ -558,43 +701,43 @@ void TreeReader::set_binner(AzBinner& binner) {
 }
 
 // Get proton distribution for simulation from real data QA plots.
-//TH1D* TreeReader::get_sim_proton_dist(int cent) {
-//	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + qa_name + to_string(energy) + "GeV.root";
-//	TFile *file = new TFile(file_path.data(), "READ");
-//	string dataset_path = sim_proton_dist_dataset;
-//	dataset_path.pop_back();
-//	string dataset = get_name_from_path(dataset_path);
-//	string hist_name = ("Proton_Dist_"+dataset+"_"+to_string(energy)+"_"+to_string(cent)).data();
-//
-//	TH1D *hist = (TH1D*)file->Get(hist_name.data());
-//	TH1D *proton_dist = (TH1D*)hist->Clone();
-//	proton_dist->SetDirectory(0);
-//
-//	file->Close();
-//	delete file;
-//
-//	return proton_dist;
-//}
+TH1D* TreeReader::get_sim_proton_dist(int cent) {
+	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + sim_dist_qa_name + to_string(energy) + "GeV.root";
+	TFile *file = new TFile(file_path.data(), "READ");
+	string dataset_path = sim_proton_dist_dataset;
+	dataset_path.pop_back();
+	string dataset = get_name_from_path(dataset_path);
+	string hist_name = ("Proton_Dist_"+dataset+"_"+to_string(energy)+"_"+to_string(cent)).data();
+
+	TH1D *hist = (TH1D*)file->Get(hist_name.data());
+	TH1D *proton_dist = (TH1D*)hist->Clone();
+	proton_dist->SetDirectory(0);
+
+	file->Close();
+	delete file;
+
+	return proton_dist;
+}
 
 
 // Get efficiency distribution for simulation from real data QA plots.
-//TH1D* TreeReader::get_sim_efficiency_dist() {
-//	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + qa_name + to_string(energy) + "GeV.root";
-//	TFile *file = new TFile(file_path.data(), "READ");
-//	string dataset_path = sim_proton_dist_dataset;
-//	dataset_path.pop_back();
-//	string dataset = get_name_from_path(dataset_path);
-//	string hist_name = ("post_phi_"+dataset+"_"+to_string(energy)).data();
-//
-//	TH1D *hist = (TH1D*)file->Get(hist_name.data());
-//	TH1D *efficiency_dist = (TH1D*)hist->Clone();
-//	efficiency_dist->SetDirectory(0);
-//
-//	file->Close();
-//	delete file;
-//
-//	return efficiency_dist;
-//}
+TH1D* TreeReader::get_sim_efficiency_dist() {
+	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + sim_dist_qa_name + to_string(energy) + "GeV.root";
+	TFile *file = new TFile(file_path.data(), "READ");
+	string dataset_path = sim_proton_dist_dataset;
+	dataset_path.pop_back();
+	string dataset = get_name_from_path(dataset_path);
+	string hist_name = ("post_phi_"+dataset+"_"+to_string(energy)).data();
+
+	TH1D *hist = (TH1D*)file->Get(hist_name.data());
+	TH1D *efficiency_dist = (TH1D*)hist->Clone();
+	efficiency_dist->SetDirectory(0);
+
+	file->Close();
+	delete file;
+
+	return efficiency_dist;
+}
 
 
 // Read individual tree. Read each event and for good events/tracks, calculate ratio values and save to data.

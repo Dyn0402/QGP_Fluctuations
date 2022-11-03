@@ -37,7 +37,6 @@
 #include "Track.h"
 
 #include "Mixer.h"
-#include "MixerSets.h"
 
 using namespace std;
 
@@ -46,19 +45,19 @@ using namespace std;
 
 AzBinner::AzBinner(int energy, int ref_num) {
 	ampt = false;
+	cooper_frye = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
-	mixed_sets = false;
 	mixed = false;
-	rand_data = false;
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
 	rapidity = false;
+	resample = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -72,24 +71,27 @@ AzBinner::AzBinner(int energy, int ref_num) {
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 	mix = Mixer(energy);
+
+//	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = poisson_distribution<int> (1);
 }
 
 
 AzBinner::AzBinner(int energy) {
 	ampt = false;
+	cooper_frye = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
-	mixed_sets = false;
 	mixed = false;
-	rand_data = false;
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
 	rapidity = false;
+	resample = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -103,24 +105,27 @@ AzBinner::AzBinner(int energy) {
 
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 	mix = Mixer(energy);
+
+//	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = poisson_distribution<int> (1);
 }
 
 
 AzBinner::AzBinner() {
 	ampt = false;
+	cooper_frye = false;
 	ampt_reaction_plane = false;
 	cbwc = false;
 	rotate_random = false;
 	event_plane = false;
-	mixed_sets = false;
 	mixed = false;
-	rand_data = false;
 	pile_up = false;
 	efficiency = false;
 	single_ratio = false;
 	n1_ratios = false;
 	check_charge = true;
 	rapidity = false;
+	resample = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -135,6 +140,9 @@ AzBinner::AzBinner() {
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
 
 	mix = Mixer(energy);
+
+//	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = poisson_distribution<int> (1);
 }
 
 
@@ -181,16 +189,8 @@ bool AzBinner::get_event_plane() {
 	return(event_plane);
 }
 
-bool AzBinner::get_mixed_sets() {
-	return(mixed_sets);
-}
-
 bool AzBinner::get_mixed() {
 	return(mixed);
-}
-
-bool AzBinner::get_rand_data() {
-	return(rand_data);
 }
 
 bool AzBinner::get_pile_up() {
@@ -220,6 +220,24 @@ int AzBinner::get_cent_binning() {
 int AzBinner::get_ref_num() {
 	return(ref_num);
 }
+
+int AzBinner::get_cent_bins() {
+	return cent_bins;
+}
+
+int AzBinner::get_cent_min() {
+	return cent_min;
+}
+
+int AzBinner::get_particle_bins() {
+	return particle_bins;
+}
+
+int AzBinner::get_particle_min() {
+	return particle_min;
+}
+
+
 
 // Setters
 
@@ -255,11 +273,11 @@ void AzBinner::set_sim_proton_dist_dataset(string path) {
 	sim_proton_dist_dataset = path;
 }
 
-void AzBinner::set_sim_eff_dist_path(string root_path, string hist_name) {
-	if ((int)sim_eff_dist_path.size() > 0) { sim_eff_dist_path.clear(); }
-	sim_eff_dist_path.push_back(root_path);
-	sim_eff_dist_path.push_back(hist_name);
-}
+//void AzBinner::set_sim_eff_dist_path(string root_path, string hist_name) {
+//	if ((int)sim_eff_dist_path.size() > 0) { sim_eff_dist_path.clear(); }
+//	sim_eff_dist_path.push_back(root_path);
+//	sim_eff_dist_path.push_back(hist_name);
+//}
 
 void AzBinner::set_energy(int energy) {
 	this->energy = energy;
@@ -271,6 +289,10 @@ void AzBinner::set_divs(vector<int> list) {
 
 void AzBinner::set_ampt(bool ampt) {
 	this->ampt = ampt;
+}
+
+void AzBinner::set_cooper_frye(bool cf) {
+	this->cooper_frye = cf;
 }
 
 void AzBinner::set_ampt_reaction_plane(bool rp) {
@@ -289,16 +311,8 @@ void AzBinner::set_event_plane(bool event_plane) {
 	this->event_plane = event_plane;
 }
 
-void AzBinner::set_mixed_sets(bool mixed) {
-	this->mixed_sets = mixed;
-}
-
-void AzBinner::set_mixed(bool mixed_roli) {
-	this->mixed = mixed_roli;
-}
-
-void AzBinner::set_rand_data(bool rand_data) {
-	this->rand_data = rand_data;
+void AzBinner::set_mixed(bool mixed) {
+	this->mixed = mixed;
 }
 
 void AzBinner::set_pile_up(bool pile_up) {
@@ -333,6 +347,10 @@ void AzBinner::set_rapidity(bool rapidity) {
 	this->rapidity = rapidity;
 }
 
+void AzBinner::set_resample(bool resample) {
+	this->resample = resample;
+}
+
 void AzBinner::set_pile_up_prob(double pile_up_prob) {
 	this->pile_up_prob = pile_up_prob;
 }
@@ -349,6 +367,18 @@ void AzBinner::set_ref_num(int ref_num) {
 	this->ref_num = ref_num;
 	if (refmultCorrUtil) { delete refmultCorrUtil; }
 	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+}
+
+void AzBinner::set_resample_alg(int alg_num) {
+	resample_alg = alg_num;
+}
+
+void AzBinner::set_n_resamples(int n) {
+	n_resamples = n;
+}
+
+void AzBinner::set_n_bootstraps(int n) {
+	n_bootstraps = n;
 }
 
 void AzBinner::set_particle(string particle) {
@@ -383,18 +413,97 @@ void AzBinner::set_stref_rand_seed(int seed) {
 	refmultCorrUtil->set_rand_seed(seed);
 }
 
+void AzBinner::set_sim_pars(simulation_pars pars) {
+	this->sim_pars = pars;
+}
+
+void AzBinner::set_cent_bins(int bins) {
+	cent_bins = bins;
+}
+
+void AzBinner::set_cent_min(int min) {
+	cent_min = min;
+}
+
+void AzBinner::set_particle_bins(int bins) {
+	particle_bins = bins;
+}
+
+void AzBinner::set_particle_min(int min) {
+	particle_min = min;
+}
+
 
 
 // Doers
 
 // Set everything necessary for read just in time (construction too early to set). 
 void AzBinner::prep_read() {
-	cut.set_values(energy, particle);
+	//cut.set_values(energy, particle);  // Resets values set in main, for now call in main, think of better way
 	set_energy(energy);
+	init_data();
 	mix.set_single_ratio(single_ratio);
-	mix.set_rand_rotate(rotate_random);
 	mix.set_n1_ratios(n1_ratios);
+	mix.set_rand_rotate(rotate_random);
+	mix.set_resample(resample);
+	mix.set_resample_alg(resample_alg);
+	mix.set_n_resamples(n_resamples);
+	mix.set_n_bootstraps(n_bootstraps);
+	mix.set_cent_bins(cent_bins);
+	mix.set_cent_min(cent_min);
+	mix.set_particle_bins(particle_bins);
+	mix.set_particle_min(particle_min);
+	mix.init_data();
 }
+
+
+void AzBinner::init_data() {
+	for (unsigned div_i=0; div_i < divs.size(); div_i++) {
+		data.push_back(vector<vector<vector<long>>> ());
+		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
+			data[div_i].push_back(vector<vector<long>> ());
+			for (int num_particles=0; num_particles < particle_bins; num_particles++) {
+				data[div_i][cent_i].push_back(vector<long> (num_particles + particle_min + 1, 0));
+			}
+		}
+	}
+
+	if (resample && n_bootstraps > 0) {
+		for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
+			data_bs.push_back(vector<vector<vector<vector<long>>>>());
+			for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
+				data_bs[div_i].push_back(vector<vector<vector<long>>>());
+				for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
+					data_bs[div_i][cent_i].push_back(vector<vector<long>>());
+					for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+						data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
+					}
+				}
+			}
+		}
+	}
+}
+
+
+//void AzBinner::init_data() {  // Old implementation, see if it still crashes
+//	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
+//		data.push_back(vector<vector<vector<long>>>());
+//		data_bs.push_back(vector<vector<vector<vector<long>>>>());
+//		for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
+//			data[div_i].push_back(vector<vector<long>>());
+//			data_bs[div_i].push_back(vector<vector<vector<long>>>());
+//			for (int bs_i = 0; bs_i < n_bootstraps; bs_i++) {
+//				data_bs[div_i][cent_i].push_back(vector<vector<long>>());
+//				for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+//					data_bs[div_i][cent_i][bs_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
+//				}
+//			}
+//			for (int num_particles = 0; num_particles < particle_bins; num_particles++) {
+//				data[div_i][cent_i].push_back(vector<long>(num_particles + particle_min + 1, 0));
+//			}
+//		}
+//	}
+//}
 
 
 // Get proton distribution for simulation from real data QA plots.
@@ -439,7 +548,6 @@ TH1D* AzBinner::get_sim_efficiency_dist() {
 
 //  For good events/tracks, azimuthally bin particles and save to data
 void AzBinner::process_event(const Event& event) {
-
 	// Check if each event is good. Analyze if so, continue if not.
 	if (check_event(event)) {
 		vector<double> good_particle_angles = {};
@@ -461,7 +569,9 @@ void AzBinner::process_event(const Event& event) {
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
 		// If there are enough good particles, calculate ratios for each division and save to data.
-		if (good_particle_angles.size() >= (unsigned)cut.min_multi) {
+		int num_particles = (int)good_particle_angles.size();
+		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
+		if (num_particles >= cut.min_multi) {
 			cent16_events.Fill(cent16_corr);
 			cent9_events.Fill(cent9_corr);
 			event_cut_hist.Fill("Enough Good Particles", 1);
@@ -473,7 +583,10 @@ void AzBinner::process_event(const Event& event) {
 			else {
 				cent = cent9_corr;
 			}
-			post_n_particles[cent].Fill((int)good_particle_angles.size());
+			post_n_particles[cent].Fill(num_particles);
+			post_ref[cent].Fill(event.get_ref());
+			post_refn[cent].Fill(event.get_refn());
+			int cent_bin = cent - cent_min;
 
 			TVector2 q(event.get_qx(), event.get_qy());
 			pre_ep_hist.Fill(0.5 * q.Phi());
@@ -484,9 +597,9 @@ void AzBinner::process_event(const Event& event) {
 			float ep_angle = 0.5 * q.Phi();
 			post_ep_hist.Fill(ep_angle);
 
-			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmunt n in place of centrality from here on.
+//			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
 
-			if (ampt) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
+			if (ampt || cooper_frye) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
 				double rand_angle = trand->Rndm() * 2 * M_PI;
 				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
 				if (ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
@@ -498,8 +611,132 @@ void AzBinner::process_event(const Event& event) {
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if (mixed) { mix.append_event(good_particle_angles, cent, ep_angle, event.get_vz()); }
-			if (mixed_sets) { mix_sets.append_event(good_particle_angles, event.get_refn()); }
-			if (rand_data) { random.append_event((int)good_particle_angles.size(), event.get_refn(), trand); }
+
+			if (event_plane) { // If event_plane flag then rotate all angles by -event_plane.
+				good_particle_angles = rotate_angles(good_particle_angles, -ep_angle);
+			}
+			else if (rotate_random) { // If rotate_random flag then rotate all angles by random angle between 0 and 2pi
+				double rand_angle = trand->Rndm() * 2 * M_PI;
+				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
+				//q.Rotate(rand_angle);  // Untested
+				//event.set_event_plane(rotate_angle(event_plane, rand_angle));  // Need to rotate event plane if it's used after this point. Currently is not.
+			}
+
+			int num_particles_bin = num_particles - particle_min;
+			if (resample) {
+				sort(good_particle_angles.begin(), good_particle_angles.end());
+				for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
+					double div_rads = (double)divs[div_bin] / 180 * M_PI;
+					vector<int> binned_event;
+					if (resample_alg == 4) {
+						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, trand);
+					} else if (resample_alg == 3) {
+						binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);
+					}
+					else { cout << "Didn't find matching resample algorithm for #" << resample_alg << endl; }
+
+					// Save binned values to data
+					vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
+						data_event[num_in_bin] += binned_event[num_in_bin];
+					}
+
+					// Save binned values to bootstraps
+					for (int i = 0; i < n_bootstraps; i++) {
+						vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
+						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+							for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
+								data_event_bs[num_in_bin] += binned_event[num_in_bin];
+							}
+						}
+					}
+				}
+			}
+			else {
+				for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
+					int bin_num = (int)360 / divs[div_bin];
+					double div_rads = (double)divs[div_bin] / 180 * M_PI;
+					if (single_ratio) { bin_num = 1; }
+					else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+					vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+
+					// Save ratio values to data
+					vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+					for (int particles_in_bin : event_ratios) {
+						data_event[particles_in_bin]++;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+//  For good events/tracks, azimuthally bin particles and save to data
+void AzBinner::process_event_pt_n(const Event& event) {
+	// Check if each event is good. Analyze if so, continue if not.
+	if (check_event(event)) {
+		vector<double> good_particle_angles = {};
+		vector<double> good_particle_pts = {};
+
+		// Iterate over particles in event and add corresponding phi to good_particle_angles if particle good.
+		for (const Track& particle : event.get_particles()) {
+			if (check_particle_good(particle)) {
+				if (efficiency) {  // Skip good particle with chance efficiency_prob
+					if (trand->Rndm() < efficiency_prob) { continue; }
+				}
+				good_particle_angles.push_back(particle.get_phi());
+				good_particle_pts.push_back(particle.get_pt());
+			}
+		}
+
+		// Get centrality bin for event from ref_multn value
+		refmultCorrUtil->init(event.get_run());
+		refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+		int cent16_corr = refmultCorrUtil->getCentralityBin16();
+		int cent9_corr = refmultCorrUtil->getCentralityBin9();
+
+		// If there are enough good particles, calculate ratios for each division and save to data.
+		int num_particles = (int)good_particle_angles.size();
+		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
+		if (num_particles >= cut.min_multi) {
+			cent16_events.Fill(cent16_corr);
+			cent9_events.Fill(cent9_corr);
+			event_cut_hist.Fill("Enough Good Particles", 1);
+
+			int cent;
+			if (cent_binning == 16) {
+				cent = cent16_corr;
+			}
+			else {
+				cent = cent9_corr;
+			}
+			post_n_particles[cent].Fill(num_particles);
+			int cent_bin = cent - cent_min;
+
+			TVector2 q(event.get_qx(), event.get_qy());
+			pre_ep_hist.Fill(0.5 * q.Phi());
+			for (double& angle : good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
+				TVector2 q_new(cos(2 * angle), sin(2 * angle));
+				q -= q_new;
+			}
+			float ep_angle = 0.5 * q.Phi();
+			post_ep_hist.Fill(ep_angle);
+
+			//			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
+
+			if (ampt || cooper_frye) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
+				double rand_angle = trand->Rndm() * 2 * M_PI;
+				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
+				if (ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
+				double ep_rotate = rotate_angle(ep_angle, rand_angle);
+				while (ep_rotate >= M_PI) { ep_rotate -= M_PI; }  // Force into range of [0, pi)
+				while (ep_rotate < 0) { ep_rotate += M_PI; }
+				ep_angle = ep_rotate;
+			}
+
+			// If mixed/rand flagged append event to mix/rand object.
+			if (mixed) { mix.append_event(good_particle_angles, cent, ep_angle, event.get_vz()); }
 
 
 			if (event_plane) { // If event_plane flag then rotate all angles by -event_plane.
@@ -512,17 +749,43 @@ void AzBinner::process_event(const Event& event) {
 				//event.set_event_plane(rotate_angle(event_plane, rand_angle));  // Need to rotate event plane if it's used after this point. Currently is not.
 			}
 
+			int num_particles_bin = num_particles - particle_min;
+			if (resample) {
+				sort(good_particle_angles.begin(), good_particle_angles.end());
+				for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
+					double div_rads = (double)divs[div_bin] / 180 * M_PI;
+					vector<int> binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);
 
-			for (auto& div : divs) {
-				int bin_num = (int)360 / div;
-				double div_rads = (double)div / 180 * M_PI;
-				if (single_ratio) { bin_num = 1; }
-				else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
-				vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+					// Save binned values to data
+					vector<long>& data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+					for (unsigned num_in_bin = 0; num_in_bin < binned_event.size(); num_in_bin++) {
+						data_event[num_in_bin] += binned_event[num_in_bin];
+					}
 
-				// Save ratio values to data
-				for (int particles_in_bin : event_ratios) {
-					data[div][cent][good_particle_angles.size()][particles_in_bin]++;
+					// Save binned values to bootstraps
+					for (int i = 0; i < n_bootstraps; i++) {
+						vector<long>& data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
+						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+							for (unsigned num_in_bin = 0; num_in_bin < binned_event.size(); num_in_bin++) {
+								data_event_bs[num_in_bin] += binned_event[num_in_bin];
+							}
+						}
+					}
+				}
+			}
+			else {
+				for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
+					int bin_num = (int)360 / divs[div_bin];
+					double div_rads = (double)divs[div_bin] / 180 * M_PI;
+					if (single_ratio) { bin_num = 1; }
+					else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+					vector<int> event_ratios = get_Rs(good_particle_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+
+					// Save ratio values to data
+					vector<long>& data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+					for (int particles_in_bin : event_ratios) {
+						data_event[particles_in_bin]++;
+					}
 				}
 			}
 		}
@@ -642,11 +905,9 @@ bool AzBinner::check_particle_good(const Track& particle) {
 
 	double pt = particle.get_pt();
 	double eta = particle.get_eta();
-	//cout << "eta: " << eta << endl;
 	if (rapidity) {
 		float m = cut.particle_mass[this->particle];
 		float rapid = log((sqrt(pow(m, 2) + pow(pt, 2) * pow(cosh(eta), 2)) + pt * sinh(eta)) / sqrt(pow(m, 2) + pow(pt, 2)));
-		//cout << "Rapidity: " << rapid << " pt: " << pt << " eta: " << eta << " m: " << m << " min_rapid: " << cut.min_rapid << " max_rapid: " << cut.max_rapid << endl;
 		pre_rapid_hist.Fill(rapid);
 		if (!(rapid >= cut.min_rapid && rapid <= cut.max_rapid)) { return false; }
 		post_rapid_hist.Fill(rapid);
@@ -664,7 +925,7 @@ bool AzBinner::check_particle_good(const Track& particle) {
 	if (!(dca >= cut.min_dca && dca <= cut.max_dca)) { return false; }
 	track_cut_hist.Fill("Good dca", 1);
 
-	if (particle.get_nhits_fit() <= cut.min_dca) { return false; }
+	if (particle.get_nhits_fit() <= cut.min_nhits_fit) { return false; }
 	track_cut_hist.Fill("Good nhitsfit", 1);
 
 	double p = particle.get_p();
@@ -802,6 +1063,8 @@ void AzBinner::define_qa() {
 
 	for (int i = -1; i < cent_binning; i++) {
 		post_n_particles[i] = TH1D(("Particle_Dist_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Particle Distribution", particle_dist_hist_max + 1, -0.5, particle_dist_hist_max + 0.5);
+		post_ref[i] = TH1D(("RefMult_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Reference Multiplicity", 801, -0.5, 800.5);
+		post_refn[i] = TH1D(("RefMultn_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Reference Multiplicity N", 801, -0.5, 800.5);
 	}
 
 }
@@ -865,10 +1128,13 @@ void AzBinner::fill_post_event_qa(const Event& event) {
 
 // Write binned data to histogram text files, raw and mixed
 void AzBinner::write_binner_data() {
-	write_tree_data("local", data, out_path + to_string(energy) + "GeV/");
+	if (resample) {
+		write_tree_data_bootstrap("local", data, data_bs, divs, cent_min, particle_min, out_path + to_string(energy) + "GeV/");
+	}
+	else {
+		write_tree_data("local", data, divs, cent_min, particle_min, out_path + to_string(energy) + "GeV/");
+	}
 	if (mixed) { mix.write_mixed_data(); }
-	if (mixed_sets) { mix_sets.write_mixed_data(); }
-	if (rand_data) { random.write_random_data(); }
 }
 
 
@@ -891,13 +1157,12 @@ void AzBinner::write_info_file() {
 		out << "particle: " << particle << endl;
 
 		out << "ampt: " << boolalpha << ampt << endl;
+		out << "cooper_frye: " << boolalpha << cooper_frye << endl;
 		out << "ampt_reaction_plane: " << boolalpha << ampt_reaction_plane << endl;
 		out << "cbwc: " << boolalpha << cbwc << endl;
 		out << "rotate_random: " << boolalpha << rotate_random << endl;
 		out << "event_plane: " << boolalpha << event_plane << endl;
-		out << "mixed_sets: " << boolalpha << mixed_sets << endl;
 		out << "mixed: " << boolalpha << mixed << endl;
-		out << "rand_data: " << boolalpha << rand_data << endl;
 		out << "pile_up: " << boolalpha << pile_up << endl;
 		out << "efficiency: " << boolalpha << efficiency << endl;
 		out << "single_ratio: " << boolalpha << single_ratio << endl;
@@ -913,10 +1178,24 @@ void AzBinner::write_info_file() {
 		out << "cent_binning: " << cent_binning << endl;
 		out << "ref_num: " << ref_num << endl;
 
+		out << "cent_bins: " << cent_bins << endl;
+		out << "cent_min: " << cent_min << endl;
+		out << "particle_bins: " << particle_bins << endl;
+		out << "particle_min: " << particle_min << endl;
+
 		out << "tree_reader_seed: " << tree_reader_seed << endl;
 		out << "mixer_seed: " << mixer_seed << endl;
 		out << "file_shuffle_seed: " << file_shuffle_seed << endl;
 		out << "stref_seed: " << stref_seed << endl;
+
+		out << "resample: " << boolalpha << resample << endl;
+		out << "resample algorithm: " << to_string(resample_alg) << endl;
+		out << "n_resamples: " << to_string(n_resamples) << endl;
+		out << "n_bootstraps: " << to_string(n_bootstraps) << endl;
+		out << "mix resample: " << boolalpha << mix.get_resample() << endl;
+		out << "mix n_resamples: " << to_string(mix.get_n_resamples()) << endl;
+		out << "mix n_bootstraps: " << to_string(mix.get_n_bootstraps()) << endl;
+
 
 		out << "min_beta: " << to_string(cut.min_beta) << endl;
 		out << "max_beta: " << to_string(cut.max_beta) << endl;
@@ -941,12 +1220,29 @@ void AzBinner::write_info_file() {
 
 		out << "min_multi: " << to_string(cut.min_multi) << endl;
 
-		out << "sim p_group: " << to_string(sim.get_p_group()) << endl;
-		out << "sim spread_sigma: " << to_string(sim.get_spread_sigma()) << endl;
+		out << "sim p_group: " << to_string(sim_pars.p_group) << endl;
+		out << "sim spread_sigma: " << to_string(sim_pars.spread_sigma) << endl;
+		out << "sim amp_group: " << to_string(sim_pars.amp_group) << endl;
+		out << "sim base: " << to_string(sim_pars.base) << endl;
+		out << "sim points: " << to_string(sim_pars.points) << endl;
+		out << "sim wrap sigmas: " << to_string(sim_pars.wrap_sigmas) << endl;
+		out << "sim x_low: " << to_string(sim_pars.x_low) << endl;
+		out << "sim x_up: " << to_string(sim_pars.x_up) << endl;
+		out << "sim min_protons: " << to_string(sim_pars.min_protons) << endl;
+		out << "sim proton_dist: " << sim_pars.proton_dist << endl;
+		out << "sim particle_mean: " << to_string(sim_pars.particle_mean) << endl;
+		out << "sim particle_max: " << to_string(sim_pars.particle_max) << endl;
+		out << "sim hom_eff: " << to_string(sim_pars.hom_eff) << endl;
+		out << "sim v2: " << to_string(sim_pars.v2) << endl;
+		out << "sim ep_res: " << to_string(sim_pars.ep_res) << endl;
 
 		out << "mix single_ratio: " << boolalpha << mix.get_single_ratio() << endl;
 		out << "mix n1_ratios: " << boolalpha << mix.get_n1_ratios() << endl;
 		out << "mix rand_rotate: " << boolalpha << mix.get_rand_rotate() << endl;
+		out << "mix resample: " << boolalpha << mix.get_resample() << endl;
+		out << "mix resample algorithm: " << to_string(mix.get_resample_alg()) << endl;
+		out << "mix n_resamples: " << mix.get_n_resamples() << endl;
+		out << "mix n_bootstraps: " << mix.get_n_bootstraps() << endl;
 		out << "mix event_plane_rotate: " << boolalpha << mix.get_event_plane_rotate() << endl;
 		out << "mix max_events: " << to_string(mix.get_max_events()) << endl;
 		out << "mix min_events: " << to_string(mix.get_min_events()) << endl;
@@ -955,6 +1251,10 @@ void AzBinner::write_info_file() {
 		out << "mix ep_bins: " << to_string(mix.get_ep_bins()) << endl;
 		out << "mix vz_range: " << to_string(mix.get_vz_range().first) << ", " << to_string(mix.get_vz_range().second) << endl;
 		out << "mix ep_range: " << to_string(mix.get_ep_range().first) << ", " << to_string(mix.get_ep_range().second) << endl;
+		out << "mix cent_bins: " << mix.get_cent_bins() << endl;
+		out << "mix cent_min: " << mix.get_cent_min() << endl;
+		out << "mix particle_bins: " << mix.get_particle_bins() << endl;
+		out << "mix particle_min: " << mix.get_particle_min() << endl;
 
 		out << "Ampt Particle PIDs: ";
 		for (auto& pid : ampt_particle_pid) { out << to_string(pid) << " "; }
@@ -1079,10 +1379,9 @@ void AzBinner::write_qa() {
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
 
-	for (auto hist : post_n_particles) {
-		hist.second.Write();
-	}
-
+	for (auto hist : post_n_particles) { hist.second.Write(); }
+	for (auto hist : post_ref) { hist.second.Write(); }
+	for (auto hist : post_refn) { hist.second.Write(); }
 
 	// Make bar plots for event/track cut histograms
 	TCanvas event_cut_maker_can("event_cut_maker_can");

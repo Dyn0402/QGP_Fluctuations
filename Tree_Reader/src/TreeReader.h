@@ -14,6 +14,9 @@
 #include <chrono>
 #include <mutex>
 
+#include "sys/types.h"
+//#include "sys/sysinfo.h"
+
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TH2.h>
@@ -45,6 +48,7 @@ public:
 	string get_tree_name();
 	string get_event_cut_hist_name();
 	string get_track_cut_hist_name();
+	string get_particle();
 
 	// Setters
 	void set_in_path(string path);
@@ -57,12 +61,13 @@ public:
 	void set_sim_eff_dist_path(string root_path, string hist_name);
 	void set_energy(int energy);
 	void set_ampt(bool ampt);
+	void set_cooper_frye(bool cf);
 	void set_pile_up(bool pile_up);
-	//void set_sim_eff(bool sim_eff);
-	//void set_sim_flow(bool sim_flow);
+	void set_sim_eff(bool sim_eff);
+	void set_sim_flow(bool sim_flow);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_particle(string particle);
-	//void set_particle_dist_hist_max(int max);
+//	void set_particle_dist_hist_max(int max);
 	void set_ampt_particle_pid(vector<int> pid);
 	void set_file_list(vector<string> *file_list);
 
@@ -73,7 +78,7 @@ public:
 
 	// Doers
 	void read_trees();
-	//void sim_events(map<int, int> cent_num_events);
+	void sim_events(map<int, int> cent_num_events);
 
 	// Attributes
 	clock_t start = clock();
@@ -86,16 +91,21 @@ public:
 	track_defaults track_defs;  // Just for AMPT default values
 	AmptCentralityMaker ampt_cent;
 
+	Simulator sim;
+
 private:
 	// Attributes
 	mutex *mtx = NULL;
+	//struct sysinfo mem_info;
 	vector<string> *file_list;
 	int file_wait_sleep = 1;  // Seconds to wait for path to clear up
+	float percent_print = 2;  // Percentage of files interval at which to print update
 
 	TRandom3* trand = new TRandom3(0);
 
 	tree_branches branches;
 	ampt_tree_branches ampt_branches;
+	cooper_frye_tree_branches cooper_frye_branches;
 
 	string tree_name = "tree";
 	string event_cut_hist_name = "Event Cut Hist";
@@ -110,18 +120,22 @@ private:
 	string ampt_type = "string_melting";
 
 	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
+	string sim_dist_qa_name = "QA_";
 	vector<string> sim_eff_dist_path {};
 
 	int energy;
 	int ref_num;
 	string particle = "proton";
-	vector<int> ampt_particle_pid{ 2212 };
+	vector<int> pdg_particle_pid{ 2212 };
 
 	int tree_reader_seed = 0;
 	int file_shuffle_seed = 0;
 
 	bool ampt;
+	bool cooper_frye;
 	bool pile_up;
+	bool sim_eff;
+	bool sim_flow;
 
 	double pile_up_prob;
 
@@ -130,10 +144,12 @@ private:
 	// Doers
 	void read_tree(TTree* tree);
 	void read_ampt_tree(TTree* tree);
+	void read_cooper_frye_tree(TTree* tree);
 	void read_tree_debug(TTree* tree);
 
 	void set_branches(TTree* tree);
 	void set_ampt_branches(TTree* tree);
+	void set_cooper_frye_branches(TTree* tree);
 
 	void set_binner(AzBinner& binner);
 

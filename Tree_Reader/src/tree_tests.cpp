@@ -31,8 +31,11 @@ void set_test_ampt_branches(TTree* tree, int ref_num);
 
 void tree_read_speed() {
 	string file_dir;
-	if (platform == "lin") { file_dir = "/media/ssd/Research/ampt_tree_read_compare/test_set/"; }
-	else if (platform == "win") { file_dir = "E:/Research/ampt_tree_read_compare/test_set/"; }
+//	if (platform == "lin") { file_dir = "/media/ssd/Research/ampt_tree_read_compare/test_set/"; }
+//	else if (platform == "win") { file_dir = "E:/Research/ampt_tree_read_compare/test_set/"; }
+
+	if (platform == "lin") { file_dir = "/mnt/c/Users/Dylan/Research/ampt_tree_read_compare/test_set/11GeV/"; }
+	else if (platform == "win") { file_dir = "C:/Users/Dylan/Research/ampt_tree_read_compare/test_set/11GeV/"; }
 
 	ampt_tree_branches ampt_branches;
 
@@ -40,6 +43,8 @@ void tree_read_speed() {
 
 	unsigned num_files = in_files.size();
 	unsigned file_index = 1;
+
+	cout << "Number of files: " << num_files << endl;
 
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys = chrono::system_clock::now();

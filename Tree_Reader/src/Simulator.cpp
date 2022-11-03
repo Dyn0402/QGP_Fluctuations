@@ -10,10 +10,12 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+//#include <random>
 
 #include <TRandom3.h>
 #include <TCanvas.h>
 #include <TH1.h>
+#include <TF1.h>
 
 #include "ratio_methods.h"
 #include "Simulator.h"
@@ -48,19 +50,27 @@ Simulator::~Simulator() {
 // Getters
 
 double Simulator::get_p_group() {
-	return(pars.p_group);
+	return pars.p_group;
 }
 
 double Simulator::get_spread_sigma() {
-	return(pars.spread_sigma);
+	return pars.spread_sigma;
+}
+
+double Simulator::get_amp_group() {
+	return pars.amp_group;
 }
 
 string Simulator::get_proton_dist_type() {
-	return(pars.proton_dist);
+	return pars.proton_dist;
 }
 
 TH1D* Simulator::get_efficiency_dist() {
-	return(efficiency_dist);
+	return efficiency_dist;
+}
+
+simulation_pars Simulator::get_sim_pars() {
+	return pars;
 }
 
 
@@ -71,6 +81,10 @@ void Simulator::set_p_group(double p_group) {
 
 void Simulator::set_spread_sigma(double sig) {
 	pars.spread_sigma = sig;
+}
+
+void Simulator::set_amp_group(double amp) {
+	pars.amp_group = amp;
 }
 
 void Simulator::set_min_protons(int protons) {
@@ -135,6 +149,27 @@ void Simulator::set_eff_flow() {
 	simulate_event = bind(&Simulator::sim_event_eff_flow, this, placeholders::_1);
 }
 
+void Simulator::set_anti_clust() {
+	simulate_event = bind(&Simulator::sim_event_anticlust, this, placeholders::_1);
+	string gaus_wrap1_name = "gaus_wrap1_" + to_string(job_energy);
+	string prob_name = "anti_clust_prob_" + to_string(job_energy);
+	gaus_wrap1 = new TF1(gaus_wrap1_name.data(), "gaus(0) + gaus(3) + gaus(6)", -2 * M_PI, 4 * M_PI);
+	prob = new TF1(prob_name.data(), "1 - gaus(0) - gaus(3) - gaus(6)", 0, 2 * M_PI);
+	gaus_wrap1->SetParameters(1, M_PI, pars.spread_sigma, 1, M_PI - 2 * M_PI, pars.spread_sigma, 1, M_PI + 2 * M_PI, pars.spread_sigma);
+	double amp = gaus_wrap1->Eval(M_PI);
+	prob->SetParameters(1 / amp, M_PI, pars.spread_sigma, 1 / amp, M_PI - 2 * M_PI, pars.spread_sigma, 1 / amp, M_PI + 2 * M_PI, pars.spread_sigma);
+//	UNCOMMENT BELOW
+//	prob->GetRandom(sim_rand);
+}
+
+void Simulator::set_clust_multi() {
+	simulate_event = bind(&Simulator::sim_event_clust_multi, this, placeholders::_1);
+}
+
+void Simulator::set_clust_final() {
+	simulate_event = bind(&Simulator::sim_event_clust_final, this, placeholders::_1);
+}
+
 void Simulator::set_hom_eff(double eff) {
 	pars.hom_eff = eff;
 }
@@ -156,6 +191,10 @@ void Simulator::set_flow(double v2, double res, double chi_acc, int event_plane_
 		ep_dist->SetBinContent(bin, event_plane(res, event_plane_n*ep_dist->GetBinCenter(bin), chi_acc));
 	}
 
+}
+
+void Simulator::set_job_energy(int num) {
+	job_energy = num;
 }
 
 
@@ -187,6 +226,185 @@ void Simulator::sim_event(Event &event) {
 
 	vector<Track> tracks;
 	for(double& angle:proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
+// Simulate single event with anti-clustering and return simulated proton angles.
+// DEPRICATED
+void Simulator::sim_event_anticlust(Event& event) {
+	double group_angle, new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	if (n_protons > 0) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		proton_angles.push_back(new_angle);
+	}
+
+	while ((int)proton_angles.size() < n_protons) {
+		if (sim_rand->Rndm() < pars.p_group) {
+			// Need unique names
+			double last_proton = proton_angles.back();
+//			gaus_wrap1->SetParameters(1, last_proton, pars.spread_sigma, 1, last_proton - 2 * M_PI, pars.spread_sigma, 1, last_proton + 2 * M_PI, pars.spread_sigma);
+//			double amp = gaus_wrap1->Eval(last_proton);
+//			prob->SetParameters(1 / amp, last_proton, pars.spread_sigma, 1 / amp, last_proton - 2 * M_PI, pars.spread_sigma, 1 / amp, last_proton + 2 * M_PI, pars.spread_sigma);
+//			UNCOMMENT BELOW!!! Passing sim_rand only in new ROOT versions
+//			group_angle = prob->GetRandom(0, 2 * M_PI, sim_rand) - (M_PI - last_proton);  // Generate at center then shift
+			group_angle = fmod(group_angle, 2 * M_PI);  // Force to range [0, 2*pi)
+			if (group_angle < 0) { group_angle += 2 * M_PI; }
+			proton_angles.push_back(group_angle);
+		}
+		else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+			proton_angles.push_back(new_angle);
+		}
+	}
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
+// Simulate single event with multi-particle anti-clustering and return simulated proton angles.
+void Simulator::sim_event_clust_multi(Event& event) {
+	double new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	if (n_protons > 0) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		proton_angles.push_back(new_angle);
+	}
+
+	int wrap_num = ceil(pars.wrap_sigmas * pars.spread_sigma / (2 * M_PI));  // Wrap out to at least wrap_sigmas
+	double x_range = pars.x_up - pars.x_low;
+	vector<double> prob_vec(pars.points, 1);
+	double x, x_val_up;
+	while ((int)proton_angles.size() < n_protons) {
+		vector<double> cdf(pars.points + 1, 0);
+		int cdf_index = 0;
+		for (int i=0; i<pars.points; i++) {
+			x = pars.x_low + (i + 0.5) * x_range / pars.points;  // Generate prob points in middle of bins
+			double prob_update = pars.base + pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma);
+			for (int wrap_i = 1; wrap_i <= wrap_num; wrap_i++) {
+				prob_update += pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI * wrap_i, pars.spread_sigma) +  // wrap pdf to deal with
+					pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI * wrap_i, pars.spread_sigma);  // periodic boundary
+			}
+			prob_vec[i] *= prob_update;
+			cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
+			cdf_index++;
+		}
+
+		double norm = cdf[pars.points];  // Last point is max, full integral
+		for (double &x : cdf) {
+			x /= norm;
+		}
+
+		double cdf_rand = sim_rand->Rndm();
+		int i = 1;  // cdf[0] = 0 and rand > 0 so no need to check.
+		while (cdf[i] < cdf_rand) { i++; }
+		x_val_up = pars.x_low + i * x_range / pars.points;  // Upper bin edge
+		new_angle = x_val_up - x_range / pars.points / (cdf[i] - cdf[i - 1]) * (cdf[i] - cdf_rand);  // Linear interpolation
+
+		proton_angles.push_back(new_angle);
+	}
+
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
+// Simulate single event with multi-particle anti-clustering as sim_event_clust_multi. Use final pdf to genrate and return simulated proton angles.
+void Simulator::sim_event_clust_final(Event& event) {
+	double new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	if (n_protons > 0) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		proton_angles.push_back(new_angle);
+	}
+
+	int wrap_num = ceil(pars.wrap_sigmas * pars.spread_sigma / (2 * M_PI));  // Wrap out to at least wrap_sigmas
+	double x_range = pars.x_up - pars.x_low;
+	vector<double> prob_vec(pars.points, 1);
+	double x, x_val_up;
+	while ((int)proton_angles.size() < n_protons) {
+		vector<double> cdf(pars.points + 1, 0);
+		int cdf_index = 0;
+		for (int i = 0; i < pars.points; i++) {
+			x = pars.x_low + (i + 0.5) * x_range / pars.points;  // Generate prob points in middle of bins
+			double prob_update = pars.base + pars.amp_group * gaus_kernel(x, new_angle, pars.spread_sigma);
+			for (int wrap_i = 1; wrap_i <= wrap_num; wrap_i++) {
+				prob_update += pars.amp_group * gaus_kernel(x, new_angle - 2 * M_PI * wrap_i, pars.spread_sigma) +  // wrap pdf to deal with
+					pars.amp_group * gaus_kernel(x, new_angle + 2 * M_PI * wrap_i, pars.spread_sigma);  // periodic boundary
+			}
+			prob_vec[i] *= prob_update;
+			cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
+			cdf_index++;
+		}
+
+		double norm = cdf[pars.points];  // Last point is max, full integral
+		for (double& x : cdf) {
+			x /= norm;
+		}
+
+		double cdf_rand = sim_rand->Rndm();
+		int i = 1;  // cdf[0] = 0 and rand > 0 so no need to check.
+		while (cdf[i] < cdf_rand) { i++; }
+		x_val_up = pars.x_low + i * x_range / pars.points;  // Upper bin edge
+		new_angle = x_val_up - x_range / pars.points / (cdf[i] - cdf[i - 1]) * (cdf[i] - cdf_rand);  // Linear interpolation
+
+		proton_angles.push_back(new_angle);
+	}
+
+	// Use final pdf to distribute particles
+	vector<double> cdf(pars.points + 1, 0);
+	int cdf_index = 0;
+	for (int i = 0; i < pars.points; i++) {
+		x = pars.x_low + (i + 0.5) * x_range / pars.points;  // Generate prob points in middle of bins
+		cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
+		cdf_index++;
+	}
+
+	double norm = cdf[pars.points];  // Last point is max, full integral
+	for (double& x : cdf) {
+		x /= norm;
+	}
+	
+	proton_angles.clear();  // Clear protons placed in previous algorithm
+	while ((int)proton_angles.size() < n_protons) {
+		double cdf_rand = sim_rand->Rndm();
+		int i = 1;  // cdf[0] = 0 and rand > 0 so no need to check.
+		while (cdf[i] < cdf_rand) { i++; }
+		x_val_up = pars.x_low + i * x_range / pars.points;  // Upper bin edge
+		new_angle = x_val_up - x_range / pars.points / (cdf[i] - cdf[i - 1]) * (cdf[i] - cdf_rand);  // Linear interpolation
+
+		proton_angles.push_back(new_angle);
+	}	
+
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
 		Track track(track_defs);
 		track.set_phi(angle);
 		tracks.push_back(track);
@@ -440,15 +658,17 @@ void Simulator::sim_event_eff_new(Event &event) {
 
 int Simulator::get_protons() {
 	int n = 0;
-	if(pars.proton_dist == "hist") {
+	if (pars.proton_dist == "hist") {
 		n = proton_dist_hist->GetRandom();
-	}else if(pars.proton_dist == "poisson") {
+	}else if (pars.proton_dist == "poisson") {
 		n = sim_rand->Poisson(pars.particle_mean);
-	} else if(pars.proton_dist == "flat") {
-		n = (int)(sim_rand->Rndm() * pars.particle_max + 0.5);
+	} else if (pars.proton_dist == "flat") {
+		n = (int)(sim_rand->Rndm() * (pars.particle_max - pars.particle_min + 1)) + pars.particle_min;
+	} else if (pars.proton_dist == "single") {
+		n = (int)pars.particle_mean;
 	}
 
-	return (n);
+	return n;
 }
 
 

@@ -141,6 +141,24 @@ void set_ampt_tree_branches(TTree* tree, ampt_tree_branches &branches) {
 }
 
 
+// Set tree branch addresses and return them in a tree_branches struct.
+void set_cooper_frye_tree_branches(TTree* tree, cooper_frye_tree_branches &branches) {
+	tree->SetBranchAddress("event", &branches.event);
+
+	tree->SetBranchAddress("refmult", &branches.refmult);
+	tree->SetBranchAddress("refmult2", &branches.refmult2);
+	tree->SetBranchAddress("refmult3", &branches.refmult3);
+
+	tree->SetBranchAddress("qx", &branches.qx);
+	tree->SetBranchAddress("qy", &branches.qy);
+
+	tree->SetBranchAddress("pid", &branches.pid, &branches.branch_pid);
+	tree->SetBranchAddress("px", &branches.px, &branches.branch_px);
+	tree->SetBranchAddress("py", &branches.py, &branches.branch_py);
+	tree->SetBranchAddress("pz", &branches.pz, &branches.branch_pz);
+}
+
+
 // Get ampt tree leaves and return them in a tree_leaves struct.
 ampt_tree_leaves get_ampt_tree_leaves(TTree* tree, int ref) {
 	ampt_tree_leaves leaves;

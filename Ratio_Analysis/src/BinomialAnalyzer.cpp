@@ -17,6 +17,8 @@
 #include <TLegend.h>
 #include <TLine.h>
 #include <TPad.h>
+#include <TMath.h>
+#include <TF1.h>
 
 #include "BinomialAnalyzer.h"
 

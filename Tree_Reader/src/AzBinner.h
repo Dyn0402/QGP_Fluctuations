@@ -5,6 +5,7 @@
 #include <ctime>
 #include <chrono>
 #include <mutex>
+#include <random>
 
 #include <TTree.h>
 #include <TLeaf.h>
@@ -22,8 +23,6 @@
 
 #include "AmptCentralityMaker.h"
 #include "Mixer.h"
-#include "MixerSets.h"
-#include "Randomizer.h"
 #include "Simulator.h"
 #include "TreeBranches.h"
 #include "TreeCuts.h"
@@ -47,9 +46,7 @@ public:
 	bool get_cbwc();
 	bool get_rotate_random();
 	bool get_event_plane();
-	bool get_mixed_sets();
 	bool get_mixed();
-	bool get_rand_data();
 	bool get_pile_up();
 	bool get_efficiency();
 	bool get_single_ratio();
@@ -57,6 +54,10 @@ public:
 	double get_efficiency_prob();
 	int get_cent_binning();
 	int get_ref_num();
+	int get_cent_bins();
+	int get_cent_min();
+	int get_particle_bins();
+	int get_particle_min();
 
 	// Setters
 	void set_in_path(string path);
@@ -67,17 +68,16 @@ public:
 	void set_qa_name(string name);
 	void set_set_name(string set_name);
 	void set_sim_proton_dist_dataset(string path);
-	void set_sim_eff_dist_path(string root_path, string hist_name);
+//	void set_sim_eff_dist_path(string root_path, string hist_name);
 	void set_energy(int energy);
 	void set_divs(vector<int> list);
 	void set_ampt(bool ampt);
+	void set_cooper_frye(bool cf);
 	void set_ampt_reaction_plane(bool rp);
 	void set_cbwc(bool cbwc);
 	void set_rotate_random(bool rotate_random);
 	void set_event_plane(bool event_plane);
-	void set_mixed_sets(bool mixed);
-	void set_mixed(bool mixed_roli);
-	void set_rand_data(bool rand_data);
+	void set_mixed(bool mixed);
 	void set_pile_up(bool pile_up);
 	void set_efficiency(bool efficiency);
 	void set_single_ratio(bool single_ratio);
@@ -86,18 +86,28 @@ public:
 	void set_sim_eff(bool sim_eff);
 	void set_sim_flow(bool sim_flow);
 	void set_rapidity(bool rapidity);
+	void set_resample(bool resample);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
 	void set_ref_num(int ref_num);
+	void set_resample_alg(int alg_num);
+	void set_n_resamples(int n);
+	void set_n_bootstraps(int n);
 	void set_particle(string particle);
 	void set_particle_dist_hist_max(int max);
 	void set_ampt_particle_pid(vector<int> pid);
+	void set_sim_pars(simulation_pars pars);
 
 	void set_tree_reader_rand_seed(int seed = 0);
 	void set_mixer_rand_seed(int seed = 0);
 	void set_file_shuffle_rand_seed(int seed = 0);
 	void set_stref_rand_seed(int seed = 0);
+
+	void set_cent_bins(int bins);
+	void set_cent_min(int min);
+	void set_particle_bins(int bins);
+	void set_particle_min(int min);
 
 	// Doers
 	void prep_read();
@@ -108,25 +118,30 @@ public:
 	void write_qa();
 	void write_binner_data();
 	void process_event(const Event& event);
+	void process_event_pt_n(const Event& event);
 
 	// Attributes
 	TreeCuts cut;
 	clock_t start = clock();
 	chrono::system_clock::time_point start_sys;
-	MixerSets mix_sets;
 	Mixer mix;
-	Randomizer random;
 
-	Simulator sim;
 	AmptCentralityMaker ampt_cent;
 
 private:
 	// Attributes
-	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
+//	map<int, map<int, map<int, vector<long>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
+//	map<int, map<int, map<int, map<int, vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
+	vector<vector<vector<vector<long>>>> data; //ratios[divisions][centrality][num particles in event][num particles in bin]
+	vector<vector<vector<vector<vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
 	StRefMultCorr* refmultCorrUtil;
 	TRandom3* trand = new TRandom3(0);
+//	mt19937_64 c_rand;
+//	poisson_distribution<int> pois_dist;
+
 	tree_branches branches;
 	ampt_tree_branches ampt_branches;
+	simulation_pars sim_pars;
 
 	string event_cut_hist_name = "Event Cut Hist";
 	string track_cut_hist_name = "Track Cut Hist";
@@ -144,7 +159,7 @@ private:
 	string ampt_type = "string_melting";
 
 	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
-	vector<string> sim_eff_dist_path{};
+//	vector<string> sim_eff_dist_path{};
 
 	vector<int> divs = { 180, 120, 90, 72, 60 };
 	int energy;
@@ -157,14 +172,18 @@ private:
 	int file_shuffle_seed = 0;
 	int stref_seed = 0;
 
+	int cent_bins = 10;
+	int cent_min = -1;
+	int particle_bins = 100;
+	int particle_min = 1;
+
 	bool ampt;
+	bool cooper_frye;
 	bool ampt_reaction_plane;
 	bool cbwc;
 	bool rotate_random;
 	bool event_plane;
-	bool mixed_sets;
 	bool mixed;
-	bool rand_data;
 	bool pile_up;
 	bool efficiency;
 	bool single_ratio;
@@ -173,12 +192,17 @@ private:
 	bool sim_flow;
 	bool check_charge;
 	bool rapidity;
+	bool resample;
 
 	double pile_up_prob;
 	double efficiency_prob;
 
 	int cent_binning;
 	int ref_num;
+
+	int resample_alg = 4;  // Which resampling algorithm to use. 4 is default stochastic algorithm
+	int n_resamples = 72;  // With stochastic resampling (algs 4,5) computational time increases linearly with #resamples
+	int n_bootstraps = 250;
 
 	int particle_dist_hist_max = 100;
 
@@ -192,6 +216,8 @@ private:
 	bool check_good_run(int run);
 	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
 	bool check_particle_good(const Track& particle);
+
+	void init_data();
 
 	void fill_pre_track_qa(const Track& particle);
 	void fill_post_track_qa(const Track& particle);
@@ -262,5 +288,6 @@ private:
 	TH1I post_m2_hist;
 
 	map<int, TH1D> post_n_particles;
-
+	map<int, TH1D> post_ref;
+	map<int, TH1D> post_refn;
 };

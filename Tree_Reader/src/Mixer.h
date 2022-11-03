@@ -10,6 +10,8 @@
 
 #include <map>
 #include <vector>
+#include <numeric>
+#include <random>
 
 #include <TRandom3.h>
 #include <TH2.h>
@@ -29,12 +31,20 @@ public:
 	bool get_n1_ratios();
 	bool get_rand_rotate();
 	bool get_event_plane_rotate();
+	bool get_resample();
 	int get_energy();
 	int get_max_events();
 	int get_min_events();
 	int get_mixes_per_event();
 	int get_vz_bins();
 	int get_ep_bins();
+	int get_resample_alg();
+	int get_n_resamples();
+	int get_n_bootstraps();
+	int get_cent_bins();
+	int get_cent_min();
+	int get_particle_bins();
+	int get_particle_min();
 	pair<double, double> get_vz_range();
 	pair<double, double> get_ep_range();
 	string get_out_path();
@@ -45,6 +55,7 @@ public:
 	void set_n1_ratios(bool n1_ratios);
 	void set_rand_rotate(bool rand_rotate);
 	void set_event_plane_rotate(bool event_plane_rotate);
+	void set_resample(bool resample);
 	void set_energy(int energy);
 	void set_max_events(int max_events);
 	void set_min_events(int min_events);
@@ -56,8 +67,16 @@ public:
 	void set_out_path(string path);
 	void set_divs(vector<int> divs);
 	void set_rand_seed(int seed=0);
+	void set_resample_alg(int alg_num);
+	void set_n_resamples(int n);
+	void set_n_bootstraps(int n);
+	void set_cent_bins(int bins);
+	void set_cent_min(int min);
+	void set_particle_bins(int bins);
+	void set_particle_min(int min);
 
 	// Doers
+	void init_data();
 	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);
 	void reset_out_dir();
 	void write_mixed_data();
@@ -71,6 +90,7 @@ private:
 	bool n1_ratios;
 	bool rand_rotate;
 	bool event_plane_rotate;  // It doesn't look like this does anything
+	bool resample;
 	int energy;
 	int min_events;
 	int max_events;
@@ -79,17 +99,32 @@ private:
 	int ep_bins;
 	pair<double, double> vz_range;
 	pair<double, double> ep_range;
-	map<int, map<int, map<int, map<int, int>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
-	map<int, map<int, map<int, vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
+
+	int cent_bins = 10;
+	int cent_min = -1;
+	int particle_bins = 100;
+	int particle_min = 1;
+
+	vector<vector<vector<vector<long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+	vector<vector<vector<vector<vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
+	vector<vector<vector<vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
+//	map<int, map<int, map<int, vector<long>>>> data; //ratios[divisions][centrality][num protons in event][num protons in bin]
+//	map<int, map<int, map<int, map<int, vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
+//	map<int, map<int, map<int, vector<vector<double>>>>> angles; //angles[centrality][event_plane][vz]
 	vector<int> divs;
 	string out_path;
 	TRandom3 *trand = new TRandom3(0);
+	mt19937_64 c_rand;
+//	poisson_distribution<int> pois_dist;
+
+	int resample_alg = 4;  // Which resampling algorithm to use. 4 is default stochastic algorithm
+	int n_resamples = 100;
+	int n_bootstraps = 100;
 
 	// Doers
-	void get_mixed(int cent, int num_protons, int ep_bin, int vz_bin);
+	void get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin);
 	int get_ep_bin(double event_plane);
 	int get_vz_bin(double vz);
-	pair<int, int> generate_index(const vector<pair<int, int>>& used_angles, int cent, int ep_bin, int vz_bin);
 	void define_hists(int cent);
 
 
