@@ -381,12 +381,9 @@ void read_new() {
 	//	{"Sim_flat80_anticlmulti_s5a99", {{"flat80_anticlmulti_spread5_amp99_resample", {{"Sim_spread5_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"Sim_flat80_clmulti_s1a1", {{"flat80_clmulti_spread1_amp1_resample", {{"Sim_spread1_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-	//	{"Sim_flat80_clmulti_s1a5", {{"flat80_clmulti_spread1_amp5_resample", {{"Sim_spread1_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-	//	{"Sim_flat80_clmulti_s05a1", {{"flat80_clmulti_spread05_amp1_resample", {{"Sim_spread05_amp1_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-	//	{"Sim_flat80_clmulti_s05a5", {{"flat80_clmulti_spread05_amp5_resample", {{"Sim_spread05_amp5_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
-	//};
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_clmultiplusminus_sm1sp1am1ap1_test", {{"flat80_clmultiplusminus_spreadminus1_spreadplus02_ampminus01_ampplus1_resample_test", {{"Sim_spreadminus1_spreadplus02_ampminus01_ampplus1_flat80_clmultiplusminus_norotate_resample_test_", {0, 0}}}}}},
+	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 ////			{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_", {0, 0}}}}}},
@@ -394,10 +391,10 @@ void read_new() {
 //			{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Ampt_qaonly", {{"qaonly", {{"Ampt_rapid05_qaonly_", {0, 0}}}}}},
-		{"BES1_qaonly", {{"qaonly", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_qaonly_", {0, 0}}}}}},
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Ampt_qaonly", {{"qaonly", {{"Ampt_rapid05_qaonly_", {0, 0}}}}}},
+	//	{"BES1_qaonly", {{"qaonly", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_qaonly_", {0, 0}}}}}},
+	//};
 
 	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 	//vector<int> energy_list{ 62 };
@@ -671,6 +668,18 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			if (in_string(set.first, { "Sim", "amp" }, true)) {
 				reader.sim.set_amp_group(str_num_dec(get_flag_trail(set.first, "amp", "_")[0], 0));
 			}
+			if (in_string(set.first, { "Sim", "spreadplus" }, true)) {
+				reader.sim.set_spread_sigma_plus(str_num_dec(get_flag_trail(set.first, "spreadplus", "_")[0], 1));
+			}
+			if (in_string(set.first, { "Sim", "spreadminus" }, true)) {
+				reader.sim.set_spread_sigma_minus(str_num_dec(get_flag_trail(set.first, "spreadminus", "_")[0], 1));
+			}
+			if (in_string(set.first, { "Sim", "ampplus" }, true)) {
+				reader.sim.set_amp_group_plus(str_num_dec(get_flag_trail(set.first, "ampplus", "_")[0], 0));
+			}
+			if (in_string(set.first, { "Sim", "ampminus" }, true)) {
+				reader.sim.set_amp_group_minus(-str_num_dec(get_flag_trail(set.first, "ampminus", "_")[0], 0));  // Make negative
+			}
 			if (in_string(set.first, { "Sim", "poisson" }, true)) {
 				reader.sim.set_proton_dist("poisson");
 				reader.sim.set_particle_mean(stof(get_flag_trail(set.first, "poisson", "_")[0]));
@@ -717,6 +726,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				reader.sim.set_clust_multi();
 				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
 			}
+			if (in_string(set.first, { "Sim", "clmultiplusminus" }, true)) { reader.sim.set_clust_multi(); }
 			if (in_string(set.first, { "Sim", "anticlfinal" }, true)) {
 				reader.sim.set_clust_final();
 				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative

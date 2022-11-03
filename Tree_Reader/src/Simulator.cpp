@@ -83,8 +83,24 @@ void Simulator::set_spread_sigma(double sig) {
 	pars.spread_sigma = sig;
 }
 
+void Simulator::set_spread_sigma_plus(double sig) {
+	pars.spread_sigma_plus = sig;
+}
+
+void Simulator::set_spread_sigma_minus(double sig) {
+	pars.spread_sigma_minus = sig;
+}
+
 void Simulator::set_amp_group(double amp) {
 	pars.amp_group = amp;
+}
+
+void Simulator::set_amp_group_plus(double amp) {
+	pars.amp_group_plus = amp;
+}
+
+void Simulator::set_amp_group_minus(double amp) {
+	pars.amp_group_minus = amp;
 }
 
 void Simulator::set_min_protons(int protons) {
@@ -164,6 +180,10 @@ void Simulator::set_anti_clust() {
 
 void Simulator::set_clust_multi() {
 	simulate_event = bind(&Simulator::sim_event_clust_multi, this, placeholders::_1);
+}
+
+void Simulator::set_clust_multi_plus_minus() {
+	simulate_event = bind(&Simulator::sim_event_clust_multi_plus_minus, this, placeholders::_1);
 }
 
 void Simulator::set_clust_final() {
@@ -332,7 +352,67 @@ void Simulator::sim_event_clust_multi(Event& event) {
 }
 
 
+// Simulate single event with multi-particle anti-clustering and return simulated proton angles.
+void Simulator::sim_event_clust_multi_plus_minus(Event& event) {
+	double new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	if (n_protons > 0) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		proton_angles.push_back(new_angle);
+	}
+
+	int wrap_num = ceil(pars.wrap_sigmas * pars.spread_sigma_minus / (2 * M_PI));  // Wrap out to at least wrap_sigmas, anti-correlation should be wider
+	double x_range = pars.x_up - pars.x_low;
+	vector<double> prob_vec(pars.points, 1);
+	double x, x_val_up;
+	while ((int)proton_angles.size() < n_protons) {
+		vector<double> cdf(pars.points + 1, 0);
+		int cdf_index = 0;
+		for (int i = 0; i < pars.points; i++) {
+			x = pars.x_low + (i + 0.5) * x_range / pars.points;  // Generate prob points in middle of bins
+			double prob_update = pars.base + pars.amp_group_plus * gaus_kernel(x, new_angle, pars.spread_sigma_plus) + 
+				pars.amp_group_minus * gaus_kernel(x, new_angle, pars.spread_sigma_minus);
+			for (int wrap_i = 1; wrap_i <= wrap_num; wrap_i++) {
+				prob_update += pars.amp_group_plus * gaus_kernel(x, new_angle - 2 * M_PI * wrap_i, pars.spread_sigma_plus) +  // wrap pdf to deal with
+					pars.amp_group_plus * gaus_kernel(x, new_angle + 2 * M_PI * wrap_i, pars.spread_sigma_plus);  // periodic boundary for positive correlation
+				prob_update += pars.amp_group_minus * gaus_kernel(x, new_angle - 2 * M_PI * wrap_i, pars.spread_sigma_minus) +  // wrap pdf to deal with
+					pars.amp_group_minus * gaus_kernel(x, new_angle + 2 * M_PI * wrap_i, pars.spread_sigma_minus);  // periodic boundary for negative correlation
+			}
+			prob_vec[i] *= prob_update;
+			cdf[cdf_index + 1] = cdf[cdf_index] + prob_vec[i];  // cdf[0] = 0
+			cdf_index++;
+		}
+
+		double norm = cdf[pars.points];  // Last point is max, full integral
+		for (double& x : cdf) {
+			x /= norm;
+		}
+
+		double cdf_rand = sim_rand->Rndm();
+		int i = 1;  // cdf[0] = 0 and rand > 0 so no need to check.
+		while (cdf[i] < cdf_rand) { i++; }
+		x_val_up = pars.x_low + i * x_range / pars.points;  // Upper bin edge
+		new_angle = x_val_up - x_range / pars.points / (cdf[i] - cdf[i - 1]) * (cdf[i] - cdf_rand);  // Linear interpolation
+
+		proton_angles.push_back(new_angle);
+	}
+
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
 // Simulate single event with multi-particle anti-clustering as sim_event_clust_multi. Use final pdf to genrate and return simulated proton angles.
+// If I remember, we reasoned that using any single pdf will only generate clustering. DON'T USE FOR ANTI-CLUSTERING
 void Simulator::sim_event_clust_final(Event& event) {
 	double new_angle;
 	vector<double> proton_angles;

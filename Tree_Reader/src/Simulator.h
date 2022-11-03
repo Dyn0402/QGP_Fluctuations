@@ -35,7 +35,14 @@ struct simulation_pars {
 	double p_group = 0.0;
 	double spread_sigma = 0.0;  // Sigma of gaussian kernels
 	double amp_group = 0.0;  // Amplitude of gaussian kernels for cluter multi. Negative for anticluster postitive for cluster
+	
 	double base = 1.0;  // Base value for cluster multi on top of which gaussian kernels superimposed
+
+	double spread_sigma_plus = 0.0;  // Sigma of gaussian kernels
+	double spread_sigma_minus = 0.0;  // Sigma of gaussian kernels
+	double amp_group_plus = 0.0;  // Amplitude of gaussian kernels for cluter multi. Negative for anticluster postitive for cluster
+	double amp_group_minus = 0.0;  // Amplitude of gaussian kernels for cluter multi. Negative for anticluster postitive for cluster
+
 
 	int points = 1000;  // Points in probability vector for cluster multi
 	int wrap_sigmas = 8;  // Wrap kernel until at least this many sigmas of pdf are summed.
@@ -69,6 +76,7 @@ public:
 	void sim_event(Event &event);
 	void sim_event_anticlust(Event& event);
 	void sim_event_clust_multi(Event& event);
+	void sim_event_clust_multi_plus_minus(Event& event);
 	void sim_event_clust_final(Event& event);
 	void sim_event_pairs(Event &event);
 	void sim_event_eff(Event &event);
@@ -93,7 +101,11 @@ public:
 	// Setters
 	void set_p_group(double p_group);
 	void set_spread_sigma(double sig);
+	void set_spread_sigma_plus(double sig);
+	void set_spread_sigma_minus(double sig);
 	void set_amp_group(double amp);
+	void set_amp_group_plus(double amp);
+	void set_amp_group_minus(double amp);
 	void set_min_protons(int protons);
 	void set_proton_dist(string dist);
 	void set_particle_mean(double mean);
@@ -107,6 +119,7 @@ public:
 	void set_eff_flow();
 	void set_anti_clust();
 	void set_clust_multi();
+	void set_clust_multi_plus_minus();
 	void set_clust_final();
 	void set_hom_eff(double eff);
 	void set_v2(double v2);
