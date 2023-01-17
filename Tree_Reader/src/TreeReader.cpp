@@ -396,9 +396,6 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 		} else {
 			sim.set_efficiency_dist_hist(sim_eff_dist_path[0], sim_eff_dist_path[1]);
 		}
-	}
-
-	if(sim_eff) {
 		if(sim_flow) { sim.set_eff_flow(); }
 		else { sim.set_eff(); }
 	} else if(sim_flow) { sim.set_flow(); }

@@ -215,6 +215,14 @@ void read_new() {
 //		{"BES1_Eff15_sys_2", {{"Eff15_sys", get_rand_set_pairs(10, "rapid05", "Efficiency15")}}}
 //	};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_flow_res08_v205_test", {{"flat80_flow_res08_v205_resample_test", {{"Sim_Flow_flat80_res08_v205_resample_", {0, 0}}}}}},
+		{"Sim_flat80_flow_res08_v205_test", {{"flat80_flow_res08_v205_resample_test", {{"Sim_Flow_flat80_res08_v205_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_clmulti_s04a002_test", {{"flat80_clmulti_spread04_amp002_resample_test", {{"Sim_spread04_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
+		//{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} 
+	};
+
+
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_", {0, 0}}}}}},
 //		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
@@ -727,18 +735,19 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
 			}
 			if (in_string(set.first, { "Sim", "Flow" }, true)) {
+				float res = str_num_dec(get_flag_trail(set.first, "res", "_")[0], 0);
+				float v2 = str_num_dec(get_flag_trail(set.first, "v2", "_")[0], 0);
 				reader.set_sim_flow(true);
-				if (in_string(set.first, { "08res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
-				else if (in_string(set.first, { "05res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
-				else if (in_string(set.first, { "099res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
-				else if (in_string(set.first, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
+				reader.sim.set_flow(v2, res);
+
+				//if (in_string(set.first, { "08res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
+				//else if (in_string(set.first, { "05res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
+				//else if (in_string(set.first, { "099res", "05v2" }, true)) { reader.sim.set_flow(0.05, 0.99, 0.0001); }
+				//else if (in_string(set.first, "05v2")) { reader.sim.set_flow(0.05, 0.0, 0.0001); }
 			}
 			else {
 				reader.set_sim_flow(false);
 			}
-			if (in_string(set.first, { "Sim", "Flat1000" }, true)) { reader.sim.set_flat_dist(1000); }
-			else if (in_string(set.first, { "Sim", "Flat500" }, true)) { reader.sim.set_flat_dist(500); }
-			else if (in_string(set.first, { "Sim", "Flat100" }, true)) { reader.sim.set_flat_dist(100); }
 			if (in_string(set.first, { "Sim", "anticlust" }, true)) { reader.sim.set_anti_clust(); }
 			if (in_string(set.first, { "Sim", "clmulti" }, true)) { reader.sim.set_clust_multi(); }
 			if (in_string(set.first, { "Sim", "anticlmulti" }, true)) {
