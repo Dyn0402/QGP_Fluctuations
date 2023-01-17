@@ -216,8 +216,8 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_flow_res08_v205_test", {{"flat80_flow_res08_v205_resample_test", {{"Sim_Flow_flat80_res08_v205_resample_", {0, 0}}}}}},
-		{"Sim_flat80_flow_res08_v205_test", {{"flat80_flow_res08_v205_resample_test", {{"Sim_Flow_flat80_res08_v205_resample_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res08_v205_test", {{"flow_flat80_res08_v205_resample_test", {{"Sim_Flow_flat80_res08_v205_resample_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res9_v204_test", {{"flow_flat80_flow_res9_v204_resample_test", {{"Sim_Flow_flat80_res9_v204_resample_", {0, 0}}}}}},
 		//{"Sim_flat80_clmulti_s04a002_test", {{"flat80_clmulti_spread04_amp002_resample_test", {{"Sim_spread04_amp002_flat80_clmulti_norotate_resample_", {0, 0}}}}}},
 		//{"BES1_rapid05", {{"test1", {{"rapid02_n1ratios_dca05_nsprx05_m2r6_m2s0_nhfit25_", {0, 0}}}}}} 
 	};
@@ -389,24 +389,24 @@ void read_new() {
 	//	{"Sim_flat80_anticlmulti_s5a99", {{"flat80_anticlmulti_spread5_amp99_resample", {{"Sim_spread5_amp99_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets;
-	vector<string> aps = {"02", "04"};
-	vector<string> ams = {"01", "02"};
-	vector<string> sdps = {"02", "04"};
-	vector<string> sdms = {"1", "2"};
-
-	for (string ap : aps) {
-		for (string am : ams) {
-			for (string sdp: sdps) {
-				for (string sdm : sdms) {
-					string jname = "Sim_flat80_clmultiplusminus_sm" + sdm + "sp" + sdp + "am" + am + "ap" + ap + "_test";
-					string gname = "flat80_clmultiplusminus_spreadminus" + sdm + "_spreadplus" + sdp + "_ampminus" + am + "_ampplus" + ap + "_resample_test";
-					string sname = "Sim_spreadminus" + sdm + "_spreadplus" + sdp + "_ampminus" + am + "_ampplus" + ap + "_flat80_clmultiplusminus_norotate_resample_test_";
-					sets[jname][gname][sname] = {0,0};
-				}
-			}
-		}
-	}
+//	map<string, map<string, map<string, pair<int, int>>>> sets;
+//	vector<string> aps = {"02", "04"};
+//	vector<string> ams = {"01", "02"};
+//	vector<string> sdps = {"02", "04"};
+//	vector<string> sdms = {"1", "2"};
+//
+//	for (string ap : aps) {
+//		for (string am : ams) {
+//			for (string sdp: sdps) {
+//				for (string sdm : sdms) {
+//					string jname = "Sim_flat80_clmultiplusminus_sm" + sdm + "sp" + sdp + "am" + am + "ap" + ap + "_test";
+//					string gname = "flat80_clmultiplusminus_spreadminus" + sdm + "_spreadplus" + sdp + "_ampminus" + am + "_ampplus" + ap + "_resample_test";
+//					string sname = "Sim_spreadminus" + sdm + "_spreadplus" + sdp + "_ampminus" + am + "_ampplus" + ap + "_flat80_clmultiplusminus_norotate_resample_test_";
+//					sets[jname][gname][sname] = {0,0};
+//				}
+//			}
+//		}
+//	}
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Sim_flat80_clmultiplusminus_sm1sp02am01ap1_test", {{"flat80_clmultiplusminus_spreadminus1_spreadplus02_ampminus01_ampplus1_resample_test", {{"Sim_spreadminus1_spreadplus02_ampminus01_ampplus1_flat80_clmultiplusminus_norotate_resample_test_", {0, 0}}}}}},
@@ -617,9 +617,13 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	else if (in_string(job_type, "Sim")) {
 		in_path += "BES1_Trees/";
 		if (in_string(job_type, "_test")) {
-			sim_events_per_total_proton = 50000;
+			sim_events_per_total_proton = 1000;
 			out_job_dir += "Data_Sim_tests/";
 			mix_out_job_dir += "Data_Sim_tests_Mix/";
+		}
+		else if(in_string(job_type, "_Flow")) {
+			out_job_dir += "Data_Sim_Flow";
+			mix_out_job_dir += "Data_Sim_Mix";
 		}
 		else {
 			out_job_dir += "Data_Sim/";
