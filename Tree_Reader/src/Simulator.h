@@ -82,6 +82,7 @@ public:
 	void sim_event_eff(Event &event);
 	void sim_event_eff_flow(Event &event);
 	void sim_event_flow(Event &event);
+	void sim_event_flow_old_model(Event &event);
 	void sim_event_eff_new(Event &event);
 
 	static double event_plane_gang(double res, double psi);

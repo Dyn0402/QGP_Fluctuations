@@ -632,8 +632,42 @@ void Simulator::sim_event_eff_flow(Event &event) {
 
 
 
-// Simulate single event and return simulated proton angles. Include elliptic flow into simulation.
-void Simulator::sim_event_flow(Event &event) {
+// Simulate single event and return simulated proton angles. Include elliptic flow only, no (anti)clustering effects.
+void Simulator::sim_event_flow(Event& event) {
+	double new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+
+	double reaction_plane = M_PI * sim_rand->Rndm();
+	double deviation = ep_dist->GetRandom();
+	double event_plane = reaction_plane + deviation;
+	event_plane = fmod(event_plane, M_PI);  // Force to range [0, pi)
+	if (event_plane < 0) { event_plane += M_PI; }
+	event.set_event_plane(event_plane);
+	flow_res += cos(2 * (event_plane - reaction_plane));
+	flow_res_n++;
+
+	while ((int)proton_angles.size() < n_protons) {
+		new_angle = sim_rand->Rndm() * 2 * M_PI;
+		if (1.0 + 2 * pars.v2 * cos(2 * (new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+			proton_angles.push_back(new_angle);
+		}
+	}
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
+// Simulate single event and return simulated proton angles. Include elliptic flow into old clustering model.
+// DEPRECATED
+void Simulator::sim_event_flow_old_model(Event &event) {
 	double group_angle, new_angle;
 	vector<double> proton_angles;
 
