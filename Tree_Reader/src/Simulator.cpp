@@ -270,7 +270,7 @@ void Simulator::sim_event_anticlust(Event& event) {
 	while ((int)proton_angles.size() < n_protons) {
 		if (sim_rand->Rndm() < pars.p_group) {
 			// Need unique names
-			double last_proton = proton_angles.back();
+//			double last_proton = proton_angles.back();
 //			gaus_wrap1->SetParameters(1, last_proton, pars.spread_sigma, 1, last_proton - 2 * M_PI, pars.spread_sigma, 1, last_proton + 2 * M_PI, pars.spread_sigma);
 //			double amp = gaus_wrap1->Eval(last_proton);
 //			prob->SetParameters(1 / amp, last_proton, pars.spread_sigma, 1 / amp, last_proton - 2 * M_PI, pars.spread_sigma, 1 / amp, last_proton + 2 * M_PI, pars.spread_sigma);
