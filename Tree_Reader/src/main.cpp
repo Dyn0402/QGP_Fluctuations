@@ -221,18 +221,18 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flow_flat80_res99_v207", {{"flow_flat80_res99_v207_resample", {{"Sim_Flow_flat80_res99_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res9_v207", {{"flow_flat80_res9_v207_resample", {{"Sim_Flow_flat80_res9_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res75_v207", {{"flow_flat80_res75_v207_resample", {{"Sim_Flow_flat80_res75_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res6_v207", {{"flow_flat80_res6_v207_resample", {{"Sim_Flow_flat80_res6_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res5_v207", {{"flow_flat80_res5_v207_resample", {{"Sim_Flow_flat80_res5_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res4_v207", {{"flow_flat80_res4_v207_resample", {{"Sim_Flow_flat80_res4_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res3_v207", {{"flow_flat80_res3_v207_resample", {{"Sim_Flow_flat80_res3_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res2_v207", {{"flow_flat80_res2_v207_resample", {{"Sim_Flow_flat80_res2_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res15_v207", {{"flow_flat80_res15_v207_resample", {{"Sim_Flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res1_v207", {{"flow_flat80_res1_v207_resample", {{"Sim_Flow_flat80_res1_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res15_v205", {{"flow_flat80_res15_v205_resample", {{"Sim_Flow_flat80_res15_v205_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res15_v202", {{"flow_flat80_res15_v202_resample", {{"Sim_Flow_flat80_res15_v202_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res99_v207", {{"flow_flat80_res99_v207_resample", {{"Sim_Flow_flat80_res99_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res9_v207", {{"flow_flat80_res9_v207_resample", {{"Sim_Flow_flat80_res9_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res75_v207", {{"flow_flat80_res75_v207_resample", {{"Sim_Flow_flat80_res75_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res6_v207", {{"flow_flat80_res6_v207_resample", {{"Sim_Flow_flat80_res6_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res5_v207", {{"flow_flat80_res5_v207_resample", {{"Sim_Flow_flat80_res5_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res4_v207", {{"flow_flat80_res4_v207_resample", {{"Sim_Flow_flat80_res4_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res3_v207", {{"flow_flat80_res3_v207_resample", {{"Sim_Flow_flat80_res3_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res2_v207", {{"flow_flat80_res2_v207_resample", {{"Sim_Flow_flat80_res2_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res15_v207", {{"flow_flat80_res15_v207_resample", {{"Sim_Flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res1_v207", {{"flow_flat80_res1_v207_resample", {{"Sim_Flow_flat80_res1_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res15_v205", {{"flow_flat80_res15_v205_resample", {{"Sim_Flow_flat80_res15_v205_resample_norotate_", {0, 0}}}}}},
+		{"Sim_Flow_flat80_res15_v202", {{"flow_flat80_res15_v202_resample", {{"Sim_Flow_flat80_res15_v202_resample_norotate_", {0, 0}}}}}},
 	};
 
 
@@ -634,9 +634,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			out_job_dir += "Data_Sim_tests/";
 			mix_out_job_dir += "Data_Sim_tests_Mix/";
 		}
-		else if(in_string(job_type, "_Flow")) {
+		else if(in_string(job_type, "_Flow")) {  // This didn't work?
 			out_job_dir += "Data_Sim_Flow";
-			mix_out_job_dir += "Data_Sim_Mix";
+			mix_out_job_dir += "Data_Sim_Flow_Mix";
 		}
 		else {
 			out_job_dir += "Data_Sim/";
