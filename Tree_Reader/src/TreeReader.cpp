@@ -415,6 +415,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 			}
 			Event event(event_defs, energy, ref_num, cent.first);
 			sim.simulate_event(event);
+			//cout << event.get_event_plane() << endl;
 
 			for (AzBinner& binner : binners) {
 				binner.process_event(event);
