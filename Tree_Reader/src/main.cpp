@@ -216,23 +216,23 @@ void read_new() {
 //	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	//{"Sim_flow_flat80_res08_v205_test", {{"flow_flat80_res08_v205_resample_test", {{"Sim_Flow_flat80_res08_v205_resample_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res9_v204_test", {{"flow_flat80_flow_res9_v204_resample_test", {{"Sim_Flow_flat80_res9_v204_resample_", {0, 0}}}}}},
+	//	//{"Sim_flow_flat80_res08_v205_test", {{"flow_flat80_res08_v205_resample_test", {{"Sim_flow_flat80_res08_v205_resample_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res9_v204_test", {{"flow_flat80_flow_res9_v204_resample_test", {{"Sim_flow_flat80_res9_v204_resample_", {0, 0}}}}}},
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_Flow_flat80_res99_v207", {{"flow_flat80_res99_v207_resample", {{"Sim_Flow_flat80_res99_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res9_v207", {{"flow_flat80_res9_v207_resample", {{"Sim_Flow_flat80_res9_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res75_v207", {{"flow_flat80_res75_v207_resample", {{"Sim_Flow_flat80_res75_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res6_v207", {{"flow_flat80_res6_v207_resample", {{"Sim_Flow_flat80_res6_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res5_v207", {{"flow_flat80_res5_v207_resample", {{"Sim_Flow_flat80_res5_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res4_v207", {{"flow_flat80_res4_v207_resample", {{"Sim_Flow_flat80_res4_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res3_v207", {{"flow_flat80_res3_v207_resample", {{"Sim_Flow_flat80_res3_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res2_v207", {{"flow_flat80_res2_v207_resample", {{"Sim_Flow_flat80_res2_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res15_v207", {{"flow_flat80_res15_v207_resample", {{"Sim_Flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res1_v207", {{"flow_flat80_res1_v207_resample", {{"Sim_Flow_flat80_res1_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res15_v205", {{"flow_flat80_res15_v205_resample", {{"Sim_Flow_flat80_res15_v205_resample_norotate_", {0, 0}}}}}},
-		{"Sim_Flow_flat80_res15_v202", {{"flow_flat80_res15_v202_resample", {{"Sim_Flow_flat80_res15_v202_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res99_v207", {{"flow_flat80_res99_v207_resample", {{"Sim_flow_flat80_res99_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res9_v207", {{"flow_flat80_res9_v207_resample", {{"Sim_flow_flat80_res9_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res75_v207", {{"flow_flat80_res75_v207_resample", {{"Sim_flow_flat80_res75_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res6_v207", {{"flow_flat80_res6_v207_resample", {{"Sim_flow_flat80_res6_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res5_v207", {{"flow_flat80_res5_v207_resample", {{"Sim_flow_flat80_res5_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res4_v207", {{"flow_flat80_res4_v207_resample", {{"Sim_flow_flat80_res4_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res3_v207", {{"flow_flat80_res3_v207_resample", {{"Sim_flow_flat80_res3_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res2_v207", {{"flow_flat80_res2_v207_resample", {{"Sim_flow_flat80_res2_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res15_v207", {{"flow_flat80_res15_v207_resample", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res1_v207", {{"flow_flat80_res1_v207_resample", {{"Sim_flow_flat80_res1_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res15_v205", {{"flow_flat80_res15_v205_resample", {{"Sim_flow_flat80_res15_v205_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res15_v202", {{"flow_flat80_res15_v202_resample", {{"Sim_flow_flat80_res15_v202_resample_norotate_", {0, 0}}}}}},
 	};
 
 
@@ -634,9 +634,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			out_job_dir += "Data_Sim_tests/";
 			mix_out_job_dir += "Data_Sim_tests_Mix/";
 		}
-		else if(in_string(job_type, "_Flow")) {  // This didn't work?
-			out_job_dir += "Data_Sim_Flow";
-			mix_out_job_dir += "Data_Sim_Flow_Mix";
+		else if(in_string(job_type, "_flow")) {
+			out_job_dir += "Data_Sim_Flow/";
+			mix_out_job_dir += "Data_Sim_Flow_Mix/";
 		}
 		else {
 			out_job_dir += "Data_Sim/";
@@ -751,7 +751,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
 				reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
 			}
-			if (in_string(set.first, { "Sim", "Flow" }, true)) {
+			if (in_string(set.first, { "Sim", "flow" }, true)) {
 				float res = str_num_dec(get_flag_trail(set.first, "res", "_")[0], 0);
 				float v2 = str_num_dec(get_flag_trail(set.first, "v2", "_")[0], 0);
 				reader.set_sim_flow(true);
@@ -929,7 +929,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 //					binner.sim.set_hom_eff(1.0);
 //					binner.set_sim_proton_dist_dataset(in_base_path + "Data/eta05_n1ratios_dca30/");
 //				}
-//				if (in_string(set.first, { "Sim", "Flow" }, true)) {
+//				if (in_string(set.first, { "Sim", "flow" }, true)) {
 //					binner.set_sim_flow(true);
 //					if (in_string(set.first, { "08res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.8, 0.0001); }
 //					else if (in_string(set.first, { "05res", "05v2" }, true)) { binner.sim.set_flow(0.05, 0.5, 0.0001); }
@@ -1208,7 +1208,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 //		reader.sim.set_hom_eff(1.0);
 //		reader.set_sim_proton_dist_dataset(in_base_path + "Data/eta05_n1ratios_dca30/");
 //	}
-//	if(in_string(set_name, {"Sim", "Flow"}, true)) {
+//	if(in_string(set_name, {"Sim", "flow"}, true)) {
 //		reader.set_sim_flow(true);
 //		if(in_string(set_name, {"08res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.8, 0.0001); }
 //		else if(in_string(set_name, {"05res", "05v2"}, true)) { reader.sim.set_flow(0.05, 0.5, 0.0001); }
