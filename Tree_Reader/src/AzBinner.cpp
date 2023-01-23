@@ -588,14 +588,22 @@ void AzBinner::process_event(const Event& event) {
 			post_refn[cent].Fill(event.get_refn());
 			int cent_bin = cent - cent_min;
 
-			TVector2 q(event.get_qx(), event.get_qy());
-			pre_ep_hist.Fill(0.5 * q.Phi());
-			for (double& angle : good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
-				TVector2 q_new(cos(2 * angle), sin(2 * angle));
-				q -= q_new;
+			float ep_angle;
+			if (!sim_flow) {
+				TVector2 q(event.get_qx(), event.get_qy());
+				pre_ep_hist.Fill(0.5 * q.Phi());
+				for (double& angle : good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
+					TVector2 q_new(cos(2 * angle), sin(2 * angle));
+					q -= q_new;
+				}
+				ep_angle = 0.5 * q.Phi();
+				post_ep_hist.Fill(ep_angle);
 			}
-			float ep_angle = 0.5 * q.Phi();
-			post_ep_hist.Fill(ep_angle);
+			else {
+				ep_angle = event.get_event_plane();
+				pre_ep_hist.Fill(ep_angle);
+				post_ep_hist.Fill(ep_angle);
+			}
 
 //			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
 

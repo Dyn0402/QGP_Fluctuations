@@ -388,6 +388,7 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 		binner.set_cent_min(cent_num_events.begin()->first);  // Clunky, can't account for gaps. Maybe do better job later if more general simulation needed
 		binner.prep_read();
 		binner.define_qa();
+		binner.set_sim_flow(sim_flow);
 	}
 
 	if(sim_eff) {
@@ -415,7 +416,6 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 			}
 			Event event(event_defs, energy, ref_num, cent.first);
 			sim.simulate_event(event);
-			//cout << event.get_event_plane() << endl;
 
 			for (AzBinner& binner : binners) {
 				binner.process_event(event);
