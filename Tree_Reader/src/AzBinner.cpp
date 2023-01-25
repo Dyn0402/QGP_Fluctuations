@@ -58,6 +58,7 @@ AzBinner::AzBinner(int energy, int ref_num) {
 	check_charge = true;
 	rapidity = false;
 	resample = false;
+	prerotate = true;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -92,6 +93,7 @@ AzBinner::AzBinner(int energy) {
 	check_charge = true;
 	rapidity = false;
 	resample = false;
+	prerotate = true;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -126,6 +128,7 @@ AzBinner::AzBinner() {
 	check_charge = true;
 	rapidity = false;
 	resample = false;
+	prerotate = true;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -349,6 +352,10 @@ void AzBinner::set_rapidity(bool rapidity) {
 
 void AzBinner::set_resample(bool resample) {
 	this->resample = resample;
+}
+
+void AzBinner::set_prerotate(bool prerotate) {
+	this->prerotate = prerotate;
 }
 
 void AzBinner::set_pile_up_prob(double pile_up_prob) {
@@ -607,7 +614,7 @@ void AzBinner::process_event(const Event& event) {
 
 //			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
 
-			if (ampt || cooper_frye) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
+			if ((ampt || cooper_frye) && prerotate) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
 				double rand_angle = trand->Rndm() * 2 * M_PI;
 				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
 				if (ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
@@ -733,7 +740,7 @@ void AzBinner::process_event_pt_n(const Event& event) {
 
 			//			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
 
-			if (ampt || cooper_frye) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
+			if ((ampt || cooper_frye) && prerotate) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
 				double rand_angle = trand->Rndm() * 2 * M_PI;
 				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
 				if (ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
@@ -1179,6 +1186,7 @@ void AzBinner::write_info_file() {
 		out << "sim_flow: " << boolalpha << sim_flow << endl;
 		out << "check_charge: " << boolalpha << check_charge << endl;
 		out << "rapidity: " << boolalpha << rapidity << endl;
+		out << "prerotate: " << boolalpha << prerotate << endl;
 
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;

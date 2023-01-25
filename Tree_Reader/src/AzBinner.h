@@ -87,6 +87,7 @@ public:
 	void set_sim_flow(bool sim_flow);
 	void set_rapidity(bool rapidity);
 	void set_resample(bool resample);
+	void set_prerotate(bool prerotate);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
@@ -193,6 +194,7 @@ private:
 	bool check_charge;
 	bool rapidity;
 	bool resample;
+	bool prerotate;
 
 	double pile_up_prob;
 	double efficiency_prob;
