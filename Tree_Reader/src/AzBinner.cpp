@@ -614,10 +614,10 @@ void AzBinner::process_event(const Event& event) {
 
 //			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
 
+			if ((ampt || cooper_frye) && ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
 			if ((ampt || cooper_frye) && prerotate) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
 				double rand_angle = trand->Rndm() * 2 * M_PI;
 				good_particle_angles = rotate_angles(good_particle_angles, rand_angle);
-				if (ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
 				double ep_rotate = rotate_angle(ep_angle, rand_angle);
 				while (ep_rotate >= M_PI) { ep_rotate -= M_PI; }  // Force into range of [0, pi)
 				while (ep_rotate < 0) { ep_rotate += M_PI; }

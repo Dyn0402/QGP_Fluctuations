@@ -241,12 +241,20 @@ void read_new() {
 //		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
 //	};
 
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+	//	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
+	//	{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
+	//	{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_", {0, 0}}}}}},
+	//	{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
+	//};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		//{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
-		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-		{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-		{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+		//{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"Ampt_def_resample", {{"default_resample_noprerotate_reactionplane", {{"Ampt_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
+		//{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+		{"CFEV_def_resample", {{"default_resample_noprerotate_reactionplane", {{"CFEV_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
+		//{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -849,7 +857,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, { "_norotate", "EP_Rotate" }, false)) { binner.set_rotate_random(false); }
 				else { binner.set_rotate_random(true); }
 
-				if (in_string(set.first, { "Ampt", "ReactionPlane" }, true)) { binner.set_ampt_reaction_plane(true); }
+				if (in_string(set.first, { "reactionplane" }, true)) { binner.set_ampt_reaction_plane(true); }
 
 				if (in_string(set.first, { "noprerotate" }, true)) { binner.set_prerotate(false); }
 
@@ -863,6 +871,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, "_n1ratios")) { binner.set_n1_ratios(true); binner.set_single_ratio(false); }
 				else if (in_string(set.first, "_allratios")) { binner.set_n1_ratios(false); binner.set_single_ratio(false); }
 				else { binner.set_n1_ratios(false); binner.set_single_ratio(true); }
+
+				if (in_string(set.first, "epbins")) {
+					binner.mix.set_ep_bins(stoi(get_flag_trail(set.first, "epbins", "_")[0]));
+				}
 
 				if (in_string(set.first, "dca")) {
 					binner.cut.max_dca = str_num_dec(get_flag_trail(set.first, "dca", "_")[0], 1);
