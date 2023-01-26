@@ -266,6 +266,22 @@ void read_new() {
 //		{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
 //	};
 
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+	//	{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_", {0, 0}}}}}},
+	//	{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_", {0, 0}}}}}},
+	//	{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_", {0, 0}}}}}},
+	//	{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
+	//};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		//{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"Ampt_def_resample", {{"default_resample_noprerotate_reactionplane", {{"Ampt_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
+		//{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+		{"CFEV_def_resample", {{"default_resample_noprerotate_reactionplane", {{"CFEV_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
+		//{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+	};
+	
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_single_", {0, 0}}}}}},
 //	};
@@ -453,12 +469,12 @@ void read_new() {
 	//	{"BES1_qaonly", {{"qaonly", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_qaonly_", {0, 0}}}}}},
 	//};
 
-//	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 62 };
+	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+//	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 7;
 
 	int jobs = sets.size() * energy_list.size();
 
@@ -866,7 +882,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, { "_norotate", "EP_Rotate" }, false)) { binner.set_rotate_random(false); }
 				else { binner.set_rotate_random(true); }
 
-				if (in_string(set.first, { "Ampt", "ReactionPlane" }, true)) { binner.set_ampt_reaction_plane(true); }
+				if (in_string(set.first, { "reactionplane" }, true)) { binner.set_ampt_reaction_plane(true); }
 
 				if (in_string(set.first, { "noprerotate" }, true)) { binner.set_prerotate(false); }
 
@@ -880,6 +896,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, "_n1ratios")) { binner.set_n1_ratios(true); binner.set_single_ratio(false); }
 				else if (in_string(set.first, "_allratios")) { binner.set_n1_ratios(false); binner.set_single_ratio(false); }
 				else { binner.set_n1_ratios(false); binner.set_single_ratio(true); }
+
+				if (in_string(set.first, "epbins")) {
+					binner.mix.set_ep_bins(stoi(get_flag_trail(set.first, "epbins", "_")[0]));
+				}
 
 				if (in_string(set.first, "dca")) {
 					binner.cut.max_dca = str_num_dec(get_flag_trail(set.first, "dca", "_")[0], 1);
