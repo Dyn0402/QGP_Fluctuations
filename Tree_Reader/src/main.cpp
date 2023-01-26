@@ -220,20 +220,37 @@ void read_new() {
 	//	{"Sim_flow_flat80_res9_v204_test", {{"flow_flat80_flow_res9_v204_resample_test", {{"Sim_flow_flat80_res9_v204_resample_", {0, 0}}}}}},
 	//};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"Sim_flow_flat80_res99_v207", {{"flow_flat80_res99_v207_resample", {{"Sim_flow_flat80_res99_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res9_v207", {{"flow_flat80_res9_v207_resample", {{"Sim_flow_flat80_res9_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res75_v207", {{"flow_flat80_res75_v207_resample", {{"Sim_flow_flat80_res75_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res6_v207", {{"flow_flat80_res6_v207_resample", {{"Sim_flow_flat80_res6_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res5_v207", {{"flow_flat80_res5_v207_resample", {{"Sim_flow_flat80_res5_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res4_v207", {{"flow_flat80_res4_v207_resample", {{"Sim_flow_flat80_res4_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res3_v207", {{"flow_flat80_res3_v207_resample", {{"Sim_flow_flat80_res3_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res2_v207", {{"flow_flat80_res2_v207_resample", {{"Sim_flow_flat80_res2_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res15_v207", {{"flow_flat80_res15_v207_resample", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res1_v207", {{"flow_flat80_res1_v207_resample", {{"Sim_flow_flat80_res1_v207_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res15_v205", {{"flow_flat80_res15_v205_resample", {{"Sim_flow_flat80_res15_v205_resample_norotate_", {0, 0}}}}}},
-	//	{"Sim_flow_flat80_res15_v202", {{"flow_flat80_res15_v202_resample", {{"Sim_flow_flat80_res15_v202_resample_norotate_", {0, 0}}}}}},
-	//};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Sim_flow_flat80_res99_v207", {{"flow_flat80_res99_v207_resample", {{"Sim_flow_flat80_res99_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res9_v207", {{"flow_flat80_res9_v207_resample", {{"Sim_flow_flat80_res9_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res75_v207", {{"flow_flat80_res75_v207_resample", {{"Sim_flow_flat80_res75_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res6_v207", {{"flow_flat80_res6_v207_resample", {{"Sim_flow_flat80_res6_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res5_v207", {{"flow_flat80_res5_v207_resample", {{"Sim_flow_flat80_res5_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res4_v207", {{"flow_flat80_res4_v207_resample", {{"Sim_flow_flat80_res4_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res3_v207", {{"flow_flat80_res3_v207_resample", {{"Sim_flow_flat80_res3_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res2_v207", {{"flow_flat80_res2_v207_resample", {{"Sim_flow_flat80_res2_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res15_v207", {{"flow_flat80_res15_v207_resample", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res1_v207", {{"flow_flat80_res1_v207_resample", {{"Sim_flow_flat80_res1_v207_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res15_v205", {{"flow_flat80_res15_v205_resample", {{"Sim_flow_flat80_res15_v205_resample_norotate_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res15_v202", {{"flow_flat80_res15_v202_resample", {{"Sim_flow_flat80_res15_v202_resample_norotate_", {0, 0}}}}}},
+//	};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flow_flat80_res15_v206", {{"flow_flat80_res15_v206_resample", {{"Sim_flow_flat80_res15_v206_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res15_v204", {{"flow_flat80_res15_v204_resample", {{"Sim_flow_flat80_res15_v204_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res15_v203", {{"flow_flat80_res15_v203_resample", {{"Sim_flow_flat80_res15_v203_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res15_v201", {{"flow_flat80_res15_v201_resample", {{"Sim_flow_flat80_res15_v201_resample_norotate_", {0, 0}}}}}},
+
+		{"Sim_flow_flat80_res75_v205", {{"flow_flat80_res75_v205_resample", {{"Sim_flow_flat80_res75_v205_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res5_v205", {{"flow_flat80_res5_v205_resample", {{"Sim_flow_flat80_res5_v205_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res4_v205", {{"flow_flat80_res4_v205_resample", {{"Sim_flow_flat80_res4_v205_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res3_v205", {{"flow_flat80_res3_v205_resample", {{"Sim_flow_flat80_res3_v205_resample_norotate_", {0, 0}}}}}},
+
+		{"Sim_flow_flat80_res75_v202", {{"flow_flat80_res75_v202_resample", {{"Sim_flow_flat80_res75_v202_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res5_v202", {{"flow_flat80_res5_v202_resample", {{"Sim_flow_flat80_res5_v202_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res4_v202", {{"flow_flat80_res4_v202_resample", {{"Sim_flow_flat80_res4_v202_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res3_v202", {{"flow_flat80_res3_v202_resample", {{"Sim_flow_flat80_res3_v202_resample_norotate_", {0, 0}}}}}},
+	};
 
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -241,13 +258,13 @@ void read_new() {
 //		{"Sim_single10_anticlmulti_resample_s0a0", {{"single10_anticlmulti_resample_spread0_amp0_test", {{"Sim_spread0_amp0_single40_anticlmulti_resample_", {0, 0}}}}}},
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		//{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
-		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-		{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-		{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-	};
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		//{"BES1_def_resample", {{"default_resample", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_", {0, 0}}}}}},
+//		{"Ampt_def_resample", {{"default_resample", {{"Ampt_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+//		{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+//		{"CFEV_def_resample", {{"default_resample", {{"CFEV_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+//		{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_single_", {0, 0}}}}}},
