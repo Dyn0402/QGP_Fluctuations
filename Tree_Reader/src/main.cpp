@@ -235,21 +235,27 @@ void read_new() {
 //		{"Sim_flow_flat80_res15_v202", {{"flow_flat80_res15_v202_resample", {{"Sim_flow_flat80_res15_v202_resample_norotate_", {0, 0}}}}}},
 //	};
 
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Sim_flow_flat80_res15_v206", {{"flow_flat80_res15_v206_resample", {{"Sim_flow_flat80_res15_v206_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res15_v204", {{"flow_flat80_res15_v204_resample", {{"Sim_flow_flat80_res15_v204_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res15_v203", {{"flow_flat80_res15_v203_resample", {{"Sim_flow_flat80_res15_v203_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res15_v201", {{"flow_flat80_res15_v201_resample", {{"Sim_flow_flat80_res15_v201_resample_norotate_", {0, 0}}}}}},
+
+	//	{"Sim_flow_flat80_res75_v205", {{"flow_flat80_res75_v205_resample", {{"Sim_flow_flat80_res75_v205_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res5_v205", {{"flow_flat80_res5_v205_resample", {{"Sim_flow_flat80_res5_v205_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res4_v205", {{"flow_flat80_res4_v205_resample", {{"Sim_flow_flat80_res4_v205_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res3_v205", {{"flow_flat80_res3_v205_resample", {{"Sim_flow_flat80_res3_v205_resample_norotate_", {0, 0}}}}}},
+
+	//	{"Sim_flow_flat80_res75_v202", {{"flow_flat80_res75_v202_resample", {{"Sim_flow_flat80_res75_v202_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res5_v202", {{"flow_flat80_res5_v202_resample", {{"Sim_flow_flat80_res5_v202_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res4_v202", {{"flow_flat80_res4_v202_resample", {{"Sim_flow_flat80_res4_v202_resample_norotate_", {0, 0}}}}}},
+	//	{"Sim_flow_flat80_res3_v202", {{"flow_flat80_res3_v202_resample", {{"Sim_flow_flat80_res3_v202_resample_norotate_", {0, 0}}}}}},
+	//};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flow_flat80_res15_v206", {{"flow_flat80_res15_v206_resample", {{"Sim_flow_flat80_res15_v206_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res15_v204", {{"flow_flat80_res15_v204_resample", {{"Sim_flow_flat80_res15_v204_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res15_v203", {{"flow_flat80_res15_v203_resample", {{"Sim_flow_flat80_res15_v203_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res15_v201", {{"flow_flat80_res15_v201_resample", {{"Sim_flow_flat80_res15_v201_resample_norotate_", {0, 0}}}}}},
-
-		{"Sim_flow_flat80_res75_v205", {{"flow_flat80_res75_v205_resample", {{"Sim_flow_flat80_res75_v205_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res5_v205", {{"flow_flat80_res5_v205_resample", {{"Sim_flow_flat80_res5_v205_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res4_v205", {{"flow_flat80_res4_v205_resample", {{"Sim_flow_flat80_res4_v205_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res3_v205", {{"flow_flat80_res3_v205_resample", {{"Sim_flow_flat80_res3_v205_resample_norotate_", {0, 0}}}}}},
-
-		{"Sim_flow_flat80_res75_v202", {{"flow_flat80_res75_v202_resample", {{"Sim_flow_flat80_res75_v202_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res5_v202", {{"flow_flat80_res5_v202_resample", {{"Sim_flow_flat80_res5_v202_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res4_v202", {{"flow_flat80_res4_v202_resample", {{"Sim_flow_flat80_res4_v202_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flow_flat80_res3_v202", {{"flow_flat80_res3_v202_resample", {{"Sim_flow_flat80_res3_v202_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
+		{"Ampt_def_resample_epbins1", {{"default_resample_noprerotate_reactionplane_epbins1", {{"Ampt_rapid05_resample_norotate_noprerotate_reactionplane_epbins1_", {0, 0}}}}}},
+		{"CFEV_def_resample_epbins1", {{"default_resample_noprerotate_reactionplane_epbins1", {{"CFEV_rapid05_resample_norotate_noprerotate_reactionplane_epbins1_", {0, 0}}}}}},
 	};
 
 
@@ -274,13 +280,13 @@ void read_new() {
 	//	{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_", {0, 0}}}}}},
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		//{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"Ampt_def_resample", {{"default_resample_noprerotate_reactionplane", {{"Ampt_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
-		//{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-		{"CFEV_def_resample", {{"default_resample_noprerotate_reactionplane", {{"CFEV_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
-		//{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	//{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"Ampt_def_resample", {{"default_resample_noprerotate_reactionplane", {{"Ampt_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
+	//	//{"CF_def_resample", {{"default_resample", {{"CF_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+	//	{"CFEV_def_resample", {{"default_resample_noprerotate_reactionplane", {{"CFEV_rapid05_resample_norotate_noprerotate_reactionplane_", {0, 0}}}}}},
+	//	//{"CFEVb342_def_resample", {{"default_resample", {{"CFEVb342_rapid05_resample_norotate_noprerotate_", {0, 0}}}}}},
+	//};
 	
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Ampt_def_single", {{"default_single", {{"Ampt_rapid05_single_", {0, 0}}}}}},
@@ -469,8 +475,8 @@ void read_new() {
 	//	{"BES1_qaonly", {{"qaonly", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_qaonly_", {0, 0}}}}}},
 	//};
 
-	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-//	vector<int> energy_list{ 62 };
+	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
