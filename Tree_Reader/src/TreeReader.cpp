@@ -338,8 +338,12 @@ void TreeReader::read_trees() {
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
 			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+			float fraction_finished = (float)((int)(1000.0*file_index/num_files+0.5))/10;
+			float remaining_seconds = elap.count() / (fraction_finished / 100);
+			auto datetime_finish = chrono::system_clock::to_time_t(chrono::system_clock::now() + chrono::seconds((int)remaining_seconds + 1));
+			vector<string> datetime_finish_vec = split((string)ctime(&datetime_finish), ' ');
 			//cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | Free RAM: " << mem_info.freeram << endl;
-			cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+			cout << " " << energy << "GeV " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << endl;
 		}
 
 		TFile *file = new TFile(path.data(), "READ");

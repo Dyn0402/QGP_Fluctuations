@@ -253,9 +253,11 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
-		{"Ampt_def_resample_epbins1", {{"default_resample_noprerotate_reactionplane_epbins1", {{"Ampt_rapid05_resample_norotate_noprerotate_reactionplane_epbins1_", {0, 0}}}}}},
-		{"CFEV_def_resample_epbins1", {{"default_resample_noprerotate_reactionplane_epbins1", {{"CFEV_rapid05_resample_norotate_noprerotate_reactionplane_epbins1_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
+		{"Ampt_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"Ampt_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		{"CFEV_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEV_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 	};
 
 
@@ -475,12 +477,12 @@ void read_new() {
 	//	{"BES1_qaonly", {{"qaonly", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_qaonly_", {0, 0}}}}}},
 	//};
 
-	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 62 };
+	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+//	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 7;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
 
