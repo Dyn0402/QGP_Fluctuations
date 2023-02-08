@@ -10,6 +10,8 @@
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TH2.h>
+#include <TProfile.h>
+#include <TGrpahErrors.h>
 #include <TRandom3.h>
 #include <TChain.h>
 
@@ -88,6 +90,7 @@ public:
 	void set_rapidity(bool rapidity);
 	void set_resample(bool resample);
 	void set_prerotate(bool prerotate);
+	void set_calc_v2(bool calc_v2);
 	void set_pile_up_prob(double pile_up_prob);
 	void set_efficiency_prob(double efficiency_prob);
 	void set_cent_binning(int cent_binning);
@@ -128,6 +131,25 @@ public:
 	Mixer mix;
 
 	AmptCentralityMaker ampt_cent;
+
+protected:
+	// Doers
+	TH1D* get_sim_proton_dist(int cent);
+	TH1D* get_sim_efficiency_dist();
+
+	bool check_event(const Event& event);
+	bool check_good_dca_xy(int run, int event_id);
+	bool check_enough_particles(const Event& event);
+	bool check_good_run(int run);
+	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
+	bool check_particle_good(const Track& particle);
+
+	void init_data();
+
+	void fill_pre_track_qa(const Track& particle);
+	void fill_post_track_qa(const Track& particle);
+	void fill_pre_event_qa(const Event& event);
+	void fill_post_event_qa(const Event& event);
 
 private:
 	// Attributes
@@ -195,6 +217,7 @@ private:
 	bool rapidity;
 	bool resample;
 	bool prerotate;
+	bool calc_v2;
 
 	double pile_up_prob;
 	double efficiency_prob;
@@ -207,24 +230,6 @@ private:
 	int n_bootstraps = 250;
 
 	int particle_dist_hist_max = 100;
-
-	// Doers
-	TH1D* get_sim_proton_dist(int cent);
-	TH1D* get_sim_efficiency_dist();
-
-	bool check_event(const Event& event);
-	bool check_good_dca_xy(int run, int event_id);
-	bool check_enough_particles(const Event& event);
-	bool check_good_run(int run);
-	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
-	bool check_particle_good(const Track& particle);
-
-	void init_data();
-
-	void fill_pre_track_qa(const Track& particle);
-	void fill_post_track_qa(const Track& particle);
-	void fill_pre_event_qa(const Event& event);
-	void fill_post_event_qa(const Event& event);
 
 
 	// QA Plots
@@ -292,4 +297,7 @@ private:
 	map<int, TH1D> post_n_particles;
 	map<int, TH1D> post_ref;
 	map<int, TH1D> post_refn;
+	map<int, TProfile> v2;
+	map<int, TGraphErrors> v2_cor;
+	map<int, TProfile> resolution;
 };

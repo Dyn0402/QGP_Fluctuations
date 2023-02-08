@@ -28,8 +28,8 @@ struct event_defaults {
 	float vx = 0.;
 	float vy = 0.;
 	float vz = 0.;
-	float qx = numeric_limits<float>::max() / 2;  // Aim for an event plane not sensitive to changes in qx, qy
-	float qy = numeric_limits<float>::max() / 2000;  // Aim for an event plane just larger than 0.0 --> 0.001
+	float psi_east = 0.;
+	float psi_west = 0.;
 	float event_plane = 0.;
 	float dca_xy_avg = 0.;
 	float dca_xy_err = 0.;
@@ -65,7 +65,7 @@ public:
 	Event();
 	Event(event_defaults& defaults, int energy, int ref_num, int cent);
 	Event(tree_leaves leaves);
-	Event(tree_branches branches);  // Not implemented
+	Event(tree_branches branches);
 	Event(Event *event);
 	~Event();
 
@@ -73,8 +73,8 @@ public:
 	float get_vx() const;
 	float get_vy() const;
 	float get_vz() const;
-	float get_qx() const;
-	float get_qy() const;
+	float get_psi_east() const;
+	float get_psi_west() const;
 	float get_event_plane() const;
 	float get_dca_xy_avg() const;
 	float get_dca_xy_err() const;
@@ -91,8 +91,8 @@ public:
 	void set_vx(float vx);
 	void set_vy(float vy);
 	void set_vz(float vz);
-	void set_qx(float qx);
-	void set_qy(float qy);
+	void set_psi_east(float psi_east);
+	void set_psi_west(float psi_west);
 	void set_event_plane(float event_plane);
 	void set_dca_xy_avg(float avg);
 	void set_dca_xy_err(float sd);
@@ -109,7 +109,7 @@ public:
 	void read_tree_event(tree_branches branches);  // Not implemented
 	void read_tree_event(Event *event);
 	void set_event(float vx, float vy, float vz, short ref, int run, int event_id,
-			short refn, short btof_multi, short btof_match, float qx, float qy, float event_plane,
+			short refn, short btof_multi, short btof_match, float psi_east, float psi_west, float event_plane,
 			float dca_xy_avg, float dca_xy_err);
 	void clear();
 	void pile_up(Event pile);
@@ -131,8 +131,8 @@ private:
 	float vx;
 	float vy;
 	float vz;
-	float qx;
-	float qy;
+	float psi_east;
+	float psi_west;
 	float event_plane;
 
 	float dca_xy_avg;

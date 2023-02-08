@@ -28,8 +28,8 @@ struct tree_leaves {
 	TLeaf *vy;
 	TLeaf *vz;
 
-	TLeaf *qx;
-	TLeaf *qy;
+	TLeaf *psi_east;
+	TLeaf *psi_west;
 
 	TLeaf *dca_xy_avg;
 	TLeaf *dca_xy_err;
@@ -71,8 +71,8 @@ struct tree_branches {
 	float vy;
 	float vz;
 
-	float qx;
-	float qy;
+	float psi_east;
+	float psi_west;
 
 	float dca_xy_avg;
 	float dca_xy_err;
@@ -106,7 +106,7 @@ struct ampt_tree_branches {
 	int refmult3;
 
 	float imp;
-	float qx, qy;
+	float psi_east, psi_west;
 
 	int npp, npt, nesp, ninesp, nest, ninest;
 
@@ -128,7 +128,7 @@ struct cooper_frye_tree_branches {
 	int refmult2;
 	int refmult3;
 
-	float qx, qy;
+	float psi_east, psi_west;
 
 	vector<int> *pid = 0;
 	vector<float> *px = 0;

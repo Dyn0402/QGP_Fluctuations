@@ -59,6 +59,7 @@ AzBinner::AzBinner(int energy, int ref_num) {
 	rapidity = false;
 	resample = false;
 	prerotate = true;
+	calc_v2 = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -94,6 +95,7 @@ AzBinner::AzBinner(int energy) {
 	rapidity = false;
 	resample = false;
 	prerotate = true;
+	calc_v2 = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -129,6 +131,7 @@ AzBinner::AzBinner() {
 	rapidity = false;
 	resample = false;
 	prerotate = true;
+	calc_v2 = false;
 
 	sim_eff = false;
 	sim_flow = false;
@@ -358,6 +361,10 @@ void AzBinner::set_prerotate(bool prerotate) {
 	this->prerotate = prerotate;
 }
 
+void AzBinner::set_calc_v2(bool calc_v2) {
+	this->calc_v2 = calc_v2;
+}
+
 void AzBinner::set_pile_up_prob(double pile_up_prob) {
 	this->pile_up_prob = pile_up_prob;
 }
@@ -558,6 +565,7 @@ void AzBinner::process_event(const Event& event) {
 	// Check if each event is good. Analyze if so, continue if not.
 	if (check_event(event)) {
 		vector<double> good_particle_angles = {};
+		vector<float> good_particle_etas = {};  // Needed for v2 calculation only
 
 		// Iterate over particles in event and add corresponding phi to good_particle_angles if particle good.
 		for (const Track& particle : event.get_particles()) {
@@ -566,6 +574,7 @@ void AzBinner::process_event(const Event& event) {
 					if (trand->Rndm() < efficiency_prob) { continue; }
 				}
 				good_particle_angles.push_back(particle.get_phi());
+				good_particle_etas.push_back(particle.get_eta());
 			}
 		}
 
@@ -595,24 +604,38 @@ void AzBinner::process_event(const Event& event) {
 			post_refn[cent].Fill(event.get_refn());
 			int cent_bin = cent - cent_min;
 
-			float ep_angle;
-			if (!sim_flow) {
-				TVector2 q(event.get_qx(), event.get_qy());
-				pre_ep_hist.Fill(0.5 * q.Phi());
-				for (double& angle : good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
-					TVector2 q_new(cos(2 * angle), sin(2 * angle));
-					q -= q_new;
-				}
-				ep_angle = 0.5 * q.Phi();
-				post_ep_hist.Fill(ep_angle);
-			}
-			else {
-				ep_angle = event.get_event_plane();
-				pre_ep_hist.Fill(ep_angle);
-				post_ep_hist.Fill(ep_angle);
-			}
+			float ep_angle = event.get_event_plane();
+			pre_ep_hist.Fill(ep_angle);
+			post_ep_hist.Fill(ep_angle);
+			//if (!sim_flow) {
+			//	TVector2 q(event.get_psi_east(), event.get_psi_west());
+			//	pre_ep_hist.Fill(0.5 * q.Phi());
+			//	for (double& angle : good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
+			//		TVector2 q_new(cos(2 * angle), sin(2 * angle));
+			//		q -= q_new;
+			//	}
+			//	ep_angle = 0.5 * q.Phi();
+			//	post_ep_hist.Fill(ep_angle);
+			//}
+			//else {
+			//	ep_angle = event.get_event_plane();
+			//	pre_ep_hist.Fill(ep_angle);
+			//	post_ep_hist.Fill(ep_angle);
+			//}
 
 //			if (cbwc) { cent = event.get_refn(); }  // For centrality bin width correction use refmult n in place of centrality from here on. Not currently implemented after data structure changes
+
+			if (calc_v2) {
+				float res = cos(2 * (event.get_psi_east() - event.get_psi_west()));
+				float v2_event = 0.;
+				for (int i = 0; i < num_particles; i++) {
+					float psi = good_particle_etas[i] >= 0 ? event.get_psi_west() : event.get_psi_east();
+					v2_event += cos(2 * (good_particle_angles[i] - psi));
+				}
+				v2_event /= num_particles;
+				v2[cent].Fill(num_particles, v2_event);
+				resolution[cent].Fill(num_particles, res);
+			}
 
 			if ((ampt || cooper_frye) && ampt_reaction_plane) { ep_angle = 0; }  // Ampt reaction plane is at zero.
 			if ((ampt || cooper_frye) && prerotate) {  // Pre-random rotate event if ampt since all reaction planes are at zero.
@@ -729,7 +752,7 @@ void AzBinner::process_event_pt_n(const Event& event) {
 			post_n_particles[cent].Fill(num_particles);
 			int cent_bin = cent - cent_min;
 
-			TVector2 q(event.get_qx(), event.get_qy());
+			TVector2 q(event.get_psi_east(), event.get_psi_west());
 			pre_ep_hist.Fill(0.5 * q.Phi());
 			for (double& angle : good_particle_angles) {  // Subtract contribution of particle of interest to mitigate autocorrelation.
 				TVector2 q_new(cos(2 * angle), sin(2 * angle));
@@ -1080,6 +1103,10 @@ void AzBinner::define_qa() {
 		post_n_particles[i] = TH1D(("Particle_Dist_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Particle Distribution", particle_dist_hist_max + 1, -0.5, particle_dist_hist_max + 0.5);
 		post_ref[i] = TH1D(("RefMult_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Reference Multiplicity", 801, -0.5, 800.5);
 		post_refn[i] = TH1D(("RefMultn_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Reference Multiplicity N", 801, -0.5, 800.5);
+		if (calc_v2) {
+			v2[i] = TProfile(("v2_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "v2", 101, -0.5, 100.5);
+			resolution[i] = TProfile(("v2_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Resolution", 101, -0.5, 100.5);
+		}
 	}
 
 }
@@ -1187,6 +1214,7 @@ void AzBinner::write_info_file() {
 		out << "check_charge: " << boolalpha << check_charge << endl;
 		out << "rapidity: " << boolalpha << rapidity << endl;
 		out << "prerotate: " << boolalpha << prerotate << endl;
+		out << "calc_v2: " << boolalpha << calc_v2 << endl;
 
 		out << "pile_up_prob: " << pile_up_prob << endl;
 		out << "efficiency_prob: " << efficiency_prob << endl;
@@ -1398,6 +1426,34 @@ void AzBinner::write_qa() {
 	for (auto hist : post_n_particles) { hist.second.Write(); }
 	for (auto hist : post_ref) { hist.second.Write(); }
 	for (auto hist : post_refn) { hist.second.Write(); }
+
+	if (calc_v2) {
+		for (pair<int, TProfile> cent : v2) {
+			vector<float> v2_cor_cent;
+			vector<float> num_particles;
+			vector<float> v2_cor_err;
+			vector<float> npart_err;
+			for (int bin = 0; bin < cent.second.GetXaxis()->GetNbins(); bin++) {
+				v2_cor_cent.push_back(cent.second.GetBinContent(bin) / resolution[cent.first].GetBinContent(bin));
+				num_particles.push_back(cent.second.GetBinCenter(bin));
+				v2_cor_err.push_back(0);  // Placeholder
+				npart_err.push_back(0);
+			}
+			v2_cor[cent.first] = TGraphErrors((int)v2_cor_cent.size(), num_particles.data(), v2_cor_cent.data(), npart_err.data(), v2_cor_err.data());
+		}
+		for (auto prof : v2) { prof.second.Write(); }
+		for (auto prof : resolution) { prof.second.Write(); }
+		for (auto graf : v2_cor) { graf.second.Write(); }
+
+		for (auto prof : v2) { 
+			prof.second.Rebin(101); 
+			float v2_int = prof.second.GetBinContent(1); 
+			float v2_int_err = prof.second.GetBinError(1); 
+			resolution[prof.first].Rebin(101);
+			float res_int = resolution[prof.first].GetBinContent(1);
+			float res_int_err = resolution[prof.first].GetBinError(1);
+		}
+	}
 
 	// Make bar plots for event/track cut histograms
 	TCanvas event_cut_maker_can("event_cut_maker_can");

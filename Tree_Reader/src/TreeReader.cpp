@@ -268,7 +268,6 @@ AzBinner& TreeReader::add_binner() {
 }
 
 
-
 // Doers
 
 
@@ -494,7 +493,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 
 		cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 		Event event(event_defs, energy, ref_num, cent_9bin);
-		event.set_qx(ampt_branches.qx); event.set_qy(ampt_branches.qy);
+		event.set_psi_east(ampt_branches.qx); event.set_psi_west(ampt_branches.qy);
 
 		vector<Track> particles;
 		for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
@@ -517,7 +516,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 				if (tree->GetEntry(event_index)) {
 					cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 					Event event2(event_defs, energy, ref_num, cent_9bin);
-					event2.set_qx(ampt_branches.qx); event.set_qy(ampt_branches.qy);
+					event2.set_psi_east(ampt_branches.qx); event.set_psi_west(ampt_branches.qy);
 
 					particles.clear();
 					for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
@@ -570,7 +569,7 @@ void TreeReader::read_cooper_frye_tree(TTree* tree) {
 	while (tree->GetEvent(event_index)) {
 
 		Event event(event_defs, energy, ref_num, cent_9bin);
-		event.set_qx(cooper_frye_branches.qx); event.set_qy(cooper_frye_branches.qy);
+		event.set_psi_east(cooper_frye_branches.qx); event.set_psi_west(cooper_frye_branches.qy);
 
 		vector<Track> particles;
 		for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
@@ -593,7 +592,7 @@ void TreeReader::read_cooper_frye_tree(TTree* tree) {
 				if (tree->GetEntry(event_index)) {
 					cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 					Event event2(event_defs, energy, ref_num, cent_9bin);
-					event2.set_qx(cooper_frye_branches.qx); event.set_qy(cooper_frye_branches.qy);
+					event2.set_psi_east(cooper_frye_branches.qx); event.set_psi_west(cooper_frye_branches.qy);
 
 					particles.clear();
 					for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
