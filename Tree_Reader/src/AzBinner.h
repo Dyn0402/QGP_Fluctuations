@@ -11,7 +11,7 @@
 #include <TLeaf.h>
 #include <TH2.h>
 #include <TProfile.h>
-#include <TGrpahErrors.h>
+#include <TGraphErrors.h>
 #include <TRandom3.h>
 #include <TChain.h>
 

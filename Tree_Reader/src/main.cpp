@@ -254,10 +254,11 @@ void read_new() {
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
-		{"Ampt_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"Ampt_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
-		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
-		{"CFEV_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEV_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
-		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+//		{"Ampt_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"Ampt_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
+//		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
+//		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 	};
 
 

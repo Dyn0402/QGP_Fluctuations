@@ -493,7 +493,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 
 		cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 		Event event(event_defs, energy, ref_num, cent_9bin);
-		event.set_psi_east(ampt_branches.qx); event.set_psi_west(ampt_branches.qy);
+		event.set_psi_east(ampt_branches.psi_east); event.set_psi_west(ampt_branches.psi_west);
 
 		vector<Track> particles;
 		for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
@@ -516,7 +516,7 @@ void TreeReader::read_ampt_tree(TTree* tree) {
 				if (tree->GetEntry(event_index)) {
 					cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 					Event event2(event_defs, energy, ref_num, cent_9bin);
-					event2.set_psi_east(ampt_branches.qx); event.set_psi_west(ampt_branches.qy);
+					event2.set_psi_east(ampt_branches.psi_east); event.set_psi_west(ampt_branches.psi_west);
 
 					particles.clear();
 					for (int particle_index = 0; particle_index < (int)ampt_branches.pid->size(); particle_index++) {
@@ -569,7 +569,7 @@ void TreeReader::read_cooper_frye_tree(TTree* tree) {
 	while (tree->GetEvent(event_index)) {
 
 		Event event(event_defs, energy, ref_num, cent_9bin);
-		event.set_psi_east(cooper_frye_branches.qx); event.set_psi_west(cooper_frye_branches.qy);
+		event.set_psi_east(cooper_frye_branches.psi_east); event.set_psi_west(cooper_frye_branches.psi_west);
 
 		vector<Track> particles;
 		for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
@@ -592,7 +592,7 @@ void TreeReader::read_cooper_frye_tree(TTree* tree) {
 				if (tree->GetEntry(event_index)) {
 					cent_9bin = ampt_cent.get_cent_bin9(*ref_n);
 					Event event2(event_defs, energy, ref_num, cent_9bin);
-					event2.set_psi_east(cooper_frye_branches.qx); event.set_psi_west(cooper_frye_branches.qy);
+					event2.set_psi_east(cooper_frye_branches.psi_east); event.set_psi_west(cooper_frye_branches.psi_west);
 
 					particles.clear();
 					for (int particle_index = 0; particle_index < (int)cooper_frye_branches.pid->size(); particle_index++) {
@@ -632,8 +632,8 @@ void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus("btof_multi", 1);
 	tree->SetBranchStatus("btof_match", 1);
 	tree->SetBranchStatus("vz", 1);
-	tree->SetBranchStatus("qx", 1);
-	tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus("psi_east", 1);
+	tree->SetBranchStatus("psi_west", 1);
 	tree->SetBranchStatus((particle+".pt").data(), 1);
 	tree->SetBranchStatus((particle+".phi").data(), 1);
 	tree->SetBranchStatus((particle+".beta").data(), 1);
@@ -647,8 +647,8 @@ void TreeReader::set_branches(TTree* tree) {
 
 void TreeReader::set_ampt_branches(TTree* tree) {
 	tree->SetBranchStatus("*", 0);
-	tree->SetBranchStatus("qx", 1);
-	tree->SetBranchStatus("qy", 1);
+//	tree->SetBranchStatus("psi_east", 1);
+//	tree->SetBranchStatus("psi_west", 1);
 	tree->SetBranchStatus("pid", 1);
 	tree->SetBranchStatus("px", 1);
 	tree->SetBranchStatus("py", 1);
@@ -669,8 +669,8 @@ void TreeReader::set_ampt_branches(TTree* tree) {
 
 void TreeReader::set_cooper_frye_branches(TTree* tree) {
 	tree->SetBranchStatus("*", 0);
-	tree->SetBranchStatus("qx", 1);
-	tree->SetBranchStatus("qy", 1);
+//	tree->SetBranchStatus("psi_east", 1);
+//	tree->SetBranchStatus("psi_west", 1);
 	tree->SetBranchStatus("pid", 1);
 	tree->SetBranchStatus("px", 1);
 	tree->SetBranchStatus("py", 1);

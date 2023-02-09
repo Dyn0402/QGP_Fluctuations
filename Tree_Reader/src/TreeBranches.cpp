@@ -20,8 +20,8 @@ tree_leaves get_tree_leaves(TTree* tree, string particle, int ref) {
 	leaves.vx = tree->GetLeaf("vx");
 	leaves.vy = tree->GetLeaf("vy");
 	leaves.vz = tree->GetLeaf("vz");
-	leaves.qx = tree->GetLeaf("qx");
-	leaves.qy = tree->GetLeaf("qy");
+	leaves.psi_east = tree->GetLeaf("psi_east");
+	leaves.psi_west = tree->GetLeaf("psi_west");
 	leaves.dca_xy_avg = tree->GetLeaf("dca_xy_avg");
 	leaves.dca_xy_err = tree->GetLeaf("dca_xy_err");
 
@@ -52,8 +52,8 @@ void set_tree_branches(TTree* tree, tree_branches &branches, string particle, in
 	tree->SetBranchAddress("vy", &branches.vy);
 	tree->SetBranchAddress("vz", &branches.vz);
 
-	tree->SetBranchAddress("qx", &branches.qx);
-	tree->SetBranchAddress("qy", &branches.qy);
+	tree->SetBranchAddress("psi_east", &branches.psi_east);
+	tree->SetBranchAddress("psi_west", &branches.psi_west);
 
 	tree->SetBranchAddress("dca_xy_avg", &branches.dca_xy_avg);
 	tree->SetBranchAddress("dca_xy_err", &branches.dca_xy_err);
@@ -83,8 +83,8 @@ void set_tree_branches(TChain* chain, tree_branches &branches, string particle, 
 	chain->SetBranchAddress("vy", &branches.vy);
 	chain->SetBranchAddress("vz", &branches.vz);
 
-	chain->SetBranchAddress("qx", &branches.qx);
-	chain->SetBranchAddress("qy", &branches.qy);
+	chain->SetBranchAddress("psi_east", &branches.psi_east);
+	chain->SetBranchAddress("psi_west", &branches.psi_west);
 
 	chain->SetBranchAddress("dca_xy_avg", &branches.dca_xy_avg);
 	chain->SetBranchAddress("dca_xy_err", &branches.dca_xy_err);
@@ -124,8 +124,8 @@ void set_ampt_tree_branches(TTree* tree, ampt_tree_branches &branches) {
 	tree->SetBranchAddress("refmult3", &branches.refmult3);
 
 	tree->SetBranchAddress("imp", &branches.imp);
-	tree->SetBranchAddress("qx", &branches.qx);
-	tree->SetBranchAddress("qy", &branches.qy);
+//	tree->SetBranchAddress("psi_east", &branches.psi_east);
+//	tree->SetBranchAddress("psi_west", &branches.psi_west);
 
 	tree->SetBranchAddress("npp", &branches.npp);
 	tree->SetBranchAddress("npt", &branches.npt);
@@ -149,8 +149,8 @@ void set_cooper_frye_tree_branches(TTree* tree, cooper_frye_tree_branches &branc
 	tree->SetBranchAddress("refmult2", &branches.refmult2);
 	tree->SetBranchAddress("refmult3", &branches.refmult3);
 
-	tree->SetBranchAddress("qx", &branches.qx);
-	tree->SetBranchAddress("qy", &branches.qy);
+//	tree->SetBranchAddress("psi_east", &branches.psi_east);
+//	tree->SetBranchAddress("psi_west", &branches.psi_west);
 
 	tree->SetBranchAddress("pid", &branches.pid, &branches.branch_pid);
 	tree->SetBranchAddress("px", &branches.px, &branches.branch_px);
