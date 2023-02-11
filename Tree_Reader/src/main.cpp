@@ -253,11 +253,12 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-//		{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
-//		{"Ampt_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"Ampt_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
+		//{"Sim_flow_flat80_res9_v207_epbins1_test", {{"flow_flat80_res9_v207_resample_epbins1_test", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_test_", {0, 0}}}}}},
 		{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
+		{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 //		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
-		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
+		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
 //		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 	};
 
@@ -479,7 +480,7 @@ void read_new() {
 	//};
 
 	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-//	vector<int> energy_list{ 62 };
+	//vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -906,10 +907,6 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				else if (in_string(set.first, "_allratios")) { binner.set_n1_ratios(false); binner.set_single_ratio(false); }
 				else { binner.set_n1_ratios(false); binner.set_single_ratio(true); }
 
-				if (in_string(set.first, "epbins")) {
-					binner.mix.set_ep_bins(stoi(get_flag_trail(set.first, "epbins", "_")[0]));
-				}
-
 				if (in_string(set.first, "dca")) {
 					binner.cut.max_dca = str_num_dec(get_flag_trail(set.first, "dca", "_")[0], 1);
 				}
@@ -1042,6 +1039,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.mix.set_min_events(150);
 				binner.mix.set_vz_bins(5);
 				binner.mix.set_ep_bins(20);
+
+				if (in_string(set.first, "epbins")) {
+					binner.mix.set_ep_bins(stoi(get_flag_trail(set.first, "epbins", "_")[0]));
+				}
 
 				if (in_string(set.first, "qaonly")) {  // If qa only don't do any binning or mixing, just run though data for qa plots
 					binner.set_divs({});

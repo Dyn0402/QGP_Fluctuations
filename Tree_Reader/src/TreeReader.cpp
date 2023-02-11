@@ -338,7 +338,7 @@ void TreeReader::read_trees() {
 			auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 			vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
 			float fraction_finished = (float)((int)(1000.0*file_index/num_files+0.5))/10;
-			float remaining_seconds = elap.count() / (fraction_finished / 100);
+			float remaining_seconds = elap.count() * (1.0 / (fraction_finished / 100) - 1);
 			auto datetime_finish = chrono::system_clock::to_time_t(chrono::system_clock::now() + chrono::seconds((int)remaining_seconds + 1));
 			vector<string> datetime_finish_vec = split((string)ctime(&datetime_finish), ' ');
 			//cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | Free RAM: " << mem_info.freeram << endl;
@@ -411,11 +411,15 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 		total_events += cent.second;
 		if(sim.get_proton_dist_type() == "hist") { cout << "hist" << endl; sim.set_proton_dist_hist(get_sim_proton_dist(cent.first)); }
 		for(int i=0; i<cent.second; i++) {
-			if(!(i % (int)(cent.second*percent_print/100+0.5))) {
+			if(!(i % (int)(cent.second*percent_print/100+0.5)) && i > 0) {
 				chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
 				auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 				vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
-				cout << " " << energy << "GeV Centrality " << cent.first << " " << (float)((int)(1000.0*i/cent.second+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
+				float fraction_finished = (float)((int)(1000.0 * i / cent.second + 0.5)) / 10;
+				float remaining_seconds = elap.count() * (1.0 / (fraction_finished / 100) - 1);
+				auto datetime_finish = chrono::system_clock::to_time_t(chrono::system_clock::now() + chrono::seconds((int)remaining_seconds + 1));
+				vector<string> datetime_finish_vec = split((string)ctime(&datetime_finish), ' ');
+				cout << " " << energy << "GeV Centrality " << cent.first << " " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << endl;
 			}
 			Event event(event_defs, energy, ref_num, cent.first);
 			sim.simulate_event(event);
