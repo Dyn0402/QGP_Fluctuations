@@ -259,6 +259,7 @@ void read_new() {
 		{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 //		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
+//		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
 //		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 	};
 
