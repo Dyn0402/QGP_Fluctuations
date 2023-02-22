@@ -76,6 +76,7 @@ public:
 	void sim_event(Event &event);
 	void sim_event_anticlust(Event& event);
 	void sim_event_clust_multi(Event& event);
+	void sim_event_clust_multi_flow(Event& event);
 	void sim_event_clust_multi_plus_minus(Event& event);
 	void sim_event_clust_final(Event& event);
 	void sim_event_pairs(Event &event);
@@ -120,6 +121,7 @@ public:
 	void set_eff_flow();
 	void set_anti_clust();
 	void set_clust_multi();
+	void set_event_clust_multi_flow();
 	void set_clust_multi_plus_minus();
 	void set_clust_final();
 	void set_hom_eff(double eff);

@@ -253,15 +253,21 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
-		//{"Sim_flow_flat80_res9_v207_epbins1_test", {{"flow_flat80_res9_v207_resample_epbins1_test", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_test_", {0, 0}}}}}},
-		{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
-		{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-//		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
-		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
-//		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
-//		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		//{"Sim_flow_flat80_res15_v207_test", {{"flow_flat80_res15_v207_resample_test", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s05a05_test", {{"flat80_anticlmulti_spread05_amp05_resample_test", {{"Sim_spread05_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflow_s05a05_res15_v207_test", {{"flat80_anticlflow_spread05_amp05_res15_v207_resample_test", {{"Sim_spread05_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
 	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
+//		//{"Sim_flow_flat80_res9_v207_epbins1_test", {{"flow_flat80_res9_v207_resample_epbins1_test", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_test_", {0, 0}}}}}},
+//		{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
+//		{"BES1_def_resample", {{"default_resample_epbins1", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+////		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+//		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
+////		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
+////		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+//	};
 
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -480,8 +486,8 @@ void read_new() {
 	//	{"BES1_qaonly", {{"qaonly", {{"rapid05_resample_dca1_nsprx1_m2r6_m2s0_nhfit20_qaonly_", {0, 0}}}}}},
 	//};
 
-	vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	//vector<int> energy_list{ 62 };
+	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
+	vector<int> energy_list{ 62 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -674,7 +680,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	else if (in_string(job_type, "Sim")) {
 		in_path += "BES1_Trees/";
 		if (in_string(job_type, "_test")) {
-			sim_events_per_total_proton = 1000;
+			sim_events_per_total_proton = 2000;
+			cout << "Running test" << endl;
 			out_job_dir += "Data_Sim_tests/";
 			mix_out_job_dir += "Data_Sim_tests_Mix/";
 		}
@@ -795,19 +802,21 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
 				reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
 			}
-			if (in_string(set.first, { "Sim", "flow" }, true)) {
+			if (in_string(set.first, { "Sim", "_flow" }, true) || in_string(set.first, { "Sim", "_anticlflow" }, true)) {
 				float res = str_num_dec(get_flag_trail(set.first, "res", "_")[0], 0);
 				float v2 = str_num_dec(get_flag_trail(set.first, "v2", "_")[0], 0);
-				reader.set_sim_flow(true);
 				reader.sim.set_flow(v2, res);
 			}
-			else {
-				reader.set_sim_flow(false);
-			}
+			reader.set_sim_flow(in_string(set.first, { "Sim", "_flow" }, true));
+
 			if (in_string(set.first, { "Sim", "anticlust" }, true)) { reader.sim.set_anti_clust(); }
 			if (in_string(set.first, { "Sim", "clmulti" }, true)) { reader.sim.set_clust_multi(); }
 			if (in_string(set.first, { "Sim", "anticlmulti" }, true)) {
 				reader.sim.set_clust_multi();
+				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
+			}
+			if (in_string(set.first, { "Sim", "anticlflow" }, true)) {
+				reader.sim.set_event_clust_multi_flow();
 				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
 			}
 			if (in_string(set.first, { "Sim", "clmultiplusminus" }, true)) { reader.sim.set_clust_multi(); }
