@@ -667,8 +667,8 @@ void Simulator::sim_event_eff_flow(Event &event) {
 	event_plane = fmod(event_plane, M_PI);  // Force to range [0, pi)
 	if(event_plane < 0) { event_plane += M_PI; }
 	event.set_event_plane(event_plane);
-	flow_res += cos(2*(event_plane - reaction_plane));
-	flow_res_n++;
+	//flow_res += cos(2*(event_plane - reaction_plane));
+	//flow_res_n++;
 
 	if(n_protons > 0) while((int)proton_angles.size() < 1) {
 		new_angle = sim_rand->Rndm() * 2 * M_PI;

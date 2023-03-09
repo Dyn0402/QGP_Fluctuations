@@ -119,7 +119,8 @@ private:
 	string ampt_cent_path = "/home/dylan/Research/Ampt_Centralities/";
 	string ampt_type = "string_melting";
 
-	string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
+	//string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
+	string sim_proton_dist_dataset = "F:/Research/Data/default_resample/rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_0/";
 	string sim_dist_qa_name = "QA_";
 	vector<string> sim_eff_dist_path {};
 

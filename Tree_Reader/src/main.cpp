@@ -255,7 +255,8 @@ void read_new() {
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
 		//{"Sim_flow_flat80_res15_v207_test", {{"flow_flat80_res15_v207_resample_test", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
 		//{"Sim_flat80_anticlmulti_s05a05_test", {{"flat80_anticlmulti_spread05_amp05_resample_test", {{"Sim_spread05_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_anticlflow_s05a05_res15_v207_test", {{"flat80_anticlflow_spread05_amp05_res15_v207_resample_test", {{"Sim_spread05_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlflow_s05a05_res15_v207_test", {{"flat80_anticlflow_spread05_amp05_res15_v207_resample_test", {{"Sim_spread05_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_flow_res15_v207_test", {{"flat80_Eff_flow_res15_v207_resample_test", {{"Sim_flat80_Eff_flow_res15_v207_norotate_resample_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
