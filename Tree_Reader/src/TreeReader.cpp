@@ -394,15 +394,17 @@ void TreeReader::sim_events(map<int, int> cent_num_events) {
 		binner.set_sim_flow(sim_flow);
 	}
 
-	if(sim_eff) {
-		if((int)sim_eff_dist_path.size() == 0)  {
+	if (sim_eff) {
+		if ((int)sim_eff_dist_path.size() == 0) {
 			sim.set_efficiency_dist_hist(get_sim_efficiency_dist());
-		} else {
+		}
+		else {
 			sim.set_efficiency_dist_hist(sim_eff_dist_path[0], sim_eff_dist_path[1]);
 		}
-		if(sim_flow) { sim.set_eff_flow(); }
-		else { sim.set_eff(); }
-	} else if(sim_flow) { sim.set_flow(); }
+	}
+	//	if(sim_flow) { sim.set_eff_flow(); }
+	//	else { sim.set_eff(); }
+	//} else if(sim_flow) { sim.set_flow(); }
 
 	sim.track_defs = track_defs;
 

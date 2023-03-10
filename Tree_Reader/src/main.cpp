@@ -256,7 +256,8 @@ void read_new() {
 		//{"Sim_flow_flat80_res15_v207_test", {{"flow_flat80_res15_v207_resample_test", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
 		//{"Sim_flat80_anticlmulti_s05a05_test", {{"flat80_anticlmulti_spread05_amp05_resample_test", {{"Sim_spread05_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
 		//{"Sim_flat80_anticlflow_s05a05_res15_v207_test", {{"flat80_anticlflow_spread05_amp05_res15_v207_resample_test", {{"Sim_spread05_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_flow_res15_v207_test", {{"flat80_Eff_flow_res15_v207_resample_test", {{"Sim_flat80_Eff_flow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		//{"Sim_flat80_Eff_flow_res15_v207_test", {{"flat80_Eff_flow_res15_v207_resample_test", {{"Sim_flat80_Eff_flow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_simpleclust_s05a05_test", {{"flat80_Eff_simpleclust_spread05_amp05_resample_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp05_norotate_resample_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -791,24 +792,28 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 			if (in_string(set.first, "Sim")) {
 				reader.sim.set_hom_eff(1.0);
-				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default/rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
+				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default_resample/rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
 				reader.sim.set_job_energy(energy * job_num);
 			}
 			if (in_string(set.first, { "Sim", "Eff" }, true)) {
 				reader.set_sim_eff(true);
+				reader.sim.set_eff();  // Can be trumped later if flow involved.
 			}
 			else {
 				reader.set_sim_eff(false);
-			}
-			if (in_string(set.first, { "Sim", "Eff", "Hole3-4" }, true)) {
-				reader.set_sim_eff_dist_path(in_base_path + "Sim_Efficiency_Hists.root", "Hole_3to4");
 			}
 			if (in_string(set.first, { "Sim", "_flow" }, true) || in_string(set.first, { "Sim", "_anticlflow" }, true)) {
 				float res = str_num_dec(get_flag_trail(set.first, "res", "_")[0], 0);
 				float v2 = str_num_dec(get_flag_trail(set.first, "v2", "_")[0], 0);
 				reader.sim.set_flow(v2, res);
 			}
-			reader.set_sim_flow(in_string(set.first, { "Sim", "_flow" }, true));
+			//reader.set_sim_flow(in_string(set.first, { "Sim", "_flow" }, true));
+			if (in_string(set.first, { "Sim", "_flow", "Eff" }, true)) {
+				reader.sim.set_eff_flow();
+			}
+			if (in_string(set.first, { "Sim", "Eff", "simpleclust" }, true)) {
+				reader.sim.set_eff_simple_clust();
+			}
 
 			if (in_string(set.first, { "Sim", "anticlust" }, true)) { reader.sim.set_anti_clust(); }
 			if (in_string(set.first, { "Sim", "clmulti" }, true)) { reader.sim.set_clust_multi(); }

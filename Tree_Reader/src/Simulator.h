@@ -82,6 +82,7 @@ public:
 	void sim_event_pairs(Event &event);
 	void sim_event_eff(Event &event);
 	void sim_event_eff_flow(Event &event);
+	void sim_event_eff_simple_clust(Event& event);
 	void sim_event_flow(Event &event);
 	void sim_event_flow_old_model(Event &event);
 	void sim_event_eff_new(Event &event);
@@ -124,6 +125,7 @@ public:
 	void set_event_clust_multi_flow();
 	void set_clust_multi_plus_minus();
 	void set_clust_final();
+	void set_eff_simple_clust();
 	void set_hom_eff(double eff);
 	void set_v2(double v2);
 	void set_ep_res(double res);

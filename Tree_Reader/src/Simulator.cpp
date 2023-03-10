@@ -194,6 +194,10 @@ void Simulator::set_clust_final() {
 	simulate_event = bind(&Simulator::sim_event_clust_final, this, placeholders::_1);
 }
 
+void Simulator::set_eff_simple_clust() {
+	simulate_event = bind(&Simulator::sim_event_eff_simple_clust, this, placeholders::_1);
+}
+
 void Simulator::set_hom_eff(double eff) {
 	pars.hom_eff = eff;
 }
@@ -729,6 +733,38 @@ void Simulator::sim_event_flow(Event& event) {
 	while ((int)proton_angles.size() < n_protons) {
 		new_angle = sim_rand->Rndm() * 2 * M_PI;
 		if (1.0 + 2 * pars.v2 * cos(2 * (new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+			proton_angles.push_back(new_angle);
+		}
+	}
+
+	vector<Track> tracks;
+	for (double& angle : proton_angles) {
+		Track track(track_defs);
+		track.set_phi(angle);
+		tracks.push_back(track);
+	}
+	event.set_particles(tracks);
+}
+
+
+// Simulate single event and return simulated proton angles. Include efficiency and simple clustering.
+void Simulator::sim_event_eff_simple_clust(Event& event) {
+	double group_angle, new_angle;
+	vector<double> proton_angles;
+
+	int n_protons = get_protons();
+	double cluster_angle = 2 * M_PI * sim_rand->Rndm();
+
+	while ((int)proton_angles.size() < n_protons) {
+		if (sim_rand->Rndm() < pars.amp_group) {  // Cluster
+			new_angle = sim_rand->Gaus(cluster_angle, pars.spread_sigma);
+			new_angle = fmod(new_angle, 2 * M_PI);  // Force to range [0, 2*pi)
+			if (new_angle < 0) { new_angle += 2 * M_PI; }
+		}
+		else {
+			new_angle = sim_rand->Rndm() * 2 * M_PI;
+		}
+		if (norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
 			proton_angles.push_back(new_angle);
 		}
 	}
