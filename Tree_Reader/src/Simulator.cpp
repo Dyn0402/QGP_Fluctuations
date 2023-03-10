@@ -29,7 +29,10 @@ Simulator::Simulator() {
 	proton_dist_hist->SetDirectory(0);
 	efficiency_dist = new TH1D();
 	efficiency_dist->SetDirectory(0);
-	norm_eff_dist = new TH1D();
+	norm_eff_dist = new TH1D("Flat_Hist", "Flat Hist", 100, 0, 2 * M_PI);
+	for (int bin=0; bin <= norm_eff_dist->GetXaxis()->GetNbins(); bin++) {  // Set default to flat distribution, 100% efficiency
+		norm_eff_dist->SetBinContent(bin, 1.0);
+	}
 	norm_eff_dist->SetDirectory(0);
 	ep_dist = new TH1D();
 	ep_dist->SetDirectory(0);

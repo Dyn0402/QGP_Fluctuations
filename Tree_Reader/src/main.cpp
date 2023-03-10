@@ -253,10 +253,17 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		//{"Sim_flow_flat80_res15_v207_test", {{"flow_flat80_res15_v207_resample_test", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
-		//{"Sim_flat80_anticlmulti_s05a05_test", {{"flat80_anticlmulti_spread05_amp05_resample_test", {{"Sim_spread05_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
-		//{"Sim_flat80_anticlflow_s05a05_res15_v207_test", {{"flat80_anticlflow_spread05_amp05_res15_v207_resample_test", {{"Sim_spread05_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
-		//{"Sim_flat80_Eff_flow_res15_v207_test", {{"flat80_Eff_flow_res15_v207_resample_test", {{"Sim_flat80_Eff_flow_res15_v207_norotate_resample_", {0, 0}}}}}},
+//		{"Sim_flow_flat80_res15_v207_test", {{"flow_flat80_res15_v207_resample_test", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s05a05_test", {{"flat80_anticlmulti_spread05_amp05_resample_test", {{"Sim_spread05_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflow_s05a05_res15_v207_test", {{"flat80_anticlflow_spread05_amp05_res15_v207_resample_test", {{"Sim_spread05_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s1a05_test", {{"flat80_anticlmulti_spread1_amp05_resample_test", {{"Sim_spread1_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflow_s1a05_res15_v207_test", {{"flat80_anticlflow_spread1_amp05_res15_v207_resample_test", {{"Sim_spread1_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s01a05_test", {{"flat80_anticlmulti_spread01_amp05_resample_test", {{"Sim_spread01_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflow_s01a05_res15_v207_test", {{"flat80_anticlflow_spread01_amp05_res15_v207_resample_test", {{"Sim_spread01_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlmulti_s08a05_test", {{"flat80_anticlmulti_spread08_amp05_resample_test", {{"Sim_spread08_amp05_flat80_anticlmulti_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflow_s08a05_res15_v207_test", {{"flat80_anticlflow_spread08_amp05_res15_v207_resample_test", {{"Sim_spread08_amp05_flat80_anticlflow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_flow_res15_v207_test", {{"flat80_Eff_flow_res15_v207_resample_test", {{"Sim_flat80_Eff_flow_res15_v207_norotate_resample_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s05a05_test", {{"flat80_simpleclust_spread05_amp05_resample_test", {{"Sim_flat80_simpleclust_spread05_amp05_norotate_resample_", {0, 0}}}}}},
 		{"Sim_flat80_Eff_simpleclust_s05a05_test", {{"flat80_Eff_simpleclust_spread05_amp05_resample_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp05_norotate_resample_", {0, 0}}}}}},
 	};
 
@@ -682,7 +689,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	else if (in_string(job_type, "Sim")) {
 		in_path += "BES1_Trees/";
 		if (in_string(job_type, "_test")) {
-			sim_events_per_total_proton = 2000;
+			sim_events_per_total_proton = 50000;
 			cout << "Running test" << endl;
 			out_job_dir += "Data_Sim_tests/";
 			mix_out_job_dir += "Data_Sim_tests_Mix/";
@@ -792,7 +799,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 			if (in_string(set.first, "Sim")) {
 				reader.sim.set_hom_eff(1.0);
-				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default_resample/rapid05_n1ratios_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
+				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default_resample/rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
 				reader.sim.set_job_energy(energy * job_num);
 			}
 			if (in_string(set.first, { "Sim", "Eff" }, true)) {
