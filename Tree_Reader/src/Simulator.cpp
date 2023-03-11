@@ -383,7 +383,9 @@ void Simulator::sim_event_clust_multi_flow(Event& event) {
 		while ((int)proton_angles.size() == 0) {
 			new_angle = sim_rand->Rndm() * 2 * M_PI;
 			if (1.0 + 2 * pars.v2 * cos(2 * (new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
-				proton_angles.push_back(new_angle);
+				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+					proton_angles.push_back(new_angle);
+				}
 			}
 		}
 	}
@@ -420,7 +422,9 @@ void Simulator::sim_event_clust_multi_flow(Event& event) {
 			x_val_up = pars.x_low + i * x_range / pars.points;  // Upper bin edge
 			new_angle = x_val_up - x_range / pars.points / (cdf[i] - cdf[i - 1]) * (cdf[i] - cdf_rand);  // Linear interpolation
 			if (1.0 + 2 * pars.v2 * cos(2 * (new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
-				new_angle_pass = true;
+				if(norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
+					new_angle_pass = true;
+				}
 			}
 		}
 		proton_angles.push_back(new_angle);
