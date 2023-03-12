@@ -833,7 +833,7 @@ void Simulator::sim_event_flow(Event& event) {
 
 // Simulate single event and return simulated proton angles. Include efficiency and simple clustering.
 void Simulator::sim_event_eff_simple_clust(Event& event) {
-	double group_angle, new_angle;
+	double new_angle;
 	vector<double> proton_angles;
 
 	int n_protons = get_protons();
