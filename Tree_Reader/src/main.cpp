@@ -254,22 +254,30 @@ void read_new() {
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"Sim_flow_flat80_res15_v207_test", {{"flow_flat80_res15_v207_resample_test", {{"Sim_flow_flat80_res15_v207_resample_norotate_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s05a01_epbins1_test", {{"flat80_anticlmulti_spread05_amp01_resample_epbins1_test", {{"Sim_spread05_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_anticlflow_s05a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread05_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread05_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_anticlflow_s05a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflow_spread05_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread05_amp01_flat80_anticlflow_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_anticlflow_s05a01_res15_v207_epbins1_test", {{"flat80_Eff_anticlflow_spread05_amp01_res15_v207_resample_epbins1_test", {{"Sim_Eff_spread05_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s1a01_epbins1_test", {{"flat80_anticlmulti_spread1_amp01_resample_epbins1_test", {{"Sim_spread1_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_anticlflow_s1a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread1_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread1_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_anticlflow_s1a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflow_spread1_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread1_amp01_flat80_anticlflow_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s01a01_epbins1_test", {{"flat80_anticlmulti_spread01_amp01_resample_epbins1_test", {{"Sim_spread01_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_anticlflow_s01a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread01_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread01_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_anticlflow_s01a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflow_spread01_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread01_amp01_flat80_anticlflow_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_anticlmulti_s08a01_epbins1_test", {{"flat80_anticlmulti_spread08_amp01_resample_epbins1_test", {{"Sim_spread08_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_anticlflow_s08a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread08_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread08_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_anticlflow_s08a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflow_spread08_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread08_amp01_flat80_anticlflow_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_flow_res15_v207_epbins1_test", {{"flat80_Eff_flow_res15_v207_resample_epbins1_test", {{"Sim_flat80_Eff_flow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_simpleclust_s05a2_epbins1_test", {{"flat80_simpleclust_spread05_amp2_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread05_amp2_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_simpleclust_s05a2_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s05a01_epbins1_test", {{"flat80_anticlmulti_spread05_amp01_resample_epbins1_test", {{"Sim_spread05_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlflow_s05a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread05_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread05_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflowindep_s05a01_res15_v207_epbins1_test", {{"flat80_anticlflowindep_spread05_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread05_amp01_flat80_anticlflowindep_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_Eff_anticlflow_s05a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflow_spread05_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread05_amp01_flat80_anticlflow_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_anticlflowindep_s05a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflowindep_spread05_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread05_amp01_flat80_anticlflowindep_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_Eff_anticlflow_s05a01_res15_v207_epbins1_test", {{"flat80_Eff_anticlflow_spread05_amp01_res15_v207_resample_epbins1_test", {{"Sim_Eff_spread05_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_anticlflowindep_s05a01_res15_v207_epbins1_test", {{"flat80_Eff_anticlflowindep_spread05_amp01_res15_v207_resample_epbins1_test", {{"Sim_Eff_spread05_amp01_flat80_anticlflowindep_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s1a01_epbins1_test", {{"flat80_anticlmulti_spread1_amp01_resample_epbins1_test", {{"Sim_spread1_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlflow_s1a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread1_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread1_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflowindep_s1a01_res15_v207_epbins1_test", {{"flat80_anticlflowindep_spread1_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread1_amp01_flat80_anticlflowindep_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_anticlflowindep_s1a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflowindep_spread1_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread1_amp01_flat80_anticlflowindep_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s01a01_epbins1_test", {{"flat80_anticlmulti_spread01_amp01_resample_epbins1_test", {{"Sim_spread01_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlflow_s01a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread01_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread01_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflowindep_s01a01_res15_v207_epbins1_test", {{"flat80_anticlflowindep_spread01_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread01_amp01_flat80_anticlflowindep_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_Eff_anticlflow_s01a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflow_spread01_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread01_amp01_flat80_anticlflow_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_anticlflowindep_s01a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflowindep_spread01_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread01_amp01_flat80_anticlflowindep_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlmulti_s08a01_epbins1_test", {{"flat80_anticlmulti_spread08_amp01_resample_epbins1_test", {{"Sim_spread08_amp01_flat80_anticlmulti_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_anticlflow_s08a01_res15_v207_epbins1_test", {{"flat80_anticlflow_spread08_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread08_amp01_flat80_anticlflow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_anticlflowindep_s08a01_res15_v207_epbins1_test", {{"flat80_anticlflowindep_spread08_amp01_res15_v207_resample_epbins1_test", {{"Sim_spread08_amp01_flat80_anticlflowindep_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_Eff_anticlflow_s08a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflow_spread08_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread08_amp01_flat80_anticlflow_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_anticlflowindep_s08a01_res15_v20_epbins1_test", {{"flat80_Eff_anticlflowindep_spread08_amp01_res15_v20_resample_epbins1_test", {{"Sim_Eff_spread08_amp01_flat80_anticlflowindep_res15_v20_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_Eff_flow_res15_v207_epbins1_test", {{"flat80_Eff_flow_res15_v207_resample_epbins1_test", {{"Sim_flat80_Eff_flow_res15_v207_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_simpleclust_s05a2_epbins1_test", {{"flat80_simpleclust_spread05_amp2_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread05_amp2_norotate_resample_epbins1_", {0, 0}}}}}},
+		//{"Sim_flat80_Eff_simpleclust_s05a2_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_norotate_resample_epbins1_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -814,7 +822,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			else {
 				reader.set_sim_eff(false);
 			}
-			if (in_string(set.first, { "Sim", "_flow" }, true) || in_string(set.first, { "Sim", "_anticlflow" }, true)) {
+			if (in_string(set.first, { "Sim", "_flow" }, true) || in_string(set.first, { "Sim", "_anticlflow" }, true) || in_string(set.first, { "Sim", "_anticlflowindep" }, true)) {
 				float res = str_num_dec(get_flag_trail(set.first, "res", "_")[0], 0);
 				float v2 = str_num_dec(get_flag_trail(set.first, "v2", "_")[0], 0);
 				reader.sim.set_flow(v2, res);
@@ -835,6 +843,10 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			}
 			if (in_string(set.first, { "Sim", "anticlflow" }, true)) {
 				reader.sim.set_event_clust_multi_flow();
+				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
+			}
+			if (in_string(set.first, { "Sim", "anticlflowindep" }, true)) {
+				reader.sim.set_event_clust_multi_flow_indep();
 				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
 			}
 			if (in_string(set.first, { "Sim", "clmultiplusminus" }, true)) { reader.sim.set_clust_multi(); }
