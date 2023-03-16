@@ -839,6 +839,13 @@ void Simulator::sim_event_eff_simple_clust(Event& event) {
 	int n_protons = get_protons();
 	double cluster_angle = 2 * M_PI * sim_rand->Rndm();
 
+	double reaction_plane = M_PI * sim_rand->Rndm();
+	double deviation = ep_dist->GetRandom();
+	double event_plane = reaction_plane + deviation;
+	event_plane = fmod(event_plane, M_PI);  // Force to range [0, pi)
+	if (event_plane < 0) { event_plane += M_PI; }
+	event.set_event_plane(event_plane);
+
 	while ((int)proton_angles.size() < n_protons) {
 		if (sim_rand->Rndm() < pars.amp_group) {  // Cluster
 			new_angle = sim_rand->Gaus(cluster_angle, pars.spread_sigma);
@@ -849,7 +856,9 @@ void Simulator::sim_event_eff_simple_clust(Event& event) {
 			new_angle = sim_rand->Rndm() * 2 * M_PI;
 		}
 		if (norm_eff_dist->GetBinContent(norm_eff_dist->FindBin(new_angle)) >= sim_rand->Rndm()) {
-			proton_angles.push_back(new_angle);
+			if (1.0 + 2 * pars.v2 * cos(2 * (new_angle - reaction_plane)) >= sim_rand->Rndm() * (1.0 + 2 * pars.v2)) {
+				proton_angles.push_back(new_angle);
+			}
 		}
 	}
 
