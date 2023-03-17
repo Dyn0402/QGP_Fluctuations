@@ -1436,7 +1436,7 @@ void AzBinner::write_qa() {
 			for (int bin = 0; bin < cent.second.GetXaxis()->GetNbins(); bin++) {
 				v2_cor_cent.push_back(cent.second.GetBinContent(bin) / resolution[cent.first].GetBinContent(bin));
 				num_particles.push_back(cent.second.GetBinCenter(bin));
-				v2_cor_err.push_back(0);  // Placeholder
+				v2_cor_err.push_back(cent.second.GetBinError(bin) / resolution[cent.first].GetBinContent(bin));  // Apparently people don't propagate resolution error
 				npart_err.push_back(0);
 			}
 			v2_cor[cent.first] = TGraphErrors((int)v2_cor_cent.size(), num_particles.data(), v2_cor_cent.data(), npart_err.data(), v2_cor_err.data());

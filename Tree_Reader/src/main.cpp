@@ -280,10 +280,10 @@ void read_new() {
 //		//{"Sim_flat80_Eff_simpleclust_s05a2_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_norotate_resample_epbins1_", {0, 0}}}}}},
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_simpleclust_s05a2_v207_res99_epbins1_test", {{"flat80_simpleclust_spread05_amp2_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread05_amp2_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_simpleclust_s05a2_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
-	};
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	{"Sim_flat80_simpleclust_s05a2_v207_res99_epbins1_test", {{"flat80_simpleclust_spread05_amp2_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread05_amp2_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+	//	{"Sim_flat80_Eff_simpleclust_s05a2_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+	//};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
@@ -295,6 +295,17 @@ void read_new() {
 ////		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
 ////		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 //	};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
+		//{"Sim_flow_flat80_res9_v207_epbins1_test", {{"flow_flat80_res9_v207_resample_epbins1_test", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_test_", {0, 0}}}}}},
+		//{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
+		{"BES1_def_resample_test", {{"default_resample_epbins1_test", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_test_", {0, 0}}}}}},
+//		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
+//		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
+//		{"CFEVb342_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CFEVb342_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
+	};
 
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -514,7 +525,7 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 62 };
+	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
@@ -886,7 +897,6 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				}
 				else { binner.set_particle_bins(particle_bins["BES1"][energy]); }
 
-
 				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
 				if (in_string(set.first, "CF")) { reader.set_cooper_frye(true); binner.set_cooper_frye(true); }
 
@@ -941,6 +951,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, { "reactionplane" }, true)) { binner.set_ampt_reaction_plane(true); }
 
 				if (in_string(set.first, { "noprerotate" }, true)) { binner.set_prerotate(false); }
+
+				if (in_string(set.first, "calcv2"))  { binner.set_calc_v2(true); }
 
 
 				// Pile up not implemented, need to think about it
