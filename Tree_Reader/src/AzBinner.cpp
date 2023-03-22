@@ -619,7 +619,7 @@ void AzBinner::process_event(const Event& event) {
 			//}
 			//else {
 			//	ep_angle = event.get_event_plane();
-			//	pre_ep_hist.Fill(ep_angle);
+			//	pre_ep_hist.Fsill(ep_angle);
 			//	post_ep_hist.Fill(ep_angle);
 			//}
 
@@ -1105,7 +1105,7 @@ void AzBinner::define_qa() {
 		post_refn[i] = TH1D(("RefMultn_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Reference Multiplicity N", 801, -0.5, 800.5);
 		if (calc_v2) {
 			v2[i] = TProfile(("v2_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "v2", 101, -0.5, 100.5);
-			resolution[i] = TProfile(("v2_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Resolution", 101, -0.5, 100.5);
+			resolution[i] = TProfile(("resolution_" + set_name + "_" + to_string(energy) + "_" + to_string(i)).data(), "Resolution", 101, -0.5, 100.5);
 		}
 	}
 
@@ -1434,25 +1434,70 @@ void AzBinner::write_qa() {
 			vector<float> v2_cor_err;
 			vector<float> npart_err;
 			for (int bin = 0; bin < cent.second.GetXaxis()->GetNbins(); bin++) {
-				v2_cor_cent.push_back(cent.second.GetBinContent(bin) / resolution[cent.first].GetBinContent(bin));
-				num_particles.push_back(cent.second.GetBinCenter(bin));
-				v2_cor_err.push_back(cent.second.GetBinError(bin) / resolution[cent.first].GetBinContent(bin));  // Apparently people don't propagate resolution error
-				npart_err.push_back(0);
+				if (cent.second.GetBinEntries(bin) >= 1) {
+					v2_cor_cent.push_back(cent.second.GetBinContent(bin) / pow(resolution[cent.first].GetBinContent(bin), 0.5));
+					num_particles.push_back(cent.second.GetBinCenter(bin));
+					v2_cor_err.push_back(cent.second.GetBinError(bin) / pow(resolution[cent.first].GetBinContent(bin), 0.5));  // Apparently people don't propagate resolution error
+					npart_err.push_back(0);
+				}
 			}
-			v2_cor[cent.first] = TGraphErrors((int)v2_cor_cent.size(), num_particles.data(), v2_cor_cent.data(), npart_err.data(), v2_cor_err.data());
+			cent.second.Write();
+			resolution[cent.first].Write();
+			TCanvas v2_cor_can(("V2_Corrected_Canvas_Cent_" + to_string(cent.first)).data());
+			TGraphErrors v2_cor_errs((int)v2_cor_cent.size(), num_particles.data(), v2_cor_cent.data(), npart_err.data(), v2_cor_err.data());
+			v2_cor_errs.Draw();
+			v2_cor_can.Write();
 		}
-		for (auto prof : v2) { prof.second.Write(); }
-		for (auto prof : resolution) { prof.second.Write(); }
-		for (auto graf : v2_cor) { graf.second.Write(); }
 
+		vector<float> cent_bin, cent_bin_err, v2_cent, v2_cent_err, v2_cor_cent, v2_cor_cent_err, res_cent, res_cent_err;
 		for (auto prof : v2) { 
 			prof.second.Rebin(101); 
-			float v2_int = prof.second.GetBinContent(1); 
-			float v2_int_err = prof.second.GetBinError(1); 
+			float v2_int = prof.second.GetBinContent(1);
+			float v2_int_err = prof.second.GetBinError(1);
 			resolution[prof.first].Rebin(101);
-			float res_int = resolution[prof.first].GetBinContent(1);
-			float res_int_err = resolution[prof.first].GetBinError(1);
+			float res_int = pow(resolution[prof.first].GetBinContent(1), 0.5);
+			float res_int_err = fabs(resolution[prof.first].GetBinError(1) / (2 * res_int));
+
+			cent_bin.push_back(prof.first);
+			cent_bin_err.push_back(0.0);
+			v2_cent.push_back(v2_int);
+			v2_cent_err.push_back(v2_int_err);
+			v2_cor_cent.push_back(v2_int / res_int);
+			v2_cor_cent_err.push_back(v2_int_err / res_int);  // Assuming negligable error on resolution, apparently what people do
+			res_cent.push_back(res_int);
+			res_cent_err.push_back(res_int_err);
 		}
+
+		TCanvas v2_cent_can("V2_Integrated_vs_Centrality_Bin");
+		TGraphErrors v2_cent_graph((int)v2_cent.size(), cent_bin.data(), v2_cent.data(), cent_bin_err.data(), v2_cent_err.data());
+		v2_cent_graph.SetTitle("v2 Uncorrected vs Centrality Bin;Centrality Bin;v2 uncorrected");
+		v2_cent_graph.SetMarkerStyle(20);
+		v2_cent_graph.SetMarkerColor(kBlue);
+		v2_cent_graph.Draw();
+		v2_cent_can.Write();
+
+		TCanvas res_cent_can("Resolution_Integrated_vs_Centrality_Bin");
+		TGraphErrors res_cent_graph((int)v2_cent.size(), cent_bin.data(), res_cent.data(), cent_bin_err.data(), res_cent_err.data());
+		res_cent_graph.SetTitle("Resolution vs Centrality Bin;Centrality Bin;Event Plane Resolution");
+		res_cent_graph.SetMarkerStyle(20);
+		res_cent_graph.SetMarkerColor(kBlue);
+		res_cent_graph.Draw();
+		res_cent_can.Write();
+
+		TCanvas v2_cor_cent_can("V2_Corrected_Integrated_vs_Centrality_Bin");
+		TGraphErrors v2_cor_cent_graph((int)v2_cent.size(), cent_bin.data(), v2_cor_cent.data(), cent_bin_err.data(), v2_cor_cent_err.data());
+		v2_cor_cent_graph.SetTitle("v2 Corrected vs Centrality Bin;Centrality Bin;v2 corrected");
+		v2_cor_cent_graph.SetMarkerStyle(20);
+		v2_cor_cent_graph.SetMarkerColor(kBlue);
+		v2_cor_cent_graph.Draw();
+		v2_cor_cent_can.Write();
+
+		ofstream v2_out_file(qa_path + "v2.txt");
+		v2_out_file << "centrality\tv2\tresolution\n";
+		for (unsigned i = 0; i < cent_bin.size(); i++) {
+			v2_out_file << cent_bin[i] << "\t" << v2_cor_cent[i] << " " << v2_cor_cent_err[i] << "\t" << res_cent[i] << " " << res_cent_err[i] << "\n";
+		}
+		v2_out_file.close();
 	}
 
 	// Make bar plots for event/track cut histograms

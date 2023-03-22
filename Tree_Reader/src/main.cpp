@@ -300,7 +300,8 @@ void read_new() {
 		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
 		//{"Sim_flow_flat80_res9_v207_epbins1_test", {{"flow_flat80_res9_v207_resample_epbins1_test", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_test_", {0, 0}}}}}},
 		//{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
-		{"BES1_def_resample_test", {{"default_resample_epbins1_test", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_test_", {0, 0}}}}}},
+		//{"BES1_def_resample_test", {{"default_resample_epbins1_test", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_test_", {0, 0}}}}}},
+		{"BES1_def_resample_test", {{"default_resample_epbins1_calcv2_qaonly_test", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_test_", {0, 0}}}}}},
 //		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
 //		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
@@ -525,7 +526,7 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 7, 11, 39 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;

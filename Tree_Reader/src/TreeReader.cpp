@@ -638,8 +638,8 @@ void TreeReader::set_branches(TTree* tree) {
 	tree->SetBranchStatus("btof_multi", 1);
 	tree->SetBranchStatus("btof_match", 1);
 	tree->SetBranchStatus("vz", 1);
-//	tree->SetBranchStatus("psi_east", 1);
-//	tree->SetBranchStatus("psi_west", 1);
+	tree->SetBranchStatus("psi_east", 1);
+	tree->SetBranchStatus("psi_west", 1);
 	tree->SetBranchStatus((particle+".pt").data(), 1);
 	tree->SetBranchStatus((particle+".phi").data(), 1);
 	tree->SetBranchStatus((particle+".beta").data(), 1);

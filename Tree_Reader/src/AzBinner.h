@@ -298,6 +298,6 @@ private:
 	map<int, TH1D> post_ref;
 	map<int, TH1D> post_refn;
 	map<int, TProfile> v2;
-	map<int, TGraphErrors> v2_cor;
+	//map<int, TGraphErrors> v2_cor;
 	map<int, TProfile> resolution;
 };
