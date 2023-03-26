@@ -1108,8 +1108,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					binner.set_mixed(false);
 				}
 
-				if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
-				else { binner.mix.set_mixes_per_event(10); }
+				if (in_string(set.first, {"Ampt", "CF_", "CFEV_", "CFEVb342_"}, false)) { binner.mix.set_mixes_per_event(10); }
+				else {
+					if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
+					else { binner.mix.set_mixes_per_event(10); }
+				}
 				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); binner.set_n_bootstraps(250); }
 
 				cout << "Added " << set.first << " set " << set_num << " " << energy << "GeV, job " << job_num << " of " << jobs << endl << endl;
