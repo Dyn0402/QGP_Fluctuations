@@ -734,17 +734,17 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 		}
 	}
 	else if (in_string(job_type, "CF_")) {
-		in_path = in_base_cf_path + "Cooper_Frye_Trees/";
+		in_path = in_base_cf_path + "Cooper_Frye_Trees/Protons_Only/";
 		out_job_dir += "Data_CF/";
 		mix_out_job_dir += "Data_CF_Mix/";
 	}
 	else if (in_string(job_type, "CFEV_")) {
-		in_path = in_base_cf_path + "Cooper_Frye_EV_Trees/";
+		in_path = in_base_cf_path + "Cooper_Frye_EV_Trees/Protons_Only/";
 		out_job_dir += "Data_CFEV/";
 		mix_out_job_dir += "Data_CFEV_Mix/";
 	}
 	else if (in_string(job_type, "CFEVb342_")) {
-		in_path = in_base_cf_path + "Cooper_Frye_EVb342_Trees/";
+		in_path = in_base_cf_path + "Cooper_Frye_EVb342_Trees/Protons_Only/";
 		out_job_dir += "Data_CFEVb342/";
 		mix_out_job_dir += "Data_CFEVb342_Mix/";
 	}
