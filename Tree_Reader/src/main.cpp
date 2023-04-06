@@ -783,7 +783,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	//map<int, int> sim_cent_events = { {8, 80 * 10000} };
 
 	// Might fail on Mixer::append_event if these are too low?
-	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
+	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 31} } },
 		//{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },
 //		{"AMPT", { {7, 76}, {11, 68}, {19, 57}, {27, 53}, {39, 47}, {62, 43} } },
 //		{"CF", { {7, 79}, {19, 65}, {27, 58}, {39, 51}, {62, 48} } },
