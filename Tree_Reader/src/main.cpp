@@ -783,13 +783,19 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	//map<int, int> sim_cent_events = { {8, 80 * 10000} };
 
 	// Might fail on Mixer::append_event if these are too low?
-	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 31} } },
+	map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
 		//{"AMPT", { {7, 75}, {11, 67}, {19, 56}, {27, 52}, {39, 46}, {62, 42} } },
 //		{"AMPT", { {7, 76}, {11, 68}, {19, 57}, {27, 53}, {39, 47}, {62, 43} } },
 //		{"CF", { {7, 79}, {19, 65}, {27, 58}, {39, 51}, {62, 48} } },
 		{"AMPT", { {7, 100}, {11, 100}, {19, 100}, {27, 100}, {39, 90}, {62, 80} } },
 		{"CF", { {7, 80}, {19, 80}, {27, 70}, {39, 70}, {62, 70} } },
 	};
+
+	if (in_string(job_type, { "BES1", "sys" }, true)) {  // If running systematics chance of getting larger max particles/event
+		for (auto energy : particle_bins["BES1"]) {
+			particle_bins["BES1"][energy.first] = particle_bins["BES1"][energy.first] * 1.3;
+		}
+	}
 
 	for (pair<string, map<string, pair<int, int>>> set_group : job) {
 		for (pair<string, pair<int, int>> set : set_group.second) {
@@ -909,7 +915,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 						binner.set_particle_bins(100);  // Placeholder for now
 					}
 				}
-				else { binner.set_particle_bins(particle_bins["BES1"][energy]); }
+				else { binner.set_particle_bins(particle_bins["BES1"][energy]); cout << binner.get_particle_bins() << endl; }
 
 				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
 				if (in_string(set.first, "CF")) { reader.set_cooper_frye(true); binner.set_cooper_frye(true); }
