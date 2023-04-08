@@ -285,26 +285,32 @@ void read_new() {
 	//	{"Sim_flat80_Eff_simpleclust_s05a2_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets_def = {
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
 		//{"Sim_flow_flat80_res9_v207_epbins1_test", {{"flow_flat80_res9_v207_resample_epbins1_test", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_test_", {0, 0}}}}}},
 		//{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
-		{"BES1_def", {{"default", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_def", {{"default", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 		//{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 		//{"CF_def_resample_epbins1", {{"default_resample_epbins1", {{"CF_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 		//{"CFEVb342_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEVb342_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
-	};
+	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets_sys = {
-		{"BES1_sys_dca08", {{"default_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_dca12", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_m2r8", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_m2r4", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		//{"BES1_sys_dca08", {{"default_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_dca12", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_m2r8", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_m2r4", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_dca05", {{"default_sys", {{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_dca15", {{"default_sys", {{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_m2r2", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_m2r10", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -537,14 +543,14 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
 	int free_threads = 0;
 
-	//int jobs = sets.size() * energy_list.size();
-	int jobs = (sets_def.size() + sets_sys.size()) * energy_list.size();
+	int jobs = sets.size() * energy_list.size();
 
 	mutex* mtx = new mutex;
 	vector<string>* file_list = new vector<string>;
@@ -554,16 +560,16 @@ void read_new() {
 		int job_num = 0;
 		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 
-		for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_def) {
-			for (int energy : energy_list) {
-				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-				this_thread::sleep_for(chrono::seconds(set_sleep));
-			}
-			this_thread::sleep_for(chrono::seconds(energy_sleep));
-		}
+		//for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+		//	for (int energy : energy_list) {
+		//		cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+		//		pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+		//		this_thread::sleep_for(chrono::seconds(set_sleep));
+		//	}
+		//	this_thread::sleep_for(chrono::seconds(energy_sleep));
+		//}
 		for (int energy : energy_list) {
-			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_sys) {
+			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
 				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
 				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
 				this_thread::sleep_for(chrono::seconds(set_sleep));
