@@ -296,26 +296,26 @@ void read_new() {
 		//{"CFEVb342_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEVb342_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 	//};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	//{"BES1_sys_dca08", {{"default_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_dca12", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_m2r8", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_m2r4", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_dca05", {{"default_sys", {{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_dca15", {{"default_sys", {{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_m2r2", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_m2r10", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//};
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		//{"BES1_sys_dca08", {{"default_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_dca12", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_m2r8", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_m2r4", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_dca05", {{"default_sys", {{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_dca15", {{"default_sys", {{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_m2r2", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_m2r10", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	};
 
-map<string, map<string, map<string, pair<int, int>>>> sets = {
-	{"BES1_sys_0", {{"default_sys_test", get_rand_set_pairs(2, "rapid05")}}},
-};
+//map<string, map<string, map<string, pair<int, int>>>> sets = {
+//	{"BES1_sys_0", {{"default_sys_test", get_rand_set_pairs(2, "rapid05")}}},
+//};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
@@ -549,7 +549,7 @@ map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 11 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
