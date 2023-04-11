@@ -327,21 +327,13 @@ void read_new() {
 	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets_39 = {
-		{"BES1_v2_sys_dca08", {{"v2_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_dca12", {{"v2_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nsprx09", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
 		{"BES1_v2_sys_nsprx11", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nhfit15", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nhfit25", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_m2r8", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_m2r4", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_dca05", {{"v2_sys", {{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_dca15", {{"v2_sys", {{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nsprx075", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
 		{"BES1_v2_sys_nsprx125", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_m2r2", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_m2r10", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
 	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_sys_rerun_test", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 10}}}}}},
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"BES1_v2_sys", {{"v2_sys", {
@@ -624,15 +616,15 @@ void read_new() {
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
-	vector<int> energy_list{ 7, 11, 19, 27, 62 };
+	vector<int> energy_list{ 11, 19, 27, 62 };
 	//vector<int> energy_list{ 7 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
 	int free_threads = 0;
 
-//	int jobs = sets.size() * energy_list.size();
-	int jobs = sets.size() * energy_list.size() + sets_39.size();
+	int jobs = sets.size() * energy_list.size();
+//	int jobs = sets.size() * energy_list.size() + sets_39.size();
 
 
 	mutex* mtx = new mutex;
@@ -1014,7 +1006,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 						binner.set_particle_bins(100);  // Placeholder for now
 					}
 				}
-				else { binner.set_particle_bins(particle_bins["BES1"][energy]); cout << binner.get_particle_bins() << endl; }
+				else { binner.set_particle_bins(particle_bins["BES1"][energy]); }
 
 				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
 				if (in_string(set.first, "CF")) { reader.set_cooper_frye(true); binner.set_cooper_frye(true); }
@@ -1107,7 +1099,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				}
 
 				if (in_string(set.first, "nhfit")) {
-					binner.cut.min_nhits_fit = str_num_dec(get_flag_trail(set.first, "nhfit", "_")[0], 2);
+					binner.cut.min_nhits_fit = stoi(get_flag_trail(set.first, "nhfit", "_")[0]);
 				}
 
 				if (in_string(set.first, "eta")) {
@@ -1221,8 +1213,17 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					binner.mix.set_ep_bins(stoi(get_flag_trail(set.first, "epbins", "_")[0]));
 				}
 
+				if (in_string(set.first, "nbootstrap")) {
+					binner.set_n_bootstraps(stoi(get_flag_trail(set.first, "nbootstrap", "_")[0]));
+					cout << binner.get_n_bootstraps() << endl;
+				}
+
 				if (in_string(set.first, "qaonly")) {  // If qa only don't do any binning or mixing, just run though data for qa plots
 					binner.set_divs({});
+					binner.set_mixed(false);
+				}
+
+				if (in_string(set.first, "nomix")) {
 					binner.set_mixed(false);
 				}
 
@@ -1231,7 +1232,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
 					else { binner.mix.set_mixes_per_event(10); }
 				}
-				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); binner.set_n_bootstraps(250); }
+				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
 
 				cout << "Added " << set.first << " set " << set_num << " " << energy << "GeV, job " << job_num << " of " << jobs << endl << endl;
 			}

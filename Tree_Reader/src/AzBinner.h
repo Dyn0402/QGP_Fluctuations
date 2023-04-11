@@ -60,6 +60,7 @@ public:
 	int get_cent_min();
 	int get_particle_bins();
 	int get_particle_min();
+	int get_n_bootstraps();
 
 	// Setters
 	void set_in_path(string path);

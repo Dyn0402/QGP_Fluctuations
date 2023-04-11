@@ -244,6 +244,11 @@ int AzBinner::get_particle_min() {
 }
 
 
+int AzBinner::get_n_bootstraps() {
+	return n_bootstraps;
+}
+
+
 
 // Setters
 
@@ -1471,6 +1476,7 @@ void AzBinner::write_qa() {
 		TCanvas v2_cent_can("V2_Integrated_vs_Centrality_Bin");
 		TGraphErrors v2_cent_graph((int)v2_cent.size(), cent_bin.data(), v2_cent.data(), cent_bin_err.data(), v2_cent_err.data());
 		v2_cent_graph.SetTitle("v2 Uncorrected vs Centrality Bin;Centrality Bin;v2 uncorrected");
+		v2_cent_graph.SetName("v2_Uncor_vs_Cent");
 		v2_cent_graph.SetMarkerStyle(20);
 		v2_cent_graph.SetMarkerColor(kBlue);
 		v2_cent_graph.Draw();
@@ -1479,6 +1485,7 @@ void AzBinner::write_qa() {
 		TCanvas res_cent_can("Resolution_Integrated_vs_Centrality_Bin");
 		TGraphErrors res_cent_graph((int)v2_cent.size(), cent_bin.data(), res_cent.data(), cent_bin_err.data(), res_cent_err.data());
 		res_cent_graph.SetTitle("Resolution vs Centrality Bin;Centrality Bin;Event Plane Resolution");
+		res_cent_graph.SetName("Res_vs_Cent");
 		res_cent_graph.SetMarkerStyle(20);
 		res_cent_graph.SetMarkerColor(kBlue);
 		res_cent_graph.Draw();
@@ -1487,6 +1494,7 @@ void AzBinner::write_qa() {
 		TCanvas v2_cor_cent_can("V2_Corrected_Integrated_vs_Centrality_Bin");
 		TGraphErrors v2_cor_cent_graph((int)v2_cent.size(), cent_bin.data(), v2_cor_cent.data(), cent_bin_err.data(), v2_cor_cent_err.data());
 		v2_cor_cent_graph.SetTitle("v2 Corrected vs Centrality Bin;Centrality Bin;v2 corrected");
+		v2_cor_cent_graph.SetName("v2_Cor_vs_Cent");
 		v2_cor_cent_graph.SetMarkerStyle(20);
 		v2_cor_cent_graph.SetMarkerColor(kBlue);
 		v2_cor_cent_graph.Draw();
