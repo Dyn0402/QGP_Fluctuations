@@ -332,18 +332,24 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_sys_rerun_test0", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_rerun_test1", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
-		{"BES1_sys_rerun_test2", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
-		{"BES1_sys_rerun_test3", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
-		{"BES1_sys_rerun_test4", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
-		{"BES1_sys_rerun_test5", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
-		{"BES1_sys_rerun_test6", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {6, 6}}}}}},
-		{"BES1_sys_rerun_test7", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {7, 7}}}}}},
-		{"BES1_sys_rerun_test8", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {8, 8}}}}}},
-		{"BES1_sys_rerun_test9", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {9, 9}}}}}},
-		{"BES1_sys_rerun_test10", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {10, 10}}}}}},
-		{"BES1_sys_rerun_test11", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {11, 11}}}}}},
+		{"BES1_rerun_nofileshuffle_test0", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // No randomization
+		{"BES1_rerun_nofileshuffle_test1", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test2", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Only mixed randomization
+		{"BES1_rerun_nofileshuffle_test3", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+		{"BES1_rerun_nofileshuffle_test4", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test5", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_rerun_nofileshuffle_test6", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+		{"BES1_rerun_nofileshuffle_test7", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
+		{"BES1_rerun_nofileshuffle_test10", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Only StRefMutCorr randomization
+		{"BES1_rerun_nofileshuffle_test11", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+		{"BES1_rerun_nofileshuffle_test12", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test13", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_rerun_nofileshuffle_test20", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Randomization of resampling and mixing 
+		{"BES1_rerun_nofileshuffle_test21", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+		{"BES1_rerun_nofileshuffle_test22", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test23", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_rerun_nofileshuffle_test24", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+		{"BES1_rerun_nofileshuffle_test25", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -785,6 +791,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	int sim_events_per_total_proton = 100000;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
+	if (in_string(job_type, "_nofileshuffle")) {
+		reader.set_file_shuffle_rand_seed(42);
+	}
 
 	string base_path, in_base_path, in_base_ampt_path, in_base_cf_path;
 	if (in_string(job_type, "RCF")) {
@@ -1042,25 +1051,31 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, "_seed")) {
 					binner.set_tree_reader_rand_seed(42);
 					binner.set_mixer_rand_seed(42);
-					binner.set_file_shuffle_rand_seed(42);
 					binner.set_stref_rand_seed(42);
 				}
 				else if (in_string(set.first, "_mixseed")) {
 					binner.set_tree_reader_rand_seed(0);
 					binner.set_mixer_rand_seed(42);
-					binner.set_file_shuffle_rand_seed(time(NULL));
 					binner.set_stref_rand_seed(0);
 				}
 				else if (in_string(set.first, "_mixnoseed")) {
 					binner.set_tree_reader_rand_seed(42);
 					binner.set_mixer_rand_seed(0);
-					binner.set_file_shuffle_rand_seed(42);
 					binner.set_stref_rand_seed(42);
+				}
+				else if (in_string(set.first, "_strefseed")) {
+					binner.set_tree_reader_rand_seed(0);
+					binner.set_mixer_rand_seed(0);
+					binner.set_stref_rand_seed(42);
+				}
+				else if (in_string(set.first, "_strefnoseed")) {
+					binner.set_tree_reader_rand_seed(42);
+					binner.set_mixer_rand_seed(42);
+					binner.set_stref_rand_seed(0);
 				}
 				else {
 					binner.set_tree_reader_rand_seed(0);
 					binner.set_mixer_rand_seed(0);
-					binner.set_file_shuffle_rand_seed(time(NULL));
 					binner.set_stref_rand_seed(0);
 				}
 

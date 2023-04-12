@@ -423,8 +423,7 @@ void AzBinner::set_mixer_rand_seed(int seed) {
 }
 
 void AzBinner::set_file_shuffle_rand_seed(int seed) {
-	file_shuffle_seed = seed;
-	srand(seed);
+	file_shuffle_seed = seed;  // To be read in from TreeReader parent for writing in info file
 }
 
 void AzBinner::set_stref_rand_seed(int seed) {
@@ -459,7 +458,7 @@ void AzBinner::set_particle_min(int min) {
 // Set everything necessary for read just in time (construction too early to set). 
 void AzBinner::prep_read() {
 	//cut.set_values(energy, particle);  // Resets values set in main, for now call in main, think of better way
-	set_energy(energy);
+	set_energy(energy);  // Not convinced this does anything?
 	init_data();
 	if (mixed) {
 		mix.set_single_ratio(single_ratio);

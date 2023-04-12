@@ -258,7 +258,7 @@ void TreeReader::set_tree_reader_rand_seed(int seed) {
 
 void TreeReader::set_file_shuffle_rand_seed(int seed) {
 	file_shuffle_seed = seed;
-	srand(seed);
+	//srand(seed);  // Now do this directly before shuffle if seed > 0, negative is code to do things randomly
 }
 
 // Create new binner with TreeReader energy and ref_num and return reference to new AzBinner
@@ -274,6 +274,7 @@ AzBinner& TreeReader::add_binner() {
 // Read files for single energy and write results to text files.
 void TreeReader::read_trees() {
 	for (AzBinner& binner : binners) {
+		binner.set_file_shuffle_rand_seed(file_shuffle_seed);  // Send this to write in info file only
 		binner.prep_read();
 		binner.define_qa();
 	}
@@ -293,6 +294,9 @@ void TreeReader::read_trees() {
 		in_files = get_files_in_dir(in_path + to_string(energy) + "GeV/", "root", "path");
 	}
 	
+	if (file_shuffle_seed > 0) {
+		srand(file_shuffle_seed);  // Set seed for random file shuffle if not negative (code for random)
+	}
 	random_shuffle(in_files.begin(), in_files.end());
 
 	unsigned num_files = in_files.size();
@@ -316,7 +320,7 @@ void TreeReader::read_trees() {
 				}
 				if(mtx) { mtx->unlock(); }
 				if(wait) {
-					if (in_files_queue.size() == 1) {  // Last file in queue, just have to wait for it to open up
+					if (in_files_queue.size() == 1 || file_shuffle_seed > 0) {  // Last file in queue, just have to wait for it to open up, or if file_seed set explicitly
 						cout << "Waiting for path: " << path << endl;
 						this_thread::sleep_for(chrono::seconds(file_wait_sleep));
 					}

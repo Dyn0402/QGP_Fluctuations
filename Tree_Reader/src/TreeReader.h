@@ -130,7 +130,7 @@ private:
 	vector<int> pdg_particle_pid{ 2212 };
 
 	int tree_reader_seed = 0;
-	int file_shuffle_seed = 0;
+	int file_shuffle_seed = -1;
 
 	bool ampt;
 	bool cooper_frye;

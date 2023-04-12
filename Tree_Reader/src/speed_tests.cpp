@@ -135,21 +135,21 @@ void tree_read_speed_characterization() {
 
 	mutex* mtx = new mutex;
 	vector<string>* file_list = new vector<string>;
-	ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("GaussLegendre");
-	ROOT::EnableThreadSafety();
-	{
-		int job_num = 0;
-		ThreadPool pool(thread::hardware_concurrency() - free_threads);
+	//ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("GaussLegendre");
+	//ROOT::EnableThreadSafety();
+	//{
+	//	int job_num = 0;
+	//	ThreadPool pool(thread::hardware_concurrency() - free_threads);
 
-		for (int energy : energy_list) {
-			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
-				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-				this_thread::sleep_for(chrono::seconds(set_sleep));
-			}
-			this_thread::sleep_for(chrono::seconds(energy_sleep));
-		}
+	//	for (int energy : energy_list) {
+	//		for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+	//			cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+	//			pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+	//			this_thread::sleep_for(chrono::seconds(set_sleep));
+	//		}
+	//		this_thread::sleep_for(chrono::seconds(energy_sleep));
+	//	}
 
-	}
+	//}
 
 }
