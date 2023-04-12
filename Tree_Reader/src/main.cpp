@@ -332,24 +332,24 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_rerun_nofileshuffle_test0", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // No randomization
-		{"BES1_rerun_nofileshuffle_test1", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 2}}}}}},
-		{"BES1_rerun_nofileshuffle_test2", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Only mixed randomization
-		{"BES1_rerun_nofileshuffle_test3", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
-		{"BES1_rerun_nofileshuffle_test4", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
-		{"BES1_rerun_nofileshuffle_test5", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
-		{"BES1_rerun_nofileshuffle_test6", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
-		{"BES1_rerun_nofileshuffle_test7", {{"default_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
-		{"BES1_rerun_nofileshuffle_test10", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Only StRefMutCorr randomization
-		{"BES1_rerun_nofileshuffle_test11", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
-		{"BES1_rerun_nofileshuffle_test12", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
-		{"BES1_rerun_nofileshuffle_test13", {{"default_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
-		{"BES1_rerun_nofileshuffle_test20", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Randomization of resampling and mixing 
-		{"BES1_rerun_nofileshuffle_test21", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
-		{"BES1_rerun_nofileshuffle_test22", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
-		{"BES1_rerun_nofileshuffle_test23", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
-		{"BES1_rerun_nofileshuffle_test24", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
-		{"BES1_rerun_nofileshuffle_test25", {{"default_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
+		{"BES1_rerun_nofileshuffle_test0", {{"default_rand_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // No randomization
+		{"BES1_rerun_nofileshuffle_test1", {{"default_rand_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test2", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Only mixed randomization
+		{"BES1_rerun_nofileshuffle_test3", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+		{"BES1_rerun_nofileshuffle_test4", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test5", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_rerun_nofileshuffle_test6", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+		{"BES1_rerun_nofileshuffle_test7", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
+		{"BES1_rerun_nofileshuffle_test10", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Only StRefMutCorr randomization
+		{"BES1_rerun_nofileshuffle_test11", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+		{"BES1_rerun_nofileshuffle_test12", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test13", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_rerun_nofileshuffle_test20", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // Randomization of resampling and mixing 
+		{"BES1_rerun_nofileshuffle_test21", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+		{"BES1_rerun_nofileshuffle_test22", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+		{"BES1_rerun_nofileshuffle_test23", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_rerun_nofileshuffle_test24", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+		{"BES1_rerun_nofileshuffle_test25", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
