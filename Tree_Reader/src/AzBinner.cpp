@@ -461,18 +461,20 @@ void AzBinner::prep_read() {
 	//cut.set_values(energy, particle);  // Resets values set in main, for now call in main, think of better way
 	set_energy(energy);
 	init_data();
-	mix.set_single_ratio(single_ratio);
-	mix.set_n1_ratios(n1_ratios);
-	mix.set_rand_rotate(rotate_random);
-	mix.set_resample(resample);
-	mix.set_resample_alg(resample_alg);
-	mix.set_n_resamples(n_resamples);
-	mix.set_n_bootstraps(n_bootstraps);
-	mix.set_cent_bins(cent_bins);
-	mix.set_cent_min(cent_min);
-	mix.set_particle_bins(particle_bins);
-	mix.set_particle_min(particle_min);
-	mix.init_data();
+	if (mixed) {
+		mix.set_single_ratio(single_ratio);
+		mix.set_n1_ratios(n1_ratios);
+		mix.set_rand_rotate(rotate_random);
+		mix.set_resample(resample);
+		mix.set_resample_alg(resample_alg);
+		mix.set_n_resamples(n_resamples);
+		mix.set_n_bootstraps(n_bootstraps);
+		mix.set_cent_bins(cent_bins);
+		mix.set_cent_min(cent_min);
+		mix.set_particle_bins(particle_bins);
+		mix.set_particle_min(particle_min);
+		mix.init_data();
+	}
 }
 
 
