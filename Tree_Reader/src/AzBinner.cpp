@@ -688,7 +688,8 @@ void AzBinner::process_event(const Event& event) {
 					// Save binned values to bootstraps
 					for (int i = 0; i < n_bootstraps; i++) {
 						vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
-						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+						int poisson_samples = trand->Poisson(1);
+						for (int j = 0; j <= poisson_samples; j++) {  // Poisson block bootstrap
 							for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 								data_event_bs[num_in_bin] += binned_event[num_in_bin];
 							}

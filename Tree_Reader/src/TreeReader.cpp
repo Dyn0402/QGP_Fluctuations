@@ -321,7 +321,9 @@ void TreeReader::read_trees() {
 				if(mtx) { mtx->unlock(); }
 				if(wait) {
 					if (in_files_queue.size() == 1 || file_shuffle_seed > 0) {  // Last file in queue, just have to wait for it to open up, or if file_seed set explicitly
-						cout << "Waiting for path: " << path << endl;
+						if (in_files_queue.size() == 1) {
+							cout << "Waiting for last file path: " << path << endl;
+						}
 						this_thread::sleep_for(chrono::seconds(file_wait_sleep));
 					}
 					else {  // Put current file at end of queue and move on to next file

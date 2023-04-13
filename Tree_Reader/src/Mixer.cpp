@@ -392,7 +392,8 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 // Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
-	double rand_angle = trand->Rndm() * 2 * M_PI;
+	double rand_angle;
+	if (rand_rotate) { rand_angle = trand->Rndm() * 2 * M_PI; }
 	int pool_events = (int)angles[cent_bin][ep_bin][vz_bin].size();
 
 	if (num_protons > pool_events) {
@@ -434,7 +435,8 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 			// Save binned values to bootstraps
 			for (int i = 0; i < n_bootstraps; i++) {
 				vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
-				for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+				int poisson_samples = trand->Poisson(1);
+				for (int j = 0; j <= poisson_samples; j++) {  // Poisson block bootstrap
 //				for (int j = 0; j < pois_dist(c_rand); j++) {
 					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 						data_event_bs[num_in_bin] += binned_event[num_in_bin];
