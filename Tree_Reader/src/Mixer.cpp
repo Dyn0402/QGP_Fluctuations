@@ -392,7 +392,8 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 // Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
-	double rand_angle = trand->Rndm() * 2 * M_PI;
+	double rand_angle;
+	if (rand_rotate) { rand_angle = trand->Rndm() * 2 * M_PI; }
 	int pool_events = (int)angles[cent_bin][ep_bin][vz_bin].size();
 
 	if (num_protons > pool_events) {
