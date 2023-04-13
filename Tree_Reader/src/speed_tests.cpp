@@ -109,32 +109,32 @@ void speed_test() {
 
 void tree_read_speed_characterization() {
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_sys_rerun_test0", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_rerun_test1", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
-		{"BES1_sys_rerun_test2", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
-		{"BES1_sys_rerun_test3", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
-		{"BES1_sys_rerun_test4", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
-		{"BES1_sys_rerun_test5", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
-		{"BES1_sys_rerun_test6", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {6, 6}}}}}},
-		{"BES1_sys_rerun_test7", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {7, 7}}}}}},
-		{"BES1_sys_rerun_test8", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {8, 8}}}}}},
-		{"BES1_sys_rerun_test9", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {9, 9}}}}}},
-		{"BES1_sys_rerun_test10", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {10, 10}}}}}},
-		{"BES1_sys_rerun_test11", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {11, 11}}}}}},
-	};
-
-
-	vector<int> energy_list{ 7 };
-
-	int set_sleep = 1;
-	int energy_sleep = 1;
-	int free_threads = 0;
-
-	int jobs = sets.size() * energy_list.size();
-
-	mutex* mtx = new mutex;
-	vector<string>* file_list = new vector<string>;
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_sys_rerun_test0", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_rerun_test1", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+//		{"BES1_sys_rerun_test2", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+//		{"BES1_sys_rerun_test3", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+//		{"BES1_sys_rerun_test4", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+//		{"BES1_sys_rerun_test5", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
+//		{"BES1_sys_rerun_test6", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {6, 6}}}}}},
+//		{"BES1_sys_rerun_test7", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {7, 7}}}}}},
+//		{"BES1_sys_rerun_test8", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {8, 8}}}}}},
+//		{"BES1_sys_rerun_test9", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {9, 9}}}}}},
+//		{"BES1_sys_rerun_test10", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {10, 10}}}}}},
+//		{"BES1_sys_rerun_test11", {{"default_sys_test", {{"rapid05_resample_norotate_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {11, 11}}}}}},
+//	};
+//
+//
+//	vector<int> energy_list{ 7 };
+//
+//	int set_sleep = 1;
+//	int energy_sleep = 1;
+//	int free_threads = 0;
+//
+//	int jobs = sets.size() * energy_list.size();
+//
+//	mutex* mtx = new mutex;
+//	vector<string>* file_list = new vector<string>;
 	//ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("GaussLegendre");
 	//ROOT::EnableThreadSafety();
 	//{
