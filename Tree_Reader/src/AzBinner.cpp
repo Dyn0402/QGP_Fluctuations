@@ -568,6 +568,10 @@ TH1D* AzBinner::get_sim_efficiency_dist() {
 
 //  For good events/tracks, azimuthally bin particles and save to data
 void AzBinner::process_event(const Event& event) {
+	// Get centrality bin for event from ref_multn value for every event to keep random string the same between runs
+	refmultCorrUtil->init(event.get_run());
+	refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+
 	// Check if each event is good. Analyze if so, continue if not.
 	if (check_event(event)) {
 		vector<double> good_particle_angles = {};
@@ -584,9 +588,6 @@ void AzBinner::process_event(const Event& event) {
 			}
 		}
 
-		// Get centrality bin for event from ref_multn value
-		refmultCorrUtil->init(event.get_run());
-		refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
 		int cent16_corr = refmultCorrUtil->getCentralityBin16();
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
