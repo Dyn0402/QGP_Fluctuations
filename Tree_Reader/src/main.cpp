@@ -296,21 +296,60 @@ void read_new() {
 		//{"CFEVb342_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEVb342_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 	//};
 
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	//{"BES1_sys_dca08", {{"default_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	//{"BES1_sys_dca12", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	//{"BES1_sys_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	//{"BES1_sys_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	//{"BES1_sys_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
+	//	//{"BES1_sys_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
+	//	//{"BES1_sys_m2r8", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	//{"BES1_sys_m2r4", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"BES1_sys_dca05", {{"default_sys", {{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"BES1_sys_dca15", {{"default_sys", {{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"BES1_sys_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"BES1_sys_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"BES1_sys_m2r2", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"BES1_sys_m2r10", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_v2_sys_nsprx09", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_nsprx11", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_nhfit15", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_nhfit25", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_m2r8", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_m2r4", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_nsprx075", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_nsprx125", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_m2r2", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_m2r10", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//	};
+//
+//	map<string, map<string, map<string, pair<int, int>>>> sets_39 = {
+//		{"BES1_v2_sys_nsprx11", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//		{"BES1_v2_sys_nsprx125", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+//	};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		//{"BES1_sys_dca08", {{"default_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		//{"BES1_sys_dca12", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		//{"BES1_sys_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		//{"BES1_sys_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		//{"BES1_sys_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
-		//{"BES1_sys_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
-		//{"BES1_sys_m2r8", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		//{"BES1_sys_m2r4", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_dca05", {{"default_sys", {{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_dca15", {{"default_sys", {{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_m2r2", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_m2r10", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_rerun_nofileshuffle_test0", {{"default_rand_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},  // No randomization
+		{"BES1_rerun_nofileshuffle_test1", {{"default_rand_sys_test", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 2}}}}}},
+		{"BES1_rerun_test2", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 5}}}}}},  // Only mixed randomization
+//		{"BES1_rerun_nofileshuffle_test3", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+//		{"BES1_rerun_nofileshuffle_test4", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+//		{"BES1_rerun_nofileshuffle_test5", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+//		{"BES1_rerun_nofileshuffle_test6", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+//		{"BES1_rerun_nofileshuffle_test7", {{"default_rand_sys_test", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
+		{"BES1_rerun_test10", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 3}}}}}},  // Only StRefMutCorr randomization
+//		{"BES1_rerun_nofileshuffle_test11", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+//		{"BES1_rerun_nofileshuffle_test12", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+//		{"BES1_rerun_nofileshuffle_test13", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefnoseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_rerun_test20", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 5}}}}}},  // Randomization of resampling and mixing
+//		{"BES1_rerun_nofileshuffle_test21", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+//		{"BES1_rerun_nofileshuffle_test22", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+//		{"BES1_rerun_nofileshuffle_test23", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+//		{"BES1_rerun_nofileshuffle_test24", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+//		{"BES1_rerun_nofileshuffle_test25", {{"default_rand_sys_test", {{"rapid05_resample_norotate_strefseed_nomix_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
 	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets_11_19 = {
@@ -337,6 +376,50 @@ void read_new() {
 		}}}},
 	};
 
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_v2_sys", {{"v2_sys", {
+////			{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+////			{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+////			{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+////			{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}
+//		}}}}
+//	};
+
+	//map<string, map<string, map<string, pair<int, int>>>> sets_39 = {
+	//	//{"BES1_v2_sys_39_0", {{"v2_sys", {
+	//	//	{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//}}}},
+	//	//{"BES1_v2_sys_39_1", {{"v2_sys", {
+	//	//	{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//}}}},
+	//	//{"BES1_v2_sys_39_2", {{"v2_sys", {
+	//	//	{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//}}}},
+	//	//{"BES1_v2_sys_39_3", {{"v2_sys", {
+	//	//	{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+	//	//	{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}
+	//	//}}}}
+	//};
+
 //map<string, map<string, map<string, pair<int, int>>>> sets = {
 //	{"BES1_sys_0", {{"default_sys_test", get_rand_set_pairs(2, "rapid05")}}},
 //};
@@ -346,7 +429,9 @@ void read_new() {
 //		//{"Sim_flow_flat80_res9_v207_epbins1_test", {{"flow_flat80_res9_v207_resample_epbins1_test", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_test_", {0, 0}}}}}},
 //		//{"Ampt_def_resample_epbins1", {{"default_resample_epbins1", {{"Ampt_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 //		//{"BES1_def_resample_test", {{"default_resample_epbins1_test", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_test_", {0, 0}}}}}},
-//		{"BES1_def_resample_test", {{"default_resample_epbins1_calcv2_qaonly_test", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_test_", {0, 0}}}}}},
+//		{"BES1_def_resample_test", {{"default_resample_epbins1_calcv2_qaonly_test2", {
+//			{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}},
+//			{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
 ////		{"CF_def_resample_epbins1", {{"default_resample_noprerotate_epbins1", {{"CF_rapid05_resample_norotate_noprerotate_epbins1_", {0, 0}}}}}},
 //		//{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
 ////		{"CFEV_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEV_rapid05_resample_norotate__epbins1_", {0, 0}}}}}},
@@ -577,10 +662,12 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
-	int free_threads = 0;
+	int free_threads = 6;
 
 //	int jobs = sets.size() * energy_list.size();
 	int jobs = sets.size() * 2 + sets_11_19.size() * 2 + sets_27.size();
+//	int jobs = sets.size() * energy_list.size() + sets_39.size();
+
 
 	mutex* mtx = new mutex;
 	vector<string>* file_list = new vector<string>;
@@ -598,6 +685,16 @@ void read_new() {
 		//	}
 		//	this_thread::sleep_for(chrono::seconds(energy_sleep));
 		//}
+
+//		for (int energy : {39}) {
+//			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_39) {
+//				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+//				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+//				this_thread::sleep_for(chrono::seconds(set_sleep));
+//			}
+//			this_thread::sleep_for(chrono::seconds(energy_sleep));
+//		}
+
 //		for (int energy : energy_list) {
 //			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
 //				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
@@ -746,6 +843,9 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	int sim_events_per_total_proton = 100000;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_file_list(file_list);
+	if (in_string(job_type, "_nofileshuffle")) {
+		reader.set_file_shuffle_rand_seed(42);
+	}
 
 	string base_path, in_base_path, in_base_ampt_path, in_base_cf_path;
 	if (in_string(job_type, "RCF")) {
@@ -978,7 +1078,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 						binner.set_particle_bins(100);  // Placeholder for now
 					}
 				}
-				else { binner.set_particle_bins(particle_bins["BES1"][energy]); cout << binner.get_particle_bins() << endl; }
+				else { binner.set_particle_bins(particle_bins["BES1"][energy]); }
 
 				if (in_string(set.first, "Ampt")) { reader.set_ampt(true); binner.set_ampt(true); }
 				if (in_string(set.first, "CF")) { reader.set_cooper_frye(true); binner.set_cooper_frye(true); }
@@ -1003,25 +1103,31 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, "_seed")) {
 					binner.set_tree_reader_rand_seed(42);
 					binner.set_mixer_rand_seed(42);
-					binner.set_file_shuffle_rand_seed(42);
 					binner.set_stref_rand_seed(42);
 				}
 				else if (in_string(set.first, "_mixseed")) {
 					binner.set_tree_reader_rand_seed(0);
 					binner.set_mixer_rand_seed(42);
-					binner.set_file_shuffle_rand_seed(time(NULL));
 					binner.set_stref_rand_seed(0);
 				}
 				else if (in_string(set.first, "_mixnoseed")) {
 					binner.set_tree_reader_rand_seed(42);
 					binner.set_mixer_rand_seed(0);
-					binner.set_file_shuffle_rand_seed(42);
 					binner.set_stref_rand_seed(42);
+				}
+				else if (in_string(set.first, "_strefseed")) {
+					binner.set_tree_reader_rand_seed(0);
+					binner.set_mixer_rand_seed(0);
+					binner.set_stref_rand_seed(42);
+				}
+				else if (in_string(set.first, "_strefnoseed")) {
+					binner.set_tree_reader_rand_seed(42);
+					binner.set_mixer_rand_seed(42);
+					binner.set_stref_rand_seed(0);
 				}
 				else {
 					binner.set_tree_reader_rand_seed(0);
 					binner.set_mixer_rand_seed(0);
-					binner.set_file_shuffle_rand_seed(time(NULL));
 					binner.set_stref_rand_seed(0);
 				}
 
@@ -1071,7 +1177,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				}
 
 				if (in_string(set.first, "nhfit")) {
-					binner.cut.min_nhits_fit = str_num_dec(get_flag_trail(set.first, "nhfit", "_")[0], 2);
+					binner.cut.min_nhits_fit = stoi(get_flag_trail(set.first, "nhfit", "_")[0]);
 				}
 
 				if (in_string(set.first, "eta")) {
@@ -1185,9 +1291,19 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					binner.mix.set_ep_bins(stoi(get_flag_trail(set.first, "epbins", "_")[0]));
 				}
 
+				if (in_string(set.first, "nbootstrap")) {
+					binner.set_n_bootstraps(stoi(get_flag_trail(set.first, "nbootstrap", "_")[0]));
+					cout << binner.get_n_bootstraps() << endl;
+				}
+
 				if (in_string(set.first, "qaonly")) {  // If qa only don't do any binning or mixing, just run though data for qa plots
 					binner.set_divs({});
 					binner.set_mixed(false);
+				}
+
+				if (in_string(set.first, "nomix")) {
+					binner.set_mixed(false);
+					cout << "Mixed? " << binner.get_mixed() << endl;
 				}
 
 				if (in_string(set.first, {"Ampt", "CF_", "CFEV_", "CFEVb342_"}, false)) { binner.mix.set_mixes_per_event(10); }
@@ -1195,7 +1311,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
 					else { binner.mix.set_mixes_per_event(10); }
 				}
-				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); binner.set_n_bootstraps(250); }
+				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
 
 				cout << "Added " << set.first << " set " << set_num << " " << energy << "GeV, job " << job_num << " of " << jobs << endl << endl;
 			}

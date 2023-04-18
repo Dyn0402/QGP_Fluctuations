@@ -98,7 +98,7 @@ private:
 	mutex *mtx = NULL;
 	//struct sysinfo mem_info;
 	vector<string> *file_list;
-	int file_wait_sleep = 1;  // Seconds to wait for path to clear up
+	int file_wait_sleep = 10;  // Seconds to wait for path to clear up
 	float percent_print = 2.;  // Percentage of files interval at which to print update
 
 	TRandom3* trand = new TRandom3(0);
@@ -130,7 +130,7 @@ private:
 	vector<int> pdg_particle_pid{ 2212 };
 
 	int tree_reader_seed = 0;
-	int file_shuffle_seed = 0;
+	int file_shuffle_seed = -1;
 
 	bool ampt;
 	bool cooper_frye;

@@ -244,6 +244,11 @@ int AzBinner::get_particle_min() {
 }
 
 
+int AzBinner::get_n_bootstraps() {
+	return n_bootstraps;
+}
+
+
 
 // Setters
 
@@ -418,8 +423,7 @@ void AzBinner::set_mixer_rand_seed(int seed) {
 }
 
 void AzBinner::set_file_shuffle_rand_seed(int seed) {
-	file_shuffle_seed = seed;
-	srand(seed);
+	file_shuffle_seed = seed;  // To be read in from TreeReader parent for writing in info file
 }
 
 void AzBinner::set_stref_rand_seed(int seed) {
@@ -454,20 +458,22 @@ void AzBinner::set_particle_min(int min) {
 // Set everything necessary for read just in time (construction too early to set). 
 void AzBinner::prep_read() {
 	//cut.set_values(energy, particle);  // Resets values set in main, for now call in main, think of better way
-	set_energy(energy);
+	set_energy(energy);  // Not convinced this does anything?
 	init_data();
-	mix.set_single_ratio(single_ratio);
-	mix.set_n1_ratios(n1_ratios);
-	mix.set_rand_rotate(rotate_random);
-	mix.set_resample(resample);
-	mix.set_resample_alg(resample_alg);
-	mix.set_n_resamples(n_resamples);
-	mix.set_n_bootstraps(n_bootstraps);
-	mix.set_cent_bins(cent_bins);
-	mix.set_cent_min(cent_min);
-	mix.set_particle_bins(particle_bins);
-	mix.set_particle_min(particle_min);
-	mix.init_data();
+	if (mixed) {
+		mix.set_single_ratio(single_ratio);
+		mix.set_n1_ratios(n1_ratios);
+		mix.set_rand_rotate(rotate_random);
+		mix.set_resample(resample);
+		mix.set_resample_alg(resample_alg);
+		mix.set_n_resamples(n_resamples);
+		mix.set_n_bootstraps(n_bootstraps);
+		mix.set_cent_bins(cent_bins);
+		mix.set_cent_min(cent_min);
+		mix.set_particle_bins(particle_bins);
+		mix.set_particle_min(particle_min);
+		mix.init_data();
+	}
 }
 
 
@@ -562,6 +568,10 @@ TH1D* AzBinner::get_sim_efficiency_dist() {
 
 //  For good events/tracks, azimuthally bin particles and save to data
 void AzBinner::process_event(const Event& event) {
+	// Get centrality bin for event from ref_multn value for every event to keep random string the same between runs
+	refmultCorrUtil->init(event.get_run());
+	refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+
 	// Check if each event is good. Analyze if so, continue if not.
 	if (check_event(event)) {
 		vector<double> good_particle_angles = {};
@@ -578,9 +588,6 @@ void AzBinner::process_event(const Event& event) {
 			}
 		}
 
-		// Get centrality bin for event from ref_multn value
-		refmultCorrUtil->init(event.get_run());
-		refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
 		int cent16_corr = refmultCorrUtil->getCentralityBin16();
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
@@ -682,7 +689,8 @@ void AzBinner::process_event(const Event& event) {
 					// Save binned values to bootstraps
 					for (int i = 0; i < n_bootstraps; i++) {
 						vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
-						for (int j = 0; j < trand->Poisson(1); j++) {  // Poisson block bootstrap
+						int poisson_samples = trand->Poisson(1);
+						for (int j = 0; j <= poisson_samples; j++) {  // Poisson block bootstrap
 							for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 								data_event_bs[num_in_bin] += binned_event[num_in_bin];
 							}
@@ -1471,6 +1479,7 @@ void AzBinner::write_qa() {
 		TCanvas v2_cent_can("V2_Integrated_vs_Centrality_Bin");
 		TGraphErrors v2_cent_graph((int)v2_cent.size(), cent_bin.data(), v2_cent.data(), cent_bin_err.data(), v2_cent_err.data());
 		v2_cent_graph.SetTitle("v2 Uncorrected vs Centrality Bin;Centrality Bin;v2 uncorrected");
+		v2_cent_graph.SetName("v2_Uncor_vs_Cent");
 		v2_cent_graph.SetMarkerStyle(20);
 		v2_cent_graph.SetMarkerColor(kBlue);
 		v2_cent_graph.Draw();
@@ -1479,6 +1488,7 @@ void AzBinner::write_qa() {
 		TCanvas res_cent_can("Resolution_Integrated_vs_Centrality_Bin");
 		TGraphErrors res_cent_graph((int)v2_cent.size(), cent_bin.data(), res_cent.data(), cent_bin_err.data(), res_cent_err.data());
 		res_cent_graph.SetTitle("Resolution vs Centrality Bin;Centrality Bin;Event Plane Resolution");
+		res_cent_graph.SetName("Res_vs_Cent");
 		res_cent_graph.SetMarkerStyle(20);
 		res_cent_graph.SetMarkerColor(kBlue);
 		res_cent_graph.Draw();
@@ -1487,6 +1497,7 @@ void AzBinner::write_qa() {
 		TCanvas v2_cor_cent_can("V2_Corrected_Integrated_vs_Centrality_Bin");
 		TGraphErrors v2_cor_cent_graph((int)v2_cent.size(), cent_bin.data(), v2_cor_cent.data(), cent_bin_err.data(), v2_cor_cent_err.data());
 		v2_cor_cent_graph.SetTitle("v2 Corrected vs Centrality Bin;Centrality Bin;v2 corrected");
+		v2_cor_cent_graph.SetName("v2_Cor_vs_Cent");
 		v2_cor_cent_graph.SetMarkerStyle(20);
 		v2_cor_cent_graph.SetMarkerColor(kBlue);
 		v2_cor_cent_graph.Draw();
