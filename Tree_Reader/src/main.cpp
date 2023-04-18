@@ -662,8 +662,8 @@ void read_new() {
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
 //	vector<int> energy_list{ 11 };
 
-	int set_sleep = 1;
-	int energy_sleep = 1;
+	int set_sleep = 100;
+	int energy_sleep = 100;
 	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
