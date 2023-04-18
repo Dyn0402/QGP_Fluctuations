@@ -313,6 +313,30 @@ void read_new() {
 		{"BES1_sys_m2r10", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 	};
 
+	map<string, map<string, map<string, pair<int, int>>>> sets_11_19 = {
+		{"BES1_sys_11_19", {{"default_sys", {
+				{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}},
+		}}}},
+	};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets_27 = {
+		{"BES1_sys_27_1", {{"default_sys", {
+				{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+		}}}},
+		{"BES1_sys_27_2", {{"default_sys", {
+				{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}},
+				{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}},
+		}}}},
+	};
+
 //map<string, map<string, map<string, pair<int, int>>>> sets = {
 //	{"BES1_sys_0", {{"default_sys_test", get_rand_set_pairs(2, "rapid05")}}},
 //};
@@ -547,15 +571,16 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 39, 62, 27, 19, 11 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 11 };
+//	vector<int> energy_list{ 11 };
 
 	int set_sleep = 1;
 	int energy_sleep = 1;
 	int free_threads = 0;
 
-	int jobs = sets.size() * energy_list.size();
+//	int jobs = sets.size() * energy_list.size();
+	int jobs = sets.size() * 2 + sets_11_19.size() * 2 + sets_27.size();
 
 	mutex* mtx = new mutex;
 	vector<string>* file_list = new vector<string>;
@@ -573,7 +598,16 @@ void read_new() {
 		//	}
 		//	this_thread::sleep_for(chrono::seconds(energy_sleep));
 		//}
-		for (int energy : energy_list) {
+//		for (int energy : energy_list) {
+//			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+//				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+//				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+//				this_thread::sleep_for(chrono::seconds(set_sleep));
+//			}
+//			this_thread::sleep_for(chrono::seconds(energy_sleep));
+//		}
+
+		for (int energy : {39, 62}) {
 			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
 				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
 				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
@@ -582,6 +616,24 @@ void read_new() {
 			this_thread::sleep_for(chrono::seconds(energy_sleep));
 		}
 		
+		for (int energy : {27}) {
+			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_27) {
+				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+				this_thread::sleep_for(chrono::seconds(set_sleep));
+			}
+			this_thread::sleep_for(chrono::seconds(energy_sleep));
+		}
+
+		for (int energy : {19, 11}) {
+			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_11_19) {
+				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+				this_thread::sleep_for(chrono::seconds(set_sleep));
+			}
+			this_thread::sleep_for(chrono::seconds(energy_sleep));
+		}
+
 	}
 }
 
