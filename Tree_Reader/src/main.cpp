@@ -296,37 +296,40 @@ void read_new() {
 		//{"CFEVb342_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEVb342_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 	//};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	//{"BES1_sys_dca08", {{"default_sys", {{"rapid05_resample_norotate_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_dca12", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_m2r8", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	//{"BES1_sys_m2r4", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_dca05", {{"default_sys", {{"rapid05_resample_norotate_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_dca15", {{"default_sys", {{"rapid05_resample_norotate_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_m2r2", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//	{"BES1_sys_m2r10", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-	//};
-
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"BES1_v2_sys_nofileshuffle_def", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 1}}}}}},
-		{"BES1_v2_sys_nofileshuffle_def", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {2, 2}}}}}},
-		{"BES1_v2_sys_nofileshuffle_nsprx09", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_nsprx11", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_nhfit15", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_nhfit25", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_m2r8", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_m2r4", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_nsprx075", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_nsprx125", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_m2r2", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
-		{"BES1_v2_sys_nofileshuffle_m2r10", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca08", {{"default_sys", {{"rapid05_resample_norotate_seed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca12", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_m2r8", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_m2r4", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca05", {{"default_sys", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_m2r2", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_m2r10", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 	};
+
+	//map<string, map<string, map<string, pair<int, int>>>> sets = {
+	//	//{"BES1_v2_sys_nofileshuffle_def", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 1}}}}}},
+	//	{"BES1_v2_sys_nofileshuffle_dca08", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	{"BES1_v2_sys_nofileshuffle_dca12", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	{"BES1_v2_sys_nofileshuffle_dca05", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	{"BES1_v2_sys_nofileshuffle_dca15", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_nsprx09", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_nsprx11", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_nhfit15", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_nhfit25", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_m2r8", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_m2r4", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_nsprx075", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_nsprx125", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_m2r2", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//	//{"BES1_v2_sys_nofileshuffle_m2r10", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
+	//};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets_39 = {
 //		{"BES1_v2_sys_nsprx11", {{"v2_sys", {{"rapid05_resample_norotate_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 0}}}}}},
@@ -658,12 +661,12 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-//	vector<int> energy_list{ 39, 62, 27, 19, 11 };
+	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
 	vector<int> energy_list{ 7 };
 
-	int set_sleep = 20;
-	int energy_sleep = 15;
+	int set_sleep = 1800;
+	int energy_sleep = 1;
 	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size();
@@ -677,23 +680,23 @@ void read_new() {
 		int job_num = 0;
 		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 
-		//for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
-		//	for (int energy : energy_list) {
+		for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+			for (int energy : energy_list) {
+				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+				this_thread::sleep_for(chrono::seconds(energy_sleep));
+			}
+			this_thread::sleep_for(chrono::seconds(set_sleep));
+		}
+
+		//for (int energy : energy_list) {
+		//	for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
 		//		cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
 		//		pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
 		//		this_thread::sleep_for(chrono::seconds(set_sleep));
 		//	}
 		//	this_thread::sleep_for(chrono::seconds(energy_sleep));
 		//}
-
-		for (int energy : energy_list) {
-			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
-				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-				this_thread::sleep_for(chrono::seconds(set_sleep));
-			}
-			this_thread::sleep_for(chrono::seconds(energy_sleep));
-		}
 	}
 }
 

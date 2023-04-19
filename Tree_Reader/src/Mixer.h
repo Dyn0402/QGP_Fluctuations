@@ -77,6 +77,7 @@ public:
 
 	// Doers
 	void init_data();
+	void gen_mix_randoms(vector<double>& random_list, vector<double>& random_bs_list);
 	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);
 	void reset_out_dir();
 	void write_mixed_data();

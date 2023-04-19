@@ -353,6 +353,19 @@ void Mixer::init_data() {
 //	}
 //}
 
+// Genrate a list of random numbers in each event to use in general, reasmpling, and bootstrapping for mixed events. 
+void Mixer::gen_mix_randoms(vector<double>& random_list, vector<double>& random_bs_list) {
+	int n_randoms = mixes_per_event * n_resamples * divs.size();
+	for (int i = 0; i < n_randoms; i++) {
+		random_list.push_back(trand->Rndm());
+	}
+
+	int n_bs_randoms = mixes_per_event * n_bootstraps * divs.size();
+	for (int i = 0; i < n_bs_randoms; i++) {
+		random_bs_list.push_back(trand->Poisson(1));
+	}
+}
+
 // Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::append_event(const vector<double>& angles, int cent, double event_plane, double vz) {
 //	cout << "cent: " << cent << " event_plane: " << event_plane << " vz: " << vz << endl;
@@ -392,23 +405,39 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 // Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
-	double rand_angle;
-	if (rand_rotate) { rand_angle = trand->Rndm() * 2 * M_PI; }
+	double rand_angle = trand->Rndm() * 2 * M_PI;
 	int pool_events = (int)angles[cent_bin][ep_bin][vz_bin].size();
 
 	if (num_protons > pool_events) {
 		cout << "Not enough mixed events " << pool_events << "  for num_protons " << num_protons << endl;
 	}
+	
 
 	vector<int> event_indices(pool_events);
 	iota(begin(event_indices), end(event_indices), 0);
-	shuffle(event_indices.begin(), event_indices.end(), c_rand);
-	for (int i=0; i < num_protons; i++) {
-		int angle_index = trand->Rndm() * angles[cent_bin][ep_bin][vz_bin][event_indices[i]].size();
-		double new_angle = angles[cent_bin][ep_bin][vz_bin][event_indices[i]][angle_index];
-		if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
+	int event_meta_index, event_index, num_angles, angle_index;
+	double new_angle;
+	for (int i = 0; i < num_protons; i++) {
+		event_meta_index = trand->Rndm() * event_indices.size();
+		event_index = event_indices[event_meta_index];
+		num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
+		if (num_angles == 0) { event_index = event_indices[0]; }  // If no angles, just take first index remaining in list
+		int angle_index = trand->Rndm() * angles[cent_bin][ep_bin][vz_bin][event_index].size();
+		double new_angle = angles[cent_bin][ep_bin][vz_bin][event_index][angle_index];
+		if (rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
 		mix_angles.push_back(new_angle);
+		event_indices.erase(event_indices.begin() + event_meta_index);
 	}
+
+	//vector<int> event_indices(pool_events);
+	//iota(begin(event_indices), end(event_indices), 0);
+	//shuffle(event_indices.begin(), event_indices.end(), c_rand);
+	//for (int i=0; i < num_protons; i++) {
+	//	int angle_index = trand->Rndm() * angles[cent_bin][ep_bin][vz_bin][event_indices[i]].size();
+	//	double new_angle = angles[cent_bin][ep_bin][vz_bin][event_indices[i]][angle_index];
+	//	if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
+	//	mix_angles.push_back(new_angle);
+	//}
 
 	if ((int)mix_angles.size() - particle_min >= particle_bins) { cout << "num_particles: " << mix_angles.size() << " too big for particle_bins: " << particle_bins << " !!! mix" << endl; }
 

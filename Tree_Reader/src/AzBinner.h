@@ -147,6 +147,8 @@ protected:
 
 	void init_data();
 
+	void gen_single_randoms(vector<double>& random_list, vector<double>& random_bs_list);
+
 	void fill_pre_track_qa(const Track& particle);
 	void fill_post_track_qa(const Track& particle);
 	void fill_pre_event_qa(const Event& event);
