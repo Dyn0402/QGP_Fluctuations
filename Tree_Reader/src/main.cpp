@@ -661,9 +661,9 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 7 };
+//	vector<int> energy_list{ 7 };
 
 	int set_sleep = 1800;
 	int energy_sleep = 1;
@@ -671,6 +671,18 @@ void read_new() {
 
 	int jobs = sets.size() * energy_list.size();
 
+//	// Testing
+//	mutex* mtx = new mutex;
+//	vector<string>* file_list = new vector<string>;
+//	int job_num = 0;
+//	for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+//		for (int energy : energy_list) {
+//			cout << endl << "Running " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+//			run_job(energy, job.second, job_num, job.first, jobs, mtx, file_list);
+//			this_thread::sleep_for(chrono::seconds(energy_sleep));
+//		}
+//		this_thread::sleep_for(chrono::seconds(set_sleep));
+//	}
 
 	mutex* mtx = new mutex;
 	vector<string>* file_list = new vector<string>;

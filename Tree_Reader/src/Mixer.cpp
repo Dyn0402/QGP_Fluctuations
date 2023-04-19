@@ -411,19 +411,39 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	if (num_protons > pool_events) {
 		cout << "Not enough mixed events " << pool_events << "  for num_protons " << num_protons << endl;
 	}
-	
 
+	vector<double> mixer_randoms;  // Make sure number of random calls independent of how many tracks in each event
+	int max_protons = 150;  // Big problems if this is broken!
+	if (num_protons > max_protons) { cout << "Too many protons in get_mixed! " << num_protons << endl; }
+	for (int i = 0; i < 2 * max_protons; i++) {
+		mixer_randoms.push_back(trand->Rndm());
+	}
+
+	if (num_protons == 0) {
+		int num_rands = divs.size() * (n_resamples + n_bootstraps);
+		for (int i = 0; i < num_rands; i++) {
+			trand->Rndm();  // Just fire these off to keep random string the same
+		}
+		return;
+	}
+
+	int rand_index = 0;
 	vector<int> event_indices(pool_events);
 	iota(begin(event_indices), end(event_indices), 0);
 	int event_meta_index, event_index, num_angles, angle_index;
 	double new_angle;
 	for (int i = 0; i < num_protons; i++) {
-		event_meta_index = trand->Rndm() * event_indices.size();
+		event_meta_index = mixer_randoms[rand_index++] * event_indices.size();
 		event_index = event_indices[event_meta_index];
 		num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
-		if (num_angles == 0) { event_index = event_indices[0]; }  // If no angles, just take first index remaining in list
-		int angle_index = trand->Rndm() * angles[cent_bin][ep_bin][vz_bin][event_index].size();
-		double new_angle = angles[cent_bin][ep_bin][vz_bin][event_index][angle_index];
+		while (num_angles == 0) {  // If no angles, just take first index remaining in list
+			event_indices.erase(event_indices.begin() + event_meta_index);
+			event_meta_index = 0;
+			event_index = event_indices[event_meta_index];
+			num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
+		}
+		angle_index = mixer_randoms[rand_index++] * angles[cent_bin][ep_bin][vz_bin][event_index].size();
+		new_angle = angles[cent_bin][ep_bin][vz_bin][event_index][angle_index];
 		if (rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
 		mix_angles.push_back(new_angle);
 		event_indices.erase(event_indices.begin() + event_meta_index);
