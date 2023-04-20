@@ -841,7 +841,14 @@ void AzBinner::process_event_debug(const Event& event) {
 			}
 
 			// If mixed/rand flagged append event to mix/rand object.
-			if (mixed) { mix.append_event(good_particle_angles, cent, ep_angle, event.get_vz()); }
+			if (mixed) { 
+				if (event.get_event_id() == 2343) {
+					mix.append_event_debug(good_particle_angles, cent, ep_angle, event.get_vz());
+				}
+				else {
+					mix.append_event(good_particle_angles, cent, ep_angle, event.get_vz());
+				}
+			}
 
 			if (event_plane) { // If event_plane flag then rotate all angles by -event_plane.
 				good_particle_angles = rotate_angles(good_particle_angles, -ep_angle);

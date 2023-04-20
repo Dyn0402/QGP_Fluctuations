@@ -296,27 +296,32 @@ void read_new() {
 		//{"CFEVb342_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEVb342_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 	//};
 
+	//map<string, map<string, map<string, pair<int, int>>>> sets_init = {
+	//	{"BES1_def_nofileshuffle", {{"default", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//	{"BES1_sys_nofileshuffle_dca08", {{"default_sys", {{"rapid05_resample_norotate_seed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	//};
+
 	map<string, map<string, map<string, pair<int, int>>>> sets_init = {
-		{"BES1_def_nofileshuffle", {{"default", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_dca08", {{"default_sys", {{"rapid05_resample_norotate_seed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca05_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"BES1_def_nofileshuffle", {{"default", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 //		{"BES1_sys_nofileshuffle_dca08", {{"default_sys", {{"rapid05_resample_norotate_seed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_dca12", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_m2r8", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_m2r4", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_dca05", {{"default_sys", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_dca15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_m2r2", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_m2r10", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_dca12", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_m2r8", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_m2r4", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_dca05", {{"default_sys", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_dca15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_m2r2", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_m2r10", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -669,11 +674,11 @@ void read_new() {
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 7, 11, 19 };
+	vector<int> energy_list{ 11 };
 
 	int set_sleep = 900;
 	int energy_sleep = 100;
-	int free_threads = 0;
+	int free_threads = 11;
 
 	int jobs = sets.size() * energy_list.size() + sets_init.size() * energy_list.size();
 
