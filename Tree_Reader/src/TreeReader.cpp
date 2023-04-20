@@ -475,7 +475,8 @@ void TreeReader::read_tree(TTree* tree) {
 		}
 
 		for (AzBinner& binner : binners) {
-			binner.process_event(event);
+			//binner.process_event(event);
+			binner.process_event_debug(event);
 		}
 
 		event_index++;

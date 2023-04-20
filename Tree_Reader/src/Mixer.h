@@ -79,6 +79,7 @@ public:
 	void init_data();
 	void gen_mix_randoms(vector<double>& random_list, vector<double>& random_bs_list);
 	void append_event(const vector<double>& angles, int cent, double event_plane, double vz);
+	void append_event_debug(const vector<double>& angles, int cent, double event_plane, double vz);
 	void reset_out_dir();
 	void write_mixed_data();
 	void write_qa();
@@ -124,6 +125,7 @@ private:
 
 	// Doers
 	void get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin);
+	void get_mixed_debug(int cent_bin, int num_protons, int ep_bin, int vz_bin);
 	int get_ep_bin(double event_plane);
 	int get_vz_bin(double vz);
 	void define_hists(int cent);

@@ -402,6 +402,43 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 }
 
 
+// Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC pass ref_mult in place of cent (untested).
+void Mixer::append_event_debug(const vector<double>& angles, int cent, double event_plane, double vz) {
+	//	cout << "cent: " << cent << " event_plane: " << event_plane << " vz: " << vz << endl;
+	int ep_bin = get_ep_bin(event_plane);
+	int vz_bin = get_vz_bin(vz);
+	int cent_bin = cent - cent_min;
+
+	if (vz_ep_appended_hists.count(cent) == 0) { define_hists(cent); }
+	vz_ep_appended_hists[cent].Fill(event_plane, vz);
+
+	//	if (cent_bin >= (int)this->angles.size()) { cout << "cent_bin " << cent_bin << " out of range for angles size " << this->angles.size() << endl; }
+	//	else if (ep_bin >= (int)this->angles[cent_bin].size()) { cout << "ep_bin " << ep_bin << " out of range for angles[cent_bin] size " << this->angles[cent_bin].size() << " cent_bin: " << cent_bin << endl; }
+	//	else if (vz_bin >= (int)this->angles[cent_bin][ep_bin].size()) {
+	//		cout << "vz_bin " << vz_bin << " out of range for angles[cent_bin][ep_bin] size " << this->angles[cent_bin][ep_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << endl;
+	//		cout << "cent: " << cent << " event_plane: " << event_plane << " vz: " << vz << endl;
+	//		cout << "ep_bins: " << ep_bins << " vz_bins: " << vz_bins << " cent_bins: " << cent_bins << endl;
+	//		cout << "ep_bin: " << ep_bin << " vz_bin: " << vz_bin << " cent_bin: " << cent_bin << endl;
+	//	}
+
+	if ((int)this->angles[cent_bin][ep_bin][vz_bin].size() >= max_events) {  // Replace a random event if there are enough.
+		int index = trand->Rndm() * max_events;
+		//		if (index >= (int)this->angles[cent_bin][ep_bin][vz_bin].size()) { cout << "index " << index << " out of range for angles[cent_bin][ep_bin][vz_bin] size " << this->angles[cent_bin][ep_bin][vz_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << " vz_bin: " << vz_bin << endl; }
+		this->angles[cent_bin][ep_bin][vz_bin][index] = angles;
+	}
+	else {  // Append event if there are not enough.
+		this->angles[cent_bin][ep_bin][vz_bin].push_back(angles);
+	}
+
+	if ((int)this->angles[cent_bin][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
+		vz_ep_generated_hists[cent].Fill(event_plane, vz, mixes_per_event);
+		for (int i = 0; i < mixes_per_event; i++) {
+			get_mixed_debug(cent_bin, (int)angles.size(), ep_bin, vz_bin);
+		}
+	}
+}
+
+
 // Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles;
@@ -503,6 +540,121 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 
 			// Save ratio values to data
 			vector<long> &data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+			for (int particles_in_bin : event_ratios) {
+				data_event[particles_in_bin]++;
+			}
+		}
+	}
+}
+
+
+// Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
+void Mixer::get_mixed_debug(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
+	vector<double> mix_angles;
+	double rand_angle = trand->Rndm() * 2 * M_PI;
+	int pool_events = (int)angles[cent_bin][ep_bin][vz_bin].size();
+
+	if (num_protons > pool_events) {
+		cout << "Not enough mixed events " << pool_events << "  for num_protons " << num_protons << endl;
+	}
+
+	vector<double> mixer_randoms;  // Make sure number of random calls independent of how many tracks in each event
+	int max_protons = 150;  // Big problems if this is broken!
+	if (num_protons > max_protons) { cout << "Too many protons in get_mixed! " << num_protons << endl; }
+	for (int i = 0; i < 2 * max_protons; i++) {
+		mixer_randoms.push_back(trand->Rndm());
+	}
+
+	if (num_protons == 0) {
+		int num_rands = divs.size() * (n_resamples + n_bootstraps);
+		for (int i = 0; i < num_rands; i++) {
+			trand->Rndm();  // Just fire these off to keep random string the same
+		}
+		return;
+	}
+
+	int rand_index = 0;
+	vector<int> event_indices(pool_events);
+	iota(begin(event_indices), end(event_indices), 0);
+	int event_meta_index, event_index, num_angles, angle_index;
+	double new_angle;
+	for (int i = 0; i < num_protons; i++) {
+		event_meta_index = mixer_randoms[rand_index++] * event_indices.size();
+		event_index = event_indices[event_meta_index];
+		num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
+		while (num_angles == 0) {  // If no angles, just take first index remaining in list
+			event_indices.erase(event_indices.begin() + event_meta_index);
+			event_meta_index = 0;
+			event_index = event_indices[event_meta_index];
+			num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
+		}
+		angle_index = mixer_randoms[rand_index++] * angles[cent_bin][ep_bin][vz_bin][event_index].size();
+		new_angle = angles[cent_bin][ep_bin][vz_bin][event_index][angle_index];
+		if (rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
+		mix_angles.push_back(new_angle);
+		event_indices.erase(event_indices.begin() + event_meta_index);
+	}
+
+	//vector<int> event_indices(pool_events);
+	//iota(begin(event_indices), end(event_indices), 0);
+	//shuffle(event_indices.begin(), event_indices.end(), c_rand);
+	//for (int i=0; i < num_protons; i++) {
+	//	int angle_index = trand->Rndm() * angles[cent_bin][ep_bin][vz_bin][event_indices[i]].size();
+	//	double new_angle = angles[cent_bin][ep_bin][vz_bin][event_indices[i]][angle_index];
+	//	if(rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
+	//	mix_angles.push_back(new_angle);
+	//}
+
+	vector<double> resample_randoms;
+	int n_random = divs.size() * n_resamples;
+	for (int i = 0; i < n_random; i++) { resample_randoms.push_back(trand->Rndm()); }
+	cout << "Mix Rand: " << resample_randoms[0] << endl;
+
+	if ((int)mix_angles.size() - particle_min >= particle_bins) { cout << "num_particles: " << mix_angles.size() << " too big for particle_bins: " << particle_bins << " !!! mix" << endl; }
+
+	int num_particles_bin = mix_angles.size() - particle_min;
+	if (resample) {
+		sort(mix_angles.begin(), mix_angles.end());
+		for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
+			double div_rads = (double)divs[div_bin] / 180 * M_PI;
+			vector<int> binned_event;
+			if (resample_alg == 4) {
+				binned_event = get_resamples4(mix_angles, div_rads, n_resamples, resample_randoms);
+			}
+			else if (resample_alg == 3) {
+				binned_event = get_resamples3(mix_angles, div_rads, n_resamples);
+			}
+			else { cout << "Didn't find matching resample algorithm for #" << resample_alg << endl; }
+
+			// Save binned values to data
+			vector<long>& data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
+			for (unsigned num_in_bin = 0; num_in_bin < binned_event.size(); num_in_bin++) {
+				data_event[num_in_bin] += binned_event[num_in_bin];
+			}
+
+			// Save binned values to bootstraps
+			for (int i = 0; i < n_bootstraps; i++) {
+				vector<long>& data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
+				int poisson_samples = trand->Poisson(1);
+				for (int j = 0; j <= poisson_samples; j++) {  // Poisson block bootstrap
+					//				for (int j = 0; j < pois_dist(c_rand); j++) {
+					for (unsigned num_in_bin = 0; num_in_bin < binned_event.size(); num_in_bin++) {
+						data_event_bs[num_in_bin] += binned_event[num_in_bin];
+					}
+				}
+			}
+		}
+	}
+	else {
+		for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
+			int bin_num = (int)360 / divs[div_bin];
+			double div_rads = (double)divs[div_bin] / 180 * M_PI;
+			if (single_ratio) { bin_num = 1; }
+			else if (bin_num > 1 && n1_ratios) { bin_num -= 1; }  // Ambiguous if case should change if div divides 360 or not.
+			vector<int> event_ratios = get_Rs(mix_angles, div_rads, trand, bin_num);  // Convert particle angles in event to ratio values.
+
+			// Save ratio values to data
+			vector<long>& data_event = data[div_bin][cent_bin][num_particles_bin];  // Reduce map traversal
 			for (int particles_in_bin : event_ratios) {
 				data_event[particles_in_bin]++;
 			}

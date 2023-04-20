@@ -123,6 +123,7 @@ public:
 	void write_qa();
 	void write_binner_data();
 	void process_event(const Event& event);
+	void process_event_debug(const Event& event);
 	void process_event_pt_n(const Event& event);
 
 	// Attributes
