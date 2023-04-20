@@ -296,8 +296,14 @@ void read_new() {
 		//{"CFEVb342_def_resample_epbins1", {{"default_resample_epbins1", {{"CFEVb342_rapid05_resample_norotate_epbins1_", {0, 0}}}}}},
 	//};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
+	map<string, map<string, map<string, pair<int, int>>>> sets_init = {
+		{"BES1_def_nofileshuffle", {{"default", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 		{"BES1_sys_nofileshuffle_dca08", {{"default_sys", {{"rapid05_resample_norotate_seed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+	};
+
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_def_nofileshuffle", {{"default", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_dca08", {{"default_sys", {{"rapid05_resample_norotate_seed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 		{"BES1_sys_nofileshuffle_dca12", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 		{"BES1_sys_nofileshuffle_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 		{"BES1_sys_nofileshuffle_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
@@ -661,15 +667,15 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+//	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-//	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 7, 11, 19 };
 
-	int set_sleep = 1800;
-	int energy_sleep = 1;
+	int set_sleep = 900;
+	int energy_sleep = 100;
 	int free_threads = 0;
 
-	int jobs = sets.size() * energy_list.size();
+	int jobs = sets.size() * energy_list.size() + sets_init.size() * energy_list.size();
 
 //	// Testing
 //	mutex* mtx = new mutex;
@@ -692,23 +698,23 @@ void read_new() {
 		int job_num = 0;
 		ThreadPool pool(thread::hardware_concurrency() - free_threads);
 
-		for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+		for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_init) {
 			for (int energy : energy_list) {
 				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
 				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-				this_thread::sleep_for(chrono::seconds(energy_sleep));
+				this_thread::sleep_for(chrono::seconds(1));
 			}
-			this_thread::sleep_for(chrono::seconds(set_sleep));
+			this_thread::sleep_for(chrono::seconds(1800));
 		}
 
-		//for (int energy : energy_list) {
-		//	for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
-		//		cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-		//		pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-		//		this_thread::sleep_for(chrono::seconds(set_sleep));
-		//	}
-		//	this_thread::sleep_for(chrono::seconds(energy_sleep));
-		//}
+		for (int energy : energy_list) {
+			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+				this_thread::sleep_for(chrono::seconds(set_sleep));
+			}
+			this_thread::sleep_for(chrono::seconds(energy_sleep));
+		}
 	}
 }
 
