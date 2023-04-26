@@ -303,7 +303,7 @@ void read_new() {
 
 	map<string, map<string, map<string, pair<int, int>>>> sets_init = {
 		{"BES1_sys_nofileshuffle_dca15_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_dca05_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		//{"BES1_sys_nofileshuffle_dca05_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -1297,7 +1297,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 				if (in_string(set.first, {"Ampt", "CF_", "CFEV_", "CFEVb342_"}, false)) { binner.mix.set_mixes_per_event(10); }
 				else {
-					if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
+					//if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
+					if (energy <= 11) { binner.mix.set_mixes_per_event(5); }  // DEBUG ONLY!
 					else { binner.mix.set_mixes_per_event(10); }
 				}
 				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }

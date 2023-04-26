@@ -122,6 +122,7 @@ private:
 	int resample_alg = 4;  // Which resampling algorithm to use. 4 is default stochastic algorithm
 	int n_resamples = 100;
 	int n_bootstraps = 100;
+	long rand_count = 0;  // DEBUG ONLY
 
 	// Doers
 	void get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin);

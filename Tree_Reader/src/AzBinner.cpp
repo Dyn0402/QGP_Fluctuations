@@ -780,7 +780,7 @@ void AzBinner::process_event_debug(const Event& event) {
 		gen_single_randoms(single_randoms, single_bs_randoms);  // Fill single randoms
 		double rand_prerotate_angle = trand->Rndm() * 2 * M_PI;
 		double rand_rotate_angle = trand->Rndm() * 2 * M_PI;
-		if (event.get_event_id() == 2343) {
+		if (event.get_event_id() >= 2343 && event.get_event_id() < 2443) {
 			cout << single_randoms[0] << endl;
 		}
 
@@ -798,7 +798,12 @@ void AzBinner::process_event_debug(const Event& event) {
 		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
 		if (num_particles < cut.min_multi) {
 			// If mixed/rand flagged append event to mix/rand object. If not enough particles just push in an empty set of angles to preserve randomization string.
-			if (mixed) { mix.append_event({}, cent, ep_angle, event.get_vz()); }
+			if (event.get_event_id() >= 2343 && event.get_event_id() < 2443) {
+				mix.append_event_debug({}, cent, ep_angle, event.get_vz());
+			}
+			else {
+				mix.append_event({}, cent, ep_angle, event.get_vz());
+			}
 		}
 		else {
 			event_cut_hist.Fill("Enough Good Particles", 1);
@@ -842,7 +847,7 @@ void AzBinner::process_event_debug(const Event& event) {
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if (mixed) { 
-				if (event.get_event_id() == 2343) {
+				if (event.get_event_id() >= 2343 && event.get_event_id() < 2443) {
 					mix.append_event_debug(good_particle_angles, cent, ep_angle, event.get_vz());
 				}
 				else {
