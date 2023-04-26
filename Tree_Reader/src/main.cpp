@@ -1298,7 +1298,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				if (in_string(set.first, {"Ampt", "CF_", "CFEV_", "CFEVb342_"}, false)) { binner.mix.set_mixes_per_event(10); }
 				else {
 					//if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
-					if (energy <= 11) { binner.mix.set_mixes_per_event(5); }  // DEBUG ONLY!
+					if (energy <= 11) { binner.mix.set_mixes_per_event(0); }  // DEBUG ONLY!
 					else { binner.mix.set_mixes_per_event(10); }
 				}
 				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
