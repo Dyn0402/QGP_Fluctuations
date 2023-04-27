@@ -528,13 +528,18 @@ void AzBinner::init_data() {
 // Genrate a list of random numbers in each event to use in general, reasmpling, and bootstrapping. 
 void AzBinner::gen_single_randoms(vector<double>& random_list, vector<double>& random_bs_list) {
 	int n_randoms = n_resamples * divs.size();
+	//random_list.resize(n_randoms);
+	random_list.reserve(n_randoms);
 	for (int i = 0; i < n_randoms; i++) {
 		random_list.push_back(trand->Rndm());
+		//trand->RndmArray(random_list.size(), &random_list[0]);
 	}
 
 	int n_bs_randoms = n_bootstraps * divs.size();
+	random_bs_list.reserve(n_bs_randoms);
 	for (int i = 0; i < n_bs_randoms; i++) {
-		random_bs_list.push_back(trand->Poisson(1));
+		//random_bs_list.push_back(trand->Poisson(1));
+		random_bs_list.push_back(sample_poisson(trand->Rndm()));
 	}
 }
 
@@ -780,7 +785,7 @@ void AzBinner::process_event_debug(const Event& event) {
 		gen_single_randoms(single_randoms, single_bs_randoms);  // Fill single randoms
 		double rand_prerotate_angle = trand->Rndm() * 2 * M_PI;
 		double rand_rotate_angle = trand->Rndm() * 2 * M_PI;
-		if (event.get_event_id() >= 2343 && event.get_event_id() < 2443) {
+		if (event.get_event_id() >= 2343 && event.get_event_id() < 2363) {
 			cout << single_randoms[0] << endl;
 		}
 
@@ -798,7 +803,7 @@ void AzBinner::process_event_debug(const Event& event) {
 		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
 		if (num_particles < cut.min_multi) {
 			// If mixed/rand flagged append event to mix/rand object. If not enough particles just push in an empty set of angles to preserve randomization string.
-			if (event.get_event_id() >= 2343 && event.get_event_id() < 2443) {
+			if (event.get_event_id() >= 2343 && event.get_event_id() < 2363) {
 				mix.append_event_debug({}, cent, ep_angle, event.get_vz());
 			}
 			else {
@@ -847,7 +852,7 @@ void AzBinner::process_event_debug(const Event& event) {
 
 			// If mixed/rand flagged append event to mix/rand object.
 			if (mixed) { 
-				if (event.get_event_id() >= 2343 && event.get_event_id() < 2443) {
+				if (event.get_event_id() >= 2343 && event.get_event_id() < 2363) {
 					mix.append_event_debug(good_particle_angles, cent, ep_angle, event.get_vz());
 				}
 				else {
