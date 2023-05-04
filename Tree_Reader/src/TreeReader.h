@@ -98,7 +98,7 @@ private:
 	mutex *mtx = NULL;
 	//struct sysinfo mem_info;
 	vector<string> *file_list;
-	int file_wait_sleep = 10;  // Seconds to wait for path to clear up
+	int file_wait_sleep = 60;  // Seconds to wait for path to clear up
 	float percent_print = 2.;  // Percentage of files interval at which to print update
 
 	TRandom3* trand = new TRandom3(0);

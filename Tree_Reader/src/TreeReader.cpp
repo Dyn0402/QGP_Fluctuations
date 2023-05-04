@@ -324,6 +324,7 @@ void TreeReader::read_trees() {
 						if (in_files_queue.size() == 1) {
 							cout << "Waiting for last file path: " << path << endl;
 						}
+						cout << "Waiting for file: " << path << endl;
 						this_thread::sleep_for(chrono::seconds(file_wait_sleep));
 					}
 					else {  // Put current file at end of queue and move on to next file
@@ -475,8 +476,8 @@ void TreeReader::read_tree(TTree* tree) {
 		}
 
 		for (AzBinner& binner : binners) {
-			//binner.process_event(event);
-			binner.process_event_debug(event);
+			binner.process_event(event);
+			//binner.process_event_debug(event);
 		}
 
 		event_index++;

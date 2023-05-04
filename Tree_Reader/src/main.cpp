@@ -302,8 +302,14 @@ void read_new() {
 	//};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets_init = {
-		{"BES1_sys_nofileshuffle_dca15_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
-		{"BES1_sys_nofileshuffle_dca05_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test1", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test2", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {1, 1}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test3", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {2, 2}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test4", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {3, 3}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test5", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test6", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {5, 5}}}}}},
+		{"BES1_sys_nofileshuffle_dca15_test7", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {6, 6}}}}}},
+		//{"BES1_sys_nofileshuffle_dca05_test", {{"default_sys_test", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_", {0, 0}}}}}},
 	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -674,11 +680,11 @@ void read_new() {
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 11 };
+	vector<int> energy_list{ 7 };
 
-	int set_sleep = 2*3600;
-	int energy_sleep = 100;
-	int free_threads = 11;
+	int set_sleep = 0;
+	int energy_sleep = 0;
+	int free_threads = 0;
 
 	int jobs = sets.size() * energy_list.size() + sets_init.size() * energy_list.size();
 
@@ -709,7 +715,7 @@ void read_new() {
 				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
 				this_thread::sleep_for(chrono::seconds(1));
 			}
-			this_thread::sleep_for(chrono::seconds(1800));
+			this_thread::sleep_for(chrono::seconds(1));
 		}
 
 		for (int energy : energy_list) {
@@ -1297,8 +1303,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 				if (in_string(set.first, {"Ampt", "CF_", "CFEV_", "CFEVb342_"}, false)) { binner.mix.set_mixes_per_event(10); }
 				else {
-					//if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
-					if (energy <= 11) { binner.mix.set_mixes_per_event(2); }  // DEBUG ONLY!
+					if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
+					//if (energy <= 11) { binner.mix.set_mixes_per_event(2); }  // DEBUG ONLY!
 					else { binner.mix.set_mixes_per_event(10); }
 				}
 				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
