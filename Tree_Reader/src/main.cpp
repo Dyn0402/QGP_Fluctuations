@@ -680,13 +680,14 @@ void read_new() {
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 11 };
+	vector<int> energy_list{ 39, 62, 19, 27 };
 
 	int set_sleep = 60;
 	int energy_sleep = 0;
 	int free_threads = 1;
 
-	int jobs = sets.size() * energy_list.size() + sets_init.size() * energy_list.size();
+	//int jobs = sets.size() * energy_list.size() + sets_init.size() * energy_list.size();
+	int jobs = sets.size() * energy_list.size();
 
 //	// Testing
 //	mutex* mtx = new mutex;
@@ -718,14 +719,14 @@ void read_new() {
 			this_thread::sleep_for(chrono::seconds(energy_sleep));
 		}
 
-		for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_init) {
-			for (int energy : {62, 27, 19}) {
-				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
-				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
-				this_thread::sleep_for(chrono::seconds(1));
-			}
-			this_thread::sleep_for(chrono::seconds(60));
-		}
+		//for (pair<string, map<string, map<string, pair<int, int>>>> job : sets_init) {
+		//	for (int energy : {62, 27, 19}) {
+		//		cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+		//		pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
+		//		this_thread::sleep_for(chrono::seconds(1));
+		//	}
+		//	this_thread::sleep_for(chrono::seconds(60));
+		//}
 	}
 }
 
