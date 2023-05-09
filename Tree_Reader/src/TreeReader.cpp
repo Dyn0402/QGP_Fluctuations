@@ -39,6 +39,12 @@
 
 #include "Mixer.h"
 
+#ifdef _WIN32
+	const std::string platform = "win";
+#else
+	const std::string platform = "lin";
+#endif
+
 using namespace std;
 
 
@@ -348,8 +354,10 @@ void TreeReader::read_trees() {
 			float remaining_seconds = elap.count() * (1.0 / (fraction_finished / 100) - 1);
 			auto datetime_finish = chrono::system_clock::to_time_t(chrono::system_clock::now() + chrono::seconds((int)remaining_seconds + 1));
 			vector<string> datetime_finish_vec = split((string)ctime(&datetime_finish), ' ');
+			double available_mem = -1;
+			if (platform == "lin") { available_mem = get_available_memory_lin(); }
 			//cout << " " << energy << "GeV " << (float)((int)(1000.0*file_index/num_files+0.5))/10 << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | Free RAM: " << mem_info.freeram << endl;
-			cout << " " << energy << "GeV " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << endl;
+			cout << " " << energy << "GeV " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << " | Available Memory (linux): " << available_mem << "GB" << endl;
 		}
 
 		TFile *file = new TFile(path.data(), "READ");
@@ -866,4 +874,25 @@ void TreeReader::read_tree_debug(TTree* tree) {
 		event_index++;
 	}
 //	delete event_pointer;
+}
+
+
+// Chat-gpt
+double get_available_memory_lin() {
+	std::ifstream meminfo("/proc/meminfo");
+	    std::string line;
+	    unsigned long long availableMemory = 0;
+
+	    while (std::getline(meminfo, line)) {
+	        if (line.compare(0, 13, "MemAvailable:") == 0) {
+	            std::size_t startPos = line.find_first_of("0123456789");
+	            std::size_t endPos = line.find_last_of("0123456789");
+	            std::string memoryStr = line.substr(startPos, endPos - startPos + 1);
+	            availableMemory = std::stoull(memoryStr);
+	            break;
+	        }
+	    }
+
+	    double availableMemoryInGB = static_cast<double>(availableMemory) / (1024 * 1024);
+	    return availableMemoryInGB;
 }

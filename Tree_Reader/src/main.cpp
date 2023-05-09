@@ -46,11 +46,6 @@
 #include "../StRefMultCorr/StRefMultCorr.h"
 #include "TreeBranches.h"
 
-#ifdef _WIN32
-static const std::string platform = "win";
-#else
-static const std::string platform = "lin";
-#endif
 
 using namespace std;
 
