@@ -675,7 +675,7 @@ void read_new() {
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 27, 19 };
+	vector<int> energy_list{ 62, 39 };
 
 	int set_sleep = 60;
 	int energy_sleep = 0;
