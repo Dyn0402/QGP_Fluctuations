@@ -394,7 +394,7 @@ void TreeReader::read_trees() {
 			}
 			if(mtx) { mtx->unlock(); }
 		}
-		cout << "Ending " << path << endl;
+//		cout << "Ending " << path << endl;
 	}
 
 	for (AzBinner& binner : binners) {
