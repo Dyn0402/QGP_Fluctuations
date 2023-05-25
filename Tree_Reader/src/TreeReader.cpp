@@ -273,7 +273,7 @@ void TreeReader::set_file_shuffle_rand_seed(int seed) {
 
 // Create new binner with TreeReader energy and ref_num and return reference to new AzBinner
 AzBinner& TreeReader::add_binner() {
-	binners.emplace_back(AzBinner(energy, ref_num));
+	binners.emplace_back(AzBinner(energy, ref_num, mtx));
 	return binners.back();
 }
 
@@ -291,9 +291,13 @@ void TreeReader::read_trees() {
 
 //	ofstream log_file(log_dir + job_type + "_" + energy + "GeV.txt");
 //	streambuf* cout_buffer = cout.rdbuf();
+<<<<<<< HEAD
 //	streambuf* cerr_buffer = cerr.rdbuf();
 //	cout.rdbuf(log_file.rdbuf());
 //	cerr.rdbuf(log_file.rdbuf());
+=======
+//	cout.rdbuf(log_file.rdbuf());
+>>>>>>> mutexs
 
 	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
@@ -372,7 +376,7 @@ void TreeReader::read_trees() {
 			cout << " " << energy << "GeV " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << " | Available Memory (linux): " << available_mem << "GB" << endl;
 		}
 
-		cout << "Starting " << path << endl;
+//		cout << "Starting " << path << endl;
 		TFile *file = new TFile(path.data(), "READ");
 		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
 		TTree *tree = (TTree*)file->Get(tree_name.data());
@@ -412,7 +416,10 @@ void TreeReader::read_trees() {
 	cout << endl << "Writing " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 	
 //	cout.rdbuf(cout_buffer);
+<<<<<<< HEAD
 //	cerr.rdbuf(cerr_buffer);
+=======
+>>>>>>> mutexs
 //	log_file.close();
 }
 

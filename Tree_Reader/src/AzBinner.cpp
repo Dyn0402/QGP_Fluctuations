@@ -43,6 +43,43 @@ using namespace std;
 
 // Structors
 
+AzBinner::AzBinner(int energy, int ref_num, mutex *mtx) {
+	ampt = false;
+	cooper_frye = false;
+	ampt_reaction_plane = false;
+	cbwc = false;
+	rotate_random = false;
+	event_plane = false;
+	mixed = false;
+	pile_up = false;
+	efficiency = false;
+	single_ratio = false;
+	n1_ratios = false;
+	check_charge = true;
+	rapidity = false;
+	resample = false;
+	prerotate = true;
+	calc_v2 = false;
+
+	sim_eff = false;
+	sim_flow = false;
+
+	pile_up_prob = 0;
+	efficiency_prob = 0;
+
+	cent_binning = 9;
+	this->ref_num = ref_num;
+	this->energy = energy;
+
+	refmultCorrUtil = new StRefMultCorr(("refmult" + to_string(ref_num)).data());
+	mix = Mixer(energy);
+
+	this->mtx = mtx;
+
+//	c_rand = mt19937_64(trand->Integer(numeric_limits<int>::max()));
+//	pois_dist = poisson_distribution<int> (1);
+}
+
 AzBinner::AzBinner(int energy, int ref_num) {
 	ampt = false;
 	cooper_frye = false;
@@ -472,12 +509,14 @@ void AzBinner::prep_read() {
 		mix.set_cent_min(cent_min);
 		mix.set_particle_bins(particle_bins);
 		mix.set_particle_min(particle_min);
+		mix.set_mutex(mtx);
 		mix.init_data();
 	}
 }
 
 
 void AzBinner::init_data() {
+	if(mtx) { mtx->lock(); }
 	for (unsigned div_i=0; div_i < divs.size(); div_i++) {
 		data.push_back(vector<vector<vector<long>>> ());
 		for (int cent_i=0; cent_i < cent_bins; cent_i++) {
@@ -502,6 +541,7 @@ void AzBinner::init_data() {
 			}
 		}
 	}
+	if(mtx) { mtx->unlock(); }
 }
 
 
@@ -529,14 +569,18 @@ void AzBinner::init_data() {
 void AzBinner::gen_single_randoms(vector<double>& random_list, vector<double>& random_bs_list) {
 	int n_randoms = n_resamples * divs.size();
 	//random_list.resize(n_randoms);
+	if (mtx) { mtx->lock(); }
 	random_list.reserve(n_randoms);
+	if (mtx) { mtx->unlock(); }
 	for (int i = 0; i < n_randoms; i++) {
 		random_list.push_back(trand->Rndm());
 		//trand->RndmArray(random_list.size(), &random_list[0]);
 	}
 
 	int n_bs_randoms = n_bootstraps * divs.size();
+	if (mtx) { mtx->lock(); }
 	random_bs_list.reserve(n_bs_randoms);
+	if (mtx) { mtx->unlock(); }
 	for (int i = 0; i < n_bs_randoms; i++) {
 		//random_bs_list.push_back(trand->Poisson(1));
 		random_bs_list.push_back(sample_poisson(trand->Rndm()));
@@ -597,8 +641,10 @@ void AzBinner::process_event(const Event& event) {
 				if (efficiency) {  // Skip good particle with chance efficiency_prob
 					if (trand->Rndm() < efficiency_prob) { continue; }
 				}
+				if (mtx) { mtx->lock(); }
 				good_particle_angles.push_back(particle.get_phi());
 				good_particle_etas.push_back(particle.get_eta());
+				if (mtx) { mtx->unlock(); }
 			}
 		}
 		
@@ -700,7 +746,7 @@ void AzBinner::process_event(const Event& event) {
 					double div_rads = (double)divs[div_bin] / 180 * M_PI;
 					vector<int> binned_event;
 					if (resample_alg == 4) {
-						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, single_randoms);
+						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, single_randoms, mtx);
 					} else if (resample_alg == 3) {
 						binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);
 					}

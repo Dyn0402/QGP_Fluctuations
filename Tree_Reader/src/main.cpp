@@ -700,7 +700,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 0;
-	int free_threads = 15;
+	int free_threads = 5;
 
 	//int jobs = sets.size() * energy_list.size() + sets_init.size() * energy_list.size();
 	int jobs = sets.size() * energy_list.size();
@@ -768,7 +768,7 @@ void read_single_job(int energy, string job_type, string set_group, string set_n
 		{set_group, {{set_name, {job_num_low, job_num_high}}}}
 	};
 
-	mutex* mtx = new mutex;
+	mutex* mtx = NULL;
 	vector<string>* file_list = new vector<string>;
 	ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("GaussLegendre");
 	run_job(energy, job, 1, job_type, 1, mtx, file_list);
@@ -867,7 +867,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	int sim_events_per_total_proton = 100000;
 	TreeReader reader(energy, ref, mtx);
 	reader.set_job_type(job_type);
-	reader.set_file_list(file_list);
+//	reader.set_file_list(file_list);
 	if (in_string(job_type, "_nofileshuffle")) {
 		reader.set_file_shuffle_rand_seed(42);
 	}

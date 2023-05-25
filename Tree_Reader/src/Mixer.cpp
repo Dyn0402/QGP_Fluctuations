@@ -280,10 +280,15 @@ void Mixer::set_particle_min(int min) {
 	particle_min = min;
 }
 
+void Mixer::set_mutex(mutex *mtx) {
+	this->mtx = mtx;
+}
+
 
 // Doers
 
 void Mixer::init_data() {
+	if(mtx) { mtx->lock(); }
 	for (unsigned div_i = 0; div_i < divs.size(); div_i++) {
 		data.push_back(vector<vector<vector<long>>>());
 		for (int cent_i = 0; cent_i < cent_bins; cent_i++) {
@@ -320,6 +325,7 @@ void Mixer::init_data() {
 			}
 		}
 	}
+	if(mtx) { mtx->unlock(); }
 }
 
 
@@ -390,7 +396,9 @@ void Mixer::append_event(const vector<double>& angles, int cent, double event_pl
 //		if (index >= (int)this->angles[cent_bin][ep_bin][vz_bin].size()) { cout << "index " << index << " out of range for angles[cent_bin][ep_bin][vz_bin] size " << this->angles[cent_bin][ep_bin][vz_bin].size() << " cent_bin: " << cent_bin << " ep_bin: " << ep_bin << " vz_bin: " << vz_bin << endl; }
 		this->angles[cent_bin][ep_bin][vz_bin][index] = angles;
 	} else {  // Append event if there are not enough.
+		if (mtx) { mtx->lock(); }
 		this->angles[cent_bin][ep_bin][vz_bin].push_back(angles);
+		if (mtx) { mtx->unlock(); }
 	}
 
 	if((int)this->angles[cent_bin][ep_bin][vz_bin].size() >= min_events) {  // Generate mixes_per_event mixed events if there are enough.
@@ -443,13 +451,15 @@ void Mixer::append_event_debug(const vector<double>& angles, int cent, double ev
 
 // Sample angles randomly for an event. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
-	vector<double> mix_angles;
+	vector<double> mix_angles(num_protons);
 	double rand_angle = trand->Rndm() * 2 * M_PI;
 
 	int max_protons = 150;  // Big problems if this is broken!
 	vector<double> mixer_randoms;  // Make sure number of random calls independent of how many tracks in each event
 	if (num_protons > max_protons) { cout << "Too many protons in get_mixed! " << num_protons << endl; }
+	if (mtx) { mtx->lock(); }
 	mixer_randoms.reserve(2 * max_protons);
+	if (mtx) { mtx->unlock(); }
 	for (int i = 0; i < 2 * max_protons; i++) {
 		mixer_randoms.push_back(trand->Rndm());
 	}
@@ -486,7 +496,7 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 		angle_index = mixer_randoms[rand_index++] * angles[cent_bin][ep_bin][vz_bin][event_index].size();
 		new_angle = angles[cent_bin][ep_bin][vz_bin][event_index][angle_index];
 		if (rand_rotate) { new_angle = rotate_angle(new_angle, rand_angle); }
-		mix_angles.push_back(new_angle);
+		mix_angles[i] = new_angle;
 		event_indices.erase(event_indices.begin() + event_meta_index);
 	}
 
@@ -510,7 +520,7 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 			double div_rads = (double)divs[div_bin] / 180 * M_PI;
 			vector<int> binned_event;
 			if (resample_alg == 4) {
-				binned_event = get_resamples4(mix_angles, div_rads, n_resamples, trand);
+				binned_event = get_resamples4(mix_angles, div_rads, n_resamples, trand, mtx);
 			}
 			else if (resample_alg == 3) {
 				binned_event = get_resamples3(mix_angles, div_rads, n_resamples);

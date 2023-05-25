@@ -12,6 +12,7 @@
 #include <vector>
 #include <numeric>
 #include <random>
+#include <mutex>
 
 #include <TRandom3.h>
 #include <TH2.h>
@@ -74,6 +75,7 @@ public:
 	void set_cent_min(int min);
 	void set_particle_bins(int bins);
 	void set_particle_min(int min);
+	void set_mutex(mutex *mtx);
 
 	// Doers
 	void init_data();
@@ -88,6 +90,8 @@ public:
 
 private:
 	// Attributes
+	mutex *mtx = NULL;
+
 	bool single_ratio;
 	bool n1_ratios;
 	bool rand_rotate;
