@@ -700,7 +700,7 @@ void read_new() {
 
 	int set_sleep = 1;
 	int energy_sleep = 0;
-	int free_threads = 1;
+	int free_threads = 15;
 
 	//int jobs = sets.size() * energy_list.size() + sets_init.size() * energy_list.size();
 	int jobs = sets.size() * energy_list.size();
