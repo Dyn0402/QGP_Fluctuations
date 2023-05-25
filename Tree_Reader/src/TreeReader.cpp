@@ -257,6 +257,10 @@ void TreeReader::set_file_list(vector<string> *file_list) {
 	this->file_list = file_list;
 }
 
+void TreeReader::set_job_type(string job_type) {
+	this->job_type = job_type;
+}
+
 void TreeReader::set_tree_reader_rand_seed(int seed) {
 	tree_reader_seed = seed;
 	trand = new TRandom3(seed);
@@ -285,7 +289,13 @@ void TreeReader::read_trees() {
 		binner.define_qa();
 	}
 
-	cout << "Reading " + to_string(energy) + "GeV trees." << endl << endl;
+	ofstream log_file(log_dir + job_type + "_" + energy + "GeV.txt");
+	streambuf* cout_buffer = cout.rdbuf();
+	cout.rdbuf(log_file.rdbuf());
+
+	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	cout << "Reading " + to_string(energy) + "GeV trees | " << datetime_vec[0] << " " << datetime_vec[3] <<endl << endl;
 
 	vector<string> in_files;
 	if (ampt) {
@@ -360,6 +370,7 @@ void TreeReader::read_trees() {
 			cout << " " << energy << "GeV " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << " | Available Memory (linux): " << available_mem << "GB" << endl;
 		}
 
+		cout << "Starting " << path << endl;
 		TFile *file = new TFile(path.data(), "READ");
 		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
 		TTree *tree = (TTree*)file->Get(tree_name.data());
@@ -381,6 +392,7 @@ void TreeReader::read_trees() {
 			}
 			if(mtx) { mtx->unlock(); }
 		}
+		cout << "Ending " << path << endl;
 	}
 
 	for (AzBinner& binner : binners) {
@@ -393,10 +405,12 @@ void TreeReader::read_trees() {
 	}
 
 	chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
-	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
-	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
+	datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	datetime_vec = split((string)ctime(&datetime), ' ');
 	cout << endl << "Writing " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 	
+	cout.rdbuf(cout_buffer);
+	log_file.close();
 }
 
 
@@ -490,6 +504,8 @@ void TreeReader::read_tree(TTree* tree) {
 
 		event_index++;
 	}
+//	TRandom3 rand_em(0);
+//	this_thread::sleep_for(chrono::seconds(int(rand_em.Rndm() * 10)));
 }
 
 

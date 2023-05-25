@@ -53,6 +53,7 @@ using namespace std;
 //void read_class();
 void read_new();
 void read_rcf_sim(string set_group, string set_name);
+void read_single_job(int energy, string job_type, string set_group, string set_name, int job_num_low, int job_num_high);
 //void read_comb_sys();
 //void real_event_tree_test();
 //void speed_test();
@@ -114,6 +115,8 @@ int main(int argc, char** argv) {
 	if (argc == 3) {
 		read_rcf_sim((string)argv[1], (string)argv[2]);
 		return 0;
+	} else if (argc == 7) {
+		read_single_job(stoi(argv[1]), (string)argv[2], (string)argv[3], (string)argv[4], stoi(argv[5]), stoi(argv[6]));
 	}
 	else {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
@@ -324,6 +327,24 @@ void read_new() {
 		{"BES1_sys_nofileshuffle_m2r2", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
 		{"BES1_sys_nofileshuffle_m2r10", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
 	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"BES1_def_nofileshuffle", {{"default", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_dca08", {{"default_sys", {{"rapid05_resample_norotate_seed_dca08_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_dca12", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_nsprx09", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx09_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_nsprx11", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx11_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_nhfit15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit15_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_nhfit25", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit25_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_m2r8", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r8_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_m2r4", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r4_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_dca05", {{"default_sys", {{"rapid05_resample_norotate_seed_dca05_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_dca15", {{"default_sys", {{"rapid05_resample_norotate_seed_dca15_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_nsprx075", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx075_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_nsprx125", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx125_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_m2r2", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r2_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//		{"BES1_sys_nofileshuffle_m2r10", {{"default_sys", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r10_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 	//	//{"BES1_v2_sys_nofileshuffle_def", {{"v2_sys", {{"rapid05_resample_norotate_strefseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_qaonly_", {0, 1}}}}}},
@@ -675,9 +696,9 @@ void read_new() {
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 //	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	vector<int> energy_list{ 62, 39 };
+	vector<int> energy_list{ 62 };
 
-	int set_sleep = 60;
+	int set_sleep = 1;
 	int energy_sleep = 0;
 	int free_threads = 1;
 
@@ -731,7 +752,7 @@ void read_rcf_sim(string set_group, string set_name) {
 	//	{"Sim_single8_anticlmulti_s25a05", {{"single8_anticlmulti_spread25_amp05_resample_test", {{"Sim_spread25_amp05_single8_anticlmulti_norotate_resample_", {0, 0}}}}}},
 	//};
 
-	map<string, map<string, pair<int, int>>> job{
+	map<string, map<string, pair<int, int>>> job {
 		{set_group, {{set_name, {0, 0}}}}
 	};
 
@@ -739,6 +760,18 @@ void read_rcf_sim(string set_group, string set_name) {
 	vector<string>* file_list = new vector<string>;
 	ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("GaussLegendre");
 	run_job(62, job, 1, "Sim_RCF", 1, mtx, file_list);
+}
+
+
+void read_single_job(int energy, string job_type, string set_group, string set_name, int job_num_low, int job_num_high) {
+	map<string, map<string, pair<int, int>>> job {
+		{set_group, {{set_name, {job_num_low, job_num_high}}}}
+	};
+
+	mutex* mtx = new mutex;
+	vector<string>* file_list = new vector<string>;
+	ROOT::Math::IntegratorOneDimOptions::SetDefaultIntegrator("GaussLegendre");
+	run_job(energy, job, 1, job_type, 1, mtx, file_list);
 }
 
 //void read_class() {
@@ -833,6 +866,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	int ref = 3;
 	int sim_events_per_total_proton = 100000;
 	TreeReader reader(energy, ref, mtx);
+	reader.set_job_type(job_type);
 	reader.set_file_list(file_list);
 	if (in_string(job_type, "_nofileshuffle")) {
 		reader.set_file_shuffle_rand_seed(42);
@@ -1302,6 +1336,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 					if (energy <= 11) { binner.mix.set_mixes_per_event(50); }
 					//if (energy <= 11) { binner.mix.set_mixes_per_event(2); }  // DEBUG ONLY!
 					else { binner.mix.set_mixes_per_event(10); }
+					binner.mix.set_mixes_per_event(11);  // DEBUG ONLY!
 				}
 				if (in_string(set.first, "Sim") || in_string(set.first, "Ampt")) { binner.mix.set_mixes_per_event(10); }
 

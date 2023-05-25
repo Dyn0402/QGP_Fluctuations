@@ -13,6 +13,9 @@
 #include <ctime>
 #include <chrono>
 #include <mutex>
+#include <iostream>
+#include <fstream>
+#include <streambuf>
 
 #include "sys/types.h"
 //#include "sys/sysinfo.h"
@@ -72,6 +75,7 @@ public:
 //	void set_particle_dist_hist_max(int max);
 	void set_ampt_particle_pid(vector<int> pid);
 	void set_file_list(vector<string> *file_list);
+	void set_job_type(string job_type);
 
 	void set_tree_reader_rand_seed(int seed=0);
 	void set_file_shuffle_rand_seed(int seed=0);
@@ -100,7 +104,7 @@ private:
 	mutex *mtx = NULL;
 	//struct sysinfo mem_info;
 	vector<string> *file_list;
-	int file_wait_sleep = 60;  // Seconds to wait for path to clear up
+	int file_wait_sleep = 2;  // Seconds to wait for path to clear up
 	float percent_print = 2.0;  // Percentage of files interval at which to print update
 
 	TRandom3* trand = new TRandom3(0);
@@ -120,6 +124,9 @@ private:
 	string qa_path = "/home/dylan/local_server/dyn0402/Research/QA/";
 	string ampt_cent_path = "/home/dylan/Research/Ampt_Centralities/";
 	string ampt_type = "string_melting";
+
+	string job_type = "";
+	string log_dir = "/media/ucla/Research/Tree_Reader_Logs/";
 
 	//string sim_proton_dist_dataset = "/media/dylan/SSD_Storage/Research/Data_Old_Ref2/Single_Ratio0/";
 	string sim_proton_dist_dataset = "F:/Research/Data/default_resample/rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_0/";
