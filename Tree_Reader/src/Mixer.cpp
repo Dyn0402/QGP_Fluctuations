@@ -485,11 +485,17 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	double new_angle;
 	for (int i = 0; i < num_protons; i++) {
 		event_meta_index = mixer_randoms[rand_index++] * event_indices.size();
+		if (event_meta_index >= event_indices.size()) {
+			cout << "event_indices call out of range. Size=" << event_indices.size() << " event_meta_index=" << event_meta_index << endl;
+		}
 		event_index = event_indices[event_meta_index];
 		num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
 		while (num_angles == 0) {  // If no angles, just take first index remaining in list
 			event_indices.erase(event_indices.begin() + event_meta_index);
 			event_meta_index = 0;
+			if (event_meta_index >= event_indices.size()) {
+				cout << "event_indices call out of range. Size=" << event_indices.size() << " event_meta_index=" << event_meta_index << endl;
+			}
 			event_index = event_indices[event_meta_index];
 			num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
 		}
