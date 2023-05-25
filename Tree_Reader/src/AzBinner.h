@@ -33,6 +33,7 @@
 class AzBinner {
 public:
 	// Structors
+	AzBinner(int energy, int ref_num, mutex *mtx);
 	AzBinner(int energy, int ref_num);
 	AzBinner(int energy);
 	AzBinner();
@@ -163,6 +164,7 @@ private:
 	vector<vector<vector<vector<vector<long>>>>> data_bs; //ratios[divisions][centrality][bootstrap #][num particles in event][num particles in bin]
 	StRefMultCorr* refmultCorrUtil;
 	TRandom3* trand = new TRandom3(0);
+	mutex *mtx = NULL;
 //	mt19937_64 c_rand;
 //	poisson_distribution<int> pois_dist;
 
