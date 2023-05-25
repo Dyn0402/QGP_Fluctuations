@@ -291,13 +291,9 @@ void TreeReader::read_trees() {
 
 //	ofstream log_file(log_dir + job_type + "_" + energy + "GeV.txt");
 //	streambuf* cout_buffer = cout.rdbuf();
-<<<<<<< HEAD
 //	streambuf* cerr_buffer = cerr.rdbuf();
 //	cout.rdbuf(log_file.rdbuf());
 //	cerr.rdbuf(log_file.rdbuf());
-=======
-//	cout.rdbuf(log_file.rdbuf());
->>>>>>> mutexs
 
 	auto datetime = chrono::system_clock::to_time_t(chrono::system_clock::now());
 	vector<string> datetime_vec = split((string)ctime(&datetime), ' ');
@@ -416,10 +412,7 @@ void TreeReader::read_trees() {
 	cout << endl << "Writing " + to_string(energy) + "GeV trees. 100% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << endl;
 	
 //	cout.rdbuf(cout_buffer);
-<<<<<<< HEAD
 //	cerr.rdbuf(cerr_buffer);
-=======
->>>>>>> mutexs
 //	log_file.close();
 }
 
