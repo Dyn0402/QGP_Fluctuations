@@ -487,6 +487,8 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 		event_meta_index = mixer_randoms[rand_index++] * event_indices.size();
 		if (event_meta_index >= event_indices.size()) {
 			cout << "event_indices call out of range. Size=" << event_indices.size() << " event_meta_index=" << event_meta_index << endl;
+			cout << "Returning without mixed for cent_bin: " << cent_bin << " ep_bin: " << ep_bin << " vz_bin: " << vz_bin << " n_protons: " << num_protons << " pool_events: " << pool_events << endl;
+			return;
 		}
 		event_index = event_indices[event_meta_index];
 		num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
@@ -495,6 +497,8 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 			event_meta_index = 0;
 			if (event_meta_index >= event_indices.size()) {
 				cout << "event_indices call out of range. Size=" << event_indices.size() << " event_meta_index=" << event_meta_index << endl;
+				cout << "Returning without mixed for cent_bin: " << cent_bin << " ep_bin: " << ep_bin << " vz_bin: " << vz_bin << " n_protons: " << num_protons << " pool_events: " << pool_events << endl;
+				return;
 			}
 			event_index = event_indices[event_meta_index];
 			num_angles = angles[cent_bin][ep_bin][vz_bin][event_index].size();
