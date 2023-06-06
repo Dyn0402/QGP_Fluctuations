@@ -359,18 +359,24 @@ void Mixer::init_data() {
 //	}
 //}
 
-// Genrate a list of random numbers in each event to use in general, reasmpling, and bootstrapping for mixed events. 
-//void Mixer::gen_mix_randoms(vector<double>& random_list, vector<double>& random_bs_list) {
-//	int n_randoms = mixes_per_event * n_resamples * divs.size();
-//	for (int i = 0; i < n_randoms; i++) {
-//		random_list.push_back(trand->Rndm());
-//	}
-//
-//	int n_bs_randoms = mixes_per_event * n_bootstraps * divs.size();
-//	for (int i = 0; i < n_bs_randoms; i++) {
-//		random_bs_list.push_back(trand->Poisson(1));
-//	}
-//}
+ //Genrate a list of random numbers in each event to use in general, reasmpling, and bootstrapping for mixed events. 
+void Mixer::gen_mix_randoms(vector<double>& random_list, vector<double>& random_bs_list) {
+	int n_randoms = n_resamples * divs.size();
+	//if (mtx) { mtx->lock(); }
+	random_list.reserve(n_randoms);
+	//if (mtx) { mtx->unlock(); }
+	for (int i = 0; i < n_randoms; i++) {
+		random_list.push_back(trand->Rndm());
+	}
+
+	int n_bs_randoms = n_bootstraps * divs.size();
+	//if (mtx) { mtx->lock(); }
+	random_bs_list.reserve(n_bs_randoms);
+	//if (mtx) { mtx->unlock(); }
+	for (int i = 0; i < n_bs_randoms; i++) {
+		random_bs_list.push_back(sample_poisson(trand->Rndm()));
+	}
+}
 
 // Append all proton angles from an event to the specified cent/eventplane/vz pool of events. For CBWC pass ref_mult in place of cent (untested).
 void Mixer::append_event(const vector<double>& angles, int cent, double event_plane, double vz) {
@@ -454,6 +460,10 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 	vector<double> mix_angles(num_protons);
 	double rand_angle = trand->Rndm() * 2 * M_PI;
 
+	// Generate random lists for event
+	vector<double> single_randoms, single_bs_randoms;
+	gen_mix_randoms(single_randoms, single_bs_randoms);  // Fill single randoms
+
 	int max_protons = 150;  // Big problems if this is broken!
 	vector<double> mixer_randoms;  // Make sure number of random calls independent of how many tracks in each event
 	if (num_protons > max_protons) { cout << "Too many protons in get_mixed! " << num_protons << endl; }
@@ -524,13 +534,17 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 
 	int num_particles_bin = mix_angles.size() - particle_min;
 	if (resample) {
+		int single_random_index = 0, single_bs_random_index = 0;
 		sort(mix_angles.begin(), mix_angles.end());
 		for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
 
 			double div_rads = (double)divs[div_bin] / 180 * M_PI;
 			vector<int> binned_event;
 			if (resample_alg == 4) {
-				binned_event = get_resamples4(mix_angles, div_rads, n_resamples, trand, mtx);
+				//binned_event = get_resamples4(mix_angles, div_rads, n_resamples, trand, mtx);
+				vector<double> div_single_randoms(single_randoms.begin() + single_random_index, single_randoms.begin() + single_random_index + n_resamples);
+				binned_event = get_resamples4(mix_angles, div_rads, n_resamples, div_single_randoms, mtx);
+				single_random_index += n_resamples;
 			}
 			else if (resample_alg == 3) {
 				binned_event = get_resamples3(mix_angles, div_rads, n_resamples);
@@ -546,7 +560,7 @@ void Mixer::get_mixed(int cent_bin, int num_protons, int ep_bin, int vz_bin) {
 			// Save binned values to bootstraps
 			for (int i = 0; i < n_bootstraps; i++) {
 				vector<long> &data_event_bs = data_bs[div_bin][cent_bin][i][num_particles_bin];
-				int poisson_samples = sample_poisson(trand->Rndm());
+				int poisson_samples = single_bs_randoms[single_bs_random_index++];
 				for (int j = 0; j <= poisson_samples; j++) {  // Poisson block bootstrap
 					for (unsigned num_in_bin=0; num_in_bin < binned_event.size(); num_in_bin++) {
 						data_event_bs[num_in_bin] += binned_event[num_in_bin];
