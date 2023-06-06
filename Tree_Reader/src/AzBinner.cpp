@@ -569,18 +569,18 @@ void AzBinner::init_data() {
 void AzBinner::gen_single_randoms(vector<double>& random_list, vector<double>& random_bs_list) {
 	int n_randoms = n_resamples * divs.size();
 	//random_list.resize(n_randoms);
-	if (mtx) { mtx->lock(); }
+	//if (mtx) { mtx->lock(); }
 	random_list.reserve(n_randoms);
-	if (mtx) { mtx->unlock(); }
+	//if (mtx) { mtx->unlock(); }
 	for (int i = 0; i < n_randoms; i++) {
 		random_list.push_back(trand->Rndm());
 		//trand->RndmArray(random_list.size(), &random_list[0]);
 	}
 
 	int n_bs_randoms = n_bootstraps * divs.size();
-	if (mtx) { mtx->lock(); }
+	//if (mtx) { mtx->lock(); }
 	random_bs_list.reserve(n_bs_randoms);
-	if (mtx) { mtx->unlock(); }
+	//if (mtx) { mtx->unlock(); }
 	for (int i = 0; i < n_bs_randoms; i++) {
 		//random_bs_list.push_back(trand->Poisson(1));
 		random_bs_list.push_back(sample_poisson(trand->Rndm()));
@@ -740,13 +740,15 @@ void AzBinner::process_event(const Event& event) {
 
 			int num_particles_bin = num_particles - particle_min;
 			if (resample) {
-				int single_bs_random_index = 0;
+				int single_random_index = 0, single_bs_random_index = 0;
 				sort(good_particle_angles.begin(), good_particle_angles.end());
 				for (unsigned div_bin=0; div_bin < divs.size(); div_bin++) {
 					double div_rads = (double)divs[div_bin] / 180 * M_PI;
 					vector<int> binned_event;
 					if (resample_alg == 4) {
-						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, single_randoms, mtx);
+						vector<double> div_single_randoms(single_randoms.begin() + single_random_index, single_randoms.begin() + single_random_index + n_resamples);
+						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, div_single_randoms, mtx);
+						single_random_index += n_resamples;
 					} else if (resample_alg == 3) {
 						binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);
 					}
