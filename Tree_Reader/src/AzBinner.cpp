@@ -641,10 +641,10 @@ void AzBinner::process_event(const Event& event) {
 				if (efficiency) {  // Skip good particle with chance efficiency_prob
 					if (trand->Rndm() < efficiency_prob) { continue; }
 				}
-				if (mtx) { mtx->lock(); }
+				//if (mtx) { mtx->lock(); }
 				good_particle_angles.push_back(particle.get_phi());
 				good_particle_etas.push_back(particle.get_eta());
-				if (mtx) { mtx->unlock(); }
+				//if (mtx) { mtx->unlock(); }
 			}
 		}
 		
@@ -747,7 +747,7 @@ void AzBinner::process_event(const Event& event) {
 					vector<int> binned_event;
 					if (resample_alg == 4) {
 						vector<double> div_single_randoms(single_randoms.begin() + single_random_index, single_randoms.begin() + single_random_index + n_resamples);
-						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, div_single_randoms, mtx);
+						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, div_single_randoms);
 						single_random_index += n_resamples;
 					} else if (resample_alg == 3) {
 						binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);
@@ -917,13 +917,15 @@ void AzBinner::process_event_debug(const Event& event) {
 
 			int num_particles_bin = num_particles - particle_min;
 			if (resample) {
-				int single_bs_random_index = 0;
+				int single_random_index = 0, single_bs_random_index = 0;
 				sort(good_particle_angles.begin(), good_particle_angles.end());
 				for (unsigned div_bin = 0; div_bin < divs.size(); div_bin++) {
 					double div_rads = (double)divs[div_bin] / 180 * M_PI;
 					vector<int> binned_event;
 					if (resample_alg == 4) {
-						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, single_randoms);
+						vector<double> div_single_randoms(single_randoms.begin() + single_random_index, single_randoms.begin() + single_random_index + n_resamples);
+						binned_event = get_resamples4(good_particle_angles, div_rads, n_resamples, div_single_randoms);
+						single_random_index += n_resamples;
 					}
 					else if (resample_alg == 3) {
 						binned_event = get_resamples3(good_particle_angles, div_rads, n_resamples);

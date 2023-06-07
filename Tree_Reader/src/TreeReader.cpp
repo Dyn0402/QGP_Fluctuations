@@ -331,7 +331,7 @@ void TreeReader::read_trees() {
 			bool skip = false;
 			while(wait) {
 				if(mtx) { mtx->lock(); }
-				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {
+				if(find(file_list->begin(), file_list->end(), path) == file_list->end()) {  // No other process reading this file.
 					in_files_queue.pop();
 					file_list->push_back(path);
 					wait = false;
@@ -356,6 +356,9 @@ void TreeReader::read_trees() {
 			}
 			if (skip) { continue; }  // Skip to next file and return to current (busy one) at the end.
 		}
+		else {
+			in_files_queue.pop();
+		}
 
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files*percent_print/100+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
@@ -372,7 +375,7 @@ void TreeReader::read_trees() {
 			cout << " " << energy << "GeV " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << " | Available Memory (linux): " << available_mem << "GB" << endl;
 		}
 
-//		cout << "Starting " << path << endl;
+		//cout << "Starting " << path << endl;
 		TFile *file = new TFile(path.data(), "READ");
 		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
 		TTree *tree = (TTree*)file->Get(tree_name.data());
@@ -501,8 +504,8 @@ void TreeReader::read_tree(TTree* tree) {
 		}
 
 		for (AzBinner& binner : binners) {
-			binner.process_event(event);
-			//binner.process_event_debug(event);
+			//binner.process_event(event);
+			binner.process_event_debug(event);
 		}
 
 		event_index++;
