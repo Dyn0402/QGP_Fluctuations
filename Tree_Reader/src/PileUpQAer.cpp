@@ -119,8 +119,10 @@ void PileUpQAer::set_sigmas_right(float sigmas_right) {
 // Doers
 void PileUpQAer::run_qa() {
 	read_trees();
+	if (mtx) { mtx->lock(); }
 	rotate_dist();
 	write_cut_file();
+	if (mtx) { mtx->unlock(); }
 }
 
 
@@ -202,6 +204,7 @@ void PileUpQAer::set_branches(TTree *tree) {
 
 
 void PileUpQAer::rotate_dist() {
+	cout << "Starting " << energy << "GeV analysis writing to " << out_path << endl;
 	out_file = new TFile((out_path+out_root_pre+to_string(energy)+"GeV.root").data(), "RECREATE");
 	out_file->cd();
 
@@ -396,8 +399,10 @@ void PileUpQAer::rotate_dist() {
 		}
 	
 		TGraph upper((int)y_upper.size(), upper_points.data(), y_upper.data());
+		upper.SetName("Upper_Graph");
 		upper.SetLineColor(kGreen); upper.SetLineWidth(2);
 		TGraph lower((int)y_lower.size(), lower_points.data(), y_lower.data());
+		lower.SetName("Lower_Graph");
 		lower.SetLineColor(kGreen); lower.SetLineWidth(2);
 		TF1 upper_fit(("upper_fit_"+name).data(), "pol4", orig_ref_low, orig_ref_high);
 		upper_fit.SetLineColor(kRed);
@@ -447,7 +452,6 @@ void PileUpQAer::rotate_dist() {
 			prob_graphs[slice.first].SetMarkerStyle(4);
 		}
 
-		if(mtx) { mtx->lock(); }
 		{
 			TCanvas orig_can(("Can_"+name).data(), title.data(), can_x_pix, can_y_pix);
 			btof_ref_hist.Draw("COLZ");
@@ -665,7 +669,6 @@ void PileUpQAer::rotate_dist() {
 				slice_dcaz_sd_can.Write();
 			}
 		}
-		if(mtx) { mtx->unlock(); }
 	}
 
 	out_file->Close();

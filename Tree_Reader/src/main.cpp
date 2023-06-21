@@ -122,10 +122,10 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	//read_new();
+	read_new();
 
 //	run_dca_xy_qa();
-	run_pile_up_qa();
+//	run_pile_up_qa();
 //	tchain_test();
 	//ampt_ref_b_plot();
 	//ampt_cent_opt();
@@ -347,19 +347,20 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"BES1_def", {{"default", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
 		{"BES1_sys_cent_+1", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift1_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_cent_-1", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift-1_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_vzleft", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzhigh-7_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_vzright", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow7_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_vzmid", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow-5_vzhigh5_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxytight", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqatight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxy2tight", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2tight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxyloose", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqaloose_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxy2loose", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2loose_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileuptight", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqatight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileup2tight", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2tight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileuploose", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqaloose_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileup2loose", {{"default_sys", {{"rapid05_resample_norotate_seed_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2loose_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_cent_-1", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift-1_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_vzleft", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzhigh-7_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_vzright", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow7_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_vzmid", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow-5_vzhigh5_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_dcxytight", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqatight_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_dcxy2tight", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2tight_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_dcxyloose", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqaloose_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_dcxy2loose", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2loose_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_pileuptight", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqatight_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_pileup2tight", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2tight_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_pileuploose", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqaloose_calcv2_", {0, 0}}}}}},
+		{"BES1_sys_pileup2loose", {{"default_sys", {{"rapid05_resample_norotate_dca12_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2loose_calcv2_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -730,7 +731,7 @@ void read_new() {
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
 	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-	//vector<int> energy_list{ 7 };
+//	vector<int> energy_list{ 7 };
 
 	int set_sleep = 5;
 	int energy_sleep = 5;
@@ -1155,18 +1156,6 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				binner.set_set_name(set.first + to_string(set_num));
 
 
-				if (in_string(set.first, "vzlow")) {
-					float vzlow = stoi(get_flag_trail(set.first, "vzlow", "_")[0]);
-					if (energy == 7) { vzlow *= 50.0 / 30.0; }
-					binner.cut.vz_cut.first = vzlow;
-				}
-				if (in_string(set.first, "vzhigh")) {  //
-					float vzhigh = stoi(get_flag_trail(set.first, "vzhigh", "_")[0]);
-					if (energy == 7) { vzhigh *= 50.0 / 30.0; }
-					binner.cut.vz_cut.second = vzhigh;
-				}
-				cout << energy << " vz_low: " << binner.cut.vz_cut.first << "  vz_high: " << binner.cut.vz_cut.second << endl;
-
 				string dca_qa_path = base_path + "Dca_xy_QA/";
 				if (in_string(set.first, "dcxyqatight")) {
 					dca_qa_path += "tight/";
@@ -1203,6 +1192,19 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				cout << "Sys_ref_shift: " << binner.get_sys_ref_shift() << endl;
 
 				binner.cut.set_values(energy, reader.get_particle());  // Setting here for now since it needs updated dca/pileup paths, think of better solution.
+
+				if (in_string(set.first, "vzlow")) {
+					float vzlow = stoi(get_flag_trail(set.first, "vzlow", "_")[0]);
+					if (energy == 7) { vzlow *= 50.0 / 30.0; }
+					binner.cut.vz_cut.first = vzlow;
+				}
+				if (in_string(set.first, "vzhigh")) {  //
+					float vzhigh = stoi(get_flag_trail(set.first, "vzhigh", "_")[0]);
+					if (energy == 7) { vzhigh *= 50.0 / 30.0; }
+					binner.cut.vz_cut.second = vzhigh;
+				}
+				cout << energy << " vz_low: " << binner.cut.vz_cut.first << "  vz_high: " << binner.cut.vz_cut.second << endl;
+
 
 				if (in_string(set.first, "_seed")) {
 					binner.set_tree_reader_rand_seed(42);
@@ -2042,6 +2044,7 @@ void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pi
 	{
 		DcaxyQAer qa(energy, mtx);
 		qa.set_in_path(in_path);
+		qa_path += variation + "/";
 		qa.set_qa_path(qa_path);
 		qa.set_pile_up_qa_path(pile_up_qa_path);
 		if (variation == "tight") {
@@ -2079,21 +2082,7 @@ void run_dca_xy_qa() {
 	string qa_path = "/media/ucla/Research/Dca_xy_QA/";
 	string pile_up_qa_path = "/media/ucla/Research/Pile_Up_QA/";
 	string variation = "2loose";
-	if (variation == "default") {
-		qa_path += "default/";
-	}
-	else if (variation == "tight") {
-		qa_path += "tight/";
-	}
-	else if (variation == "2tight") {
-		qa_path += "2tight/";
-	}
-	else if (variation == "loose") {
-		qa_path += "loose/";
-	}
-	else if (variation == "2loose") {
-		qa_path += "2loose/";
-	}
+
 	mutex *mtx = new mutex;
 
 //	for (int energy : energies) {
@@ -2120,22 +2109,17 @@ void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path, string v
 		if (variation == "tight") {
 			qa.set_sigmas_left(2);
 			qa.set_sigmas_right(2);
-			qa_path += "tight/";
 		} else if (variation == "2tight") {
 			qa.set_sigmas_left(1.5);
 			qa.set_sigmas_right(1.5);
-			qa_path += "2loose/";
 		} else if (variation == "loose") {
 			qa.set_sigmas_left(4);
 			qa.set_sigmas_right(4);
-			qa_path += "loose/";
 		} else if (variation == "2loose") {
 			qa.set_sigmas_left(5);
 			qa.set_sigmas_right(5);
-			qa_path += "2loose/";
-		} else {
-			qa_path += "default/";
 		}
+		qa_path += variation + "/";
 		qa.set_out_path(qa_path);
 
 		qa.run_qa();
@@ -2172,22 +2156,25 @@ void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path, string v
 }
 
 void run_pile_up_qa() {
-//	vector<int> energies{ 7, 11, 19, 27, 39, 62};
-	vector<int> energies{ 7, 11 };//, 19, 27, 39, 62};
+//	vector<int> energies{ 7, 11, 19, 27, 39, 62 };
+	vector<int> energies{ 39, 62, 27, 19, 11, 7 };
 //	string in_path = "F:/Research/BES1_Trees/";
 //	string qa_path = "F:/Research/Pile_Up_QA/";
 	string in_path = "/media/ucla/Research/BES1_Trees/";
-	string qa_path = "/media/ucla/Pile_Up_QA/";
+	string qa_path = "/media/ucla/Research/Pile_Up_QA/";
 	mutex *mtx = new mutex;
 
+	gErrorIgnoreLevel = kError;
+
 //	string variation = "default";
-	vector<string> variations {"default", "tight", "2tight", "loose", "2loose"};
+//	vector<string> variations {"default", "tight", "2tight", "loose", "2loose"};
+	vector<string> variations { "2tight", "2loose"};
 
 	ROOT::EnableThreadSafety();
 	{
 		ThreadPool pool(thread::hardware_concurrency() - 1);
-		for(int energy:energies) {
-			for (string variation:variations) {
+		for (string variation:variations) {
+			for(int energy:energies) {
 				pool.enqueue(pile_up_qa, energy, mtx, in_path, qa_path, variation);
 				this_thread::sleep_for(chrono::seconds(1));
 			}
