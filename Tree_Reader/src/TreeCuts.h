@@ -29,6 +29,10 @@ public:
 	void set_pileupqa_path(string path);
 	void set_dcaqa_path(string path);
 
+	// Getters
+	string get_pileupqa_path();
+	string get_dcaqa_path();
+
 	// Doers
 	void set_values();
 	void set_values(int energy);
@@ -46,6 +50,7 @@ public:
 	pu_cut pile_up_high;
 	vector<int> dca_xy_bad_runs;
 	map<int, vector<pair<int, int>>> dca_xy_bad_event_ranges;
+	pair<float, float> vz_cut;
 
 	// Track Cuts
 	float min_beta = 0.0;
@@ -96,6 +101,10 @@ protected:
 	};
 //	map<int, float> max_slope_by_energy {{7, (float)(1565-187)/(310+6)}, {11, (float)(1274-172)/(250+6)}, {14, (float)(1954-240)/(350+12)}, {19, (float)(1596-195)/(364+11)}, {27, (float)(1878-207)/(400+18)}, {39, (float)(2220-128)/(415+20)}, {62, (float)(3700-116)/(544+22)}, {200, (float)(4376-142)/(543+10)}};
 //	map<int, float> min_slope_by_energy {{7, (float)(924+34)/(418-7)}, {11, (float)(660+20)/(307-7)}, {14, (float)(1020+61)/(396-10)}, {19, (float)(1049+35)/(426-5)}, {27, (float)(1211+39)/(460-6)}, {39, (float)(1563+103)/(524-10)}, {62, (float)(2657+244)/(649-51)}, {200, (float)(3130+77)/(616-70)}};
+
+	map<int, pair<float, float>> vz_cut_by_energy {
+		{7, {-50, 50}}, {11, {-30, 30}}, {14, {-30, 30}}, {19, {-30, 30}}, {27, {-30, 30}}, {39, {-30, 30}}, {54, {-30, 30}}, {62, {-30, 30}}, {200, {-30, 30}}
+	};
 
 	// Track cuts
 	map<string, map<int, float>> min_pt_by_energy {

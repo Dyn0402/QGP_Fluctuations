@@ -52,9 +52,12 @@ void DcaxyQAer::set_pile_up_qa_path(string path) {
 void DcaxyQAer::run_qa() {
 	prep_run();
 	read_trees();
+	if (mtx) { mtx->lock(); }
 	analyze_runs();
 	make_proton_plots();
 	write_bad_dca_file();
+	write_dca_stats_file();
+	if (mtx) { mtx->unlock(); }
 }
 
 
@@ -75,12 +78,9 @@ void DcaxyQAer::read_trees() {
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
 
 	unsigned num_files = in_files.size();
-	cout << in_path + to_string(energy) + "GeV/" + "  " << num_files << endl;
 	unsigned file_index = 1;
 
 	for(string path:in_files) {
-		cout << path << endl;
-
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
 			chrono::duration<double> elap = chrono::system_clock::now() - start_sys;
@@ -110,7 +110,6 @@ void DcaxyQAer::read_tree(TTree* tree) {
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
-		cout << "Eentry# " << event_index << endl;
 		event_index++;
 		unsigned run = branches.run_num;  //leaves.run->GetValue();
 
@@ -161,20 +160,15 @@ void DcaxyQAer::set_branches(TTree* tree) {
 	tree->SetBranchStatus("*", 0);
 	tree->SetBranchStatus("run_num", 1);
 	tree->SetBranchStatus("event_id", 1);
-	tree->SetBranchStatus("dca_xy_avg", 1);
-	tree->SetBranchStatus("dca_xy_err", 1);
-	tree->SetBranchStatus("refmult3", 1);
-	tree->SetBranchStatus("vz", 1);
-
-	tree->SetBranchStatus("run_num", 1);
-	tree->SetBranchStatus("event_id", 1);
 	tree->SetBranchStatus("refmult", 1);
 	tree->SetBranchStatus(("refmult"+to_string(ref_num)).data(), 1);
+	tree->SetBranchStatus("dca_xy_avg", 1);
+	tree->SetBranchStatus("dca_xy_err", 1);
 	tree->SetBranchStatus("btof_multi", 1);
 	tree->SetBranchStatus("btof_match", 1);
 	tree->SetBranchStatus("vz", 1);
-	//tree->SetBranchStatus("qx", 1);
-	//tree->SetBranchStatus("qy", 1);
+	tree->SetBranchStatus("psi_east", 1);
+	tree->SetBranchStatus("psi_west", 1);
 	tree->SetBranchStatus((particle+".pt").data(), 1);
 	tree->SetBranchStatus((particle+".phi").data(), 1);
 	tree->SetBranchStatus((particle+".beta").data(), 1);
@@ -182,6 +176,7 @@ void DcaxyQAer::set_branches(TTree* tree) {
 	tree->SetBranchStatus((particle+".dca").data(), 1);
 	tree->SetBranchStatus((particle+".nsigma").data(), 1);
 	tree->SetBranchStatus((particle+".eta").data(), 1);
+	tree->SetBranchStatus((particle + ".nhits_fit").data(), 1);
 }
 
 
@@ -303,18 +298,21 @@ void DcaxyQAer::analyze_runs() {
 	}
 	cout << endl << energy << "GeV:" << endl;
 	good_runs_dir->Close(); bad_runs_dir->Close();
-	cout << "Runs: " << num_runs << endl;
-	cout << "7sig runs: " << num_7sig_runs << endl;
-	cout << "Percentage of runs with bad event: " << ((float)num_7sig_runs) / num_runs * 100 << "%" << endl;
-	cout << "mv avg runs: " << num_mv_avg_runs << endl;
-	cout << "Percentage of runs with bad moving average: " << ((float)num_mv_avg_runs) / num_runs * 100 << "%" << endl;
-	cout << "Events: " << num_events << endl;
-	cout << "7sig events: " << num_7sig_events << endl;
-	cout << "Percentage of events bad: " << ((float)num_7sig_events) / num_events * 100 << "%" << endl;
-	cout << "Moving Average Stats: " << endl;
-	for(pair<int, int> mv_avg_stat:mv_avg_stats) {
-		cout << " " << mv_avg_stat.first << "pt: " << mv_avg_stat.second << " runs" << endl;
+
+	analysis_out << "Runs: " << num_runs << endl;
+	analysis_out << "7sig runs: " << num_7sig_runs << endl;
+	analysis_out << "Percentage of runs with bad event: " << fixed << setprecision(2) << ((float)num_7sig_runs) / num_runs * 100 << "%" << endl;
+	analysis_out << "mv avg runs: " << num_mv_avg_runs << endl;
+	analysis_out << "Percentage of runs with bad moving average: " << fixed << setprecision(2) << ((float)num_mv_avg_runs) / num_runs * 100 << "%" << endl;
+	analysis_out << "Events: " << num_events << endl;
+	analysis_out << "7sig events: " << num_7sig_events << endl;
+	analysis_out << "Percentage of events bad: " << fixed << setprecision(2) << ((float)num_7sig_events) / num_events * 100 << "%" << endl;
+	analysis_out << "Moving Average Stats: " << endl;
+	for (pair<int, int> mv_avg_stat : mv_avg_stats) {
+		analysis_out << " " << mv_avg_stat.first << "pt: " << mv_avg_stat.second << " runs" << endl;
 	}
+
+	cout << analysis_out.str() << endl;
 
 	out_file->Close();
 }
@@ -374,8 +372,6 @@ void DcaxyQAer::make_proton_plots() {
 	}
 //	TF2 pre_gaus((to_string(energy)+"GeV_Pre_Gaus_Fit").data(), "xygaus", -0.2, 0.2, 0, 40);
 
-	if(mtx) { mtx->lock(); }
-
 	TCanvas pre_can((to_string(energy)+"GeV_Pre_Proton_DCA_Can").data(), (to_string(energy)+"GeV Protons vs DCA").data());
 	pre_proton_dca.Draw("ColZ");
 	pre_can.SetGrid(); pre_can.SetLogz();
@@ -398,8 +394,6 @@ void DcaxyQAer::make_proton_plots() {
 		slice_fit.second.Draw("Same");
 		slice_can.Write();
 	}
-
-	if(mtx) { mtx->unlock(); }
 
 	out_file->Close();
 }
@@ -508,8 +502,6 @@ pair<vector<float>, vector<float>> moving_average(const vector<float> &x, const 
 void DcaxyQAer::plot_run(vector<float> &run_num, vector<float> &dca_xy_run_avg, vector<float> &dca_xy_run_err, vector<float> &run_indexes) {
 	string energy_str = to_string(energy);
 
-	if(mtx) mtx->lock();
-
 	TCanvas can_dataset((energy_str+"GeV_Dca_xy_vs_Run_Can").data(), (energy_str+"GeV Dca XY vs Run").data());
 	TGraphErrors dca_xy_dataset((int)run_num.size(), run_num.data(), dca_xy_run_avg.data(), 0, dca_xy_run_err.data());
 	dca_xy_dataset.SetNameTitle((energy_str+"GeV_Dca_xy_vs_Run_Graph").data(), (energy_str+"GeV Dca XY vs Run").data());
@@ -564,15 +556,11 @@ void DcaxyQAer::plot_run(vector<float> &run_num, vector<float> &dca_xy_run_avg, 
 	leg_index_dataset.Draw();
 	can_index_dataset.SetGrid();
 	can_index_dataset.Write();
-
-	if(mtx) mtx->unlock();
 }
 
 
 void DcaxyQAer::plot_mv_avg(const vector<float> &event_ids, const vector<float> &dca_xy_val, const vector<float> &dca_xy_err, const pair<vector<float>, vector<float>> &mv_avg, const vector<pair<int, int>> &bad_ranges, TF1 &lin_fit, float run_avg, float sigmas_thresh, int mv_avg_num, int run_num) {
 	string energy_str = to_string(energy), run_str = to_string(run_num), mv_pt_str = to_string(mv_avg_num);
-
-	if(mtx) mtx->lock();
 
 	TCanvas can((mv_pt_str + "pt_" + energy_str + "GeV_Can_Run_"+run_str).data(), ("Run "+run_str).data());
 	TGraphErrors run_graph((int)event_ids.size(), event_ids.data(), dca_xy_val.data(), 0, dca_xy_err.data());
@@ -628,15 +616,11 @@ void DcaxyQAer::plot_mv_avg(const vector<float> &event_ids, const vector<float> 
 	leg.Draw();
 	can.SetGrid();
 	can.Write();
-
-	if(mtx) mtx->unlock();
 }
 
 
 void DcaxyQAer::plot_final(const vector<float> &event_ids, const vector<float> &dca_xy_val, const vector<float> &dca_xy_err, const vector<pair<int, int>> &bad_ranges, TF1 &lin_fit, float run_avg, int run_num) {
 	string energy_str = to_string(energy), run_str = to_string(run_num);
-
-	if(mtx) mtx->lock();
 
 	TCanvas can(("Final_"+ energy_str + "GeV_Can_Run_"+run_str+"_final").data(), ("Run "+run_str).data());
 	TGraphErrors run_graph((int)event_ids.size(), event_ids.data(), dca_xy_val.data(), 0, dca_xy_err.data());
@@ -688,8 +672,6 @@ void DcaxyQAer::plot_final(const vector<float> &event_ids, const vector<float> &
 	leg.Draw();
 	can.SetGrid();
 	can.Write();
-
-	if(mtx) mtx->unlock();
 }
 
 

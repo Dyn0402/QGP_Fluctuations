@@ -44,6 +44,16 @@ void TreeCuts::set_dcaqa_path(string path) {
 }
 
 
+// Getters
+string TreeCuts::get_pileupqa_path() {
+	return pileupqa_path;
+}
+
+string TreeCuts::get_dcaqa_path() {
+	return dcaqa_path;
+}
+
+
 // Doers
 void TreeCuts::set_values() {
 	// Dca_xy Cuts
@@ -60,6 +70,7 @@ void TreeCuts::set_values() {
 
 	// Event Cuts
 	bad_runs = bad_runs_by_energy[energy];
+	vz_cut = vz_cut_by_energy[energy];
 
 	// Track Cuts
 	min_beta = min_beta_by_energy[particle][energy];

@@ -55,13 +55,17 @@ protected:
 
 	string qa_path = "/home/dylan/Research/Dca_xy_QA/";
 	string qa_file_suf = "_Bad_DCA_Runs_Ranges.txt";
+	string qa_stats_file_suf = "_Bad_DCA_Stats.txt";
 
 	// Data Containers
 	vector<int> bad_runs;
 	map<int, vector<pair<int, int>>> bad_ranges;
 
+	ostringstream analysis_out;
+
 	// Doers
 	void write_bad_dca_file();
+	void write_dca_stats_file();
 	void read_bad_dca_file();
 };
 

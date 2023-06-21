@@ -107,12 +107,19 @@ void PileUpQAer::set_write_out_txt(bool write) {
 	write_out_txt = write;
 }
 
+void PileUpQAer::set_sigmas_left(float sigmas_left) {
+	this->sigmas_left = sigmas_left;
+}
+
+void PileUpQAer::set_sigmas_right(float sigmas_right) {
+	this->sigmas_right = sigmas_right;
+}
+
 
 // Doers
 void PileUpQAer::run_qa() {
 	read_trees();
 	rotate_dist();
-//	get_cuts();
 	write_cut_file();
 }
 

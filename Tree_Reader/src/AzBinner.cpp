@@ -285,6 +285,14 @@ int AzBinner::get_n_bootstraps() {
 	return n_bootstraps;
 }
 
+bool AzBinner::get_mix_empties() {
+	return mix_empties;
+}
+
+int AzBinner::get_sys_ref_shift() {
+	return sys_ref_shift;
+}
+
 
 
 // Setters
@@ -488,6 +496,14 @@ void AzBinner::set_particle_min(int min) {
 	particle_min = min;
 }
 
+void AzBinner::set_mix_empties(bool mix_empties) {
+	this->mix_empties = mix_empties;
+}
+
+void AzBinner::set_sys_ref_shift(int sys_ref_shift) {
+	this->sys_ref_shift = sys_ref_shift;
+}
+
 
 
 // Doers
@@ -650,7 +666,7 @@ void AzBinner::process_event(const Event& event) {
 		
 		// Get centrality bin for event from ref_multn value for every event to keep random string the same between runs
 		refmultCorrUtil->init(event.get_run());
-		refmultCorrUtil->initEvent((int)event.get_refn(), (double)event.get_vz());
+		refmultCorrUtil->initEvent((int)event.get_refn() + sys_ref_shift, (double)event.get_vz());
 		int cent16_corr = refmultCorrUtil->getCentralityBin16();
 		int cent9_corr = refmultCorrUtil->getCentralityBin9();
 
@@ -686,7 +702,7 @@ void AzBinner::process_event(const Event& event) {
 		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
 		if (num_particles < cut.min_multi) {
 			// If mixed/rand flagged append event to mix/rand object. If not enough particles just push in an empty set of angles to preserve randomization string.
-			if (mixed) { mix.append_event({}, cent, ep_angle, event.get_vz()); }
+			if (mixed && mix_empties) { mix.append_event({}, cent, ep_angle, event.get_vz()); }
 		}
 		else {
 			event_cut_hist.Fill("Enough Good Particles", 1);
@@ -851,11 +867,13 @@ void AzBinner::process_event_debug(const Event& event) {
 		if (num_particles - particle_min >= particle_bins) { cout << "num_particles: " << num_particles << " too big for particle_bins: " << particle_bins << " !!!" << endl; }
 		if (num_particles < cut.min_multi) {
 			// If mixed/rand flagged append event to mix/rand object. If not enough particles just push in an empty set of angles to preserve randomization string.
-			if (event.get_event_id() >= 2343 && event.get_event_id() < 2363) {
-				mix.append_event_debug({}, cent, ep_angle, event.get_vz());
-			}
-			else {
-				mix.append_event({}, cent, ep_angle, event.get_vz());
+			if (mixed && mix_empties){
+				if (event.get_event_id() >= 2343 && event.get_event_id() < 2363) {
+					mix.append_event_debug({}, cent, ep_angle, event.get_vz());
+				}
+				else {
+					mix.append_event({}, cent, ep_angle, event.get_vz());
+				}
 			}
 		}
 		else {
@@ -1122,6 +1140,9 @@ bool AzBinner::check_event(const Event& event) {
 	if (!check_pile_up(event.get_btof_multi(), event.get_btof_match(), event.get_ref())) return false;
 	event_cut_hist.Fill("Pile Up Rejected", 1);
 
+	if (!check_vz(event.get_vz())) return false;
+	event_cut_hist.Fill("Good Vz", 1);
+
 	fill_post_event_qa(event);
 
 	return true;
@@ -1188,6 +1209,15 @@ bool AzBinner::check_pile_up(int btof_multi, int btof_match, int ref_mult) {
 	}
 
 	return true;
+}
+
+
+// Returns true if vz within vz cut, false if outside of range.
+bool AzBinner::check_vz(float vz) {
+	if (vz >= cut.vz_cut.first && vz <= cut.vz_cut.second) {
+		return true;
+	}
+	return false;
 }
 
 
@@ -1292,13 +1322,14 @@ void AzBinner::define_qa() {
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(15, "nsigma_pion");
 	track_cut_tree_maker.GetXaxis()->SetBinLabel(16, "m_pion");
 
-	event_cut_hist = TH1D(("event_cut" + set_name + "_" + to_string(energy)).data(), "Event Cuts", 6, -0.5, 5.5);
+	event_cut_hist = TH1D(("event_cut" + set_name + "_" + to_string(energy)).data(), "Event Cuts", 7, -0.5, 6.5);
 	event_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
 	event_cut_hist.GetXaxis()->SetBinLabel(2, "Good Dca_xy");
 	event_cut_hist.GetXaxis()->SetBinLabel(3, "Good Run");
 	event_cut_hist.GetXaxis()->SetBinLabel(4, "Enough Particles");
 	event_cut_hist.GetXaxis()->SetBinLabel(5, "Pile Up Rejected");
-	event_cut_hist.GetXaxis()->SetBinLabel(6, "Enough Good Particles");
+	event_cut_hist.GetXaxis()->SetBinLabel(6, "Good Vz");
+	event_cut_hist.GetXaxis()->SetBinLabel(7, "Enough Good Particles");
 
 	track_cut_hist = TH1D(("track_cut" + set_name + "_" + to_string(energy)).data(), "Track Cuts", 7, -0.5, 6.5);
 	track_cut_hist.GetXaxis()->SetBinLabel(1, "Original");
@@ -1450,6 +1481,8 @@ void AzBinner::write_info_file() {
 		out << "out_path: " << out_path << endl;
 		out << "qa_path: " << qa_path << endl;
 		out << "qa_name: " << qa_name << endl;
+		out << "dca_xy qa path: " << cut.get_dcaqa_path() << endl;
+		out << "pileup qa path: " << cut.get_pileupqa_path() << endl;
 
 		out << "energy: " << to_string(energy) << endl;
 		out << "divs: { ";
@@ -1481,6 +1514,7 @@ void AzBinner::write_info_file() {
 
 		out << "cent_binning: " << cent_binning << endl;
 		out << "ref_num: " << ref_num << endl;
+		out << "sys_ref_shift: " << sys_ref_shift << endl;
 
 		out << "cent_bins: " << cent_bins << endl;
 		out << "cent_min: " << cent_min << endl;
@@ -1499,6 +1533,7 @@ void AzBinner::write_info_file() {
 		out << "mix resample: " << boolalpha << mix.get_resample() << endl;
 		out << "mix n_resamples: " << to_string(mix.get_n_resamples()) << endl;
 		out << "mix n_bootstraps: " << to_string(mix.get_n_bootstraps()) << endl;
+		out << "mix empties: " << boolalpha << mix_empties << endl;
 
 
 		out << "min_beta: " << to_string(cut.min_beta) << endl;
@@ -1521,6 +1556,8 @@ void AzBinner::write_info_file() {
 		out << "max_p_tof: " << to_string(cut.max_p_tof) << endl;
 		out << "max_p_no_tof: " << to_string(cut.max_p_no_tof) << endl;
 		out << "min_nhits_fit: " << to_string(cut.min_nhits_fit) << endl;
+		out << "min_vz: " << to_string(cut.vz_cut.first) << endl;
+		out << "max_vz: " << to_string(cut.vz_cut.second) << endl;
 
 		out << "min_multi: " << to_string(cut.min_multi) << endl;
 

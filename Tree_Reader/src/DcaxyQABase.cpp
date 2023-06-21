@@ -105,6 +105,19 @@ void DcaxyQABase::write_bad_dca_file() {
 }
 
 
+void DcaxyQABase::write_dca_stats_file() {
+	if(!check_path(qa_path)) { cout << "Can't access path: " << qa_path << " Skipping following read/write." << endl; return; }
+
+	string out_name = qa_path + to_string(energy) + "GeV" + qa_stats_file_suf;
+	ofstream out_txt(out_name);
+	if(!out_txt.is_open()) { cout << "Could not open " << out_name << " Not writing." << endl; return; }
+
+	out_txt << analysis_out.str() << endl;
+
+	out_txt.close();
+}
+
+
 void DcaxyQABase::read_bad_dca_file() {
 	if(!check_path(qa_path)) { cout << "Can't access path: " << qa_path << " Skipping following read/write." << endl; return; }
 

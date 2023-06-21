@@ -63,6 +63,9 @@ public:
 	int get_particle_min();
 	int get_n_bootstraps();
 
+	bool get_mix_empties();
+	int get_sys_ref_shift();
+
 	// Setters
 	void set_in_path(string path);
 	void set_out_path(string path);
@@ -115,6 +118,9 @@ public:
 	void set_particle_bins(int bins);
 	void set_particle_min(int min);
 
+	void set_mix_empties(bool mix_empties);
+	void set_sys_ref_shift(int sys_ref_shift);
+
 	// Doers
 	void prep_read();
 	void define_qa();
@@ -145,6 +151,7 @@ protected:
 	bool check_enough_particles(const Event& event);
 	bool check_good_run(int run);
 	bool check_pile_up(int btof_multi, int btof_match, int ref_mult);
+	bool check_vz(float vz);
 	bool check_particle_good(const Track& particle);
 
 	void init_data();
@@ -200,11 +207,14 @@ private:
 	int mixer_seed = 0;
 	int file_shuffle_seed = 0;
 	int stref_seed = 0;
+	bool mix_empties = true;
 
 	int cent_bins = 10;
 	int cent_min = -1;
 	int particle_bins = 100;
 	int particle_min = 1;
+
+	int sys_ref_shift = 0;  // For systematics
 
 	bool ampt;
 	bool cooper_frye;

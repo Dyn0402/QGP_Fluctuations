@@ -66,6 +66,8 @@ public:
 	void set_out_txt_suf(string suf);
 	void set_out_root_pre(string pre);
 	void set_write_out_txt(bool write);
+	void set_sigmas_left(float sigmas_left);
+	void set_sigmas_right(float sigmas_right);
 
 	// Doers
 	void run_qa();
