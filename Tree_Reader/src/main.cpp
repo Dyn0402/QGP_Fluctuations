@@ -65,7 +65,7 @@ void ref_mult_test();
 void ampt_cent_opt();
 void ampt_cent_make();
 void ampt_ref_b_plot();
-void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pile_up_qa_path);
+void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pile_up_qa_path, string variation);
 void run_dca_xy_qa();
 void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path);
 void run_pile_up_qa();
@@ -122,9 +122,9 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	read_new();
+	//read_new();
 
-	//run_dca_xy_qa();
+	run_dca_xy_qa();
 	//run_pile_up_qa();
 //	tchain_test();
 	//ampt_ref_b_plot();
@@ -1973,12 +1973,18 @@ void ref_mult_test() {
 }
 
 
-void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pile_up_qa_path) {
+void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pile_up_qa_path, string variation = "default") {
 	{
 		DcaxyQAer qa(energy, mtx);
 		qa.set_in_path(in_path);
 		qa.set_qa_path(qa_path);
 		qa.set_pile_up_qa_path(pile_up_qa_path);
+		if (variation == "tight") {
+			qa.pars.mv_avg_pars = { {1, {4.0, 0.2}}, {5, {4.5, 2.0}}, {10, {7.0, 4.0}} };
+		}
+		else if (variation == "loose") {
+			qa.pars.mv_avg_pars = { {1, {6.0, 0.2}}, {5, {6.5, 2.0}}, {10, {9.0, 4.0}} };
+		}
 		qa.run_qa();
 	}
 //	DcaxyQAer qa(energy);
@@ -1993,20 +1999,31 @@ void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pi
 }
 
 void run_dca_xy_qa() {
-	vector<int> energies{ 7, 11 };//, 19, 27, 39, 62};
-	string in_path = "C:/Users/Dylan/Desktop/Research/BES1_Trees/";
-	string qa_path = "C:/Users/Dylan/Desktop/Research/Dca_xy_QA/";
-	string pile_up_qa_path = "C:/Users/Dylan/Desktop/Research/Pile_Up_QA/";
+	vector<int> energies{ 7, 11, 19, 27, 39, 62};
+	string in_path = "F:/Research/BES1_Trees/";
+	string qa_path = "F:/Research/Dca_xy_QA/";
+	string pile_up_qa_path = "F:/Research/Pile_Up_QA/";
+	string variation = "tight";
+	if (variation == "tight") {
+		qa_path += "tight/";
+	}
+	else if (variation == "loose") {
+		qa_path += "loose/";
+	}
 	mutex *mtx = new mutex;
 
-	ROOT::EnableThreadSafety();
-	{
-		ThreadPool pool(thread::hardware_concurrency());
-		for(int energy:energies) {
-			pool.enqueue(dca_xy_qa, energy, mtx, in_path, qa_path, pile_up_qa_path);
-			this_thread::sleep_for(chrono::seconds(1));
-		}
+	for (int energy : energies) {
+		dca_xy_qa(energy, mtx, in_path, qa_path, pile_up_qa_path, variation);
 	}
+
+	//ROOT::EnableThreadSafety();
+	//{
+	//	ThreadPool pool(thread::hardware_concurrency() - 1);
+	//	for(int energy:energies) {
+	//		pool.enqueue(dca_xy_qa, energy, mtx, in_path, qa_path, pile_up_qa_path, variation);
+	//		this_thread::sleep_for(chrono::seconds(1));
+	//	}
+	//}
 }
 
 

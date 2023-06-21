@@ -75,9 +75,11 @@ void DcaxyQAer::read_trees() {
 	vector<string> in_files = get_files_in_dir(in_path+to_string(energy)+"GeV/", "root", "path");
 
 	unsigned num_files = in_files.size();
+	cout << in_path + to_string(energy) + "GeV/" + "  " << num_files << endl;
 	unsigned file_index = 1;
 
 	for(string path:in_files) {
+		cout << path << endl;
 
 		// Display progress and time while running.
 		if(!(file_index % (unsigned)(num_files/10.0+0.5))) { // Gives floating point exception for too few num_files --> % 0. Fix!!!
@@ -108,6 +110,7 @@ void DcaxyQAer::read_tree(TTree* tree) {
 
 	int event_index = 0;
 	while(tree->GetEntry(event_index)) {
+		cout << "Eentry# " << event_index << endl;
 		event_index++;
 		unsigned run = branches.run_num;  //leaves.run->GetValue();
 
@@ -170,8 +173,8 @@ void DcaxyQAer::set_branches(TTree* tree) {
 	tree->SetBranchStatus("btof_multi", 1);
 	tree->SetBranchStatus("btof_match", 1);
 	tree->SetBranchStatus("vz", 1);
-	tree->SetBranchStatus("qx", 1);
-	tree->SetBranchStatus("qy", 1);
+	//tree->SetBranchStatus("qx", 1);
+	//tree->SetBranchStatus("qy", 1);
 	tree->SetBranchStatus((particle+".pt").data(), 1);
 	tree->SetBranchStatus((particle+".phi").data(), 1);
 	tree->SetBranchStatus((particle+".beta").data(), 1);
