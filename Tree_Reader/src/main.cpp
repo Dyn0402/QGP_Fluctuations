@@ -352,19 +352,19 @@ void read_new() {
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"BES1_def", {{"default", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
-//		{"BES1_sys_cent_+1", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift1_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_cent_-1", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift-1_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_vzleft", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzhigh-7_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_vzright", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow7_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_vzmid", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow-5_vzhigh5_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxytight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqatight_calcv2_", {0, 0}}}}}},
+////		{"BES1_sys_cent_+1", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift1_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_cent_-1", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift-1_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_vzleft", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzhigh-7_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_vzright", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow7_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_vzmid", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow-5_vzhigh5_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_dcxytight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqatight_calcv2_", {0, 0}}}}}},
 		{"BES1_sys_dcxy2tight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2tight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxyloose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqaloose_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxy2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2loose_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileuptight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqatight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileup2tight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2tight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileuploose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqaloose_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_pileup2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2loose_calcv2_", {0, 0}}}}}},
+		//{"BES1_sys_dcxyloose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqaloose_calcv2_", {0, 0}}}}}},
+		//{"BES1_sys_dcxy2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2loose_calcv2_", {0, 0}}}}}},
+		//{"BES1_sys_pileuptight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqatight_calcv2_", {0, 0}}}}}},
+		//{"BES1_sys_pileup2tight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2tight_calcv2_", {0, 0}}}}}},
+		//{"BES1_sys_pileuploose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqaloose_calcv2_", {0, 0}}}}}},
+		//{"BES1_sys_pileup2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2loose_calcv2_", {0, 0}}}}}},
 	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
@@ -733,9 +733,9 @@ void read_new() {
 	//};
 
 	//vector<int> energy_list{ 7, 11, 19, 27, 39, 62 };
-	vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
+	//vector<int> energy_list{ 39, 62, 27, 19, 11, 7 };
 	//vector<int> energy_list{ 7, 11, 19, 27, 62, 39 };
-//	vector<int> energy_list{ 7 };
+	vector<int> energy_list{ 7 };
 
 	int set_sleep = 5;
 	int energy_sleep = 5;
