@@ -278,10 +278,12 @@ void read_new() {
 //		//{"Sim_flat80_Eff_simpleclust_s05a2_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_norotate_resample_epbins1_", {0, 0}}}}}},
 //	};
 
-	//map<string, map<string, map<string, pair<int, int>>>> sets = {
-	//	{"Sim_flat80_simpleclust_s05a2_v207_res99_epbins1_test", {{"flat80_simpleclust_spread05_amp2_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread05_amp2_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
-	//	{"Sim_flat80_Eff_simpleclust_s05a2_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread05_amp2_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread05_amp2_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
-	//};
+	map<string, map<string, map<string, pair<int, int>>>> sets = {
+		{"Sim_flat80_simpleclust_s08a18_v21_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v21_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v21_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a18_v207_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a18_v205_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v205_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v205_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a18_v203_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v203_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v203_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
@@ -350,7 +352,7 @@ void read_new() {
 //		{"BES1_sys_nofileshuffle_mixrand4", {{"default_sys", {{"rapid05_resample_norotate_mixnoseed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {4, 4}}}}}},  // Only mixed randomization
 //	};
 
-	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"BES1_def", {{"default", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_", {0, 0}}}}}},
 ////		{"BES1_sys_cent_+1", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift1_calcv2_", {0, 0}}}}}},
 //		{"BES1_sys_cent_-1", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_sysrefshift-1_calcv2_", {0, 0}}}}}},
@@ -358,14 +360,14 @@ void read_new() {
 //		{"BES1_sys_vzright", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow7_calcv2_", {0, 0}}}}}},
 //		{"BES1_sys_vzmid", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_vzlow-5_vzhigh5_calcv2_", {0, 0}}}}}},
 //		{"BES1_sys_dcxytight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqatight_calcv2_", {0, 0}}}}}},
-		{"BES1_sys_dcxy2tight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2tight_calcv2_", {0, 0}}}}}},
-		//{"BES1_sys_dcxyloose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqaloose_calcv2_", {0, 0}}}}}},
-		//{"BES1_sys_dcxy2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2loose_calcv2_", {0, 0}}}}}},
-		//{"BES1_sys_pileuptight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqatight_calcv2_", {0, 0}}}}}},
-		//{"BES1_sys_pileup2tight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2tight_calcv2_", {0, 0}}}}}},
-		//{"BES1_sys_pileuploose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqaloose_calcv2_", {0, 0}}}}}},
-		//{"BES1_sys_pileup2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2loose_calcv2_", {0, 0}}}}}},
-	};
+//		{"BES1_sys_dcxy2tight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2tight_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_dcxyloose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqaloose_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_dcxy2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_dcxyqa2loose_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_pileuptight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqatight_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_pileup2tight", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2tight_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_pileuploose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqaloose_calcv2_", {0, 0}}}}}},
+//		{"BES1_sys_pileup2loose", {{"default_sys", {{"rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_pileupqa2loose_calcv2_", {0, 0}}}}}},
+//	};
 
 //	map<string, map<string, map<string, pair<int, int>>>> sets = {
 //		{"BES1_def_nofileshuffle", {{"default", {{"rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_nomix_", {0, 0}}}}}},
@@ -968,7 +970,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	else if (in_string(job_type, "Sim")) {
 		in_path += "BES1_Trees/";
 		if (in_string(job_type, "_test")) {
-			sim_events_per_total_proton = 60000;
+			//sim_events_per_total_proton = 60000;
 			cout << "Running test" << endl;
 			out_job_dir += "Data_Sim_tests/";
 			mix_out_job_dir += "Data_Sim_tests_Mix/";
