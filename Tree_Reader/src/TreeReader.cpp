@@ -748,6 +748,7 @@ void TreeReader::set_binner(AzBinner& binner) {
 // Get proton distribution for simulation from real data QA plots.
 TH1D* TreeReader::get_sim_proton_dist(int cent) {
 	string file_path = sim_proton_dist_dataset + to_string(energy) + "GeV/" + sim_dist_qa_name + to_string(energy) + "GeV.root";
+	cout << file_path << endl;
 	TFile *file = new TFile(file_path.data(), "READ");
 	string dataset_path = sim_proton_dist_dataset;
 	dataset_path.pop_back();

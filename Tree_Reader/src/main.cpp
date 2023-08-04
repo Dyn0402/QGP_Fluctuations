@@ -279,10 +279,10 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_simpleclust_s08a05_epbins1_test", {{"flat80_simpleclust_spread08_amp05_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_simpleclust_s08a3_epbins1_test", {{"flat80_simpleclust_spread08_amp3_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp3_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_simpleclust_s08a05_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp05_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp05_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_Eff_simpleclust_s08a3_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp3_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp3_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a05_v20_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v20_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v20_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a3_v20_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp3_v20_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp3_v20_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_simpleclust_s08a05_v20_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp05_v20_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp05_v20_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_simpleclust_s08a3_v20_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp3_v20_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp3_v20_res99_norotate_resample_epbins1_", {0, 0}}}}}},
 		{"Sim_flat80_simpleclust_s08a05_v21_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v21_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v21_res99_norotate_resample_epbins1_", {0, 0}}}}}},
 		{"Sim_flat80_simpleclust_s08a05_v207_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
 		{"Sim_flat80_simpleclust_s08a05_v205_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v205_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v205_res99_norotate_resample_epbins1_", {0, 0}}}}}},
@@ -294,6 +294,13 @@ void read_new() {
 		{"Sim_flat80_Eff_simpleclust_s08a05_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp05_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp05_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
 		{"Sim_flat80_Eff_simpleclust_s08a3_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp3_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp3_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
 	};
+
+//	map<string, map<string, map<string, pair<int, int>>>> sets = {
+//		{"Sim_flat80_simpleclust_s08a18_v21_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v21_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v21_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+//		{"Sim_flat80_simpleclust_s08a18_v207_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+//		{"Sim_flat80_simpleclust_s08a18_v205_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v205_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v205_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+//		{"Sim_flat80_simpleclust_s08a18_v203_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v203_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v203_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+//	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
 		//{"Sim_flow_flat80_res9_v207_epbins1", {{"flow_flat80_res9_v207_resample_epbins1", {{"Sim_flow_flat80_res9_v207_resample_norotate_epbins1_", {0, 0}}}}}},
@@ -787,6 +794,15 @@ void read_new() {
 		}
 
 //		for (int energy : energy_list) {
+//			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets) {
+//				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
+//				run_job(energy, job.second, job_num, job.first, jobs, mtx, file_list);
+////				this_thread::sleep_for(chrono::seconds(set_sleep));
+//			}
+////			this_thread::sleep_for(chrono::seconds(energy_sleep));
+//		}
+
+//		for (int energy : energy_list) {
 //			for (pair<string, map<string, map<string, pair<int, int>>>> job : sets2) {
 //				cout << endl << "Queueing " << energy << "GeV  job " << ++job_num << " of " << jobs << endl << endl;
 //				pool.enqueue(run_job, energy, job.second, job_num, job.first, jobs, mtx, file_list);
@@ -1065,9 +1081,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			}
 			if (in_string(set.first, { "Sim", "spread" }, true)) {
 				reader.sim.set_spread_sigma(str_num_dec(get_flag_trail(set.first, "spread", "_")[0], 1));
+				cout << reader.sim.get_spread_sigma() << endl;
 			}
 			if (in_string(set.first, { "Sim", "amp" }, true)) {
 				reader.sim.set_amp_group(str_num_dec(get_flag_trail(set.first, "amp", "_")[0], 0));
+				cout << reader.sim.get_amp_group() << endl;
 			}
 			if (in_string(set.first, { "Sim", "spreadplus" }, true)) {
 				reader.sim.set_spread_sigma_plus(str_num_dec(get_flag_trail(set.first, "spreadplus", "_")[0], 1));
@@ -1096,7 +1114,7 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 			if (in_string(set.first, "Sim")) {
 				reader.sim.set_hom_eff(1.0);
-				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default_resample/rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_0/");
+				reader.set_sim_proton_dist_dataset(in_base_path + "Data/default/rapid05_resample_norotate_seed_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_0/");
 				reader.sim.set_job_energy(energy * job_num);
 			}
 			if (in_string(set.first, { "Sim", "Eff" }, true)) {
@@ -1108,9 +1126,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 			}
 			if (in_string(set.first, { "Sim", "_flow" }, true) || in_string(set.first, { "Sim", "_anticlflow" }, true) || 
 				in_string(set.first, { "Sim", "_anticlflowindep" }, true) || in_string(set.first, { "Sim", "_simpleclust" }, true)) {
-				float res = str_num_dec(get_flag_trail(set.first, "res", "_")[0], 0);
-				float v2 = str_num_dec(get_flag_trail(set.first, "v2", "_")[0], 0);
-				reader.sim.set_flow(v2, res);
+				if (in_string(set.first, {"_v2", "_res"}, true)) {
+					float res = str_num_dec(get_flag_trail(set.first, "res", "_")[0], 0);
+					float v2 = str_num_dec(get_flag_trail(set.first, "v2", "_")[0], 0);
+					reader.sim.set_flow(v2, res);
+				}
 			}
 			//reader.set_sim_flow(in_string(set.first, { "Sim", "_flow" }, true));
 			if (in_string(set.first, { "Sim", "_flow", "Eff" }, true)) {
@@ -1139,6 +1159,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 				reader.sim.set_clust_final();
 				reader.sim.set_amp_group(-reader.sim.get_amp_group());  // anticl so make amp negative
 			}
+
+			cout << "post_sim set" << endl;
 
 
 			vector<int> set_nums;
