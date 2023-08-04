@@ -279,10 +279,20 @@ void read_new() {
 //	};
 
 	map<string, map<string, map<string, pair<int, int>>>> sets = {
-		{"Sim_flat80_simpleclust_s08a18_v21_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v21_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v21_res99_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_simpleclust_s08a18_v207_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_simpleclust_s08a18_v205_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v205_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v205_res99_norotate_resample_epbins1_", {0, 0}}}}}},
-		{"Sim_flat80_simpleclust_s08a18_v203_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp18_v203_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp18_v203_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a05_epbins1_test", {{"flat80_simpleclust_spread08_amp05_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a3_epbins1_test", {{"flat80_simpleclust_spread08_amp3_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp3_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_simpleclust_s08a05_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp05_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp05_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_simpleclust_s08a3_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp3_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp3_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a05_v21_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v21_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v21_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a05_v207_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a05_v205_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v205_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v205_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a05_v203_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp05_v203_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp05_v203_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a3_v21_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp3_v21_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp3_v21_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a3_v207_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp3_v207_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp3_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a3_v205_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp3_v205_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp3_v205_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_simpleclust_s08a3_v203_res99_epbins1_test", {{"flat80_simpleclust_spread08_amp3_v203_res99_resample_epbins1_test", {{"Sim_flat80_simpleclust_spread08_amp3_v203_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_simpleclust_s08a05_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp05_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp05_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
+		{"Sim_flat80_Eff_simpleclust_s08a3_v207_res99_epbins1_test", {{"flat80_Eff_simpleclust_spread08_amp3_v207_res99_resample_epbins1_test", {{"Sim_flat80_Eff_simpleclust_spread08_amp3_v207_res99_norotate_resample_epbins1_", {0, 0}}}}}},
 	};
 
 	//map<string, map<string, map<string, pair<int, int>>>> sets = {
