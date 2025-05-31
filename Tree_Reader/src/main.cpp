@@ -71,6 +71,7 @@ void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path, string v
 void run_pile_up_qa();
 void tchain_test();
 void run_tchain();
+void yunshan_example();
 //void AMPT_Proton_Num_Check();
 void get_flag_trail_test();
 map<string, pair<int, int>> get_rand_set_pairs(int num_pairs, string rapid="rapid05", string efficiency="");
@@ -1486,6 +1487,46 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	}
 }
 
+
+void yunshan_example() {
+    int energy = 7;  // Energy in GeV
+    int ref = 3;  // Which refmult to use
+    sting in_path = "/home/dylan/Research/BES1_Trees/";  // Input path for trees
+    sting out_dir = "/home/dylan/Research/Data_Sim/";  // Output directory for binned data
+    TreeReader reader(energy, ref);
+    reader.set_in_path(in_path);
+    reader.set_tree_name("tree");
+
+    AzBinner& binner = reader.add_binner();
+    binner.set_divs(divs);
+    binner.set_cent_binning(9);
+
+    binner.set_out_path(out_dir);
+    binner.set_qa_path(out_dir);
+    binner.set_qa_name("QA_");
+    binner.cut.set_dcaqa_path(out_dir);
+    binner.cut.set_pileupqa_path(out_dir);
+
+    binner.cut.set_values(energy, reader.get_particle());  // Setting here for now since it needs updated dca/pileup paths, think of better solution.
+    binner.set_rotate_random(false);
+    binner.set_calc_v2(true);
+    binner.set_efficiency(false);
+    binner.set_efficiency_prob(0);
+
+    vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
+
+    binner.set_mixed(true);
+    binner.mix.set_divs(divs);
+    binner.mix.set_out_path(out_dir);
+    binner.mix.set_max_events(250);
+    binner.mix.set_min_events(150);
+    binner.mix.set_vz_bins(5);
+    binner.mix.set_ep_bins(20);
+
+    binner.mix.set_mixes_per_event(11);
+
+    reader.read_trees();
+}
 
 //void run_set(int energy, int set_num, string set_name, int job_num, int jobs, mutex *mtx, vector<string> *file_list) {
 //	string base_path, in_base_path, in_base_ampt_path;
