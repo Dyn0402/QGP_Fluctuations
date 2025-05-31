@@ -123,7 +123,8 @@ int main(int argc, char** argv) {
 		cout << "No commandline input, assume not rcf. Doing other things." << endl;
 	}
 
-	read_new();
+//	read_new();
+    yunshan_example();
 
 //	run_dca_xy_qa();
 //	run_pile_up_qa();
