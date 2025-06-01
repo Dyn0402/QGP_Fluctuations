@@ -1492,11 +1492,13 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 void yunshan_example() {
     int energy = 7;  // Energy in GeV
     int ref = 3;  // Which refmult to use
-    sting in_path = "/home/dylan/Research/BES1_Trees/";  // Input path for trees
-    sting out_dir = "/home/dylan/Research/Data_Sim/";  // Output directory for binned data
+    string in_path = "/home/dylan/Research/BES1_Trees/";  // Input path for trees
+    string out_dir = "/home/dylan/Research/Data_Sim/";  // Output directory for binned data
     TreeReader reader(energy, ref);
     reader.set_in_path(in_path);
     reader.set_tree_name("tree");
+
+    vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 
     AzBinner& binner = reader.add_binner();
     binner.set_divs(divs);
@@ -1513,8 +1515,6 @@ void yunshan_example() {
     binner.set_calc_v2(true);
     binner.set_efficiency(false);
     binner.set_efficiency_prob(0);
-
-    vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 
     binner.set_mixed(true);
     binner.mix.set_divs(divs);
