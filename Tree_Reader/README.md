@@ -1,6 +1,7 @@
 # To Compile:
 
 - Clone and compile the ResearchLibs repository https://github.com/Dyn0402/Research_Libs
+- Edit the Makefile to point to a ROOT6 installation in CXXFLAGS and LDFLAGS
 - Edit the Makefile to point FLUCT_LIB_DIR to the FluctuationLib directory (within Research_Libs)
 - Edit the /src/main.cpp file to run what you want
   - read_new() function

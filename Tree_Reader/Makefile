@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -O2 -std=c++17 $(shell /local/home/dn277127/Software/root/bin/root-config --cflags)
-LDFLAGS = $(shell /local/home/dn277127/Software/root/bin/root-config --libs)
+CXXFLAGS = -Wall -O2 -std=c++11 $(shell /star/u/dneff/Software/root/root-6.14.06/obj/bin/root-config --cflags)
+LDFLAGS = $(shell /star/u/dneff/Software/root/root-6.14.06/obj/bin/root-config --libs)
 
 # Directories
 SRC_DIR = src
