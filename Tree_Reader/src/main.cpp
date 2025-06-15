@@ -1490,19 +1490,27 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 
 
 void yunshan_example() {
-    int energy = 7;  // Energy in GeV
+    int energy = 11;  // Energy in GeV
     int ref = 3;  // Which refmult to use
-    string in_path = "/home/dylan/Research/BES1_Trees/";  // Input path for trees
-    string out_dir = "/home/dylan/Research/Data_Sim/";  // Output directory for binned data
+    string in_path = "/gpfs01/star/pwg/yunshancheng/ProtonPartition/trees/final/output/";  // Input path for trees
+    string out_dir = "/gpfs01/star/pwg/dneff/tree_reader_data/BES1/";  // Output directory for binned data
     TreeReader reader(energy, ref);
     reader.set_in_path(in_path);
     reader.set_tree_name("tree");
+
+    // Might fail on Mixer::append_event if these are too low?
+    map<string, map<int, int>> particle_bins { {"BES1", { {7, 55}, {11, 44}, {19, 38}, {27, 36}, {39, 32}, {62, 29} } },
+                                               {"AMPT", { {7, 100}, {11, 100}, {19, 100}, {27, 100}, {39, 90}, {62, 80} } },
+                                               {"CF", { {7, 80}, {19, 80}, {27, 70}, {39, 70}, {62, 70} } },
+    };
 
     vector<int> divs{ 356, 300, 288, 270, 240, 180, 120, 90, 89, 72, 60 };
 
     AzBinner& binner = reader.add_binner();
     binner.set_divs(divs);
     binner.set_cent_binning(9);
+
+    binner.set_particle_bins(particle_bins["BES1"][energy]);  // Just to preset bins, improves performance
 
     binner.set_out_path(out_dir);
     binner.set_qa_path(out_dir);
