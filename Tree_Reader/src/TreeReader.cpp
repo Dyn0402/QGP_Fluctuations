@@ -387,7 +387,7 @@ void TreeReader::read_trees() {
 			cout << " " << energy << "GeV " << fraction_finished << "% complete | time: " << (clock() - start) / CLOCKS_PER_SEC << "s" << " , " << elap.count() << "s  | " << datetime_vec[0] << " " << datetime_vec[3] << " | est--> " << datetime_finish_vec[0] << " " << datetime_finish_vec[3] << " | Available Memory (linux): " << available_mem << "GB" << endl;
 		}
 
-		cout << "Starting " << path << endl;
+//		cout << "Starting " << path << endl;
 
 		TFile *file = new TFile(path.data(), "READ");
 		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }

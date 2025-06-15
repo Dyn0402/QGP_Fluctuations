@@ -1492,8 +1492,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 void yunshan_example() {
     int energy = 11;  // Energy in GeV
     int ref = 3;  // Which refmult to use
-    string in_path = "/gpfs01/star/pwg/yunshancheng/ProtonPartition/trees/final/output/";  // Input path for trees
-    string out_dir = "/gpfs01/star/pwg/dneff/tree_reader_data/BES1/";  // Output directory for binned data
+    string in_path = "/star/data01/pwg/yunshancheng/ProtonPartition/trees/final/output/";  // Input path for trees
+    string out_dir = "/star/data01/pwg/yunshancheng/ProtonPartition/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
     TreeReader reader(energy, ref);
     reader.set_in_path(in_path);
     reader.set_tree_name("tree");
