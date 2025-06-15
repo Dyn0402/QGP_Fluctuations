@@ -311,6 +311,18 @@ void TreeReader::read_trees() {
 	else {
 		in_files = get_files_in_dir(in_path + to_string(energy) + "GeV/", "root", "path");
 	}
+
+    // Remove any files ending with "_qa.root"
+    in_files.erase(
+            std::remove_if(
+                    in_files.begin(),
+                    in_files.end(),
+                    [](const std::string& filename) {
+                        return filename.size() >= 8 && filename.substr(filename.size() - 8) == "_qa.root";
+                    }
+            ),
+            in_files.end()
+    );
 	
 	if (file_shuffle_seed > 0) {
 		srand(file_shuffle_seed);  // Set seed for random file shuffle if not negative (code for random)
@@ -376,11 +388,6 @@ void TreeReader::read_trees() {
 		}
 
 		cout << "Starting " << path << endl;
-        if (path.size() >= 7 && path.substr(path.size() - 7) == "_qa.root") {
-            in_files_queue.pop();
-            file_index++;
-            continue;
-        }
 
 		TFile *file = new TFile(path.data(), "READ");
 		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
