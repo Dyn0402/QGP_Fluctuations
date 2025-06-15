@@ -376,6 +376,12 @@ void TreeReader::read_trees() {
 		}
 
 		cout << "Starting " << path << endl;
+        if (path.size() >= 7 && path.substr(path.size() - 7) == "_qa.root") {
+            in_files_queue.pop();
+            file_index++;
+            continue;
+        }
+
 		TFile *file = new TFile(path.data(), "READ");
 		if (!ampt && !cooper_frye) { for (AzBinner& binner : binners) { binner.add_cut_hists(file); } }
 		TTree *tree = (TTree*)file->Get(tree_name.data());
