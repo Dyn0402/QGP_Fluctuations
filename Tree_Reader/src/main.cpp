@@ -1530,7 +1530,7 @@ void yunshan_example() {
     binner.set_mixed(true);
     binner.mix.set_divs(divs);
     binner.mix.set_out_path(out_dir);
-    binner.mix.set_ep_bins(stoi(get_flag_trail(set.first, "epbins", "_")[0]));
+    binner.mix.set_ep_bins(1);
     binner.mix.set_max_events(250);
     binner.mix.set_min_events(150);
     binner.mix.set_vz_bins(5);
