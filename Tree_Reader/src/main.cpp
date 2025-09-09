@@ -1493,7 +1493,8 @@ void yunshan_example() {
     int energy = 11;  // Energy in GeV
     int ref = 3;  // Which refmult to use
     string in_path = "/star/data01/pwg/yunshancheng/ProtonPartition/trees/final/output/";  // Input path for trees
-    string out_dir = "/star/data01/pwg/yunshancheng/ProtonPartition/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
+    //string out_dir = "/star/data01/pwg/yunshancheng/ProtonPartition/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
+    string out_dir = "/star/u/dneff/gpfs/git/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
     TreeReader reader(energy, ref);
     reader.set_in_path(in_path);
     reader.set_tree_name("tree");
