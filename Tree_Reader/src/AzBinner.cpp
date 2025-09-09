@@ -1606,9 +1606,7 @@ void AzBinner::write_info_file() {
 
 // Write all qa plots into TFile.
 void AzBinner::write_qa() {
-	cout << "Try to open QA file: " << (qa_path + qa_name + to_string(energy) + "GeV.root").data() << endl;
 	TFile qa((qa_path + qa_name + to_string(energy) + "GeV.root").data(), "RECREATE");
-	cout << "QA file opened." << endl;
 
 	TCanvas cent_can("cent_can");
 	cent_hist.Draw("COLZ");
@@ -1721,8 +1719,6 @@ void AzBinner::write_qa() {
 
 	pre_m2_hist.Write();
 	post_m2_hist.Write();
-
-	cout << "Some mid-way point" << endl;
 
 	for (auto hist : post_n_particles) { hist.second.Write(); }
 	for (auto hist : post_ref) { hist.second.Write(); }

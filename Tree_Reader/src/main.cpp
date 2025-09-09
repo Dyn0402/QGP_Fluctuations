@@ -1501,8 +1501,8 @@ void yunshan_example() {
     int energy = 11;  // Energy in GeV
     int ref = 3;  // Which refmult to use
     string in_path = "/star/data01/pwg/yunshancheng/ProtonPartition/trees/final/output/";  // Input path for trees
-    //string out_dir = "/star/data01/pwg/yunshancheng/ProtonPartition/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
-    string out_dir = "/star/u/dneff/gpfs/git/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
+    string out_dir = "/star/data01/pwg/yunshancheng/ProtonPartition/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
+    //string out_dir = "/star/u/dneff/gpfs/git/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
 	string dca_qa_path = "/star/u/dneff/gpfs/Dca_xy_QA/default/";  // Where the dca qa cut files are
 	string pile_up_qa_path = "/star/u/dneff/gpfs/Pile_Up_QA/default/";  // Where the pile up qa cut files are
 
