@@ -94,9 +94,17 @@ int main(int argc, char** argv) {
 		gROOT->ProcessLine(".L Event.h");
 	}
 	else if (platform == "lin") {
-		gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
-		gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
-	} else if (platform == "win") {
+		if (gSystem->AccessPathName("/home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h") == 0 &&
+			gSystem->AccessPathName("/home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h") == 0) {
+			gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Track.h");
+			gROOT->ProcessLine(".L /home/dylan/git/Research/QGP_Fluctuations/Tree_Reader/src/Event.h");
+		}
+		else {  // Probably on linux
+			gROOT->ProcessLine(".L src/Track.h");
+			gROOT->ProcessLine(".L src/Event.h");
+		}
+	}
+	else if (platform == "win") {
 		gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Track.h");
 		gROOT->ProcessLine(".L C:/Users/Dylan/source/repos/Dyn0402/QGP_Fluctuations/Tree_Reader/src/Event.h");
 	}
@@ -124,10 +132,10 @@ int main(int argc, char** argv) {
 	}
 
 //	read_new();
-    yunshan_example();
+    //yunshan_example();
 
-//	run_dca_xy_qa();
-//	run_pile_up_qa();
+	//run_dca_xy_qa();
+	run_pile_up_qa();
 //	tchain_test();
 	//ampt_ref_b_plot();
 	//ampt_cent_opt();
@@ -1495,6 +1503,9 @@ void yunshan_example() {
     string in_path = "/star/data01/pwg/yunshancheng/ProtonPartition/trees/final/output/";  // Input path for trees
     //string out_dir = "/star/data01/pwg/yunshancheng/ProtonPartition/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
     string out_dir = "/star/u/dneff/gpfs/git/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
+	string dca_qa_path = "/star/u/dneff/gpfs/Dca_xy_QA/default/";
+	string pile_up_qa_path = "/star/u/dneff/gpfs/Pile_Up_QA/default/";
+
     TreeReader reader(energy, ref);
     reader.set_in_path(in_path);
     reader.set_tree_name("tree");
@@ -1516,8 +1527,9 @@ void yunshan_example() {
     binner.set_out_path(out_dir);
     binner.set_qa_path(out_dir);
     binner.set_qa_name("QA_");
-    binner.cut.set_dcaqa_path(out_dir);
-    binner.cut.set_pileupqa_path(out_dir);
+
+    binner.cut.set_dcaqa_path(dca_qa_path);
+    binner.cut.set_pileupqa_path(pile_up_qa_path);
 
     binner.cut.set_values(energy, reader.get_particle());  // Setting here for now since it needs updated dca/pileup paths, think of better solution.
     binner.set_rotate_random(false);
@@ -2185,12 +2197,12 @@ void dca_xy_qa(int energy, mutex *mtx, string in_path, string qa_path, string pi
 void run_dca_xy_qa() {
 	vector<int> energies{ 7, 11, 19, 27, 39, 62};
 //	vector<int> energies{ 62, 19, 11, 7 };
-//	string in_path = "F:/Research/BES1_Trees/";
-//	string qa_path = "F:/Research/Dca_xy_QA/";
-//	string pile_up_qa_path = "F:/Research/Pile_Up_QA/";
-	string in_path = "/media/ucla/Research/BES1_Trees/";
-	string qa_path = "/media/ucla/Research/Dca_xy_QA/";
-	string pile_up_qa_path = "/media/ucla/Research/Pile_Up_QA/";
+	string in_path = "F:/Research/BES1_Trees/";
+	string qa_path = "F:/Research/Dca_xy_QA/";
+	string pile_up_qa_path = "F:/Research/Pile_Up_QA/";
+	//string in_path = "/media/ucla/Research/BES1_Trees/";
+	//string qa_path = "/media/ucla/Research/Dca_xy_QA/";
+	//string pile_up_qa_path = "/media/ucla/Research/Pile_Up_QA/";
 	string variation = "2loose";
 
 	mutex *mtx = new mutex;
@@ -2268,10 +2280,10 @@ void pile_up_qa(int energy, mutex *mtx, string in_path, string qa_path, string v
 void run_pile_up_qa() {
 //	vector<int> energies{ 7, 11, 19, 27, 39, 62 };
 	vector<int> energies{ 39, 62, 27, 19, 11, 7 };
-//	string in_path = "F:/Research/BES1_Trees/";
-//	string qa_path = "F:/Research/Pile_Up_QA/";
-	string in_path = "/media/ucla/Research/BES1_Trees/";
-	string qa_path = "/media/ucla/Research/Pile_Up_QA/";
+	string in_path = "F:/Research/BES1_Trees/";
+	string qa_path = "F:/Research/Pile_Up_QA/";
+	//string in_path = "/media/ucla/Research/BES1_Trees/";
+	//string qa_path = "/media/ucla/Research/Pile_Up_QA/";
 	mutex *mtx = new mutex;
 
 	gErrorIgnoreLevel = kError;
