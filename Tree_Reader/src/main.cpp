@@ -1536,6 +1536,7 @@ void yunshan_example() {
     binner.set_calc_v2(true);
     binner.set_efficiency(false);
     binner.set_efficiency_prob(0);
+	binner.set_resample(true);
 
     binner.set_divs({});
     binner.set_mixed(false);

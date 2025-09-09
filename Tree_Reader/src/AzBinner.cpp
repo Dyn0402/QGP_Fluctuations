@@ -1474,8 +1474,8 @@ void AzBinner::write_binner_data() {
 // Write file to outpath containing information about AzBinner variables used.
 void AzBinner::write_info_file() {
 	ofstream out(out_path + to_string(energy) + "GeV/" + info_file_name);
-	if (!out) { cerr << "Couldn't open info_file path" << endl; }
-	else {
+	//if (!out) { cerr << "Couldn't open info_file path" << endl; }
+	if (out.is_open()) {
 		out << "Information file for AzBinner run." << endl;
 		out << "in_path: " << in_path << endl;
 		out << "out_path: " << out_path << endl;
@@ -1600,7 +1600,11 @@ void AzBinner::write_info_file() {
 		out << "Ampt Particle PIDs: ";
 		for (auto& pid : ampt_particle_pid) { out << to_string(pid) << " "; }
 		out << endl;
+		out.close();
 	}
+	 else {
+		 cerr << "Couldn't open info_file path" << endl;
+		}
 }
 
 
