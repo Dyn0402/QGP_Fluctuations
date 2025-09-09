@@ -132,10 +132,10 @@ int main(int argc, char** argv) {
 	}
 
 //	read_new();
-    //yunshan_example();
+    yunshan_example();
 
 	//run_dca_xy_qa();
-	run_pile_up_qa();
+	//run_pile_up_qa();
 //	tchain_test();
 	//ampt_ref_b_plot();
 	//ampt_cent_opt();
@@ -1503,8 +1503,8 @@ void yunshan_example() {
     string in_path = "/star/data01/pwg/yunshancheng/ProtonPartition/trees/final/output/";  // Input path for trees
     //string out_dir = "/star/data01/pwg/yunshancheng/ProtonPartition/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
     string out_dir = "/star/u/dneff/gpfs/git/QGP_Fluctuations/Tree_Reader/output/";  // Output directory for binned data
-	string dca_qa_path = "/star/u/dneff/gpfs/Dca_xy_QA/default/";
-	string pile_up_qa_path = "/star/u/dneff/gpfs/Pile_Up_QA/default/";
+	string dca_qa_path = "/star/u/dneff/gpfs/Dca_xy_QA/default/";  // Where the dca qa cut files are
+	string pile_up_qa_path = "/star/u/dneff/gpfs/Pile_Up_QA/default/";  // Where the pile up qa cut files are
 
     TreeReader reader(energy, ref);
     reader.set_in_path(in_path);
