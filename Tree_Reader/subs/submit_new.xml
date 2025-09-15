@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE note [
+]>
+<job simulateSubmission="false">
+  
+	<command>
+		source /star/u/dneff/Software/root/root-6.14.06/obj/bin/thisroot.csh
+		./tree_reader 11 BES1_def default rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_ 0 0;
+	</command>
+
+	<ResourceUsage>
+		<Times>
+			<MinWallTime>72</MinWallTime>
+		</Times>
+		<Memory>
+			<MinMemory>300</MinMemory>
+			<MaxMemory>600</MaxMemory>
+		</Memory>
+	</ResourceUsage>
+  
+	<SandBox>
+		<Package>
+			<File>file:/gpfs01/star/pwg/dneff/git/QGP_Fluctuations/Tree_Reader/tree_reader</File>
+			<File>file:/gpfs01/star/pwg/dneff/git/QGP_Fluctuations/Tree_Reader/src/Track.h</File>
+			<File>file:/gpfs01/star/pwg/dneff/git/QGP_Fluctuations/Tree_Reader/src/Event.h</File>
+			<File>file:/gpfs01/star/pwg/dneff/Dca_xy_QA</File>
+			<File>file:/gpfs01/star/pwg/dneff/Pile_Up_QA</File>
+		</Package>
+	</SandBox>
+
+	<stderr URL="file:/gpfs01/star/pwg/dneff/tree_reader_data/log/err_$JOBID.err"/>
+	<stdout URL="file:/gpfs01/star/pwg/dneff/tree_reader_data/log/log_$JOBID.out" />
+
+	<output fromScratch="Data/*" toURL="file:/gpfs01/star/pwg/dneff/tree_reader_data/Data/" />
+	<output fromScratch="Data_Mix/*" toURL="file:/gpfs01/star/pwg/dneff/tree_reader_data/Data_Mix/" />
+ 
+	<Generator>
+		<Location>/gpfs01/star/pwg/dneff/tree_reader_data/log/</Location>
+		<ScriptLocation>/gpfs01/star/pwg/dneff/tree_reader_data/script/</ScriptLocation>
+		<ListLocation>/gpfs01/star/pwg/dneff/tree_reader_data/list/</ListLocation>
+	</Generator>
+  
+</job>

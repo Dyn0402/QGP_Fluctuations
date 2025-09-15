@@ -953,11 +953,11 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	string base_path, in_base_path, in_base_ampt_path, in_base_cf_path;
 	if (in_string(job_type, "RCF")) {
 		base_path = "./";  //"/star/u/dneff/Documents/";
-		in_base_path = "./";
+		in_base_path = "/gpfs01/star/pwg/deff/data/";
 		in_base_ampt_path = "./";
 		in_base_cf_path = "./";
-		mkdir("Data_Sim");
-		mkdir("Data_Sim_Mix");
+		mkdir("Data");
+		mkdir("Data_Mix");
 	}
 	else if (platform == "lin") {
 		//base_path = "/home/dylan/Research/";
