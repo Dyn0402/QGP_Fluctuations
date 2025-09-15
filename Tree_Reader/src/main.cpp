@@ -89,7 +89,7 @@ auto start_sys = chrono::system_clock::now();
 
 
 int main(int argc, char** argv) {
-	if (argc == 3) {  // Running on RCF
+	if (argc == 3 || argc == 7) {  // Running on RCF
 		gROOT->ProcessLine(".L Track.h");
 		gROOT->ProcessLine(".L Event.h");
 	}
