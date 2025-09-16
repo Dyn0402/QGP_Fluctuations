@@ -13,8 +13,8 @@
 			<MinWallTime>72</MinWallTime>
 		</Times>
 		<Memory>
-			<MinMemory>300</MinMemory>
-			<MaxMemory>600</MaxMemory>
+			<MinMemory>3000</MinMemory>
+			<MaxMemory>6000</MaxMemory>
 		</Memory>
 	</ResourceUsage>
   
@@ -25,7 +25,7 @@
 			<File>file:/gpfs01/star/pwg/dneff/git/QGP_Fluctuations/Tree_Reader/src/Event.h</File>
 			<File>file:/gpfs01/star/pwg/dneff/Dca_xy_QA</File>
 			<File>file:/gpfs01/star/pwg/dneff/Pile_Up_QA</File>
-			<File>file:/gpfs01/star/pwg/dneff/data/BES1_Trees</File>
+<!--			<File>file:/gpfs01/star/pwg/dneff/data/BES1_Trees</File>-->
 		</Package>
 	</SandBox>
 

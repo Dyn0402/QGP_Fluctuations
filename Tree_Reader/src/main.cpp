@@ -961,7 +961,8 @@ void run_job(int energy, map<string, map<string, pair<int, int>>> job, int job_n
 	string base_path, in_base_path, in_base_ampt_path, in_base_cf_path;
 	if (in_string(job_type, "RCF")) {
 		base_path = "./";  //"/star/u/dneff/Documents/";
-		in_base_path = "./";  // "/gpfs01/star/pwg/dneff/data/";
+//		in_base_path = "./";  // "/gpfs01/star/pwg/dneff/data/";
+		in_base_path = /gpfs01/star/pwg/dneff/data/";
 		in_base_ampt_path = "./";
 		in_base_cf_path = "./";
 		mkdir("Data");
