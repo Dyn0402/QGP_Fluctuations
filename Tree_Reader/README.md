@@ -1,3 +1,37 @@
+# Quick Start
+
+### Clone and Compile the Git Repositories
+
+- Instructions for bash shell: `bash`
+- Make a directory for your work and navigate to it
+- Copy clone_and_compile.sh from Tree_Reader
+- Make it executable with `chmod +x clone_and_compile.sh`
+- Run it with `./clone_and_compile.sh`
+- The repositories should now be cloned and compiled
+
+### Run Single Energy as One Job on Condor
+
+This TreeReder code was designed to run on a modern CPU utilizing multiple cores. 
+The explanation below shows how to run on condor as a single job. 
+A single condor process is exceedingly slow compared to modern CPUs, and the job will take a long time to complete.
+
+**Important Note:** When running the 11.5 GeV data, the job took over two days to complete 
+and the log file was only written once complete. If all energies need to be rerun, a parallelization framework should 
+be developed.
+
+- Go to the *subs* directory `cd Tree_Reader/subs`
+- Edit the paths in `submit_single_job.xml` to point to your input and output directories.
+- Edit the \<command> ./tree_reader arugments for the type of run:
+  - The first argument is a beam energy (e.g. 7 &rarr; 7.7, 11 &rarr; 11.5, 19 &rarr; 19.6, 27, 39, 62 &rarr; 62.4)
+  - The second argument is the *job type* (not important, just needs to contain `BES1_`)
+  - The third argument is the *set group* (just a name for the output directory)
+  - The fourth argument is the *set name* which specifies all the parameters of the analysis as a `_` separated string.
+  - The fifth and sixth arguments are the start and number of times to run the set (for randomization sampling), e.g. `0 10` to run 10 times. Probably just leave as `0 0` for a single run.
+  - An example command: `./tree_reader 11 BES1_Sim_flat80_simpleclust_s08a05_v207_res99_epbins1_test flat80_simpleclust_spread08_amp05_v207_res99_resample_epbins1_test Sim_flat80_simpleclust_spread08_amp05_v207_res99_norotate_resample_epbins1_ 0 0`
+- Submit the job to the star manager `star-submit submit_single_job.xml`
+- Wait for run to complete (days).
+
+
 # To Compile:
 
 - Clone and compile the ResearchLibs repository https://github.com/Dyn0402/Research_Libs
@@ -26,7 +60,7 @@
 
 ---
 
-# Tree Reader – Compilation & Usage Instructions
+# Tree Reader More Generally – Compilation & Usage Instructions
 
 ## 📦 Dependencies
 
