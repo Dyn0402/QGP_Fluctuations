@@ -19,7 +19,7 @@ A single condor process is exceedingly slow compared to modern CPUs, and the job
 and the log file was only written once complete. If all energies need to be rerun, a parallelization framework should 
 be developed.
 
-- Go to the *subs* directory `cd Tree_Reader/subs`
+- Go to the *subs* directory `cd QGP_Fluctuations/Tree_Reader/subs/`
 - Edit the paths in `submit_single_job.xml` to point to your input and output directories.
 - Edit the \<command> ./tree_reader arugments for the type of run:
   - The first argument is a beam energy (e.g. 7 &rarr; 7.7, 11 &rarr; 11.5, 19 &rarr; 19.6, 27, 39, 62 &rarr; 62.4)
