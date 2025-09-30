@@ -21,6 +21,7 @@ be developed.
 
 - Go to the *subs* directory `cd QGP_Fluctuations/Tree_Reader/subs/`
 - Edit the paths in `submit_single_job.xml` to point to your input and output directories.
+- Edit the `in_base_path = "/gpfs01/star/pwg/dneff/data/";` on line 965 of `main.cpp`. Recompile with `make clean` `make`. (Not ideal but a better fix hasn't yet been implemented)
 - Edit the \<command> ./tree_reader arugments for the type of run:
   - The first argument is a beam energy (e.g. 7 &rarr; 7.7, 11 &rarr; 11.5, 19 &rarr; 19.6, 27, 39, 62 &rarr; 62.4)
   - The second argument is the *job type* (not important, just needs to contain `BES1_`)
