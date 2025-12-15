@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE note [
+]>
+<job simulateSubmission="false">
+  
+	<command>
+<!--		source /star/u/dneff/Software/root/root-6.14.06/obj/bin/thisroot.csh-->
+		source /afs/rhic.bnl.gov/star/ROOT/38/6.20.08/build/bin/thisroot.csh
+		./tree_reader 7 BES1_def_RCF default rapid05_resample_norotate_dca1_nsprx1_m2r6_m2s0_nhfit20_epbins1_calcv2_ 0 0;
+	</command>
+
+	<ResourceUsage>
+		<Times>
+			<MinWallTime>72</MinWallTime>
+		</Times>
+		<Memory>
+			<MinMemory>3000</MinMemory>
+			<MaxMemory>6000</MaxMemory>
+		</Memory>
+	</ResourceUsage>
+  
+	<SandBox>
+		<Package>
+			<File>file:/star/data01/pwg/yunshancheng/ProtonPartition2/QGP_Fluctuations/Tree_Reader/tree_reader</File>
+			<File>file:/star/data01/pwg/yunshancheng/ProtonPartition2/QGP_Fluctuations/Tree_Reader/src/Track.h</File>
+			<File>file:/star/data01/pwg/yunshancheng/ProtonPartition2/QGP_Fluctuations/Tree_Reader/src/Event.h</File>
+			<File>file:/star/data01/pwg/yunshancheng/ProtonPartition2/Dca_xy_QA</File>
+			<File>file:/star/data01/pwg/yunshancheng/ProtonPartition2/Pile_Up_QA</File>
+<!--			<File>file:/gpfs01/star/pwg/dneff/data/BES1_Trees</File>-->
+		</Package>
+	</SandBox>
+
+	<stderr URL="file:/star/data01/pwg/yunshancheng/ProtonPartition2/tree_reader_data/log/err_$JOBID.err"/>
+	<stdout URL="file:/star/data01/pwg/yunshancheng/ProtonPartition2/tree_reader_data/log/log_$JOBID.out" />
+
+	<output fromScratch="Data/*" toURL="file:/star/data01/pwg/yunshancheng/ProtonPartition2/tree_reader_data/Data/" />
+	<output fromScratch="Data_Mix/*" toURL="file:/star/data01/pwg/yunshancheng/ProtonPartition2/tree_reader_data/Data_Mix/" />
+ 
+	<Generator>
+		<Location>/star/data01/pwg/yunshancheng/ProtonPartition2/tree_reader_data/log/</Location>
+		<ScriptLocation>/star/data01/pwg/yunshancheng/ProtonPartition2/tree_reader_data/script/</ScriptLocation>
+		<ListLocation>/star/data01/pwg/yunshancheng/ProtonPartition2/tree_reader_data/list/</ListLocation>
+	</Generator>
+  
+</job>
