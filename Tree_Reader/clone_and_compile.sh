@@ -7,7 +7,8 @@
 set -e
 
 # Source dylan's root6
-source /star/u/dneff/Software/root/root-6.14.06/obj/bin/thisroot.sh
+#source /star/u/dneff/Software/root/root-6.14.06/obj/bin/thisroot.sh
+source /afs/rhic.bnl.gov/star/ROOT/38/6.20.08/build/bin/thisroot.csh
 alias root='root -l'
 
 # Clone the repositories
